@@ -1,0 +1,76 @@
+/* ==========================================================================
+   Colors
+   ========================================================================== */
+
+$light: #f7f7f7;
+$default: #999999;
+$dark: #000000;
+
+html {
+    // colors
+    --rentfetch-white: #ffffff;
+    --rentfetch-base: #f7f7f7;
+    --rentfetch-default: #999999;
+    --rentfetch-dark: #000000;
+    --rentfetch-gold-pale: #ffebb1;
+    --rentfetch-gold: #fbbc00;
+    --rentfetch-orange: #e57a3a;
+    --rentfetch-black-5-percent: rgba(0, 0, 0, 0.05);
+    --rentfetch-black-7-percent: rgba(0, 0, 0, 0.07);
+    --rentfetch-black-10-percent: rgba(0, 0, 0, 0.1);
+
+    // font sizes
+    --rentfetch-font-size-small: 15px;
+    --rentfetch-font-size-medium: 18px;
+    --rentfetch-font-size-large: 22px;
+    --rentfetch-font-size-larger: 25px;
+}
+
+/* ==========================================================================
+   Queries
+   ========================================================================== */
+
+$thin: 600px;
+$medium: 960px;
+$wide: 1200px;
+
+@mixin mobile {
+    @media (max-width: #{$thin}) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (min-width: #{$thin}) and (max-width: #{$medium}) {
+        @content;
+    }
+}
+
+@mixin notdesktop {
+    @media (max-width: #{$medium}) {
+        @content;
+    }
+}
+
+@mixin notmobile {
+    @media (min-width: #{$thin}) {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media (min-width: #{$medium}) {
+        @content;
+    }
+}
+
+@mixin desktop-wide {
+    @media (min-width: #{$wide}) {
+        @content;
+    }
+}
+
+pre {
+    font-size: 13px;
+    line-height: 1.2em;
+}

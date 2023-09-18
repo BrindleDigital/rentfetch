@@ -1,0 +1,53 @@
+.floorplan-in-archive {
+
+    .floorplans {
+        p.info {
+            display: flex;
+            padding-top: 15px;
+
+            span {
+                display: block;
+                flex: 0 1 auto;
+                position: relative;
+                line-height: 30px;
+                padding-left: 40px;
+                margin-right: 30px;
+
+                &:before {
+                    display: block;
+                    content: "";
+                    height: 30px;
+                    width: 35px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    background-size: contain;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                }
+
+                &.floorplan-beds {
+                    padding-left: 45px;
+
+                    &:before {
+                        background-image: url('../images/beds-icon-gray.svg');
+                    }
+                }
+
+                &.floorplan-baths {
+                    &:before {
+                        background-image: url('../images/baths-icon-gray.svg');
+                    }
+                }
+
+                &.floorplan-sqft_range {
+                    padding-left: 45px;
+
+                    &:before {
+                        background-image: url('../images/sqft-icon-gray.svg');
+                    }
+                }
+            }
+        }
+    }
+}

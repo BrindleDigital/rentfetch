@@ -1,0 +1,127 @@
+// .floorplangrid {
+//     .floorplan-images-wrap {
+//         width: 100%;
+//         padding: 10px;
+//         background-color: white;
+//         position: relative;
+
+//         .floorplan-slide {
+//             height: 240px;
+//         }
+//     }
+
+//     .floorplan-slide {
+//         position: relative;
+//         border-radius: 3px;
+//         overflow: hidden;
+
+//         img {
+//             width: 100%;
+//             height: 100%;
+//             object-fit: contain;
+//         }
+//     }
+
+//     .entry.type-floorplans {
+//         &:hover {
+//             .floorplan-slider {
+//                 .slick-arrow {
+//                     @include desktop {
+//                         opacity: 1;
+//                     }
+//                 }
+
+//                 .slick-dots {
+//                     @include desktop {
+//                         opacity: 1;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     .floorplan-slider {
+//         opacity: 0;
+//         margin-bottom: 0 !important;
+
+//         &.slick-initialized {
+//             opacity: 1;
+//         }
+
+//         .slick-arrow {
+//             z-index: 50;
+//             width: 30px;
+//             height: 30px;
+//             background-color: white !important;
+//             border-radius: 100%;
+//             box-shadow: 0 0 10px 0 rgba($dark, 0.3);
+//             transition: 0.3s all ease;
+
+//             @include desktop {
+//                 // opacity: 0;
+//             }
+
+//             &:before {
+//                 color: $dark;
+//                 transition: 0.3s all ease;
+//             }
+
+//             &.slick-prev {
+//                 left: 10px;
+
+//                 &:before {
+//                     content: '\f341';
+//                     font-family: 'dashicons';
+//                 }
+//             }
+
+//             &.slick-next {
+//                 right: 10px;
+//                 padding-left: 3px;
+
+//                 &:before {
+//                     content: '\f345';
+//                     font-family: 'dashicons';
+//                 }
+//             }
+//         }
+
+//         .slick-dots {
+//             z-index: 50;
+//             bottom: 10px;
+//             transition: 0.3s all ease;
+
+//             @include desktop {
+//                 // opacity: 0;
+//             }
+
+//             li {
+//                 margin: 0 5px;
+//                 width: 14px;
+//                 height: 14px;
+
+//                 button {
+//                     &:before {
+//                         color: transparent;
+//                         border: 2px solid white;
+//                         border-radius: 100%;
+//                         font-size: 13px;
+//                         height: 14px;
+//                         width: 14px;
+//                         opacity: 1;
+//                     }
+//                 }
+
+//                 &.slick-active {
+//                     button {
+//                         &:before {
+//                             color: transparent;
+//                             opacity: 1;
+//                             background-color: white;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }

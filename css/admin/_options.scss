@@ -1,0 +1,110 @@
+/* ==========================================================================
+   Subnavigation
+   ========================================================================== */
+
+ul.rent-fetch-options-submenu {
+    border-bottom: 1px solid #c3c4c7;
+    padding-bottom: 6px;
+    margin-bottom: 30px;
+
+    li {
+        list-style: none;
+        display: inline-block;
+
+        a {
+            display: block;
+            padding: 8px;
+            line-height: 1;
+
+            &:first-child {
+                // padding-left: 0;
+            }
+
+            &.tab-active {
+                font-weight: bold;
+                color: inherit;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+form.rent-fetch-options {
+    position: relative;
+
+    .top-right-submit {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        p.submit {
+            margin: 0;
+        }
+    }
+}
+
+/* ==========================================================================
+   Base rows
+   ========================================================================== */
+
+form.rent-fetch-options {
+    .row {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+
+        .column:first-child {
+            padding: 20px 0;
+        }
+
+        .column:last-child {
+            padding: 15px 0;
+        }
+    }
+
+    label {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    ul.radio,
+    ul.checkboxes {
+        label {
+            font-size: 13px;
+            font-weight: normal;
+        }
+    }
+
+    .white-box {
+        padding: 15px;
+        border: 1px solid #cdd0d3;
+        background-color: white;
+        margin-bottom: -1px;
+
+        label {
+            font-weight: normal;
+            // font-size: 13px;
+            margin-bottom: 4px;
+            display: block;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        p.description {
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    input[type='text'],
+    select {
+        width: 400px;
+    }
+}

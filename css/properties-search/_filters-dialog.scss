@@ -1,0 +1,144 @@
+dialog#search-filters {
+    max-width: 800px;
+    width: 100%;
+    margin: auto auto;
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    position: fixed;
+    transform: translateY(100vh) translateZ(0);
+    transition: 0.3s transform ease, 0.3s opacity ease;
+    display: block;
+    opacity: 0;
+
+    button.toggle {
+        display: none;
+    }
+
+    &::backdrop {
+        background-color: transparent;
+        transition: 0.3s background-color ease, 1s backdrop-filter ease;
+    }
+
+    &[open] {
+        transform: none;
+        opacity: 1;
+
+        &::backdrop {
+            background-color: rgba(black, 0.6);
+
+            // blur the background
+            backdrop-filter: blur(3px);
+        }
+    }
+}
+
+header.property-search-filters-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(black, 0.1);
+
+    h2 {
+        font-size: 1.2em;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+form.property-search-filters {
+    padding: 40px;
+    height: calc(
+        100vh - 80px - 80px - 2.4em
+    ); // screen height less the margin we want top and bottom, and the header and footer height (both the padding and the font size)
+    overflow-y: scroll;
+
+    fieldset {
+        border: none;
+        padding: 0;
+        margin-bottom: 40px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        legend {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+    }
+
+    label {
+        display: block;
+    }
+
+    .checkboxes {
+        display: grid;
+        // display minimum 3 columns, maximum 6 columns
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    fieldset.property-type {
+        .checkboxes {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    fieldset.amenities {
+        .checkboxes {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+    }
+
+    fieldset.price {
+        .inputs-prices {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: 1fr 20px 1fr;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+
+            .price-dash {
+                height: 1px;
+                background-color: black;
+            }
+        }
+    }
+
+    input[type='text'],
+    input[type='number'],
+    input[type='date'] {
+        display: block;
+        line-height: 50px;
+        padding-left: 15px;
+        padding-right: 15px;
+        width: 100%;
+    }
+}
+
+footer.property-search-filters-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    border-top: 1px solid rgba(black, 0.1);
+
+    button#reset {
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+        color: var(--rentfetch-dark);
+    }
+
+    button#show-properties {
+        cursor: pointer;
+        border: none;
+        background-color: var(--rentfetch-dark);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 3px;
+    }
+}

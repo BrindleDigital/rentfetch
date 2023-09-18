@@ -1,0 +1,14 @@
+.single-properties-template {
+    .single-properties-entry-header {
+
+        h1 {
+            margin: 0;
+        }
+
+        p.admin-data {
+            span {
+                display: block;
+            }
+        }
+    }
+}

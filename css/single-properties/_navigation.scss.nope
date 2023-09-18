@@ -1,0 +1,29 @@
+body.single-properties {
+    .wrap-section-navigation.single-properties-section {
+        padding: 0;
+
+        @include notmobile {
+            text-align: center;
+        }
+
+        ul {
+            margin: 0;
+            list-style: none;
+            padding: 0;
+
+            li {
+                padding: 0;
+                list-style: none;
+                margin: 0;
+                display: inline-block;
+
+                a {
+                    padding: 8px 15px;
+                    text-decoration: none;
+                    position: static;
+                    display: block;
+                }
+            }
+        }
+    }
+}

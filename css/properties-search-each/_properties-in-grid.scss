@@ -1,0 +1,157 @@
+/* ==========================================================================
+   Styles for columns in the #response div (used in the maps shortcode)
+   ========================================================================== */
+
+.properties-loop {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    padding: 0;
+
+    .entry {
+        background-color: white;
+        margin: 0;
+        box-shadow: 3px 3px 10px 0 var(--rentfetch-black-5-percent);
+        transition: 0.5s box-shadow ease;
+        cursor: pointer;
+        position: relative;
+
+        &:hover {
+            box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
+        }
+
+        &.active {
+            box-shadow: 0 0 0 5px var(--rentfetch-dark);
+        }
+    }
+
+    .property-single-image-wrap {
+        width: 100%;
+        height: 150px;
+
+        img.property-single-image {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    h3,
+    p {
+        color: var(--rentfetch-dark);
+    }
+
+    h3,
+    p.property-location {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+
+    .property-attributes {
+        line-height: 1;
+        margin-bottom: 15px;
+
+        p {
+            display: inline-block;
+            margin-right: 10px;
+        }
+    }
+
+    .property-availability {
+        margin-top: 5px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(black, 0.07);
+        display: flex;
+        flex: 0 1 auto;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .property-details {
+        padding: 15px;
+    }
+
+    .post-edit-link {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 5;
+        padding: 5px 10px;
+        color: white;
+        background-color: var(--rentfetch-dark);
+        text-decoration: none;
+        line-height: 1;
+    }
+
+    p.specials {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        padding: 5px 10px 5px 30px;
+        background-color: var(--rentfetch-gold-pale);
+        z-index: 5;
+        font-size: var(--rentfetch-font-size-small);
+        border-radius: 3px;
+        color: var(--rentfetch-dark);
+        margin: 0;
+
+        &:before {
+            content: '\f155';
+            font-family: 'dashicons';
+            color: var(--rentfetch-gold);
+            font-size: var(--rentfetch-font-size-medium);
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+
+    h3 {
+        margin: 0 0 10px;
+        font-size: var(--rentfetch-font-size-large);
+    }
+
+    p {
+        font-size: var(--rentfetch-font-size-medium);
+        margin: 0 0 10px;
+        line-height: 1.2;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    p.rent {
+        font-size: var(--rentfetch-font-size-large);
+        font-weight: bold;
+    }
+
+    p.rent,
+    p.availability {
+        margin: 0;
+    }
+
+    p.availability {
+        font-size: var(--rentfetch-font-size-small);
+        font-style: italic;
+    }
+
+    a.post-edit-link {
+        margin: 0;
+    }
+}
+
+.results-count {
+    margin-bottom: 20px;
+    font-size: var(--rentfetch-font-size-medium);
+    line-height: 1;
+
+    #properties-results-count-number {
+        font-weight: bold;
+    }
+}

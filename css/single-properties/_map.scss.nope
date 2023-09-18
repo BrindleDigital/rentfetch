@@ -1,0 +1,28 @@
+body.single-properties {
+    .map {
+        margin-left: calc(-100vw / 2 + 100% / 2);
+        margin-right: calc(-100vw / 2 + 100% / 2);
+        max-width: 100vw;
+        width: 100vw;
+        background-color: $light;
+        height: 60vh;
+    }
+
+    #map-marker {
+        p {
+            margin-bottom: 0;
+            font-size: 18px;
+            line-height: 1.4em;
+        }
+
+        p.single-property-map-title {
+            font-weight: bold;
+        }
+
+        p.single-property-map-address {
+            span {
+                display: block;
+            }
+        }
+    }
+}

@@ -1,0 +1,184 @@
+#featured-filters {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+
+    @include mobile {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+    }
+
+    button,
+    input[type='text'],
+    label {
+        color: var(--rentfetch-dark);
+    }
+
+    @media (max-width: 1200px) {
+        flex-flow: row wrap;
+    }
+
+    button.toggle,
+    button#open-search-filters {
+        background-color: transparent;
+        border: none;
+        font-size: var(--rentfetch-font-size-medium);
+        line-height: 50px;
+        margin: 0;
+        outline: none;
+        padding: 0 15px;
+        transition: 0.3s all ease;
+        cursor: pointer;
+
+        @media (max-width: 1200px) {
+            margin: 0;
+        }
+
+        &:hover {
+            background-color: var(--rentfetch-base);
+        }
+    }
+
+    button.toggle {
+        &:after {
+            content: '\f347';
+            font-family: 'dashicons';
+            font-size: var(--rentfetch-font-size-small);
+            transform: translateY(3px);
+            margin-left: 0.5em;
+        }
+    }
+
+    input[type='text'],
+    input[type='number'] {
+        display: block;
+        line-height: 48px;
+        padding-left: 15px;
+        width: 100%;
+        border: 1px solid rgba(black, 0.3);
+        border-radius: 3px;
+    }
+
+    fieldset {
+        border: none;
+        padding: 0;
+        position: relative;
+
+        @include mobile {
+            display: none;
+        }
+
+        legend {
+            display: none;
+        }
+
+        .input-wrap:not(.text) {
+            display: none;
+            position: absolute;
+            z-index: 50;
+            background-color: white;
+            min-width: 400px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(black, 0.1);
+
+            input[type='text'],
+            input[type='number'] {
+                display: block;
+                line-height: 50px;
+                padding-left: 15px;
+                width: 100%;
+            }
+
+            label {
+                display: block;
+                font-size: var(--rentfetch-font-size-medium);
+                line-height: 1.2;
+            }
+
+            &.active {
+                display: grid;
+            }
+        }
+
+        .input-wrap.checkboxes {
+            label {
+                display: grid;
+                grid-template-columns: 18px 1fr;
+                gap: 8px;
+                align-items: center;
+
+                input[type='checkbox'] {
+                    width: 18px;
+                    height: 18px;
+                    border: 1px solid rgba(black, 0.3);
+                }
+            }
+        }
+    }
+
+    fieldset.price {
+        .inputs-prices {
+            display: grid;
+            grid-template-columns: 1fr 20px 1fr;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            .price-dash {
+                height: 1px;
+                background-color: black;
+            }
+        }
+    }
+
+    fieldset.text-based-search {
+        display: block;
+        min-width: 200px;
+        margin-right: 15px;
+
+        @media (max-width: 1200px) {
+            width: 100%;
+            flex: 1 1 auto;
+        }
+
+        .input-wrap {
+            display: block;
+            padding: 0;
+            background-color: transparent;
+            width: auto;
+        }
+    }
+
+    fieldset.property-type {
+        .input-wrap {
+            grid-template-columns: 1fr;
+            min-width: 300px;
+        }
+    }
+
+    button#open-search-filters {
+        margin-left: auto;
+        position: relative;
+        padding-right: 43px;
+
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            right: 15px;
+            width: 18px;
+            background-image: url('../images/search-icon-filters.svg');
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+    }
+}

@@ -1,0 +1,28 @@
+.has-specials-property {
+    margin-top: 10px;
+    position: relative;
+    display: inline-block;
+    // position: absolute;
+    // left: 24px;
+    // top: 24px;
+    background-color: #FFEBB1;
+    z-index: 20;
+    font-size: 14px;
+    line-height: 1em;
+    padding: 8px 10px 8px 30px;
+    border-radius: 3px;
+
+    &:before {
+        content: "";
+        position: absolute;
+        left: 7px;
+        height: 100%;
+        top: 0;
+        background-image: url('../images/star-gold.svg');
+        display: block;
+        width: 18px;
+        background-position: center center;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+}

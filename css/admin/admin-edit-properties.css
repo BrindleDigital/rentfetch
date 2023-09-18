@@ -1,0 +1,114 @@
+.row-actions {
+    opacity: 1;
+    /* left: auto; */
+}
+
+.wp-list-table {
+    display: inline-block;
+    width: auto;
+    margin-bottom: -4px !important;
+    max-width: 100%;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    overflow-x: auto;
+    position: relative;
+    box-sizing: border-box;
+}
+
+td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+th {
+    width: 100px;
+    min-width: 100px !important;
+}
+
+th#title {
+    width: 300px !important;
+}
+
+th#property_id {
+    width: 80px !important;
+}
+
+th#property_code {
+    width: 100px !important;
+}
+
+th#address {
+    width: 150px !important;
+}
+
+th#city {
+    width: 70px !important;
+}
+
+th#state {
+    width: 50px !important;
+}
+
+th#zipcode {
+    width: 75px !important;
+}
+
+th#latitude {
+    width: 100px !important;
+}
+
+th#longitude {
+    width: 100px !important;
+}
+
+th#email {
+    width: 150px !important;
+}
+
+th#phone {
+    width: 100px !important;
+}
+
+th#url,
+td.url {
+    width: 300px !important;
+    max-width: 300px;
+}
+
+th#images {
+    width: 200px !important;
+}
+
+th#property_source {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+
+th#description,
+td.description {
+    width: 200px !important;
+    max-width: 200px;
+}
+
+th#matterport {
+    width: 80px !important;
+}
+
+th#video {
+    width: 80px !important;
+}
+
+th#pets {
+    width: 100px !important;
+}
+
+th#content_area {
+    width: 200px !important;
+}
+
+th#property_images,
+td.property_images {
+    width: 200px !important;
+    max-width: 200px;
+}

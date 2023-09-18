@@ -1,0 +1,2283 @@
+{
+    "key": "group_5fffa736dc322",
+    "title": "Rent Fetch Settings",
+    "fields": [
+        {
+            "key": "field_5fffafb0deddf",
+            "label": "General",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_61634d012db85",
+            "label": "Rent Fetch API key",
+            "name": "rent_fetch_api_key",
+            "type": "text",
+            "instructions": "In a future release, a license key will be required for all syncing functionality. Manual entry functionality and plugin updates will continue to work normally without an API key.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5fffab9b598c2",
+            "label": "Site type",
+            "name": "apartment_site_type",
+            "type": "radio",
+            "instructions": "Controls whether this site uses Neighborhoods and Properties.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "single": "This site is for a single property",
+                "multiple": "This site is for multiple properties"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_5fffc4e1f293c",
+            "label": "Data sync",
+            "name": "data_sync",
+            "type": "radio",
+            "instructions": "How should we sync data from an API to this site?",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "nosync": "Do not automatically sync any API data into this site",
+                "updatesync": "Update data on this site with data from the API. Try not to delete posts added manually or data in manually-added custom fields which can supplement the API.",
+                "delete": "Delete all data that's been pulled from a third-party API."
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_5fffc553f293d",
+            "label": "Sync term",
+            "name": "sync_term",
+            "type": "radio",
+            "instructions": "How often should the site automatically pull data from an API?",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5fffc4e1f293c",
+                        "operator": "!=",
+                        "value": "nosync"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "paused": "Paused",
+                "hourly": "Hourly"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_600a285dca256",
+            "label": "Enabled integrations",
+            "name": "enabled_integrations",
+            "type": "checkbox",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5fffc4e1f293c",
+                        "operator": "!=",
+                        "value": "nosync"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "yardi": "Yardi\/RentCafe",
+                "realpage": "RealPage",
+                "entrata": "Entrata",
+                "appfolio": "AppFolio"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "allow_custom": 0,
+            "layout": "vertical",
+            "toggle": 0,
+            "save_custom": 0
+        },
+        {
+            "key": "field_5fffb270c1f37",
+            "label": "Yardi\/RentCafe",
+            "name": "yardi_integration_creds",
+            "type": "group",
+            "instructions": "The Yardi API does not currently allow for autodetecting property IDs. You must manually enter property ID numbers to enable syncing.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_600a285dca256",
+                        "operator": "==",
+                        "value": "yardi"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5fffb4009b1af",
+                    "label": "Yardi API Key",
+                    "name": "yardi_api_key",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5fffb4149b1b0",
+                    "label": "Yardi Property Codes",
+                    "name": "yardi_property_code",
+                    "type": "text",
+                    "instructions": "Multiple property codes should be entered separated by commas",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "e.g. 12345th,67891th",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62100e9dd6855",
+                    "label": "Enable Yardi API lead generation",
+                    "name": "enable_yardi_api_lead_generation",
+                    "type": "true_false",
+                    "instructions": "Adds a lightbox form on the single properties template which can send leads directly to the Yardi API.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_62101c664b754",
+                    "label": "Yardi username",
+                    "name": "yardi_username",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_62100e9dd6855",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62101c814b756",
+                    "label": "Yardi password",
+                    "name": "yardi_password",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_62100e9dd6855",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5fffb2cac1f38",
+            "label": "Entrata",
+            "name": "entrata_integration_creds",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_600a285dca256",
+                        "operator": "==",
+                        "value": "entrata"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_5fffb5301d62d",
+                    "label": "Entrata Username",
+                    "name": "entrata_user",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5fffb5371d62e",
+                    "label": "Entrata Password",
+                    "name": "entrata_pass",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_5fffb5421d62f",
+                    "label": "Entrata Property ID",
+                    "name": "entrata_property_ids",
+                    "type": "text",
+                    "instructions": "If there are multiple properties to be pulled in, enter those separated by commas",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "e.g. 1234567,2345678",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_617aeb9c7f548",
+            "label": "RealPage",
+            "name": "realpage_integration_creds",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_600a285dca256",
+                        "operator": "==",
+                        "value": "realpage"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_617aeb9c7f549",
+                    "label": "RealPage Username",
+                    "name": "realpage_user",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_617aeb9c7f54a",
+                    "label": "RealPage Password",
+                    "name": "realpage_pass",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_617aebf07f54c",
+                    "label": "RealPage PMC ID",
+                    "name": "realpage_pmc_id",
+                    "type": "text",
+                    "instructions": "The ID number for the organization as a whole.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "e.g. 1234567",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_617aeb9c7f54b",
+                    "label": "RealPage Site IDs",
+                    "name": "realpage_site_ids",
+                    "type": "text",
+                    "instructions": "If there are multiple properties to be pulled in, enter those separated by commas",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "e.g. 1234567,2345678",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_63574d69ae9ec",
+            "label": "AppFolio",
+            "name": "appfolio_integration_creds",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_600a285dca256",
+                        "operator": "==",
+                        "value": "appfolio"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_63575034e9081",
+                    "label": "AppFolio database name",
+                    "name": "appfolio_database_name",
+                    "type": "text",
+                    "instructions": "Typically this is xxxxxxxxxxx.appfolio.com",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_63574d69ae9ed",
+                    "label": "AppFolio Client ID",
+                    "name": "appfolio_client_id",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_63574d69ae9ee",
+                    "label": "AppFolio Client Secret",
+                    "name": "appfolio_client_secret",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_63574dcbae9f1",
+                    "label": "AppFolio Property IDs",
+                    "name": "appfolio_property_ids",
+                    "type": "text",
+                    "instructions": "For AppFolio, this is an optional field. If left blank, Rent Fetch will simply fetch all of the properties in the account, which may or not be your preference. Please note that if property IDs are present here, all *other* synced properties through AppFolio will be deleted when the site next syncs.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "100,101,102 ...",
+                    "prepend": "",
+                    "append": ""
+                }
+            ]
+        },
+        {
+            "key": "field_62d1be0e0b86b",
+            "label": "Enable logging",
+            "name": "enable_rentfetch_logging",
+            "type": "true_false",
+            "instructions": "If enabled, this setting will start logging processes into \/wp-content\/rentfetch-debug.log and \/wp-content\/rentfetch-debug-verbose.log. When disabled, this setting will automatically delete these files, as those can become large over time.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_5fffafe5dede1",
+            "label": "Google",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_6218218481792",
+            "label": "Google reCaptcha",
+            "name": "google_recaptcha",
+            "type": "group",
+            "instructions": "Required for Rent Fetch forms to use the reCaptcha integration.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "sub_fields": [
+                {
+                    "key": "field_621822ad5b7fe",
+                    "label": "Google reCAPTCHA v2 site key",
+                    "name": "google_recaptcha_v2_site_key",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "51",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_621822bf5b7ff",
+                    "label": "Google reCAPTCHA v2 secret",
+                    "name": "google_recaptcha_v2_secret",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_6079264fd1ffe",
+            "label": "Google Maps API key",
+            "name": "google_maps_api_key",
+            "type": "text",
+            "instructions": "Required for the map to function. This API key needs access to the Maps Javascript API, and can be restricted by referrer to only allow your website to use it.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_6358d42903b11",
+            "label": "Google Geocoding API key",
+            "name": "google_geocoding_api_key",
+            "type": "text",
+            "instructions": "Required for geocoding to function. This API key needs access to the Geocoding API, and CANNOT be restricted by referrer. We'd recommend either only adding this when you're actually needing it (most sites don't), or restricting it by IP address instead.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_609b3c225274f",
+            "label": "Map marker",
+            "name": "google_map_marker",
+            "type": "image",
+            "instructions": "An optional custom marker. Important: this needs to be uploaded at actual size to work properly (even if it's an SVG file). Google's default marker is 43px tall and 27px wide, for reference.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "preview_size": "full",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_60792662d1fff",
+            "label": "Map styles",
+            "name": "google_maps_styles",
+            "type": "textarea",
+            "instructions": "Paste in a json array from <a target=\"_blank\" href=\"https:\/\/snazzymaps.com\/\">SnazzyMaps.com<\/a> or from <a href=\"https:\/\/mapstyle.withgoogle.com\/\" target=\"_blank\">Google's map styler<\/a>.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_63f54742f5edb",
+            "label": "Google maps default latitude",
+            "name": "google_maps_default_latitude",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_63f54759f5edc",
+            "label": "Google maps default longitude",
+            "name": "google_maps_default_longitude",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_6344f22fa769b",
+            "label": "Property search",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_60b5824d8186e",
+            "label": "Maximum number of properties to show",
+            "name": "maximum_number_of_properties_to_show",
+            "type": "number",
+            "instructions": "-1 allows for ALL available properties to show",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 100,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_632e1dfba3e97",
+            "label": "Property availability display",
+            "name": "property_availability_display",
+            "type": "button_group",
+            "instructions": "Even if this is set to ignore availability, properties still must have associated floorplans in order to display (since a significant portion of what we show in property archives comes from a property's associated floorplans).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "available": "Availability",
+                "all": "All ignoring availability"
+            },
+            "default_value": "availability",
+            "return_format": "value",
+            "allow_null": 0,
+            "layout": "horizontal"
+        },
+        {
+            "key": "field_6166445f3ef59",
+            "label": "Starter search components",
+            "name": "starter_search_components",
+            "type": "group",
+            "instructions": "This is the starter search, which can be output with the <strong>[propertysearch]<\/strong> shortcode (usually placed on the homepage of a site).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_616644b93ef5b",
+                    "label": "Enable text-based search",
+                    "name": "text_based_search",
+                    "type": "true_false",
+                    "instructions": "Please note that this functionality works best with Relevanssi enhancing your site's search capabilities.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_6166451b3ef5d",
+                    "label": "Enable beds search",
+                    "name": "beds_search",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_616645383ef5f",
+                    "label": "Enable baths search",
+                    "name": "baths_search",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664695fe4ca",
+                    "label": "Enable property type search",
+                    "name": "type_search",
+                    "type": "true_false",
+                    "instructions": "Property type is an arbitrary category system that can be assigned to properties (e.g. student housing vs. residential housing). If you've not assigned any categories, this should be left off.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                }
+            ]
+        },
+        {
+            "key": "field_61664900c40b6",
+            "label": "Map search components",
+            "name": "map_search_components",
+            "type": "group",
+            "instructions": "This is the map-based search, which can be output with the <strong>[propertymap]<\/strong> shortcode (by default, this should be placed at \/apartment-search).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_61664900c40b7",
+                    "label": "Enable text-based search",
+                    "name": "text_based_search",
+                    "type": "true_false",
+                    "instructions": "Please note that this functionality works best with Relevanssi enhancing your site's search capabilities.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664900c40b8",
+                    "label": "Enable beds search",
+                    "name": "beds_search",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664900c40b9",
+                    "label": "Enable baths search",
+                    "name": "baths_search",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664b38cc4e7",
+                    "label": "Enable neighborhoods search",
+                    "name": "neighborhoods_search",
+                    "type": "true_false",
+                    "instructions": "This functionality requires <a target=\"_blank\" href=\"https:\/\/wordpress.org\/plugins\/meta-box\/\">metabox.io<\/a> and the MB <a href=\"https:\/\/docs.metabox.io\/extensions\/mb-relationships\/\" target=\"_blank\">Relationships addon<\/a>, and without both these installed, this will not function properly. It also requires that you've created some neighborhoods and linked properties with those neighborhoods. If you've not done these things, you should disable this field.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664900c40ba",
+                    "label": "Enable property type search",
+                    "name": "type_search",
+                    "type": "true_false",
+                    "instructions": "Property type is an arbitrary category system that can be assigned to properties (e.g. student housing vs. residential housing). If you've not assigned any categories, this should be left off.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664bd9cc4e8",
+                    "label": "Enable date-based search",
+                    "name": "date_search",
+                    "type": "true_false",
+                    "instructions": "The date-based search requires that you have availability dates. If you're managing properties and floorplans manually (not through an API), it's strongly recommended to disable this field.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664c1bcc4e9",
+                    "label": "Enable price-based search",
+                    "name": "price_search",
+                    "type": "true_false",
+                    "instructions": "The price-based search requires that you have pricing set for individual floorplans to work properly.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664c48cc4ea",
+                    "label": "Enable amenities search",
+                    "name": "amenities_search",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_61664c5bcc4eb",
+                    "label": "Enable pet policy search",
+                    "name": "pets_search",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                }
+            ]
+        },
+        {
+            "key": "field_60ff5db6fc32d",
+            "label": "Maximum bedrooms to search",
+            "name": "maximum_bedrooms_to_search",
+            "type": "number",
+            "instructions": "If you were to enter \"9\" then the bedrooms dropdown would show \"9+ Bedrooms\" and would hide all numbers above 9.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_6166451b3ef5d",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ],
+                [
+                    {
+                        "field": "field_61664900c40b8",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 9,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_6081cb6a61666",
+            "label": "Price filter",
+            "name": "price_filter",
+            "type": "group",
+            "instructions": "Settings for the price filter",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_61664c1bcc4e9",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_6081d1b561667",
+                    "label": "Minimum value",
+                    "name": "minimum",
+                    "type": "number",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "33",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 0,
+                    "placeholder": "",
+                    "prepend": "$",
+                    "append": "",
+                    "min": "",
+                    "max": "",
+                    "step": ""
+                },
+                {
+                    "key": "field_6081d1bd61668",
+                    "label": "Maximum value",
+                    "name": "maximum",
+                    "type": "number",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "33",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 5000,
+                    "placeholder": "",
+                    "prepend": "$",
+                    "append": "",
+                    "min": "",
+                    "max": "",
+                    "step": ""
+                },
+                {
+                    "key": "field_6081d1cb61669",
+                    "label": "Step",
+                    "name": "step",
+                    "type": "number",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "33",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 50,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "min": "",
+                    "max": "",
+                    "step": ""
+                }
+            ]
+        },
+        {
+            "key": "field_6076785d3ea87",
+            "label": "Number of amenities to show",
+            "name": "number_of_amenities_to_show",
+            "type": "number",
+            "instructions": "If this site uses amenities, how many should be shown in the search filter? (Shown in order of popularity.)",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_61664c48cc4ea",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        },
+        {
+            "key": "field_607f966693794",
+            "label": "Property archives",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_607f967893795",
+            "label": "Property footer grid",
+            "name": "property_footer_grid",
+            "type": "group",
+            "instructions": "By default, this shows on the individual neighborhood and properties templates when multiple properties are connected to a neighborhood. If there are less than two properties that would show, this area simply does not appear.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_607f96bc93796",
+                    "label": "Maximum properties to show",
+                    "name": "number_properties",
+                    "type": "number",
+                    "instructions": "The maximum number of properties to show. By default, this will show all (-1) properties",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": -1,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "min": "",
+                    "max": "",
+                    "step": ""
+                }
+            ]
+        },
+        {
+            "key": "field_61634e5949d25",
+            "label": "Property pricing display",
+            "name": "property_pricing_display",
+            "type": "button_group",
+            "instructions": "Show either the pricing range, e.g. \"$1999 to $2999\", or  just the minimum \"From $1999\"",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "range": "Range",
+                "minimum": "Minimum"
+            },
+            "allow_null": 0,
+            "default_value": "range",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_62bc8a2a62b55",
+            "label": "Order properties by",
+            "name": "property_orderby",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "menu_order": "Menu order (use this if utilizing drag\/drop reordering)",
+                "date": "Publish date",
+                "modified": "Last modified date",
+                "ID": "Post ID number",
+                "title": "Alphabetical, based on property name",
+                "name": "Alphabetical, based on property slug",
+                "rand": "Randomize"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_62bc8ae362b56",
+            "label": "Property order direction",
+            "name": "property_order",
+            "type": "button_group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "ASC": "Ascending",
+                "DESC": "Descending"
+            },
+            "allow_null": 0,
+            "default_value": "",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_6344f203a769a",
+            "label": "Single property template",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_6344f2c2a769c",
+            "label": "Single property components",
+            "name": "single_property_components",
+            "type": "group",
+            "instructions": "These settings control which default components of the page display. Please note that theme developers can also customize this display in several other ways. Each individual section can be replaced by removing the corresponding action (<a target=\"_blank\" href=\"https:\/\/github.com\/jonschr\/rent-fetch\/blob\/main\/template\/single-properties-functions.php\">see actions here<\/a>), or you can simply add a single-properties.php file to the root of your theme.<\/br>\r\n<\/br>\r\nPlease note that each individual section will only display if there's enough information to meaningfully display it. A property with no images set will not output a blank \"images\" section, for example.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_6344f325a769d",
+                    "label": "Enable property title",
+                    "name": "enable_property_title",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f3b5a769e",
+                    "label": "Enable property images",
+                    "name": "enable_property_images",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f3dda769f",
+                    "label": "Enable section navigation",
+                    "name": "enable_section_navigation",
+                    "type": "true_false",
+                    "instructions": "An internal page navigation",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f437a76a0",
+                    "label": "Enable basic info display",
+                    "name": "enable_basic_info_display",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f44fa76a1",
+                    "label": "Enable property description",
+                    "name": "enable_property_description",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f465a76a2",
+                    "label": "Enable floorplans display",
+                    "name": "enable_floorplans_display",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f472a76a3",
+                    "label": "Enable amenities display",
+                    "name": "enable_amenities_display",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f48da76a4",
+                    "label": "Enable lease details display",
+                    "name": "enable_lease_details_display",
+                    "type": "true_false",
+                    "instructions": "This is the optional generic custom content area of the page (it will only display if there's some content to show)",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f4a7a76a5",
+                    "label": "Enable property map",
+                    "name": "enable_property_map",
+                    "type": "true_false",
+                    "instructions": "Requires that you've set up a Google API key in the Google Integrations settings",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                },
+                {
+                    "key": "field_6344f505a76a6",
+                    "label": "Enable nearby properties",
+                    "name": "enable_nearby_properties",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "ui": 1
+                }
+            ]
+        },
+        {
+            "key": "field_5fffb22e3a541",
+            "label": "Floorplan archives",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_607df64364712",
+            "label": "Contact button",
+            "name": "contact_button",
+            "type": "group",
+            "instructions": "A button linking either to a static page on the site, to a gravity forms lightbox, or to a single third-party locations. This will be the same link for every floorplan (it is not dynamic).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_607df6b064715",
+                    "label": "Enabled",
+                    "name": "enabled",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_607df6cb64716",
+                    "label": "Button label",
+                    "name": "button_label",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607df6b064715",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "Contact",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_607df70b64717",
+                    "label": "Button type",
+                    "name": "button_type",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607df6b064715",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "link": "Simple link",
+                        "gform": "Gravity form lightbox link"
+                    },
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_607df74f64718",
+                    "label": "Link",
+                    "name": "link",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607df70b64717",
+                                "operator": "==",
+                                "value": "link"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_607df76e64719",
+                    "label": "Link target",
+                    "name": "link_target",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607df70b64717",
+                                "operator": "==",
+                                "value": "link"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "_self": "Same tab",
+                        "_blank": "New tab"
+                    },
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                },
+                {
+                    "key": "field_607df7aa6471a",
+                    "label": "Gravity form ID",
+                    "name": "gravity_form_id",
+                    "type": "number",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607df70b64717",
+                                "operator": "==",
+                                "value": "gform"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "min": "",
+                    "max": "",
+                    "step": ""
+                }
+            ]
+        },
+        {
+            "key": "field_607df8b2a9eea",
+            "label": "Availability button",
+            "name": "availability_button",
+            "type": "group",
+            "instructions": "A button which can pull in the availability link for each individual floorplan, with a single fallback link to use if no availability url is available.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_607df8b2a9eeb",
+                    "label": "Enabled",
+                    "name": "enabled",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_607df8b2a9eec",
+                    "label": "Button label",
+                    "name": "button_label",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607df8b2a9eeb",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "Availability",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_607e353500c13",
+                    "label": "Button behavior",
+                    "name": "button_behavior",
+                    "type": "radio",
+                    "instructions": "How should this button behave when this floorplan does not currently have units available?",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607df8b2a9eeb",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "hide": "Hide this button entirely",
+                        "fallback": "Fall back to a static link"
+                    },
+                    "allow_null": 0,
+                    "other_choice": 0,
+                    "default_value": "",
+                    "layout": "vertical",
+                    "return_format": "value",
+                    "save_other_choice": 0
+                },
+                {
+                    "key": "field_607df8b2a9eee",
+                    "label": "Fallback Link",
+                    "name": "link",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607e353500c13",
+                                "operator": "==",
+                                "value": "fallback"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_607e3d4d1546b",
+            "label": "Tour button",
+            "name": "tour_button",
+            "type": "group",
+            "instructions": "A button to show a lightbox with a video, or an external link (this link is always per-floorplan).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_607e3d4d1546c",
+                    "label": "Enabled",
+                    "name": "enabled",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_607e3d4d1546d",
+                    "label": "Button label",
+                    "name": "button_label",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607e3d4d1546c",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "Tour",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_607e3d4d1546f",
+                    "label": "Link target",
+                    "name": "link_target",
+                    "type": "button_group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607e3d4d1546c",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "lightbox": "Lightbox",
+                        "newtab": "New tab"
+                    },
+                    "allow_null": 0,
+                    "default_value": "",
+                    "layout": "horizontal",
+                    "return_format": "value"
+                }
+            ]
+        },
+        {
+            "key": "field_607e3dca15471",
+            "label": "Link to floorplan single template",
+            "name": "single_button",
+            "type": "group",
+            "instructions": "A button which simply links to the individual floorplan template.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_607e3dca15472",
+                    "label": "Enabled",
+                    "name": "enabled",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_607e3dca15473",
+                    "label": "Button label",
+                    "name": "button_label",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_607e3dca15472",
+                                "operator": "==",
+                                "value": "1"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "More information",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_61634d8c49d24",
+            "label": "Floorplan pricing display",
+            "name": "floorplan_pricing_display",
+            "type": "button_group",
+            "instructions": "Show either the pricing range, e.g. \"$1999 to $2999\", or  just the minimum \"From $1999\"",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "range": "Range",
+                "minimum": "Minimum"
+            },
+            "allow_null": 0,
+            "default_value": "range",
+            "layout": "horizontal",
+            "return_format": "value"
+        },
+        {
+            "key": "field_62a8cfb01c1d5",
+            "label": "Labels",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_62a8cfca1c1d6",
+            "label": "Bedroom numbers",
+            "name": "bedroom_numbers",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_62a8cfdc1c1d7",
+                    "label": "0 Bedroom",
+                    "name": "0_bedroom",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "Studio",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62a8cff21c1d8",
+                    "label": "1 Bedroom",
+                    "name": "1_bedroom",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "1 Bedroom",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62a8d0041c1d9",
+                    "label": "2 Bedroom",
+                    "name": "2_bedroom",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "2 Bedroom",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62a8d0101c1da",
+                    "label": "3 Bedroom",
+                    "name": "3_bedroom",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "3 Bedroom",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62a8d01c1c1db",
+                    "label": "4 Bedroom",
+                    "name": "4_bedroom",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "4 Bedroom",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                },
+                {
+                    "key": "field_62a8d0271c1dc",
+                    "label": "5 Bedroom",
+                    "name": "5_bedroom",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "5 Bedroom",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "rent-fetch-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "seamless",
+    "label_placement": "left",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1677019000
+}

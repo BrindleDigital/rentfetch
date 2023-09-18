@@ -1,0 +1,14 @@
+ul.amenities {
+    margin-left: 0;
+    padding-left: 0;
+
+    @include desktop {
+        columns: 4;
+    }
+
+    li {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+    }
+}
