@@ -374,17 +374,22 @@ function rent_fetch_settings_general() {
                 <input type="text" name="options_yardi_integration_creds_yardi_api_key" id="options_yardi_integration_creds_yardi_api_key" value="<?php echo esc_attr( get_option( 'options_yardi_integration_creds_yardi_api_key' ) ); ?>">
             </div>
             <div class="white-box">
+                <label for="options_yardi_integration_creds_yardi_voyager_code">Yardi Voyager Codes</label>
+                <textarea rows="10" style="width: 100%;" name="options_yardi_integration_creds_yardi_voyager_code" id="options_yardi_integration_creds_yardi_voyager_code"><?php echo esc_attr( get_option( 'options_yardi_integration_creds_yardi_voyager_code' ) ); ?></textarea>
+                <p class="description">Multiple property codes should be entered separated by commas</p>
+            </div>
+            <div class="white-box">
                 <label for="options_yardi_integration_creds_yardi_property_code">Yardi Property Codes</label>
                 <textarea rows="10" style="width: 100%;" name="options_yardi_integration_creds_yardi_property_code" id="options_yardi_integration_creds_yardi_property_code"><?php echo esc_attr( get_option( 'options_yardi_integration_creds_yardi_property_code' ) ); ?></textarea>
                 <p class="description">Multiple property codes should be entered separated by commas</p>
             </div>
-            <div class="white-box">
+            <!-- <div class="white-box">
                 <label for="options_yardi_integration_creds_enable_yardi_api_lead_generation">
                     <input type="checkbox" name="options_yardi_integration_creds_enable_yardi_api_lead_generation" id="options_yardi_integration_creds_enable_yardi_api_lead_generation" <?php checked( get_option( 'options_yardi_integration_creds_enable_yardi_api_lead_generation' ), true ); ?>>
                     Enable Yardi API Lead Generation
                 </label>
                 <p class="description">Adds a lightbox form on the single properties template which can send leads directly to the Yardi API.</p>
-            </div>
+            </div> -->
             <div class="white-box">
                 <label for="options_yardi_integration_creds_yardi_username">Yardi Username</label>
                 <input type="text" name="options_yardi_integration_creds_yardi_username" id="options_yardi_integration_creds_yardi_username" value="<?php echo esc_attr( get_option( 'options_yardi_integration_creds_yardi_username' ) ); ?>">
@@ -406,7 +411,7 @@ function rent_fetch_settings_general() {
                 <input type="text" name="options_entrata_integration_creds_entrata_user" id="options_entrata_integration_creds_entrata_user" value="<?php echo esc_attr( get_option( 'options_entrata_integration_creds_entrata_user' ) ); ?>">
             </div>
             <div class="white-box">
-                <label for="options_entrata_integration_creds_entrata_pass">Entrata Username</label>
+                <label for="options_entrata_integration_creds_entrata_pass">Entrata Password</label>
                 <input type="text" name="options_entrata_integration_creds_entrata_pass" id="options_entrata_integration_creds_entrata_pass" value="<?php echo esc_attr( get_option( 'options_entrata_integration_creds_entrata_pass' ) ); ?>">
             </div>
             <div class="white-box">
@@ -513,6 +518,19 @@ function rent_fetch_save_settings_general() {
     if ( isset( $_POST['options_yardi_integration_creds_yardi_api_key'] ) ) {
         $options_yardi_integration_creds_yardi_api_key = sanitize_text_field( $_POST['options_yardi_integration_creds_yardi_api_key'] );
         update_option( 'options_yardi_integration_creds_yardi_api_key', $options_yardi_integration_creds_yardi_api_key );
+    }
+    
+    // Textarea field
+    if ( isset( $_POST['options_yardi_integration_creds_yardi_voyager_code'] ) ) {
+        $options_yardi_integration_creds_yardi_voyager_code = sanitize_text_field( $_POST['options_yardi_integration_creds_yardi_voyager_code'] );
+        
+        // Remove all whitespace
+        $options_yardi_integration_creds_yardi_voyager_code = preg_replace('/\s+/', '', $options_yardi_integration_creds_yardi_voyager_code);
+        
+        // Add a space after each comma
+        $options_yardi_integration_creds_yardi_voyager_code = preg_replace('/,/', ', ', $options_yardi_integration_creds_yardi_voyager_code);
+        
+        update_option( 'options_yardi_integration_creds_yardi_voyager_code', $options_yardi_integration_creds_yardi_voyager_code );
     }
     
     // Textarea field

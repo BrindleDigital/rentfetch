@@ -32,28 +32,48 @@ function rentfetch_single_properties_parts_more_properties() {
             ),
         );
         
+        $args = apply_filters( 'rentfetch_filter_more_properties_query_args', $args );
+        
         // The Query
         $custom_query = new WP_Query( $args );
 
         // The Loop
         if ( $custom_query->have_posts() ) {
             
-            echo '<div class="properties-simple-grid">'; // .properties-loop
+            wp_enqueue_script( 'blaze-script' );
+            wp_enqueue_script( 'blaze-more-properties-init' );
+            wp_enqueue_style( 'blaze-style' );
+            
+            echo '<div class="more-properties-slider blaze-slider">';
+                echo '<div class="blaze-container">';
+                    echo '<div class="blaze-track-container">';
+                        echo '<div class="blaze-track">';
+                        
+                            while ( $custom_query->have_posts() ) {
+                
+                                $custom_query->the_post();
+                                
+                                $class = implode( ' ', get_post_class() );
+                                
+                                printf( '<div class="%s">', $class );
+                                    do_action( 'rentfetch_do_each_property_in_archive' );
+                                echo '</div>';
+                            
+                            }
+                        
+                        echo '</div>'; // .blaze-track
+                    echo '</div>'; // .blaze-track-container
+                    
+                    echo '<div class="blaze-buttons">';
+                        echo '<button class="blaze-prev"></button>';
+                        echo '<button class="blaze-next"></button>';
+                    echo '</div>';
 
-            while ( $custom_query->have_posts() ) {
-                
-                $custom_query->the_post();
-                
-                $class = implode( ' ', get_post_class() );
-                
-                printf( '<div class="%s">', $class );
-                    do_action( 'rentfetch_do_each_property_in_archive' );
-                echo '</div>';
-            
-            }
-            
-            echo '</div>';
-            
+                    // echo '<div class="blaze-pagination"></div>';
+                    
+                echo '</div>'; // .blaze-container
+            echo '</div>'; // .blaze-slider
+                        
             // Restore postdata
             wp_reset_postdata();
 

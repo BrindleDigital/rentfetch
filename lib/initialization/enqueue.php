@@ -55,6 +55,27 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	// Google reCAPTCHA
 	wp_register_script( 'rentfetch-google-recaptcha', 'https://www.google.com/recaptcha/api.js', array('jquery'), RENTFETCH_VERSION, true );
 	
+	wp_register_style( 
+		'blaze-style', 
+		'https://unpkg.com/blaze-slider@1.9.3/dist/blaze.css',
+		array(), 
+		RENTFETCH_VERSION
+	);
+	
+	wp_register_script(
+		'blaze-script',
+		'https://unpkg.com/blaze-slider@1.9.3/dist/blaze-slider.min.js',
+		array(),
+		RENTFETCH_VERSION 
+	);
+	
+	wp_register_script(
+		'blaze-more-properties-init',
+		RENTFETCH_PATH . 'js/rentfetch-blaze-more-properties-init.js', 
+		array( 'blaze-script' ),
+		RENTFETCH_VERSION 
+	);
+	
 		
 }
 
@@ -95,7 +116,7 @@ function rentfetch_enqueue_in_admin_metabox_properties() {
 		array(), 
 		RENTFETCH_VERSION
 	);
-	
+		
 	wp_register_style('jquery-style', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css');
 	
 	
