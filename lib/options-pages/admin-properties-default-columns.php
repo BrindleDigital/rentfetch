@@ -24,7 +24,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
         'cb' =>              '<input type="checkbox" />',
         'title' =>           __( 'Title', 'rentfetch' ),
         'property_id' =>     __( 'Property ID', 'rentfetch' ),
-        'property_code' =>   __( 'Property Code', 'rentfetch' ),
+        // 'property_code' =>   __( 'Property Code', 'rentfetch' ),
         'address' =>         __( 'Address', 'rentfetch' ),
         'city' =>            __( 'City', 'rentfetch' ),
         'state' =>           __( 'State', 'rentfetch' ),
@@ -35,13 +35,15 @@ function rentfetch_default_properties_admin_columns( $columns ) {
         'phone' =>           __( 'Phone', 'rentfetch' ),
         'url' =>             __( 'URL', 'rentfetch' ),
         'images' =>          __( 'Images', 'rentfetch' ),
-        'property_source' => __( 'Property Source', 'rentfetch' ),
         'description' =>     __( 'Description', 'rentfetch' ),
         'matterport' =>      __( 'Matterport', 'rentfetch' ),
         'video' =>           __( 'Video', 'rentfetch' ),
         'pets' =>            __( 'Pets', 'rentfetch' ),
         'content_area' =>    __( 'Content Area', 'rentfetch' ),
-        'property_images' => __( 'Yardi Property Images', 'rentfetch' ),
+        'yardi_property_images' => __( 'Images (Yardi)', 'rentfetch' ),
+        'property_source' => __( 'Property Source', 'rentfetch' ),
+        'updated' =>         __( 'Last API update', 'rentfetch' ),
+        'api_error' =>         __( 'API response', 'rentfetch' ),
     );
     
     return $columns;
@@ -85,7 +87,7 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
         echo esc_attr( get_post_meta( $post_id, 'phone', true ) );
         
     if ( 'url' === $column )
-        echo esc_attr( get_post_meta( $post_id, 'url', true ) );
+        printf( '<a target="_blank" href="%s">%s</a>', esc_url( get_post_meta( $post_id, 'url', true ) ), esc_attr( get_post_meta( $post_id, 'url', true ) ) );
         
     if ( 'images' === $column ) {
         $images = get_post_meta( $post_id, 'images', true );
@@ -116,8 +118,14 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
     if ( 'content_area' === $column )
         echo esc_attr( get_post_meta( $post_id, 'content_area', true ) );
         
-    if ( 'property_images' === $column )
-        echo esc_attr( get_post_meta( $post_id, 'property_images', true ) );
+    if ( 'yardi_property_images' === $column )
+        echo esc_attr( get_post_meta( $post_id, 'yardi_property_images', true ) );
+    
+    if ( 'updated' === $column )
+        echo esc_attr( get_post_meta( $post_id, 'updated', true ) );
+        
+    if ( 'api_error' === $column )
+        echo esc_attr( get_post_meta( $post_id, 'api_error', true ) );
     
     if ( 'attraction_type' === $column ) {
         $terms = get_the_terms( $post_id, 'attractiontypes' );

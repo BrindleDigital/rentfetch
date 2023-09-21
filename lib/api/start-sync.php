@@ -63,28 +63,18 @@ function rentfetch_start_sync() {
     } else {
         
         //* We're doing these async because we don't want them constantly triggering on each pageload.
-        if ( as_next_scheduled_action( 'rentfetch_do_sync_logic' ) === false  ) 
-            as_enqueue_async_action( 'rentfetch_do_sync_logic' );
-            
-        // if ( as_next_scheduled_action( 'rentfetch_do_chron_activation' ) === false  ) 
-        //     as_enqueue_async_action( 'rentfetch_do_chron_activation' );
-            
-        if ( as_next_scheduled_action( 'rentfetch_do_remove_old_data' ) === false  ) 
-            as_enqueue_async_action( 'rentfetch_do_remove_old_data' );
+        // if ( as_next_scheduled_action( 'rentfetch_do_sync_logic' ) === false  ) 
+        //     as_enqueue_async_action( 'rentfetch_do_sync_logic' );
+                        
+        // if ( as_next_scheduled_action( 'rentfetch_do_remove_old_data' ) === false  ) 
+        //     as_enqueue_async_action( 'rentfetch_do_remove_old_data' );
             
     }
         
     //* Delete everything if we're set to delete
     if ( $data_sync == 'delete' )
         do_action( 'rentfetch_do_delete' );
-            
-    // do_action( 'rentfetch_do_sync_logic' );
-    // do_action( 'rentfetch_do_chron_activation' );
-        
-    // // Look and see whether there's another scheduled action waiting
-    // var_dump( as_next_scheduled_action( 'rentfetch_do_sync_logic' ) ); 
-    // var_dump( as_next_scheduled_action( 'rentfetch_do_chron_activation' ) );
-    
+                
 }
 
 function rentfetch_database_tables_missing_notice() {

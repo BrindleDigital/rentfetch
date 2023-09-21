@@ -177,8 +177,6 @@ function rentfetch_get_floorplans_array() {
         if ($floorplans[$key]['available_date'] !== null) {
             $floorplans[$key]['available_date'] = $floorplans[$key]['available_date']->format('F j');
         }
-
-        
         
         //* SPECIALS
         
@@ -204,7 +202,7 @@ function rentfetch_set_floorplans() {
     
     global $rentfetch_floorplans;
     $rentfetch_floorplans = rentfetch_get_floorplans_array();
-    
+        
 }
 
 /**
@@ -213,7 +211,7 @@ function rentfetch_set_floorplans() {
 function rentfetch_get_floorplans( $property_id = null ) {
     
     global $rentfetch_floorplans;
-    $property_id = intval( $property_id );
+    $property_id = esc_html( $property_id );
     
     if ( $property_id && isset( $rentfetch_floorplans[$property_id] ) )
         return $rentfetch_floorplans[$property_id];

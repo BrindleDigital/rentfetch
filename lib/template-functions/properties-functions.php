@@ -189,6 +189,8 @@ function rentfetch_get_property_bedrooms() {
     
     $floorplan_data = rentfetch_get_floorplans( $property_id );
     
+    console_log( $floorplan_data );
+    
     if ( !isset( $floorplan_data['bedsrange'] ) )
         return;
         

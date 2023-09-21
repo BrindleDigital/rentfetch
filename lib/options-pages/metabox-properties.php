@@ -48,13 +48,15 @@ function rf_properties_identifiers_metabox_callback( $post ) {
     ?>
     <div class="rf-metabox rf-metabox-properties">
         
-        <div class="columns columns-3">
+        <div class="columns columns-2">
         
             <?php 
             //* Property Source
             $property_source = get_post_meta( $post->ID, 'property_source', true ); 
+            $last_updated = get_post_meta( $post->ID, 'updated', true );
+            $api_error = get_post_meta( $post->ID, 'api_error', true );
             if ( !$property_source )
-                $property_source = 'Manually managed';
+                $property_source = null;
             ?>
             
             <div class="field">
@@ -64,6 +66,15 @@ function rf_properties_identifiers_metabox_callback( $post ) {
                 <div class="column">
                     <input disabled type="text" id="property_source" name="property_source" value="<?php echo esc_attr( $property_source ); ?>">
                     <p class="description">This isn't a field meant to be edited; it's here to show you how this property is currently being managed (whether it syncs from a data source or it's manually managed).</p>
+                    <?php 
+                    
+                    if ( $last_updated )
+                        printf( '<p class="description"><strong>Property metadata last updated:</strong> %s</p>', $last_updated );
+                        
+                    if ( $api_error )
+                        printf( '<p class="description"><strong>API response:</strong> %s</p>', $api_error );
+                    
+                    ?>
                 </div>
             </div>
                                 
@@ -112,7 +123,7 @@ function rf_properties_identifiers_metabox_callback( $post ) {
             <?php 
             //* Property Code
             $property_code = get_post_meta( $post->ID, 'property_code', true ); ?>
-            <div class="field">
+            <!-- <div class="field">
                 <div class="column">
                     <label for="property_code">Voyager Property Code</label>
                 </div>
@@ -120,7 +131,7 @@ function rf_properties_identifiers_metabox_callback( $post ) {
                     <input type="text" id="property_code" name="property_code" value="<?php echo esc_attr( $property_code ); ?>">
                     <p class="description">In Yardi, properties also have a Voyager property code, so if this property is synced with Yardi, that may show below as well (if this is not a Yardi property, you can probably ignore this).</p>
                 </div>
-            </div>
+            </div> -->
             
         </div>
     </div>
@@ -313,7 +324,7 @@ function rf_properties_display_information_metabox_callback( $post ) {
         if ( $property_source == 'yardi' ) {
             
             //* Property Images from Yardi
-            $property_images_json = get_post_meta( $post->ID, 'property_images', true );
+            $property_images_json = get_post_meta( $post->ID, 'yardi_property_images', true );
             $property_images = json_decode( $property_images_json );
             ?>
              

@@ -3,7 +3,7 @@
 /**
  * Delete all posts with a data source
  */
-add_action( 'rentfetch_do_delete', 'apartment_delete' );
+// add_action( 'rentfetch_do_delete', 'apartment_delete' );
 function apartment_delete() {
     
     //* FLOORPLANS

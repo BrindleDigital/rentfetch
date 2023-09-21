@@ -60,7 +60,7 @@ function rentfetch_get_property_images_manual( $args ) {
 function rentfetch_get_property_images_yardi( $args ) {
     global $post; 
             
-    $yardi_images_string = get_post_meta( get_the_ID(), 'property_images', true );
+    $yardi_images_string = get_post_meta( get_the_ID(), 'yardi_property_images', true );
     
     // bail if there's no yardi images
     if ( !$yardi_images_string )
@@ -109,25 +109,28 @@ function rentfetch_property_images_grid( $args = null ) {
     wp_enqueue_style( 'rentfetch-fancybox-style' );
     wp_enqueue_script( 'rentfetch-fancybox-script' );
     
-    // var_dump( $images );
-    
     $number_of_images = count( $images );
     
+    // bail if we only have the sample image; we don't want to show that here
+    if ( $number_of_images == 1 && $images[0]['url'] == apply_filters( 'rentfetch_sample_image', RENTFETCH_PATH . 'images/fallback-property.svg' ) )
+        return;
+    
+    // set up our classes
     if ( $number_of_images < 5 ) {
         $count_class = 'single-image';
     } else {
         $count_class = 'multiple-images';
     }
-        
+    
     printf( '<div class="property-images-grid %s">', $count_class );
     
-    foreach( $images as $image ) {
-        printf( '<div class="image-item"><a data-fancybox="property-images-grid" href="%s"><img src="%s" alt="%s" title="%s" /></a></div>', $image['url'], $image['url'], $image['alt'], $image['title'] );
-    }
-    
-    if ( $number_of_images > 1 ) {
-        printf( '<a href="#" data-fancybox-trigger="property-images-grid" class="view-all-images">View %s images</a>', $number_of_images );
-    }
+        foreach( $images as $image ) {
+            printf( '<div class="image-item"><a data-fancybox="property-images-grid" href="%s"><img src="%s" alt="%s" title="%s" /></a></div>', $image['url'], $image['url'], $image['alt'], $image['title'] );
+        }
+        
+        if ( $number_of_images > 1 ) {
+            printf( '<a href="#" data-fancybox-trigger="property-images-grid" class="view-all-images">View %s images</a>', $number_of_images );
+        }
     
     echo '</div>';
     

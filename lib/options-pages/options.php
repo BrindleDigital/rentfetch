@@ -270,33 +270,33 @@ function rent_fetch_settings_general() {
     <div class="row">
         <div class="column">
             <label for="options_data_sync">Data Sync</label>
-            <p class="description">Setting this to delete will immediately pause all ongoing processes and start tasks to delete all properties and floorplans which were previously synced. This process is not reversible.</p>
+            <p class="description">When you start syncing from data from your management software, it generally takes 5-15 seconds per property to sync. <strong>Rome wasn't built in a day.</strong></p>
         </div>
         <div class="column">
             <ul class="radio">
                 <li>
                     <label>
                         <input type="radio" name="options_data_sync" id="options_data_sync" value="nosync" <?php checked( get_option( 'options_data_sync' ), 'nosync' ); ?>>
-                        Do not automatically sync any API data into this site
+                        Pause all syncing from all APIs
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="radio" name="options_data_sync" id="options_data_sync" value="updatesync" <?php checked( get_option( 'options_data_sync' ), 'updatesync' ); ?>>
-                        Update data on this site with data from the API. Try not to delete posts added manually or data in manually-added custom fields which can supplement the API
+                        Update data on this site with data from the API. This option should never modify manually-added properties/floorplans, nor should it overwrite any custom data you've added to otherwise synced properties/floorplans.
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="radio" name="options_data_sync" id="options_data_sync" value="delete" <?php checked( get_option( 'options_data_sync' ), 'delete' ); ?>>
-                        Delete all data that's been pulled from a third-party API
+                        <span style="color: red;">Delete all data that's been pulled from a third-party API. <strong style="color: white; background-color: red; padding: 3px 5px; border-radius: 3px;">This will take place immediately upon saving. There is no undo.</strong></span>
                     </label>
                 </li>
             </ul>
         </div>
     </div>
     
-    <div class="row">
+    <!-- <div class="row">
         <div class="column">
             <label for="options_sync_term">Sync Term</label>
         </div>
@@ -307,7 +307,7 @@ function rent_fetch_settings_general() {
                 <option value="hourly" <?php selected( get_option( 'options_sync_term' ), 'hourly' ); ?>>Hourly</option>
             </select>
         </div>
-    </div>
+    </div> -->
     
     <div class="row">
         <div class="column">
@@ -503,10 +503,10 @@ function rent_fetch_save_settings_general() {
     }
     
     // Select field
-    if ( isset( $_POST['options_sync_term'] ) ) {
-        $options_sync_term = sanitize_text_field( $_POST['options_sync_term'] );
-        update_option( 'options_sync_term', $options_sync_term );
-    }
+    // if ( isset( $_POST['options_sync_term'] ) ) {
+    //     $options_sync_term = sanitize_text_field( $_POST['options_sync_term'] );
+    //     update_option( 'options_sync_term', $options_sync_term );
+    // }
     
     // Checkboxes field
     if ( isset ( $_POST['options_enabled_integrations'] ) ) {

@@ -17,17 +17,17 @@ if ( !function_exists( 'console_log' ) ) {
 function rentfetch_log($message) { 
     
     //* bail and delete the log file if logging is not enabled
-    $enable_logging = get_option( 'options_enable_rentfetch_logging' );
-    if ( boolval($enable_logging) !== true ) {
+    // $enable_logging = get_option( 'options_enable_rentfetch_logging' );
+    // if ( boolval($enable_logging) !== true ) {
         
-        if ( file_exists( WP_CONTENT_DIR . "/apartment-sync-debug.log" ) )
-            $delete = unlink( WP_CONTENT_DIR . "/apartment-sync-debug.log" );
+        // if ( file_exists( WP_CONTENT_DIR . "/apartment-sync-debug.log" ) )
+        //     $delete = unlink( WP_CONTENT_DIR . "/apartment-sync-debug.log" );
             
-        if ( file_exists( WP_CONTENT_DIR . "/rentfetch-debug.log" ) )
-            $delete = unlink( WP_CONTENT_DIR . "/rentfetch-debug.log" );
+        // if ( file_exists( WP_CONTENT_DIR . "/rentfetch-debug.log" ) )
+        //     $delete = unlink( WP_CONTENT_DIR . "/rentfetch-debug.log" );
             
-        return;
-    }
+        // return;
+    // }
     
     if( is_array( $message ) )
         $message = json_encode($message); 

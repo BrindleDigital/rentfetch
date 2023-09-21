@@ -3,16 +3,17 @@
 /**
  * Register the content stypes
  */
-add_action( 'init', 'rentfetch_register_floorplans_cpt' );
-function rentfetch_register_floorplans_cpt() {
 
-	//* Floorplans
-	$name_plural = 'Floorplans';
-	$name_singular = 'Floorplan';
-	$post_type = 'floorplans';
-	$slug = 'floorplans';
-	$supports = array( 'title' );
-	$menu_icon = RENTFETCH_PATH . 'images/admin-icon-grayscale-floorplans.svg';
+add_action( 'init', 'rentfetch_register_units_cpt', 5 );
+function rentfetch_register_units_cpt() {
+
+	//* Units
+	$name_plural = 'Units';
+	$name_singular = 'Unit';
+	$post_type = 'units';
+	$slug = 'units';
+	$supports = array( 'title', 'page-attributes' );
+	$menu_icon = RENTFETCH_PATH . 'images/admin-icon-grayscale-properties.svg';
 	
 	$arrContextOptions=array(
       "ssl"=>array(
@@ -23,7 +24,7 @@ function rentfetch_register_floorplans_cpt() {
 	
 	$menu_icon = file_get_contents( $menu_icon, false, stream_context_create($arrContextOptions));
 	$menu_icon = base64_encode( $menu_icon );
-		
+
 	$labels = array(
 		'name' => $name_plural,
 		'singular_name' => $name_singular,
@@ -60,3 +61,4 @@ function rentfetch_register_floorplans_cpt() {
 	register_post_type( $post_type, $args );
 
 }
+

@@ -107,8 +107,8 @@ th#content_area {
     width: 200px !important;
 }
 
-th#property_images,
-td.property_images {
+th#yardi_property_images,
+td.yardi_property_images {
     width: 200px !important;
     max-width: 200px;
 }
