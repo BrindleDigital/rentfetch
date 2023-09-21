@@ -87,8 +87,34 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 	if ( 'specials' === $column )
 		echo esc_attr( get_post_meta( $post_id, 'specials', true ) );
 
-	if ( 'yardi_unit_image_urls' === $column )
-		echo esc_attr( get_post_meta( $post_id, 'yardi_unit_image_urls', true ) );
+	if ( 'yardi_unit_image_urls' === $column ) {
+		
+		$yardi_unit_image_urls = get_post_meta( $post_id, 'yardi_unit_image_urls', true );
+		
+		// escape the array of image urls
+		if ( is_array( $yardi_unit_image_urls ) ) {
+			$unit_image_urls = array();
+
+			foreach ($yardi_unit_image_urls as $url) {
+				$unit_image_urls[] = esc_url($url);
+			}
+		}
+		
+		foreach( $unit_image_urls as $url ) {
+			if ( $url ) {
+				
+				$url = explode( ',', $url );
+				
+				foreach( $url as $imgurl ) {
+					printf( '<div style="border: 1px solid gray; margin: 2px; background-image: url(\'%s\'); background-size: cover; background-position: center center; height: 35px; width: 35px; overflow: hidden; position: relative; display: inline-block;"></div>', $imgurl );
+				}
+					
+				
+			}
+				
+		}
+		
+	}
 
 	if ( 'unit_source' === $column )
 		echo esc_attr( get_post_meta( $post_id, 'unit_source', true ) );

@@ -47,6 +47,18 @@ td.availability_date {
     min-width: 120px !important;
 }
 
+th#specials,
+td.specials {
+    max-width: 120px !important;
+    min-width: 120px !important;
+}
+
+th#yardi_unit_image_urls,
+td.yardi_unit_image_urls {
+    max-width: 200px !important;
+    min-width: 200px !important;
+}
+
 td.api_error {
     max-width: 150px !important;
 }
