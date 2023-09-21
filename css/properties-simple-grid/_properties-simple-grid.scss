@@ -15,6 +15,11 @@
         inset: 0;
         cursor: pointer;
         z-index: 5;
+        transition: 0.5s box-shadow ease;
+    }
+
+    &:hover .overlay {
+        box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
     }
 
     .property-single-image-wrap {
