@@ -22,8 +22,8 @@ td {
 }
 
 th {
-    width: 100px;
-    min-width: 100px !important;
+    width: auto;
+    min-width: 70px !important;
 }
 
 th#title {
@@ -81,8 +81,7 @@ th#images {
 }
 
 th#property_source {
-    width: 150px !important;
-    min-width: 150px !important;
+    min-width: 110px !important;
 }
 
 th#description,
@@ -111,4 +110,20 @@ th#yardi_property_images,
 td.yardi_property_images {
     width: 200px !important;
     max-width: 200px;
+}
+
+td.api_response,
+th#api_response {
+    width: auto !important;
+    max-width: auto;
+}
+
+td.api_response .api-responses {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+}
+
+td.api_response .api-responses .api-response {
+    line-height: 1.1;
 }

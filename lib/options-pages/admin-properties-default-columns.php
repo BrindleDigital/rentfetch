@@ -21,29 +21,30 @@ add_filter( 'manage_properties_posts_columns', 'rentfetch_default_properties_adm
 function rentfetch_default_properties_admin_columns( $columns ) {
     
     $columns = array(
-        'cb' =>              '<input type="checkbox" />',
-        'title' =>           __( 'Title', 'rentfetch' ),
-        'property_id' =>     __( 'Property ID', 'rentfetch' ),
-        // 'property_code' =>   __( 'Property Code', 'rentfetch' ),
-        'address' =>         __( 'Address', 'rentfetch' ),
-        'city' =>            __( 'City', 'rentfetch' ),
-        'state' =>           __( 'State', 'rentfetch' ),
-        'zipcode' =>         __( 'Zipcode', 'rentfetch' ),
-        'latitude' =>        __( 'Latitude', 'rentfetch' ),
-        'longitude' =>       __( 'Longitude', 'rentfetch' ),
-        'email' =>           __( 'Email', 'rentfetch' ),
-        'phone' =>           __( 'Phone', 'rentfetch' ),
-        'url' =>             __( 'URL', 'rentfetch' ),
-        'images' =>          __( 'Images', 'rentfetch' ),
-        'description' =>     __( 'Description', 'rentfetch' ),
-        'matterport' =>      __( 'Matterport', 'rentfetch' ),
-        'video' =>           __( 'Video', 'rentfetch' ),
-        'pets' =>            __( 'Pets', 'rentfetch' ),
-        'content_area' =>    __( 'Content Area', 'rentfetch' ),
-        'yardi_property_images' => __( 'Images (Yardi)', 'rentfetch' ),
-        'property_source' => __( 'Property Source', 'rentfetch' ),
-        'updated' =>         __( 'Last API update', 'rentfetch' ),
-        'api_error' =>         __( 'API response', 'rentfetch' ),
+        'cb' =>                     '<input type="checkbox" />',
+        'title' =>                  __( 'Title', 'rentfetch' ),
+        'property_id' =>            __( 'Property ID', 'rentfetch' ),
+        // 'property_code' =>      __( 'Property Code', 'rentfetch' ),
+        'address' =>                __( 'Address', 'rentfetch' ),
+        'city' =>                   __( 'City', 'rentfetch' ),
+        'state' =>                  __( 'State', 'rentfetch' ),
+        'zipcode' =>                __( 'Zipcode', 'rentfetch' ),
+        'latitude' =>               __( 'Latitude', 'rentfetch' ),
+        'longitude' =>              __( 'Longitude', 'rentfetch' ),
+        'email' =>                  __( 'Email', 'rentfetch' ),
+        'phone' =>                  __( 'Phone', 'rentfetch' ),
+        'url' =>                    __( 'URL', 'rentfetch' ),
+        'images' =>                 __( 'Images', 'rentfetch' ),
+        'description' =>            __( 'Description', 'rentfetch' ),
+        'matterport' =>             __( 'Matterport', 'rentfetch' ),
+        'video' =>                  __( 'Video', 'rentfetch' ),
+        'pets' =>                   __( 'Pets', 'rentfetch' ),
+        'content_area' =>           __( 'Content Area', 'rentfetch' ),
+        'yardi_property_images' =>  __( 'Images (Yardi)', 'rentfetch' ),
+        'property_source' =>        __( 'Property Source', 'rentfetch' ),
+        // 'updated' =>                __( 'Last API update', 'rentfetch' ),
+        // 'api_error' =>              __( 'API error', 'rentfetch' ),
+        'api_response' =>           __( 'API response', 'rentfetch' ),
     );
     
     return $columns;
@@ -126,6 +127,32 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
         
     if ( 'api_error' === $column )
         echo esc_attr( get_post_meta( $post_id, 'api_error', true ) );
+        
+    if ( 'api_response' === $column ) {
+        $api_response = get_post_meta( $post_id, 'api_response', true );
+        
+        if ( !is_array( $api_response ) )
+            $api_response = [];
+            
+        echo '<div class="api-responses">';
+        
+        foreach( $api_response as $key => $value ) {
+            
+            echo '<div class="api-response">';
+            
+                printf( '<strong>%s:</strong><br/>', esc_attr( $key ) );
+                
+                foreach ( $value as $subkey => $subvalue ) {
+                    printf( '%s: %s<br/>', esc_attr( $subkey ), esc_attr( $subvalue ) );
+                }
+                
+            echo '</div>';
+        }   
+        
+        echo '</div>';
+        
+    }
+    
     
     if ( 'attraction_type' === $column ) {
         $terms = get_the_terms( $post_id, 'attractiontypes' );

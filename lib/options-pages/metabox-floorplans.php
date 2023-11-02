@@ -98,8 +98,8 @@ function rf_floorplans_identifiers_metabox_callback( $post ) {
                             $query->the_post();
                             $property_title = get_the_title();
                             $property_link = get_the_permalink();
-                            $property_id = get_post_meta( $post->ID, 'property_id', true );
-                            printf( '<p class="description">Property %s: <a target="_blank" href="%s">%s</a></p>', $property_id, $property_link, $property_title );
+                            $property_id = get_post_meta( get_the_ID(), 'property_id', true );
+                            printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', $property_link, $property_title, get_the_ID() );
                         }
                     } else {
                         echo '<p class="description">When this is filled out, just save and refresh the page to see a link to the associated property.</p>';
@@ -131,6 +131,38 @@ function rf_floorplans_identifiers_metabox_callback( $post ) {
                 </div>
                 <div class="column">
                     <input type="text" id="unit_type_mapping" name="unit_type_mapping" value="<?php echo esc_attr( $unit_type_mapping ); ?>">
+                    <?php
+                    $floorplan_id = get_post_meta( $post->ID, 'floorplan_id', true );
+                    $args = array(
+                        'post_type' => 'units',
+                        'posts_per_page' => -1,
+                        'post_status' => 'publish',
+                        'orderby' => 'title',
+                        'order' => 'ASC',
+                        'meta_query' => array(
+                            array(
+                                'key' => 'floorplan_id',
+                                'value' => $floorplan_id,
+                                'compare' => '=',
+                            )
+                        )
+                    );
+                    
+                    $query = new WP_Query( $args );
+                    
+                    if ( $query->have_posts() ) {
+                        echo '<ul class="unit-list">';
+                        while ( $query->have_posts() ) {
+                            $query->the_post();
+                            $unit_title = get_the_title();
+                            $unit_id = get_post_meta( get_the_ID(), 'unit_id', true );
+                            printf( '<li>%s (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</li>', $unit_title, get_the_ID() );
+                        }
+                        echo '</ul>';
+                    } else {
+                        // echo '<p class="description">When this is filled out, just save and refresh the page to see a link to the associated property.</p>';
+                    }
+                    ?>
                 </div>
             </div>
             

@@ -84,3 +84,19 @@ th#availability_url,
 td.availability_url {
     max-width: 150px !important;
 }
+
+td.api_response,
+th#api_response {
+    width: auto !important;
+    max-width: auto;
+}
+
+td.api_response .api-responses {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+}
+
+td.api_response .api-responses .api-response {
+    line-height: 1.1;
+}

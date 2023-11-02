@@ -27,18 +27,19 @@ function rentfetch_default_units_admin_columns( $columns ) {
 		'floorplan_id' =>              __( 'Floorplan ID', 'rentfetch' ),
 		'property_id' =>               __( 'Property ID', 'rentfetch' ),
 		'apply_online_url' =>          __( 'Apply URL', 'rentfetch' ),
-		'availability_date' =>          __( 'Availability date', 'rentfetch' ),
-		'baths' =>         				 __( 'Baths', 'rentfetch' ),
-		'beds' =>         				 __( 'Beds', 'rentfetch' ),
-		'deposit' =>       			   __( 'Deposit', 'rentfetch' ),
-		'minimum_rent' =>      		    __( 'Min Rent', 'rentfetch' ),
-		'maximum_rent' =>     	     __( 'Max Rent', 'rentfetch' ),
-		'sqrft' =>         			 __( 'Sqrft', 'rentfetch' ),
-		'specials' =>      				    __( 'Specials', 'rentfetch' ),
-		'yardi_unit_image_urls' =>          __( 'Yardi image', 'rentfetch' ),
-		'unit_source' =>          __( 'Integration', 'rentfetch' ),
-		'updated' =>          __( 'Updated', 'rentfetch' ),
-		'api_error' =>          __( 'API reponse', 'rentfetch' ),
+		'availability_date' =>         __( 'Availability date', 'rentfetch' ),
+		'baths' =>                     __( 'Baths', 'rentfetch' ),
+		'beds' =>                      __( 'Beds', 'rentfetch' ),
+		'deposit' =>                   __( 'Deposit', 'rentfetch' ),
+		'minimum_rent' =>              __( 'Min Rent', 'rentfetch' ),
+		'maximum_rent' =>              __( 'Max Rent', 'rentfetch' ),
+		'sqrft' =>                     __( 'Sqrft', 'rentfetch' ),
+		'specials' =>                  __( 'Specials', 'rentfetch' ),
+		'yardi_unit_image_urls' =>     __( 'Yardi image', 'rentfetch' ),
+		'unit_source' =>               __( 'Integration', 'rentfetch' ),
+		// 'updated' =>                   __( 'Updated', 'rentfetch' ),
+		// 'api_error' =>                 __( 'API reponse', 'rentfetch' ),
+		'api_response' =>               __( 'API response', 'rentfetch' ),
 	);
 	
 	return $columns;
@@ -124,5 +125,30 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 
 	if ( 'api_error' === $column )
 		echo esc_attr( get_post_meta( $post_id, 'api_error', true ) );
+		
+	if ( 'api_response' === $column ) {
+        $api_response = get_post_meta( $post_id, 'api_response', true );
+		        
+        if ( !is_array( $api_response ) )
+            $api_response = [];
+            
+        echo '<div class="api-responses">';
+        
+        foreach( $api_response as $key => $value ) {
+            
+            echo '<div class="api-response">';
+            
+                printf( '<strong>%s:</strong><br/>', esc_attr( $key ) );
+                
+                foreach ( $value as $subkey => $subvalue ) {
+                    printf( '%s: %s<br/>', esc_attr( $subkey ), esc_attr( $subvalue ) );
+                }
+                
+            echo '</div>';
+        }   
+        
+        echo '</div>';
+        
+    }
 	
 }
