@@ -1,6 +1,6 @@
 <?php
 
-function rentfetch_search_properties_map_filters_amenities() {
+function rentfetch_search_filters_amenities() {
 					
 	//* figure out how many amenities to show
 	$number_of_amenities_to_show = get_option( 'options_number_of_amenities_to_show' );

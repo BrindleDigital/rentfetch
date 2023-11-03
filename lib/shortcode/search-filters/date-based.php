@@ -1,6 +1,6 @@
 <?php
 
-function rentfetch_search_properties_map_filters_date() {
+function rentfetch_search_filters_date() {
 			
 	// enqueue date picker scripts
 	wp_enqueue_style( 'rentfetch-flatpickr-style' );

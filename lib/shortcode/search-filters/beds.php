@@ -1,6 +1,6 @@
 <?php
 
-function rentfetch_search_properties_map_filters_beds() {
+function rentfetch_search_filters_beds() {
 	
 	// check whether beds search is enabled
 	$map_search_components = get_option( 'options_map_search_components' );

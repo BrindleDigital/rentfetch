@@ -1,6 +1,6 @@
 <?php
 
-function rentfetch_search_properties_map_filters_baths() {
+function rentfetch_search_filters_baths() {
 				
 	// get info about baths from the database
 	$baths = rentfetch_get_meta_values( 'baths', 'floorplans' );

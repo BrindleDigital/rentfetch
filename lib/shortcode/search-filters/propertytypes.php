@@ -1,6 +1,6 @@
 <?php
 
-function rentfetch_search_properties_map_filters_property_types() {
+function rentfetch_search_filters_property_types() {
            
     // bail if propertytypes taxonomy does not exist
     if ( !taxonomy_exists('propertytypes') )

@@ -1,6 +1,6 @@
 <?php
 
-function rentfetch_search_properties_map_filters_price() {
+function rentfetch_search_filters_price() {
 			
 	// figure out our min/max values
 	$valueSmall = get_option( 'options_price_filter_minimum', 0 );

@@ -1,7 +1,7 @@
 <?php 
 
 
-function rentfetch_search_properties_map_filters_text_search() {
+function rentfetch_search_filters_text_search() {
     
     // check the query to see if we have a text-based search
     if (isset($_GET['textsearch'])) {
