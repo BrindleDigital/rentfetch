@@ -55,29 +55,29 @@ function rentfetch_search_floorplans_filters_beds() {
 	echo '</fieldset>';
 }
 
-// add_filter('rentfetch_search_property_map_floorplans_query_args', 'rentfetch_search_property_map_floorplans_args_beds', 10, 1);
-// function rentfetch_search_property_map_floorplans_args_beds( $floorplans_args ) {
+add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_floorplan_args_beds', 10, 1);
+function rentfetch_search_floorplans_floorplan_args_beds( $floorplans_args ) {
 		
-// 	if ( isset( $_POST['search-beds'] ) && is_array( $_POST['search-beds'] ) ) {
+	if ( isset( $_POST['search-beds'] ) && is_array( $_POST['search-beds'] ) ) {
 		
-// 		// Get the values
-// 		$beds = $_POST['search-beds'];
+		// Get the values
+		$beds = $_POST['search-beds'];
 		
-// 		// Escape the values
-// 		$beds = array_map( 'sanitize_text_field', $beds );
+		// Escape the values
+		$beds = array_map( 'sanitize_text_field', $beds );
 		
-// 		// Convert the beds query to a meta query
-// 		$meta_query = array(
-// 			array(
-// 				'key' => 'beds',
-// 				'value' => $beds,
-// 			),
-// 		);
+		// Convert the beds query to a meta query
+		$meta_query = array(
+			array(
+				'key' => 'beds',
+				'value' => $beds,
+			),
+		);
 				
-// 		// Add the meta query to the property args
-// 		$floorplans_args['meta_query'][] = $meta_query;
+		// Add the meta query to the property args
+		$floorplans_args['meta_query'][] = $meta_query;
 				
-// 	}
+	}
 	
-// 	return $floorplans_args;
-// }
+	return $floorplans_args;
+}

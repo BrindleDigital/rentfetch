@@ -231,7 +231,7 @@ function rent_fetch_process_form_data() {
     // remove /wp-admin/ from the referrer
     $referrer = preg_replace('/\/wp-admin\//', '', $referrer);
     
-    var_dump( $referrer );
+    // var_dump( $referrer );
     
     wp_redirect( add_query_arg( 'rent_fetch_message', 'success', $referrer ) );
     
@@ -1430,6 +1430,20 @@ function rent_fetch_settings_floorplans_floorplan_search() {
         </div>
     </div>
     <?php
+}
+
+/**
+ * Save the floorplan 
+ */
+add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_floorplan_search' );
+function rent_fetch_save_settings_floorplan_search() {
+        
+        // Checkboxes field
+        if ( isset ( $_POST['options_floorplan_filters'] ) ) {
+            $options_floorplan_filters = array_map('sanitize_text_field', $_POST['options_floorplan_filters']);
+            update_option('options_floorplan_filters', $options_floorplan_filters);
+        }
+    
 }
 
 /**
