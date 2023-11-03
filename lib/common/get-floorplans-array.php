@@ -12,7 +12,7 @@ function rentfetch_get_floorplans_array() {
         'no_found_rows' => true,
 	);
     
-    $floorplans_args = apply_filters( 'rentfetch_search_property_map_floorplans_query_args', $floorplans_args );
+    $floorplans_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplans_args );
     
     // console_log( 'Floorplans search args:' );
     // console_log( $floorplans_args );

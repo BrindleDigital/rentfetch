@@ -3,8 +3,8 @@
 function rentfetch_search_filters_price() {
 			
 	// figure out our min/max values
-	$valueSmall = get_option( 'options_price_filter_minimum', 0 );
-	$valueBig = get_option( 'options_price_filter_maximum', 5000 );	
+	$valueSmall = get_option( 'options_price_filter_minimum', null );
+	$valueBig = get_option( 'options_price_filter_maximum', null );	
 	$step = 50;
 	
 	// if pricesmall isset, then use that value for $valueSmall
@@ -44,15 +44,15 @@ function rentfetch_search_filters_price() {
 
 }
 
-add_filter( 'rentfetch_search_property_map_floorplans_query_args', 'rentfetch_search_property_map_floorplans_args_price', 10, 1 );
-function rentfetch_search_property_map_floorplans_args_price( $floorplans_args ) {
+// add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_price', 10, 1 );
+function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 	
 	// bail if we don't have a price search
 	if ( !isset( $_POST['pricesmall'] ) && !isset( $_POST['pricebig'] ) )
 		return $floorplans_args;
 	
-	$defaultpricesmall = get_option( 'options_price_filter_minimum', 0 );
-	$defaultpricebig = get_option( 'options_price_filter_maximum', 5000 );
+	$defaultpricesmall = get_option( 'options_price_filter_minimum', null );
+	$defaultpricebig = get_option( 'options_price_filter_maximum', null );
 	
 	// get the small value
 	if ( isset( $_POST['pricesmall'] ) && $_POST['pricebig'] > 0 ){
@@ -68,6 +68,9 @@ function rentfetch_search_property_map_floorplans_args_price( $floorplans_args )
 		$pricebig = $defaultpricebig;
 	}
 	
+	$pricebig = null;
+	$pricesmall = null;
+		
 	// // if neither are set, then bail
 	// if ( $pricesmall == $defaultpricesmall && $pricebig == $defaultpricebig )
 	// 	return $floorplans_args;

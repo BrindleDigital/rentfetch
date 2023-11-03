@@ -1,17 +1,6 @@
 <?php
 
 function rentfetch_search_filters_beds() {
-	
-	// check whether beds search is enabled
-	$map_search_components = get_option( 'options_map_search_components' );
-	
-	// this needs to be set to an array even if the option isn't set
-	if ( !is_array( $map_search_components ) )
-		$map_search_components = array();
-	
-	// bail if beds search is not enabled
-	if ( !in_array( 'beds_search', $map_search_components ) )
-		return;
 			
 	// get info about beds from the database
 	$beds = rentfetch_get_meta_values( 'beds', 'floorplans' );
@@ -55,8 +44,8 @@ function rentfetch_search_filters_beds() {
 	echo '</fieldset>';
 }
 
-add_filter('rentfetch_search_property_map_floorplans_query_args', 'rentfetch_search_property_map_floorplans_args_beds', 10, 1);
-function rentfetch_search_property_map_floorplans_args_beds( $floorplans_args ) {
+add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_beds', 10, 1);
+function rentfetch_search_floorplans_args_beds( $floorplans_args ) {
 		
 	if ( isset( $_POST['search-beds'] ) && is_array( $_POST['search-beds'] ) ) {
 		

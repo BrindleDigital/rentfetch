@@ -19,8 +19,8 @@ function rentfetch_search_filters_date() {
 	
 }
 
-add_filter( 'rentfetch_search_property_map_floorplans_query_args', 'rentfetch_search_property_map_floorplans_args_date', 10, 1 );
-function rentfetch_search_property_map_floorplans_args_date( $floorplans_args ) {
+add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_date', 10, 1 );
+function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	
 	// bail if we don't have a date search
 	if ( !isset( $_POST['dates'] ) )

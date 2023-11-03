@@ -28,8 +28,8 @@ function rentfetch_search_filters_text_search() {
         
 }
 
-add_filter( 'rentfetch_search_property_map_properties_query_args', 'rentfetch_search_property_map_properties_args_text', 10, 1 );
-function rentfetch_search_property_map_properties_args_text( $property_args ) {
+add_filter( 'rentfetch_search_property_map_properties_query_args', 'rentfetch_search_properties_args_text', 10, 1 );
+function rentfetch_search_properties_args_text( $property_args ) {
     //* Add text-based search into the query
     $search = null;
     

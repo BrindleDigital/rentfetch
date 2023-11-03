@@ -44,8 +44,8 @@ function rentfetch_search_filters_baths() {
 		
 }
 
-add_filter('rentfetch_search_property_map_floorplans_query_args', 'rentfetch_search_property_map_floorplans_args_baths', 10, 1);
-function rentfetch_search_property_map_floorplans_args_baths( $floorplans_args ) {
+add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_baths', 10, 1);
+function rentfetch_search_floorplans_args_baths( $floorplans_args ) {
 		
 	if ( isset( $_POST['search-baths'] ) && is_array( $_POST['search-baths'] ) ) {
 		

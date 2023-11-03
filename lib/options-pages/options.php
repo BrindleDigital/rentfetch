@@ -148,6 +148,13 @@ function rent_fetch_documentation_shortcodes() {
     <h2>Properties grid</h2>
     <p>This layout ignores availability, and is most suitable for smaller ownership groups with 5-20 properties.</p>
     <p><span class="shortcode">[properties]</span></p>
+    
+    <h2>Floorplans search</h2>
+    <p>This layout ignores availability, and is most suitable for very small ownership groups, listing 1-5 properties.</p>
+    <h3>Default search</h3>
+    <p><span class="shortcode">[floorplansearch]</span></p>
+    <h3>Individual components</h3>
+    <p><span class="shortcode">[floorplansearchfilters]</span><span class="shortcode">[floorplansearchresults]</span></p>
     <?php
 }
 
