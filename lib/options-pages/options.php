@@ -166,7 +166,7 @@ function rent_fetch_options_page_html() {
                 <a href="?page=rent_fetch_options" class="nav-tab<?php if (!isset($_GET['tab']) || $_GET['tab'] === 'general') { echo ' nav-tab-active'; } ?>">General</a>
                 <a href="?page=rent_fetch_options&tab=google" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'google') { echo ' nav-tab-active'; } ?>">Google</a>
                 <a href="?page=rent_fetch_options&tab=properties" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'properties') { echo ' nav-tab-active'; } ?>">Properties</a>
-                <a href="?page=rent_fetch_options&tab=floorplan_archives" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'floorplan_archives') { echo ' nav-tab-active'; } ?>">Floorplans</a>
+                <a href="?page=rent_fetch_options&tab=floorplans" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'floorplans') { echo ' nav-tab-active'; } ?>">Floorplans</a>
                 <a href="?page=rent_fetch_options&tab=labels" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'labels') { echo ' nav-tab-active'; } ?>">Labels</a>
             </nav>
         
@@ -188,8 +188,8 @@ function rent_fetch_options_page_html() {
                 do_action( 'rent_fetch_do_settings_property_archives' );
             } elseif (isset($_GET['tab']) && $_GET['tab'] === 'single_property_template') {
                 do_action( 'rent_fetch_do_settings_single_property_template' );
-            } elseif (isset($_GET['tab']) && $_GET['tab'] === 'floorplan_archives') {
-                do_action( 'rent_fetch_do_settings_floorplan_archives' );
+            } elseif (isset($_GET['tab']) && $_GET['tab'] === 'floorplans') {
+                do_action( 'rent_fetch_do_settings_floorplans' );
             } elseif (isset($_GET['tab']) && $_GET['tab'] === 'labels') {
                 do_action( 'rent_fetch_do_settings_labels' );
             } else {
@@ -1344,11 +1344,100 @@ function rent_fetch_save_settings_property_single() {
 /**
  * Adds the floorplans settings section to the Rent Fetch settings page
  */
-add_action( 'rent_fetch_do_settings_floorplan_archives', 'rent_fetch_settings_floorplan_archives' );
-function rent_fetch_settings_floorplan_archives() {
-    //! TODO: save data
+add_action( 'rent_fetch_do_settings_floorplans', 'rent_fetch_settings_floorplans' );
+function rent_fetch_settings_floorplans() {
     ?>
-    
+    <ul class="rent-fetch-options-submenu">
+        <li><a href="?page=rent_fetch_options&tab=floorplans&section=floorplan_search" class="tab<?php if (!isset($_GET['section']) || $_GET['section'] === 'floorplan_search') { echo ' tab-active'; } ?>">Floorplan Search</a></li>
+        <li><a href="?page=rent_fetch_options&tab=floorplans&section=floorplan_buttons" class="tab<?php if ( isset( $_GET['section']) && $_GET['section'] === 'floorplan_buttons') { echo ' tab-active'; } ?>">Floorplan Buttons</a></li>
+    </ul>    
+    <?php
+    if ( !isset($_GET['section']) || $_GET['section'] === 'floorplan_search') {
+        do_action( 'rent_fetch_do_settings_floorplans_floorplan_search' );
+    } elseif (isset($_GET['section']) && $_GET['section'] === 'floorplan_buttons') {
+        do_action( 'rent_fetch_do_settings_floorplans_floorplan_buttons' );
+    }
+}
+
+add_action( 'rent_fetch_do_settings_floorplans_floorplan_search', 'rent_fetch_settings_floorplans_floorplan_search' );
+function rent_fetch_settings_floorplans_floorplan_search() {
+    ?>
+    <div class="row">
+        <div class="column">
+            <label for="options_floorplan_filters">Floorplan search filters</label>
+            <p class="description">Which components should be shown floorplans search?</p>
+        </div>
+        <div class="column">
+            <?php
+            
+            // Get saved options
+            $options_floorplan_filters = get_option( 'options_floorplan_filters' );
+            
+            // Define default values
+            $default_options = array(
+                'beds_search',
+                'baths_search',
+                'price_search',
+                'date_search',
+                'squarefoot_search',
+                'sort',
+            );
+            
+            // Make it an array just in case it isn't (for example, if it's a new install)
+            if (!is_array($options_floorplan_filters)) {
+                $options_floorplan_filters = $default_options;
+            }
+            
+            ?>
+            <ul class="checkboxes">
+                <li>
+                    <label>
+                        <input type="checkbox" name="options_floorplan_filters[]" value="beds_search" <?php checked( in_array( 'beds_search', $options_floorplan_filters ) ); ?>>
+                        Beds search
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" name="options_floorplan_filters[]" value="baths_search" <?php checked( in_array( 'baths_search', $options_floorplan_filters ) ); ?>>
+                        Baths search
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" name="options_floorplan_filters[]" value="price_search" <?php checked( in_array( 'price_search', $options_floorplan_filters ) ); ?>>
+                        Price search
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" name="options_floorplan_filters[]" value="date_search" <?php checked( in_array( 'date_search', $options_floorplan_filters ) ); ?>>
+                        Date search
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" name="options_floorplan_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_floorplan_filters ) ); ?>>
+                        Square footage search
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" name="options_floorplan_filters[]" value="sort" <?php checked( in_array( 'sort', $options_floorplan_filters ) ); ?>>
+                        Sorting
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Output floorplan button settings
+ */
+add_action( 'rent_fetch_do_settings_floorplans_floorplan_buttons', 'rent_fetch_settings_floorplans_floorplan_buttons' );
+function rent_fetch_settings_floorplans_floorplan_buttons() {
+    ?>
     <script type="text/javascript">
         jQuery(document).ready(function( $ ) {
 	
@@ -1534,14 +1623,12 @@ function rent_fetch_settings_floorplan_archives() {
                 <input type="text" name="options_single_button_button_label" id="options_single_button_button_label" value="<?php echo esc_attr( get_option( 'options_single_button_button_label' ) ); ?>">
             </div>
         </div>
-    </div>    
-    
-    
+    </div>
     <?php
 }
 
 /**
- * Save the property single settings
+ * Save the floorplan button settings
  */
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_floorplan_buttons' );
 function rent_fetch_save_settings_floorplan_buttons() {

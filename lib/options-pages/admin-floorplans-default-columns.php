@@ -14,6 +14,8 @@ function rentfetch_enqueue_floorplans_admin_style() {
 		
 		// Enqueue your custom admin style
 		wp_enqueue_style( 'floorplans-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-floorplans.css', array(), RENTFETCH_VERSION, 'screen' );
+		
+		wp_enqueue_script( 'floorplans-edit-admin-script', RENTFETCH_PATH . 'js/floorplans-edit-admin-script.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	}
 }
 
