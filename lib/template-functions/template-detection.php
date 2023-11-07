@@ -1,7 +1,7 @@
 <?php
 
-add_filter( 'single_template', 'apartmentsync_load_single_templates' );
-function apartmentsync_load_single_templates( $template ) {
+add_filter( 'single_template', 'rentfetch_load_single_templates' );
+function rentfetch_load_single_templates( $template ) {
     
     global $post;
             

@@ -22,7 +22,7 @@ function rentfetch_search_filters_beds() {
 				if ( $bed === null )
 					continue;
 					
-				$label = apply_filters( 'rentfetch_get_bedroom_number_label', $label = null, $bed );
+				$label = apply_filters( 'rentfetch_get_bedroom_number_label', $bed );
 					
 				printf( 
 					'<label>

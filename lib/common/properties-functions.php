@@ -188,14 +188,11 @@ function rentfetch_get_property_bedrooms() {
     $property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
     
     $floorplan_data = rentfetch_get_floorplans( $property_id );
-    
-    console_log( $floorplan_data );
-    
+        
     if ( !isset( $floorplan_data['bedsrange'] ) )
         return;
         
-    $bedrooms = apply_filters( 'rentfetch_filter_property_bedrooms', $floorplan_data['bedsrange'] );
-    return esc_html( $bedrooms );
+    return apply_filters( 'rentfetch_get_bedroom_number_label', $floorplan_data['bedsrange'] );
 }
 
 function rentfetch_property_bedrooms() {
@@ -203,11 +200,6 @@ function rentfetch_property_bedrooms() {
     
     if ( $bedrooms )
         echo $bedrooms;
-}
-
-add_filter( 'rentfetch_filter_property_bedrooms', 'rentfetch_default_property_bedrooms_label', 10, 1 );
-function rentfetch_default_property_bedrooms_label( $bedrooms ) {
-    return $bedrooms . ' Bed';
 }
 
 //* PROPERTY BATHROOMS
@@ -221,8 +213,7 @@ function rentfetch_get_property_bathrooms() {
     if ( !isset( $floorplan_data['bathsrange'] ) )
         return;
         
-    $bathrooms = apply_filters( 'rentfetch_filter_property_bathrooms', $floorplan_data['bathsrange'] );
-    return esc_html( $bathrooms );
+    return apply_filters( 'rentfetch_get_bathroom_number_label', $floorplan_data['bathsrange'] );
     
 }
 
@@ -231,11 +222,6 @@ function rentfetch_property_bathrooms() {
     
     if ( $bathrooms )
         echo $bathrooms;
-}
-
-add_filter( 'rentfetch_filter_property_bathrooms', 'rentfetch_default_property_bathrooms_label', 10, 1 );
-function rentfetch_default_property_bathrooms_label( $bathrooms ) {
-    return $bathrooms . ' Bath';
 }
 
 //* PROPERTY SQUARE FEET
@@ -248,8 +234,7 @@ function rentfetch_get_property_square_feet() {
     if ( !isset( $floorplan_data['sqftrange'] ) )
         return;
     
-    $square_feet = apply_filters( 'rentfetch_filter_property_square_feet', $floorplan_data['sqftrange'] );
-    return esc_html( $square_feet );
+    return apply_filters( 'rentfetch_get_square_feet_number_label', $floorplan_data['sqftrange'] );
 }
 
 function rentfetch_property_square_feet() {
@@ -257,11 +242,6 @@ function rentfetch_property_square_feet() {
     
     if ( $square_feet )
         echo $square_feet;
-}
-
-add_filter( 'rentfetch_filter_property_square_feet', 'rentfetch_default_property_square_feet_label', 10, 1 );
-function rentfetch_default_property_square_feet_label( $square_feet ) {
-    return $square_feet . ' sqft';
 }
 
 //* PROPERTY RENT

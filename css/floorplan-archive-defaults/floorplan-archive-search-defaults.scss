@@ -1,0 +1,15 @@
+.floorplans-loop {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+
+    .entry {
+        margin: 0;
+
+        .floorplan-images {
+            background-color: var(--rentfetch-base);
+            height: 0;
+            padding-top: 55%;
+        }
+    }
+}

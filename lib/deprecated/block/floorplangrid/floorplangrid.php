@@ -315,7 +315,7 @@ function rentfetch_floorplangrid_block_show_filter_bedrooms( $settings ) {
         
         foreach ( $bedroomnumbers as $bedroomnumber ) {
             
-            $label = apply_filters( 'rentfetch_get_bedroom_number_label', $label = null, $bedroomnumber );
+            $label = apply_filters( 'rentfetch_get_bedroom_number_label', $bedroomnumber );
             printf( '<li><a data-filter="beds-%s" class="filter-select" href="#">%s</a></li>', $bedroomnumber, $label );
         }
     echo '</ul>';

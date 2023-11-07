@@ -102,10 +102,8 @@ function rentfetch_filter_floorplans() {
 				$class = implode( ' ', get_post_class() );
 								
 				printf( '<div class="%s">', $class );
-				
-					the_title();
-				
-                    do_action( 'rentfetch_do_floorplans_each' );
+								
+                    do_action( 'rentfetch_floorplans_search_do_floorplans_each' );
 				
 				echo '</div>'; // post_class
 				

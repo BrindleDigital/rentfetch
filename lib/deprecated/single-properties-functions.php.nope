@@ -1,15 +1,15 @@
 <?php
 
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_images', 20 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_section_navigation', 25 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_basic_info', 30 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_description', 40 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_tour', 45 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_floorplans', 50 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_amenities', 60 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_lease_details', 70 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_map', 80 );
-add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_neighborhood', 90 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_images', 20 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_section_navigation', 25 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_basic_info', 30 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_description', 40 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_tour', 45 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_floorplans', 50 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_amenities', 60 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_lease_details', 70 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_map', 80 );
+// add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_neighborhood', 90 );
 // add_action( 'rentfetch_do_single_properties', 'rentfetch_single_property_nearby_properties', 100 );
 
 function rentfetch_single_property_images() {

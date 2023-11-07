@@ -54,62 +54,23 @@ function rentfetch_single_properties_parts_floorplans() {
 				if ( $floorplans_query->have_posts() ) {
 					// echo '<details open>';
 						// echo '<summary><h3>';   
+												
 						echo '<h3>';                 
-							echo apply_filters( 'rentfetch_get_bedroom_number_label', $label = null, $bed );
+							echo apply_filters( 'rentfetch_get_bedroom_number_label', $bed );
 						echo '</h3>';
 						// echo '</h3></summary>';
-						echo '<div class="floorplan-in-archive">';
+						echo '<div class="floorplans-in-archive">';
+						
 							while ( $floorplans_query->have_posts() ) : $floorplans_query->the_post(); 
 							
-								echo '<div><strong>';
-								the_title();
-								echo '</strong></div>';
+								$class = implode( ' ', get_post_class() );
+						
+								printf( '<div class="%s">', $class );
 								
-								$available_units = get_post_meta( get_the_ID(), 'available_units', true );
+									do_action( 'rentfetch_single_properties_do_floorplans_each' );
 								
-								printf( '%s Available', $available_units );
+								echo '</div>'; // post_class
 								
-								$floorplan_id = get_post_meta( get_the_ID(), 'floorplan_id', true );
-								
-								$args = array(
-									'post_type' => 'units',
-									'posts_per_page' => -1,
-									'orderby' => 'meta_value_num',
-									'meta_key' => 'beds',
-									'order' => 'ASC',
-									'meta_query' => array(
-										array(
-											'key'   => 'property_id',
-											'value' => $property_id,
-										),
-										array(
-											'key'   => 'floorplan_id',
-											'value' => $floorplan_id,
-										),
-									),
-								);
-								
-								// The Query
-								$units_query = new WP_Query( $args );
-
-								// The Loop
-								if ( $units_query->have_posts() ) {
-
-									while ( $units_query->have_posts() ) {
-										
-										$units_query->the_post();
-										
-											echo '<div>';
-												the_title();
-											echo '</div>';
-
-									}
-									
-									// Restore postdata
-									wp_reset_postdata();
-
-								}
-							
 							endwhile;
 						echo '</div>'; // .floorplans
 					// echo '</details>';
