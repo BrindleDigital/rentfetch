@@ -67,6 +67,16 @@ function rentfetch_floorplan_square_feet() {
 
 //* Number available
 
+function rentfetch_get_floorplan_available_units() {
+    $available_units = get_post_meta( get_the_ID(), 'available_units', true );
+        
+    return apply_filters( 'rentfetch_get_available_units_label', $available_units );
+}
+
+function rentfetch_floorplan_available_units() {
+    echo rentfetch_get_floorplan_available_units();
+}
+
 //* Pricing
 
 //* Move in special

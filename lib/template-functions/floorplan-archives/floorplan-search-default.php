@@ -6,6 +6,7 @@ function rentfetch_floorplans_search_floorplans_each_default() {
     $beds = rentfetch_get_floorplan_bedrooms();
     $baths = rentfetch_get_floorplan_bathrooms();
     $square_feet = rentfetch_get_floorplan_square_feet();
+    $available_units = rentfetch_get_floorplan_available_units();
     
     echo '<div class="floorplan-images">';
     
@@ -30,6 +31,9 @@ function rentfetch_floorplans_search_floorplans_each_default() {
     
     echo '</div>';
     echo '<div class="floorplan-availability">';
+    
+    if ( $available_units )
+        printf( '<p class="available-units">%s</p>', $available_units );
     
     echo '</div>';
     
