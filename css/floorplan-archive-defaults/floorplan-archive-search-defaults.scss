@@ -3,13 +3,41 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
 
+    @include mobile {
+        grid-template-columns: 1fr;
+    }
+
     .entry {
         margin: 0;
+    }
 
-        .floorplan-images {
-            background-color: var(--rentfetch-base);
-            height: 0;
-            padding-top: 55%;
+    .floorplan-images {
+        background-color: var(--rentfetch-base);
+        height: 0;
+        padding-top: 55%;
+    }
+
+    .floorplan-content {
+        margin: 15px 0;
+    }
+
+    h3,
+    p {
+        margin-bottom: 5px;
+
+        &:last-child {
+            margin-bottom: 0;
         }
     }
+
+    p.info {
+        span {
+            display: inline-block;
+            margin: 0 1em 5px 0;
+        }
+    }
+}
+
+.floorplan-search-filters {
+    display: none;
 }

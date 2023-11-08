@@ -7,6 +7,7 @@ function rentfetch_floorplans_search_floorplans_each_default() {
     $baths = rentfetch_get_floorplan_bathrooms();
     $square_feet = rentfetch_get_floorplan_square_feet();
     $available_units = rentfetch_get_floorplan_available_units();
+    $buttons = rentfetch_get_floorplan_links();
     
     echo '<div class="floorplan-images">';
     
@@ -32,10 +33,15 @@ function rentfetch_floorplans_search_floorplans_each_default() {
     echo '</div>';
     echo '<div class="floorplan-availability">';
     
-    if ( $available_units )
-        printf( '<p class="available-units">%s</p>', $available_units );
+        if ( $available_units )
+            printf( '<p class="available-units">%s</p>', $available_units );
+        
+            
     
     echo '</div>';
+    
+    if ( $buttons )
+        echo $buttons;
     
 }
 add_action( 'rentfetch_floorplans_search_do_floorplans_each', 'rentfetch_floorplans_search_floorplans_each_default' );

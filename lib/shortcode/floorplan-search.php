@@ -85,7 +85,9 @@ function rentfetch_filter_floorplans() {
 	);
 	
 	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
-			
+	
+	// console_log( $floorplan_args );
+	
 	$floorplanquery = new WP_Query( $floorplan_args );
 		
 	if( $floorplanquery->have_posts() ) {

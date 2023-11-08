@@ -22,6 +22,5 @@ jQuery(document).ready(function ($) {
     // prevent closing input-wrap when clicking inside input elements
     $('.input-wrap input').on('click touchstart', function (event) {
         event.stopPropagation();
-        console.log('Clicked:', event.target);
     });
 });

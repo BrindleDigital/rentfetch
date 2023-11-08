@@ -11,7 +11,7 @@ function rentfetch_search_filters_baths() {
 	echo '<fieldset class="baths">';
 		echo '<legend>Baths</legend>';
 		echo '<button class="toggle">Baths</button>';
-		echo '<div class="input-wrap checkboxes">';
+		echo '<div class="input-wrap checkboxes inactive">';
 				
 				foreach( $baths as $bath ) {
 					
@@ -19,10 +19,11 @@ function rentfetch_search_filters_baths() {
 					$checked = in_array($bath, $_GET['search-baths'] ?? array());
 					
 					// skip if there's a null value for bath
-					if ( $bath === null )
+					if ( $bath === null || $bath == 0 )
 						continue;
 						
-					$label = $bath . ' Bathroom';
+					// $label = $bath . ' Bathroom';
+					$label = apply_filters( 'rentfetch_get_bathroom_number_label', $bath );
 						
 					printf( 
 						'<label>

@@ -11,15 +11,15 @@ function rentfetch_search_filters_date() {
 	echo '<fieldset class="move-in">';
 		echo '<legend>Move-In Date</legend>';
 		echo '<button class="toggle">Move-In Date</button>';
-		echo '<div class="input-wrap text">';
-			echo '<input type="date" name="dates" placeholder="Available date" style="width:auto;" data-input>';
-		echo '</div>'; // .checkboxes
+		echo '<div class="input-wrap inactive">';
+			echo '<input type="date" name="dates" placeholder="Available date" style="width:auto;" data-input />';
+		echo '</div>'; // .input-wrap
 	echo '</fieldset>';
 		
 	
 }
 
-add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_date', 10, 1 );
+// add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_date', 10, 1 );
 function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	
 	// bail if we don't have a date search

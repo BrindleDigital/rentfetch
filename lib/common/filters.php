@@ -73,7 +73,7 @@ function rentfetch_available_units_label( $number ) {
     if ( $number == 0 ) {
         $available = 'No units available';
     } elseif ( $number == 1 ) {
-        $available = '1 unit availabe';
+        $available = '1 unit available';
     } else {
         $available = $number . ' units available';
     }

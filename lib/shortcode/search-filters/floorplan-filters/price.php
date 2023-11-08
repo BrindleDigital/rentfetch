@@ -26,18 +26,27 @@ function rentfetch_search_filters_price() {
 		)
 	);
 	
+	
+	
+	if ( intval( $valueSmall ) == 0 && intval( $valueBig ) == 0 ) {
+		$valueSmall = null;
+		$valueBig = null;
+	}
+		
 	// wp_enqueue_script( 'rentfetch-nouislider-init-script' );
 	
 	//* build the price search
 	echo '<fieldset class="price">';
 		echo '<legend>Price Range</legend>';
 		echo '<button class="toggle">Price Range</button>';
-		echo '<div class="input-wrap slider">';
-			echo '<div class="price-slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';
-			echo '<div class="inputs-prices">';
-				printf( '<input type="number" name="pricesmall" data-default-value="%s" id="pricesmall" value="%s" />', $valueSmall, $valueSmall );
-				echo '<div class="price-dash"></div>';
-				printf( '<input type="number" name="pricebig" data-default-value="%s" id="pricebig" value="%s" />', $valueBig, $valueBig );
+		echo '<div class="input-wrap slider inactive">';
+			echo '<div>';
+				echo '<div class="price-slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';
+				echo '<div class="inputs-prices">';
+					printf( '<input type="number" name="pricesmall" data-default-value="%s" id="pricesmall" value="%s" />', $valueSmall, $valueSmall );
+					echo '<div class="price-dash"></div>';
+					printf( '<input type="number" name="pricebig" data-default-value="%s" id="pricebig" value="%s" />', $valueBig, $valueBig );
+				echo '</div>'; // .inputs-prices
 			echo '</div>';
 		echo '</div>'; // .slider
 	echo '</fieldset>';		
@@ -68,8 +77,8 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 		$pricebig = $defaultpricebig;
 	}
 	
-	$pricebig = null;
-	$pricesmall = null;
+	// $pricebig = null;
+	// $pricesmall = null;
 		
 	// // if neither are set, then bail
 	// if ( $pricesmall == $defaultpricesmall && $pricebig == $defaultpricebig )
