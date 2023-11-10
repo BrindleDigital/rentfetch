@@ -9,31 +9,92 @@
 
     .entry {
         margin: 0;
+        box-shadow: 3px 3px 10px 0 var(--rentfetch-black-5-percent);
+        transition: 0.5s box-shadow ease;
+        position: relative;
     }
 
-    .floorplan-images {
-        background-color: var(--rentfetch-base);
-        height: 0;
-        padding-top: 55%;
+    .floorplan-details {
+        padding: 15px;
     }
 
-    .floorplan-content {
-        margin: 15px 0;
+    .floorplan-single-image-wrap {
+        width: 100%;
+        height: 175px;
+
+        img.floorplan-single-image {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    h3 {
+        font-size: var(--rentfetch-font-size-large);
+        color: var(--rentfetch-dark);
+    }
+
+    p {
+        font-size: var(--rentfetch-font-size-medium);
+        color: var(--rentfetch-dark);
+        line-height: 1.2;
     }
 
     h3,
     p {
         margin-bottom: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
 
-        &:last-child {
-            margin-bottom: 0;
+    p.floorplan-availability {
+    }
+
+    .floorplan-attributes {
+        line-height: 1;
+        margin-bottom: 15px;
+
+        p {
+            display: inline-block;
+            margin-right: 10px;
         }
     }
 
-    p.info {
-        span {
-            display: inline-block;
-            margin: 0 1em 5px 0;
+    .floorplan-availability {
+        // margin-top: 5px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(0, 0, 0, 0.07);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    p.pricing {
+        font-size: var(--rentfetch-font-size-large);
+        font-weight: bold;
+        margin-bottom: 0;
+    }
+
+    p.availability {
+        font-size: var(--rentfetch-font-size-small);
+        font-style: italic;
+        margin-bottom: 0;
+    }
+
+    .overlay-link {
+        position: absolute;
+        inset: 0;
+        transition: 0.3s all ease;
+    }
+
+    .entry:hover {
+        .overlay-link {
+            box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
         }
     }
 }

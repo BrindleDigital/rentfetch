@@ -25,9 +25,7 @@ function rentfetch_search_filters_price() {
 			'step' => $step,
 		)
 	);
-	
-	
-	
+		
 	if ( intval( $valueSmall ) == 0 && intval( $valueBig ) == 0 ) {
 		$valueSmall = null;
 		$valueBig = null;

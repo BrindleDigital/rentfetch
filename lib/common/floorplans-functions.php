@@ -141,7 +141,7 @@ function rentfetch_get_floorplan_links() {
         
     } else {
         
-        $overlay = sprintf( '<a href="%s" class="overlay-link">Overlay</a>', get_the_permalink() );
+        $overlay = sprintf( '<a href="%s" class="overlay-link"></a>', get_the_permalink() );
         
         // if there are units attached to this floorplan, then link to the permalink of the floorplan
         echo apply_filters( 'rentfetch_do_floorplan_overlay_link', $overlay );
