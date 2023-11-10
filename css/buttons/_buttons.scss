@@ -1,0 +1,16 @@
+.rentfetch-button {
+    color: var(--rentfetch-white);
+    background-color: var(--rentfetch-dark);
+    text-decoration: none;
+    line-height: 1;
+    position: static;
+    padding: 15px 25px;
+    font-size: var(--rentfetch-font-size-medium);
+    background-color: var(--rentfetch-accent);
+    font-weight: bold;
+
+    &:hover {
+        color: var(--rentfetch-white);
+        background-color: var(--rentfetch-accent-active);
+    }
+}

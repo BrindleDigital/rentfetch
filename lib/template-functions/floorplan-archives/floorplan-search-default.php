@@ -8,7 +8,7 @@ function rentfetch_floorplans_search_floorplans_each_default() {
     $square_feet = rentfetch_get_floorplan_square_feet();
     $available_units = rentfetch_get_floorplan_available_units();
     $links = rentfetch_get_floorplan_links();
-    $pricing = rentfetch_get_floorplan_pricing();
+    $pricing = rentfetch_get_floorplan_pricing();        
     
     do_action( 'rentfetch_do_floorplan_images' );
     

@@ -92,9 +92,42 @@
         transition: 0.3s all ease;
     }
 
+    .buttons-outer {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--rentfetch-black-90-percent);
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.3s all ease;
+
+        .buttons-inner {
+            width: 75%;
+            max-width: 300px;
+
+            .rentfetch-button {
+                display: block;
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
     .entry:hover {
         .overlay-link {
-            box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
+            box-shadow: 0 0 0 5px var(--rentfetch-dark);
+        }
+
+        .buttons-outer {
+            opacity: 1;
+            pointer-events: all;
         }
     }
 }
