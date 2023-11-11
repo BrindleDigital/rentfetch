@@ -146,27 +146,43 @@ function rentfetch_floorplan_buttons() {
 
 // Availability button
 function rentfetch_floorplan_default_availability_button() {
-    $availability_button = sprintf( '<a href="%s" class="rentfetch-button">Availability</a>', 'https://google.com/availability-button' ); 
-    
-    echo apply_filters( 'rentfetch_floorplan_default_availability_button', $availability_button );
+    $button_enabled = get_option( 'options_availability_button_enabled', false );
+
+    // bail if the button is not enabled
+    if ( $button_enabled != 1 )
+        return false;
+        
+    echo apply_filters( 'rentfetch_floorplan_default_availability_button_markup', null );
 }
 add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_availability_button' );
+
+function rentfetch_floorplan_default_availability_button_markup() {
+    
+    $button_label = get_option( 'options_availability_button_button_label', 'availability' );
+    
+    $link = get_post_meta( get_the_ID(), 'availability_url', true );
+        
+    // bail if no link is set
+    if ( $link == false )
+        return false;
+    
+    $button_markup = sprintf( '<a href="%s" target="_blank" class="rentfetch-button">%s</a>', $link, $button_label );
+    return $button_markup;
+}
+add_filter( 'rentfetch_floorplan_default_availability_button_markup', 'rentfetch_floorplan_default_availability_button_markup' );
 
 // Contact button
 function rentfetch_floorplan_default_contact_button() {
     
     $button_enabled = get_option( 'options_contact_button_enabled', false );
 
-    // bail if the contact button is not enabled
+    // bail if the button is not enabled
     if ( $button_enabled != 1 )
         return;
-    
-    $button = sprintf( '<a href="%s" class="rentfetch-button">Contact</a>', 'https://google.com/contact-button' ); 
-    
-    echo apply_filters( 'rentfetch_floorplan_default_contact_button_markup', $button );
+        
+    echo apply_filters( 'rentfetch_floorplan_default_contact_button_markup', null );
 }
 add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_contact_button' );
-
 
 function rentfetch_floorplan_default_contact_button_markup() {
     
@@ -188,7 +204,6 @@ function rentfetch_floorplan_default_contact_button_markup() {
     return $button_markup;
 }
 add_filter( 'rentfetch_floorplan_default_contact_button_markup', 'rentfetch_floorplan_default_contact_button_markup' );
-
 
 // Tour button
 function rentfetch_floorplan_default_tour_button() {

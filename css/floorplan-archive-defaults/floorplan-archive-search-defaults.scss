@@ -51,12 +51,9 @@
         -webkit-box-orient: vertical;
     }
 
-    p.floorplan-availability {
-    }
-
     .floorplan-attributes {
         line-height: 1;
-        margin-bottom: 15px;
+        // margin-bottom: 15px;
 
         p {
             display: inline-block;
@@ -65,11 +62,10 @@
     }
 
     .floorplan-availability {
-        // margin-top: 5px;
+        margin-top: 10px;
         padding-top: 15px;
         border-top: 1px solid rgba(0, 0, 0, 0.07);
         display: flex;
-        justify-content: space-between;
         align-items: center;
         justify-content: space-between;
     }

@@ -39,17 +39,21 @@ function rentfetch_properties_each_list() {
             if ( $square_feet )
                 printf( '<p class="square-feet">%s</p>', esc_html( $square_feet ) );
             
-        echo '</div>';
+        echo '</div>'; // .property-attributes
         
-        echo '<div class="property-availability">';
-                
-            if ( $rent )
-                printf( '<p class="rent">%s</p>', esc_html( $rent ) );
-
-            if ( $availability)
-                printf( '<p class="availability">%s</p>', esc_html( $availability ) );
-                
-        echo '</div>';    
+        if ( $rent || $availability ) {
+            
+            echo '<div class="property-availability">';
+                    
+                if ( $rent )
+                    printf( '<p class="rent">%s</p>', esc_html( $rent ) );
     
-    echo '</div>';
+                if ( $availability)
+                    printf( '<p class="availability">%s</p>', esc_html( $availability ) );
+                    
+            echo '</div>'; // .property-availability
+            
+        }
+    
+    echo '</div>'; // .property-details
 }

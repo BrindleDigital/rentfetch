@@ -250,7 +250,7 @@ function rent_fetch_process_form_data() {
  * Adds the general settings section to the Rent Fetch settings page.
  */
 add_action( 'rent_fetch_do_settings_general', 'rent_fetch_settings_general' );
-function rent_fetch_settings_general() {
+function rent_fetch_settings_general() {    
     ?>
     <!-- <div class="row">
         <div class="column">
@@ -491,6 +491,14 @@ function rent_fetch_settings_general() {
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_general' );
 function rent_fetch_save_settings_general() {
     
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    // this particular settings page has no tab or section, and it's the only one that doesn't
+    if ( $tab || $section )
+        return;
+    
     // Text field
     if ( isset( $_POST['options_rent_fetch_api_key']) ) {
         $options_rent_fetch_api_key = sanitize_text_field( $_POST['options_rent_fetch_api_key'] );
@@ -519,6 +527,8 @@ function rent_fetch_save_settings_general() {
     if ( isset ( $_POST['options_enabled_integrations'] ) ) {
         $enabled_integrations = array_map('sanitize_text_field', $_POST['options_enabled_integrations']);
         update_option('options_enabled_integrations', $enabled_integrations);
+    } else {
+        update_option('options_enabled_integrations', array());
     }
     
     // Text field
@@ -671,7 +681,7 @@ function rent_fetch_save_settings_general() {
  * Adds the Google settings section to the Rent Fetch settings page
  */
 add_action( 'rent_fetch_do_settings_google', 'rent_fetch_settings_google' );
-function rent_fetch_settings_google() {
+function rent_fetch_settings_google() {    
     ?>
     
     <div class="row">
@@ -745,6 +755,13 @@ function rent_fetch_settings_google() {
  */
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_google' );
 function rent_fetch_save_settings_google() {
+    
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    if ( $tab !== 'google' || !empty( $section ) )
+        return;
         
     // Text field
     if ( isset( $_POST['options_google_maps_api_key'] ) ) {
@@ -1039,6 +1056,13 @@ function rent_fetch_settings_properties_property_search() {
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_search' );
 function rent_fetch_save_settings_property_search() {
     
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    if ( $tab !== 'properties' || !empty( $section ) )
+        return;
+    
     // Number field
     if ( isset( $_POST['options_maximum_number_of_properties_to_show'] ) ) {
         $max_properties = intval( $_POST['options_maximum_number_of_properties_to_show'] );
@@ -1055,12 +1079,16 @@ function rent_fetch_save_settings_property_search() {
     if (isset($_POST['options_dialog_filters'])) {
         $options_dialog_filters = array_map('sanitize_text_field', $_POST['options_dialog_filters']);
         update_option('options_dialog_filters', $options_dialog_filters);
+    } else {
+        update_option('options_dialog_filters', array());
     }
     
     // Checkboxes field
     if (isset($_POST['options_featured_filters'])) {
         $options_featured_filters = array_map('sanitize_text_field', $_POST['options_featured_filters']);
         update_option('options_featured_filters', $options_featured_filters);
+    } else {
+        update_option('options_featured_filters', array());
     }
     
     // Number field
@@ -1223,6 +1251,13 @@ function rent_fetch_settings_properties_property_archives() {
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_archives' );
 function rent_fetch_save_settings_property_archives() {
     
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    if ( $tab !== 'properties' || $section !== 'property_archives' )
+        return;
+    
     // Number field
     if ( isset( $_POST['options_property_footer_grid_number_properties'] ) ) {
         $max_properties = intval( $_POST['options_property_footer_grid_number_properties'] );
@@ -1341,10 +1376,19 @@ function rent_fetch_settings_properties_property_single() {
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_single' );
 function rent_fetch_save_settings_property_single() {
     
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    if ( $tab !== 'properties' || $section !== 'property_single' )
+        return;
+    
     // Checkboxes field
     if ( isset ( $_POST['options_single_property_components'] ) ) {
         $enabled_integrations = array_map('sanitize_text_field', $_POST['options_single_property_components']);
         update_option('options_single_property_components', $enabled_integrations);
+    } else {
+        update_option('options_single_property_components', array());
     }
 }
 
@@ -1444,12 +1488,21 @@ function rent_fetch_settings_floorplans_floorplan_search() {
  */
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_floorplan_search' );
 function rent_fetch_save_settings_floorplan_search() {
+    
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    if ( $tab !== 'floorplans' || !empty( $section ) )
+        return;
         
-        // Checkboxes field
-        if ( isset ( $_POST['options_floorplan_filters'] ) ) {
-            $options_floorplan_filters = array_map('sanitize_text_field', $_POST['options_floorplan_filters']);
-            update_option('options_floorplan_filters', $options_floorplan_filters);
-        }
+    // Checkboxes field
+    if ( isset ( $_POST['options_floorplan_filters'] ) ) {
+        $options_floorplan_filters = array_map('sanitize_text_field', $_POST['options_floorplan_filters']);
+        update_option('options_floorplan_filters', $options_floorplan_filters);
+    } else {
+        update_option('options_floorplan_filters', array());
+    }
     
 }
 
@@ -1483,40 +1536,18 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
     <div class="row floorplan-archive-buttons availability">
         <div class="column">
             <label>Availability button</label>
-            <p class="description">A button which can pull in the availability link for each individual floorplan, with a single fallback link to use if no availability url is available.</p>
+            <p class="description">A button which can pull in the availability link for each individual floorplan. If an availability URL is unavailable, this button will not display.</p>
         </div>
         <div class="column">
             <div class="white-box always-visible">
                 <label for="options_availability_button_enabled">
-                    <input type="checkbox" name="options_availability_button_enabled" id="options_availability_button_enabled" <?php checked( get_option( 'options_availability_button_enabled' ), true ); ?>>
+                    <input type="checkbox" name="options_availability_button_enabled" id="options_availability_button_enabled" <?php checked( get_option( 'options_availability_button_enabled' ), '1' ); ?>>
                     Enable the availability button
                 </label>
             </div>
             <div class="white-box">
                 <label for="options_availability_button_button_label">Button label</label>
-                <input type="text" name="options_availability_button_button_label" id="options_availability_button_button_label" value="<?php echo esc_attr( get_option( 'options_availability_button_button_label' ) ); ?>">
-            </div>
-            <div class="white-box">
-                <label for="options_availability_button_button_behavior">Button behavior</label>
-                <p class="description">How should this button behave when this floorplan does not currently have units available?</p>
-                <ul class="radio">
-                    <li>
-                        <label>
-                            <input type="radio" name="options_availability_button_button_behavior" id="options_availability_button_button_behavior" value="hide" <?php checked( get_option( 'options_availability_button_button_behavior' ), 'hide' ); ?>>
-                            Hide this button entirely
-                        </label>
-                    </li>
-                    <li>
-                        <label>
-                            <input type="radio" name="options_availability_button_button_behavior" id="options_availability_button_button_behavior" value="fallback" <?php checked( get_option( 'options_availability_button_button_behavior' ), 'fallback' ); ?>>
-                            Fall back to a static link
-                        </label>
-                    </li>
-                </ul>
-            </div>
-            <div class="white-box">
-                <label for="options_availability_button_link">Fallback link</label>
-                <input type="text" name="options_availability_button_link" id="options_availability_button_link" value="<?php echo esc_attr( get_option( 'options_availability_button_link' ) ); ?>">
+                <input type="text" name="options_availability_button_button_label" id="options_availability_button_button_label" value="<?php echo esc_attr( get_option( 'options_availability_button_button_label', 'Lease now' ) ); ?>">
             </div>
         </div>
     </div>
@@ -1549,7 +1580,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
         <div class="column">
             <div class="white-box always-visible">
                 <label for="options_contact_button_enabled">
-                    <input type="checkbox" name="options_contact_button_enabled" id="options_contact_button_enabled" <?php checked( get_option( 'options_contact_button_enabled' ), true ); ?>>
+                    <input type="checkbox" name="options_contact_button_enabled" id="options_contact_button_enabled" <?php checked( get_option( 'options_contact_button_enabled', 'Contact' ), true ); ?>>
                     Enable the contact button
                 </label>
             </div>
@@ -1560,11 +1591,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
             </div>
             <div class="white-box">
                 <label for="options_contact_button_link">Link</label>
-                <input type="text" name="options_contact_button_link" id="options_contact_button_link" value="<?php echo esc_attr( get_option( 'options_contact_button_link' ) ); ?>">
-                <label style="margin-top: 10px;" for="options_contact_button_link_target">
-                    <input type="checkbox" name="options_contact_button_link_target" id="options_contact_button_link_target" <?php checked( get_option( 'options_contact_button_link_target' ), true ); ?>>
-                    Open in new tab?
-                </label>
+                <input type="url" name="options_contact_button_link" id="options_contact_button_link" value="<?php echo esc_url( get_option( 'options_contact_button_link' ) ); ?>">
             </div>
         </div>
     </div>
@@ -1592,7 +1619,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
     <div class="row floorplan-archive-buttons tour">
         <div class="column">
             <label>Tour button</label>
-            <p class="description">A button to show a lightbox with a video, or an external link (this link is always per-floorplan).</p>
+            <p class="description">A typically-external link, set on a per-property basis, to schedule a tour. You can set a global fallback link below.</p>
         </div>
         <div class="column">
             <div class="white-box always-visible">
@@ -1605,6 +1632,10 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
                 <label for="options_tour_button_button_label">Button label</label>
                 <input type="text" name="options_tour_button_button_label" id="options_tour_button_button_label" value="<?php echo esc_attr( get_option( 'options_tour_button_button_label' ) ); ?>">
             </div>
+            <div class="white-box">
+                <label for="options_tour_button_fallback_link">Fallback link</label>
+                <input type="url" name="options_tour_button_fallback_link" id="options_tour_button_fallback_link" value="<?php echo esc_attr( get_option( 'options_tour_button_fallback_link' ) ); ?>">
+            </div>
         </div>
     </div>
 
@@ -1616,6 +1647,13 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
  */
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_floorplan_buttons' );
 function rent_fetch_save_settings_floorplan_buttons() {
+    
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    if ( $tab !== 'floorplans' || $section !== 'floorplan_buttons' )
+        return;
     
     // Checkbox field - Enable the contact button
     $options_contact_button_enabled = isset( $_POST['options_contact_button_enabled'] ) ? '1' : '0';
@@ -1633,10 +1671,6 @@ function rent_fetch_save_settings_floorplan_buttons() {
         update_option( 'options_contact_button_link', $options_contact_button_link );
     }
 
-    // Checkbox field - Open in new tab?
-    $options_contact_button_link_target = isset( $_POST['options_contact_button_link_target'] ) ? '1' : '0';
-    update_option( 'options_contact_button_link_target', $options_contact_button_link_target );
-
     // Checkbox field - Enable the availability button
     $options_availability_button_enabled = isset( $_POST['options_availability_button_enabled'] ) ? '1' : '0';
     update_option( 'options_availability_button_enabled', $options_availability_button_enabled );
@@ -1647,18 +1681,6 @@ function rent_fetch_save_settings_floorplan_buttons() {
         update_option( 'options_availability_button_button_label', $options_availability_button_button_label );
     }
 
-    // Radio field - Button behavior
-    if ( isset( $_POST['options_availability_button_button_behavior'] ) ) {
-        $options_availability_button_button_behavior = sanitize_text_field( $_POST['options_availability_button_button_behavior'] );
-        update_option( 'options_availability_button_button_behavior', $options_availability_button_button_behavior );
-    }
-
-    // Text field - Fallback link
-    if ( isset( $_POST['options_availability_button_link'] ) ) {
-        $options_availability_button_link = sanitize_text_field( $_POST['options_availability_button_link'] );
-        update_option( 'options_availability_button_link', $options_availability_button_link );
-    }
-
     // Checkbox field - Enable the tour button
     $options_tour_button_enabled = isset( $_POST['options_tour_button_enabled'] ) ? '1' : '0';
     update_option( 'options_tour_button_enabled', $options_tour_button_enabled );
@@ -1667,6 +1689,12 @@ function rent_fetch_save_settings_floorplan_buttons() {
     if ( isset( $_POST['options_tour_button_button_label'] ) ) {
         $options_tour_button_button_label = sanitize_text_field( $_POST['options_tour_button_button_label'] );
         update_option( 'options_tour_button_button_label', $options_tour_button_button_label );
+    }
+    
+    // Text field - Tour button fallback link
+    if ( isset( $_POST['options_tour_button_fallback_link'] ) ) {
+        $options_tour_button_fallback_link = sanitize_text_field( $_POST['options_tour_button_fallback_link'] );
+        update_option( 'options_tour_button_fallback_link', $options_tour_button_fallback_link );
     }
     
 }
@@ -1735,6 +1763,13 @@ function rent_fetch_settings_labels() {
  */
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_labels' );
 function rent_fetch_save_settings_labels() {
+    
+    // Get the tab and section
+    $tab = rentfetch_settings_get_tab();
+    $section = rentfetch_settings_get_section();
+    
+    if ( $tab !== 'properties' || !empty( $section ) )
+        return;
     
     // Text field
     if ( isset( $_POST['options_bedroom_numbers_0_bedroom']) ) {

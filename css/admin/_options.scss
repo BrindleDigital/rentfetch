@@ -16,10 +16,6 @@ ul.rent-fetch-options-submenu {
             padding: 8px;
             line-height: 1;
 
-            &:first-child {
-                // padding-left: 0;
-            }
-
             &.tab-active {
                 font-weight: bold;
                 color: inherit;
@@ -104,6 +100,7 @@ form.rent-fetch-options {
     }
 
     input[type='text'],
+    input[type='url'],
     select {
         width: 400px;
     }

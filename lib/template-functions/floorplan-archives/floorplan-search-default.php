@@ -8,7 +8,8 @@ function rentfetch_floorplans_search_floorplans_each_default() {
     $square_feet = rentfetch_get_floorplan_square_feet();
     $available_units = rentfetch_get_floorplan_available_units();
     $links = rentfetch_get_floorplan_links();
-    $pricing = rentfetch_get_floorplan_pricing();        
+    $pricing = rentfetch_get_floorplan_pricing();     
+    $units_count = rentfetch_get_floorplan_units_count();   
     
     do_action( 'rentfetch_do_floorplan_images' );
     
@@ -32,12 +33,18 @@ function rentfetch_floorplans_search_floorplans_each_default() {
             echo '</div>';
         
         echo '</div>'; // .floorplan-content
-        echo '<div class="floorplan-availability">';
         
-            printf( '<p class="pricing">%s</p>', $pricing );
-            printf( '<p class="availability">%s</p>', $available_units );
-                
-        echo '</div>'; // .floorplan-availability
+        // show this if there are units or pricing (if there's nothing at all to say, don't show this section)
+        if ( $units_count > 0 || $pricing ) {
+            
+            echo '<div class="floorplan-availability">';
+            
+                printf( '<p class="pricing">%s</p>', $pricing );
+                printf( '<p class="availability">%s</p>', $available_units );
+                    
+            echo '</div>'; // .floorplan-availability
+            
+        }
         
         if ( $links )
             echo $links;
