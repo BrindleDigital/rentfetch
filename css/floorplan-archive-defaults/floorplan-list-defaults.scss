@@ -1,0 +1,112 @@
+.floorplan-group {
+    box-shadow: var(--rentfetch-box-shadow);
+    margin-bottom: 50px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    > h3 {
+        border-bottom: 1px solid var(--rentfetch-black-10-percent);
+        padding: 25px;
+    }
+}
+
+.floorplans-in-archive {
+    .entry {
+        margin-bottom: 0;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        grid-column-gap: 60px;
+        border-bottom: 1px solid var(--rentfetch-black-10-percent);
+        margin: 0;
+        padding: 25px;
+        background-color: white;
+
+        @include mobile {
+            grid-template-columns: 1fr;
+            margin-bottom: 25px;
+        }
+
+        &:last-child {
+            border: none;
+        }
+
+        &:before {
+            display: none;
+        }
+    }
+
+    .floorplan-attributes {
+        p {
+            display: inline-block;
+            margin: 0 20px 10px 0;
+        }
+    }
+
+    p {
+        font-size: var(--rentfetch-font-size-medium);
+    }
+
+    p.availability {
+        font-style: italic;
+    }
+
+    p.pricing {
+        font-weight: bold;
+    }
+
+    summary.rentfetch-button {
+        display: inline-block;
+
+        span.dropdown {
+            margin-left: 5px;
+            display: inline-block;
+            line-height: 1em;
+            transition: all 0.3s ease;
+            height: 1em;
+            width: 1em;
+        }
+
+        span.dropdown:after {
+            content: '\f347';
+            font-family: 'dashicons';
+
+            transition: 0.3s all ease;
+        }
+    }
+
+    details[open] {
+        summary.rentfetch-button {
+            span.dropdown {
+                transform: rotate(-180deg);
+            }
+        }
+    }
+}
+
+table.unit-details {
+    margin-top: 25px;
+
+    th {
+        font-size: var(--rentfetch-font-size-medium);
+        font-weight: bold;
+
+        @include mobile {
+            font-size: var(--rentfetch-font-size-small);
+        }
+    }
+
+    td {
+        font-size: var(--rentfetch-font-size-medium);
+
+        @include mobile {
+            font-size: var(--rentfetch-font-size-small);
+        }
+    }
+
+    tbody {
+        border-bottom: none;
+    }
+}

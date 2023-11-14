@@ -7,9 +7,29 @@
     padding: 15px 25px;
     font-size: var(--rentfetch-font-size-medium);
     background-color: var(--rentfetch-accent);
+    color: var(--rentfetch-white);
     font-weight: bold;
+    border: none;
+    transition: 0.3s all ease;
+    cursor: pointer;
 
-    &:hover {
+    &.rentfetch-button-small {
+        font-size: var(--rentfetch-font-size-small);
+        padding: 10px 20px;
+    }
+
+    &.rentfetch-button-no-highlight {
+        background-color: var(--rentfetch-base);
+        color: var(--rentfetch-dark);
+
+        &:hover {
+            background-color: var(--rentfetch-dark);
+            color: var(--rentfetch-white);
+        }
+    }
+
+    &:hover,
+    &:focus {
         color: var(--rentfetch-white);
         background-color: var(--rentfetch-accent-active);
     }

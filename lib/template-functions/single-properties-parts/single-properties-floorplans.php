@@ -5,12 +5,12 @@
  *
  */
 function rentfetch_single_properties_parts_floorplans() {
-    
-    $maybe_do_floorplans = apply_filters( 'rentfetch_maybe_do_property_part_floorplans', true );    
-    if ( $maybe_do_floorplans !== true )
-        return;
-    
-    echo '<div id="floorplans" class="single-properties-section">';
+	
+	$maybe_do_floorplans = apply_filters( 'rentfetch_maybe_do_property_part_floorplans', true );    
+	if ( $maybe_do_floorplans !== true )
+		return;
+	
+	echo '<div id="floorplans" class="single-properties-section">';
 		echo '<div class="wrap">';
 		
 		echo '<h2>Floorplans</h2>';
@@ -53,26 +53,30 @@ function rentfetch_single_properties_parts_floorplans() {
 					
 				if ( $floorplans_query->have_posts() ) {
 					// echo '<details open>';
-						// echo '<summary><h3>';   
+						// echo '<summary><h3>';
+						
+						echo '<div class="floorplan-group">';
 												
-						echo '<h3>';                 
-							echo apply_filters( 'rentfetch_get_bedroom_number_label', $bed );
-						echo '</h3>';
-						// echo '</h3></summary>';
-						echo '<div class="floorplans-in-archive">';
-						
-							while ( $floorplans_query->have_posts() ) : $floorplans_query->the_post(); 
+							echo '<h3>';                 
+								echo apply_filters( 'rentfetch_get_bedroom_number_label', $bed );
+							echo '</h3>';
+							// echo '</h3></summary>';
+							echo '<div class="floorplans-in-archive">';
 							
-								$class = implode( ' ', get_post_class() );
+								while ( $floorplans_query->have_posts() ) : $floorplans_query->the_post(); 
+								
+									$class = implode( ' ', get_post_class() );
+							
+									printf( '<div class="%s">', $class );
+									
+										do_action( 'rentfetch_single_properties_do_floorplans_each' );
+									
+									echo '</div>'; // post_class
+									
+								endwhile;
+							echo '</div>'; // .floorplans
 						
-								printf( '<div class="%s">', $class );
-								
-									do_action( 'rentfetch_single_properties_do_floorplans_each' );
-								
-								echo '</div>'; // post_class
-								
-							endwhile;
-						echo '</div>'; // .floorplans
+						echo '</div>';
 					// echo '</details>';
 					
 				}
@@ -83,7 +87,7 @@ function rentfetch_single_properties_parts_floorplans() {
 		
 		echo '</div>'; // .wrap
 	echo '</div>'; // #floorplans
-    
+	
 }
 
 /**
@@ -91,11 +95,11 @@ function rentfetch_single_properties_parts_floorplans() {
  */
 add_filter( 'rentfetch_maybe_do_property_part_floorplans', 'rentfetch_maybe_property_part_floorplans' );
 function rentfetch_maybe_property_part_floorplans() {
-    
-    // bail if this section is not enabled
-    $property_components = get_option( 'options_single_property_components' );
-    if ( !is_array( $property_components ) || !in_array( 'floorplans_display', $property_components ) )
-        return false;
+	
+	// bail if this section is not enabled
+	$property_components = get_option( 'options_single_property_components' );
+	if ( !is_array( $property_components ) || !in_array( 'floorplans_display', $property_components ) )
+		return false;
 		
 	// bail if this property doesn't have any floorplans
 	$floorplans = get_posts( array(
@@ -116,8 +120,8 @@ function rentfetch_maybe_property_part_floorplans() {
 	// bail if this property doesn't have an ID
 	if ( !get_post_meta( get_the_ID(), 'property_id', true ) )
 		return false;
-        
-    return true;
+		
+	return true;
 }
 
 function rentfetch_single_properties_parts_subnav_floorplans() {

@@ -99,7 +99,7 @@ function rentfetch_get_floorplan_pricing() {
         $rent_range = sprintf( '$%s', number_format( $maximum_rent ) );
     }    
     
-    return $rent_range;
+    return apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_range );
 }
 
 function rentfetch_floorplan_pricing() {
@@ -138,8 +138,18 @@ function rentfetch_get_floorplan_links() {
     
 }
 
-function rentfetch_floorplan_buttons() {
+function rentfetch_floorplan_links() {
     echo rentfetch_get_floorplan_links();
+}
+
+function rentfetch_get_floorplan_buttons() {
+    ob_start();
+    do_action( 'rentfetch_do_floorplan_buttons' );
+    return ob_get_clean();
+}
+
+function rentfetch_floorplan_buttons() {
+    echo rentfetch_get_floorplan_buttons();
 }
 
 //* Add actions for each button to easily add or remove buttons
@@ -180,7 +190,7 @@ function rentfetch_floorplan_default_contact_button() {
     if ( $button_enabled != 1 )
         return;
         
-    echo apply_filters( 'rentfetch_floorplan_default_contact_button_markup', null );
+    echo apply_filters( 'rentfetch_filter_floorplan_default_contact_button_markup', null );
 }
 add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_contact_button' );
 
@@ -203,7 +213,7 @@ function rentfetch_floorplan_default_contact_button_markup() {
     $button_markup = sprintf( '<a href="%s" %s class="rentfetch-button">%s</a>', $link, $target, $button_label );
     return $button_markup;
 }
-add_filter( 'rentfetch_floorplan_default_contact_button_markup', 'rentfetch_floorplan_default_contact_button_markup' );
+add_filter( 'rentfetch_filter_floorplan_default_contact_button_markup', 'rentfetch_floorplan_default_contact_button_markup' );
 
 // Tour button
 function rentfetch_floorplan_default_tour_button() {

@@ -1,6 +1,6 @@
 <?php
 
-function rentfetch_floorplans_search_floorplans_each_default() {
+function rentfetch_floorplans_each_grid_default() {
     
     $title = rentfetch_get_floorplan_title();
     $beds = rentfetch_get_floorplan_bedrooms();
@@ -49,7 +49,9 @@ function rentfetch_floorplans_search_floorplans_each_default() {
         if ( $links )
             echo $links;
         
+        edit_post_link( 'Edit floorplan' );
+        
     echo '</div>'; // .floorplan-details
     
 }
-add_action( 'rentfetch_floorplans_search_do_floorplans_each', 'rentfetch_floorplans_search_floorplans_each_default' );
+add_action( 'rentfetch_floorplans_search_do_floorplans_each', 'rentfetch_floorplans_each_grid_default' );
