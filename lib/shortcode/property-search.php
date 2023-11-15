@@ -59,7 +59,12 @@ function rentfetch_propertysearchfilters() {
 			do_action( 'rentfetch_do_search_properties_featured_filters' );
 			echo '<button id="open-search-filters">Filters</button>';
 		echo '</div>';
-		echo '<div id="filter-toggles"></div>';
+		echo '<div class="filter-details">';
+			echo '<div id="filter-toggles"></div>';
+			echo '<div id="search-order">';
+				echo 'filter order here';
+			echo '</div>';
+		echo '</div>';
    echo '</div>'; // .filters-wrap
    
 	return ob_get_clean();

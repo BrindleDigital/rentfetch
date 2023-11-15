@@ -59,6 +59,12 @@
                 position: static;
                 padding: 15px;
             }
+
+            .filter-details {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
         }
 
         #response {

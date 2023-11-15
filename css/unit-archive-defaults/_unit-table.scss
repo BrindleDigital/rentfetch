@@ -1,0 +1,28 @@
+table.unit-details {
+    margin-top: 25px;
+
+    th {
+        font-size: var(--rentfetch-font-size-medium);
+        font-weight: bold;
+
+        @include mobile {
+            font-size: var(--rentfetch-font-size-small);
+        }
+    }
+
+    td {
+        font-size: var(--rentfetch-font-size-medium);
+
+        @include mobile {
+            font-size: var(--rentfetch-font-size-small);
+        }
+    }
+
+    td.unit-buttons {
+        text-align: right;
+    }
+
+    tbody {
+        border-bottom: none;
+    }
+}

@@ -222,3 +222,80 @@ function rentfetch_floorplan_default_tour_button() {
     echo apply_filters( 'rentfetch_floorplan_default_tour_button', $contact_button );
 }
 add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_tour_button' );
+
+
+//* Unit table (this always must be in the context of a floorplan, which is why it's in this file)
+function rentfetch_floorplan_unit_table() {
+        
+    $floorplan_id = get_post_meta( get_the_ID(), 'floorplan_id', true );
+    $property_id = get_post_meta( get_the_ID(), 'property_id', true );
+    
+    $args = array(
+        'post_type' => 'units',
+        'posts_per_page' => -1,
+        'orderby' => 'meta_value_num',
+        'order' => 'ASC',
+        'meta_query' => array(
+            array(
+                'key'   => 'property_id',
+                'value' => $property_id,
+            ),
+            array(
+                'key'   => 'floorplan_id',
+                'value' => $floorplan_id,
+            ),
+        ),
+    );
+    
+    // The Query
+    $units_query = new WP_Query( $args );
+
+    // The Loop
+    if ( $units_query->have_posts() ) {
+            
+            echo '<table class="unit-details">';
+                 echo '<tr>';
+                    echo '<th class="unit-title">Apt #</th>';
+                    // echo '<th class="unit-floor">Floor</th>';
+                    echo '<th class="unit-starting-at">Starting At</th>';
+                    echo '<th class="unit-deposit">Deposit</th>';
+                    echo '<th class="unit-availability">Date Available</th>';
+                    echo '<th class="unit-tour-video"></th>';
+                    echo '<th class="unit-buttons"></th>';
+                echo '<tr>';
+
+                while ( $units_query->have_posts() ) {
+                    
+                    $units_query->the_post();
+                    
+                    $title = rentfetch_get_floorplan_title();
+                    $pricing = rentfetch_get_unit_pricing();
+                    $deposit = rentfetch_get_unit_deposit();
+                    $availability_date = rentfetch_get_unit_availability_date();
+                    $floor = null;
+                    $tour_video = null;
+                    
+                    echo '<tr>';
+                        printf( '<td class="unit-title">%s</td>', $title );
+                        // printf( '<td class="unit-floor">%s</td>', $floor );
+                        printf( '<td class="unit-starting-at">%s</td>', $pricing );
+                        printf( '<td class="unit-deposit">%s</td>', $deposit );
+                        printf( '<td class="unit-availability">%s</td>', $availability_date );
+                        printf( '<td class="unit-tour-video">%s</td>', $tour_video );
+                        echo '<td class="unit-buttons">';
+                            do_action( 'rentfetch_do_unit_button' );
+                        echo '</td>';
+                    echo '<tr>';
+
+                }
+         
+         echo '</table>';
+     
+     
+     
+    } else {
+        // no posts found
+    }
+    
+}
+add_action( 'rentfetch_floorplan_do_unit_table', 'rentfetch_floorplan_unit_table' );

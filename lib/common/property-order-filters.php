@@ -10,7 +10,7 @@ function rentfetch_property_orderby( $orderby ) {
     
     // default to menu_order if no selection made
     if ( !$orderby )
-        return 'menu_order';
+        return 'ID';
         
     return $orderby;
     
@@ -19,7 +19,7 @@ function rentfetch_property_orderby( $orderby ) {
 /**
  * Get the order of the properties
  */
-add_filter( 'rentfetch_get_property_order', 'rentfetch_property_order', 10, 1 );
+// add_filter( 'rentfetch_get_property_order', 'rentfetch_property_order', 10, 1 );
 function rentfetch_property_order( $order ) {
     
     $order = get_option( 'options_property_order' );

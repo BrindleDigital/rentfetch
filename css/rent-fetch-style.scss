@@ -1,17 +1,5 @@
+// import the global stuff first
 @import 'global';
 
-@import 'buttons/*';
-
-// @import 'floorplan-in-archive/*';
-
-@import 'floorplan-archive-defaults/*';
-
-@import 'floorplangrid/*';
-
-@import 'properties-search/*';
-
-@import 'properties-search-each/*';
-
-@import 'properties-simple-grid/*';
-
-@import 'single-properties/*';
+// import everything from subfolders of this folder automatically
+@import '*/**/*';
