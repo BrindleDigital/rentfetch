@@ -13,6 +13,8 @@ function rentfetch_floorplans_each_list_default() {
 	
 	echo '<div class="images-column">';
 		do_action( 'rentfetch_do_floorplan_images' );
+		
+		edit_post_link();
 	echo '</div>';
 	echo '<div class="content-column">';
 		
@@ -45,8 +47,7 @@ function rentfetch_floorplans_each_list_default() {
 				do_action( 'rentfetch_floorplan_do_unit_table' );
 					
 			echo '</details>';
-		}
-						
+		}						
 			
 	echo '</div>'; // .content-column
 	

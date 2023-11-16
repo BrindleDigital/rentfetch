@@ -273,7 +273,7 @@ function rentfetch_default_property_rent_label( $rent ) {
         return '$' . esc_html( $rent );
         
     // This could return 'Call for Pricing' or 'Pricing unavailable' if pricing isn't available
-    return null;
+    return 'Call for Pricing';
 }
 
 //* PROPERTY AVAILABILITY

@@ -290,6 +290,9 @@ function rentfetch_floorplan_unit_table() {
                 }
          
          echo '</table>';
+         
+        // Reset the query
+        wp_reset_postdata();
      
      
      

@@ -45,10 +45,10 @@ function rentfetch_properties_each_list() {
             
             echo '<div class="property-availability">';
                     
-                if ( $rent )
+                // if ( $rent )
                     printf( '<p class="rent">%s</p>', esc_html( $rent ) );
     
-                if ( $availability)
+                // if ( $availability)
                     printf( '<p class="availability">%s</p>', esc_html( $availability ) );
                     
             echo '</div>'; // .property-availability

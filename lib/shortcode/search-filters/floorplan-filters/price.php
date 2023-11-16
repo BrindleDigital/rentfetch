@@ -1,33 +1,39 @@
 <?php
 
 function rentfetch_search_filters_price() {
+	
+	$valueSmall = null;
+	$valueBig = null;
 			
 	// figure out our min/max values
-	$valueSmall = get_option( 'options_price_filter_minimum', null );
-	$valueBig = get_option( 'options_price_filter_maximum', null );	
-	$step = 50;
-	
+	// $valueSmall = get_option( 'options_price_filter_minimum', null );
+	// $valueBig = get_option( 'options_price_filter_maximum', null );	
+	// $step = 50;
+		
 	// if pricesmall isset, then use that value for $valueSmall
-	if ( isset( $_POST['pricesmall'] ) && $_POST['pricesmall'] > 0 )
-		$valueSmall = intval( sanitize_text_field( $_POST['pricesmall'] ) );
+	if ( isset( $_GET['pricesmall'] ) && $_GET['pricesmall'] > 0 )
+		$valueSmall = intval( sanitize_text_field( $_GET['pricesmall'] ) );
 		
 	// if pricebig isset, then use that value for $valueBig
-	if ( isset( $_POST['pricebig'] ) && $_POST['pricebig'] > 0 )
-		$valueBig = intval( sanitize_text_field( $_POST['pricebig'] ) );
+	if ( isset( $_GET['pricebig'] ) && $_GET['pricebig'] > 0 )
+		$valueBig = intval( sanitize_text_field( $_GET['pricebig'] ) );
 	
 	// enqueue the noui slider
-	wp_enqueue_style( 'rentfetch-nouislider-style' );
-	wp_enqueue_script( 'rentfetch-nouislider-script' );
-	wp_localize_script( 'rentfetch-nouislider-init-script', 'settings', 
-		array(
-			'valueSmall' => $valueSmall,
-			'valueBig' => $valueBig,
-			'step' => $step,
-		)
-	);
+	// wp_enqueue_style( 'rentfetch-nouislider-style' );
+	// wp_enqueue_script( 'rentfetch-nouislider-script' );
+	// wp_localize_script( 'rentfetch-nouislider-init-script', 'settings', 
+	// 	array(
+	// 		'valueSmall' => $valueSmall,
+	// 		'valueBig' => $valueBig,
+	// 		'step' => $step,
+	// 	)
+	// );
 		
-	if ( intval( $valueSmall ) == 0 && intval( $valueBig ) == 0 ) {
+	if ( intval( $valueSmall ) == 0 ) {
 		$valueSmall = null;
+	}
+	
+	if ( intval( $valueBig ) == 0 ) {
 		$valueBig = null;
 	}
 		
@@ -41,9 +47,9 @@ function rentfetch_search_filters_price() {
 			echo '<div>';
 				echo '<div class="price-slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';
 				echo '<div class="inputs-prices">';
-					printf( '<input type="number" name="pricesmall" data-default-value="%s" id="pricesmall" value="%s" />', $valueSmall, $valueSmall );
+					printf( '<div class="input-price-wrap"><span class="input-group-addon">$</span><input type="number" min="1" name="pricesmall" data-default-value="%s" id="pricesmall" value="%s" /></div>', $valueSmall, $valueSmall );
 					echo '<div class="price-dash"></div>';
-					printf( '<input type="number" name="pricebig" data-default-value="%s" id="pricebig" value="%s" />', $valueBig, $valueBig );
+					printf( '<div class="input-price-wrap"><span class="input-group-addon">$</span><input type="number" min="1" name="pricebig" data-default-value="%s" id="pricebig" value="%s" /></div>', $valueBig, $valueBig );
 				echo '</div>'; // .inputs-prices
 			echo '</div>';
 		echo '</div>'; // .slider
@@ -51,45 +57,95 @@ function rentfetch_search_filters_price() {
 
 }
 
-// add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_price', 10, 1 );
+add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_price', 10, 1 );
 function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 	
-	// bail if we don't have a price search
+	// bail if we don't have a price search (neither are set)
 	if ( !isset( $_POST['pricesmall'] ) && !isset( $_POST['pricebig'] ) )
 		return $floorplans_args;
 	
-	$defaultpricesmall = get_option( 'options_price_filter_minimum', null );
-	$defaultpricebig = get_option( 'options_price_filter_maximum', null );
+	$defaultpricesmall = get_option( 'options_price_filter_minimum' );
+	$defaultpricebig = get_option( 'options_price_filter_maximum' );
+	
+	$pricesmall = null;
+	$pricebig = null;
 	
 	// get the small value
-	if ( isset( $_POST['pricesmall'] ) && $_POST['pricebig'] > 0 ){
+	if ( isset( $_POST['pricesmall'] ) )
 		$pricesmall = intval( sanitize_text_field( $_POST['pricesmall'] ) );
-	} else {
-		$pricesmall = $defaultpricesmall;
-	}
 	
 	// get the big value
-	if ( isset( $_POST['pricebig'] ) && $_POST['pricebig'] > 0 ) {
+	if ( isset( $_POST['pricebig'] ) )
 		$pricebig = intval( sanitize_text_field( $_POST['pricebig'] ) );
-	} else {
-		$pricebig = $defaultpricebig;
-	}
 	
-	// $pricebig = null;
-	// $pricesmall = null;
+	// let's block any values that are less than 1
+	if ( $pricesmall < 1 && $pricesmall != null )
+		$pricesmall = null;
+	
+	// let's block any values that are less than 1
+	if ( $pricebig < 1 && $pricebig != null )
+		$pricebig = null;
 		
 	// // if neither are set, then bail
 	// if ( $pricesmall == $defaultpricesmall && $pricebig == $defaultpricebig )
 	// 	return $floorplans_args;
-								
-	$floorplans_args['meta_query'][] = array(
-		array(
-			'key' => 'minimum_rent',
-			'value' => array( $pricesmall, $pricebig ),
-			'type' => 'numeric',
-			'compare' => 'BETWEEN',
-		)
-	);
+	
+	if ( $pricesmall == null && $pricebig == null ) {
+		// if no values are set, just make sure that the minimum rent is greater than 0
+		$floorplans_args['meta_query'][] = array(
+			array(
+				'key' => 'minimum_rent',
+				'value' => '1',
+				'type' => 'numeric',
+				'compare' => '>=',
+			),
+		);
+	}
+	
+	elseif ( intval( $pricesmall ) > 0 && intval( $pricebig ) > 0 ) {
+		// if both values are set, then do a between query
+		$floorplans_args['meta_query'][] = array(
+			array(
+				'key' => 'minimum_rent',
+				'value' => array( $pricesmall, $pricebig ),
+				'type' => 'numeric',
+				'compare' => 'BETWEEN',
+			),
+		);
+	} 
+	
+	elseif ( intval( $pricesmall ) > 0 && empty( $pricebig)) {
+		// if only the small value is set, then do a greater than or equal to query
+		$floorplans_args['meta_query'][] = array(
+			'relation' => 'AND',
+			array(
+				'key' => 'minimum_rent',
+				'value' => $pricesmall,
+				'type' => 'numeric',
+				'compare' => '>=',
+			),
+			array(
+				'key' => 'minimum_rent',
+				'value' => '1',
+				'type' => 'numeric',
+				'compare' => '>=',
+			),
+		);
+	} 
+	
+	elseif ( intval( $pricebig ) > 0 && empty( $pricesmall ) ) {
+		
+		// if only the big value is set, then do a between query between 1 and the big value
+		$floorplans_args['meta_query'][] = array(
+			array(
+				'key' => 'minimum_rent',
+				'value' => array( 1, $pricebig ),
+				'type' => 'numeric',
+				'compare' => 'BETWEEN',
+			),
+		);
+	}
+	
 		
 	return $floorplans_args;
 	

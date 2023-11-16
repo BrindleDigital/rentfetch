@@ -68,7 +68,9 @@ jQuery(function ($) {
             var fieldset = $(this);
             var legend = fieldset.find('legend').text();
             var activeFields = fieldset
-                .find('input:checked, input[type="number"], input[type="text"]')
+                .find(
+                    'input:checked, input[type="number"], input[type="text"], input[type="date"]'
+                )
                 .filter(function () {
                     return $(this).val().trim() !== ''; // Check if input is not empty
                 })
@@ -281,7 +283,7 @@ jQuery(function ($) {
                         $(this).off('change input'); // Temporarily remove the event handler
                         $(this).val(newValue);
                         $(this).trigger('change');
-                        $(this).on('change input', changeInputHandler); // Reattach the event handler
+                        // $(this).on('change input', changeInputHandler); // Reattach the event handler
                     }
                 }
             });

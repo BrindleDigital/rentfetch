@@ -61,6 +61,22 @@
         border-radius: 3px;
     }
 
+    input[type='date'] {
+        &::-webkit-calendar-picker-indicator {
+            opacity: 0.3;
+            margin-right: 15px;
+            transition: 0.3s all ease;
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+            &::-webkit-calendar-picker-indicator {
+                opacity: 1;
+            }
+        }
+    }
+
     fieldset {
         border: none;
         padding: 0;
@@ -141,6 +157,24 @@
             .price-dash {
                 height: 1px;
                 background-color: black;
+            }
+
+            .input-price-wrap {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                span.input-group-addon {
+                    padding: 5px 10px;
+                    display: inline-block;
+                    opacity: 0.2;
+                    z-index: 10;
+                    position: absolute;
+                }
+
+                input {
+                    padding-left: 25px;
+                }
             }
         }
     }

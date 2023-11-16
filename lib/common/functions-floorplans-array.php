@@ -3,7 +3,7 @@
 function rentfetch_get_floorplans_array() {
     
     global $floorplans;
-    
+        
 	$floorplans_args = array(
         'post_type' => 'floorplans',
         'posts_per_page' => -1,
@@ -14,9 +14,9 @@ function rentfetch_get_floorplans_array() {
     
     $floorplans_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplans_args );
     
-    // console_log( 'Floorplans search args:' );
-    // console_log( $floorplans_args );
-    
+    console_log( 'Floorplans search args:');
+    console_log( $floorplans_args );
+        
 	$floorplans_query = new WP_Query( $floorplans_args );
         
     // reset the floorplans array
@@ -197,7 +197,7 @@ function rentfetch_get_floorplans_array() {
 /**
  * Get the floorplans using the default function and make them available globally
  */
-add_action( 'init', 'rentfetch_set_floorplans' );
+add_action( 'wp_loaded', 'rentfetch_set_floorplans' );
 function rentfetch_set_floorplans() {
     
     global $rentfetch_floorplans;

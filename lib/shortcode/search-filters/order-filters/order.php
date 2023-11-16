@@ -45,7 +45,7 @@ function rentfetch_search_filters_order() {
 		
 }
 
-add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_order', 10, 1);
+// add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_order', 10, 1);
 function rentfetch_search_floorplans_args_order( $floorplans_args ) {
 		
 	if ( isset( $_POST['search-order'] ) && is_array( $_POST['search-order'] ) ) {

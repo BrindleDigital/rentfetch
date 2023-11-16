@@ -104,6 +104,24 @@ form.property-search-filters {
                 height: 1px;
                 background-color: black;
             }
+
+            .input-price-wrap {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                span.input-group-addon {
+                    padding: 5px 10px;
+                    display: inline-block;
+                    opacity: 0.2;
+                    z-index: 10;
+                    position: absolute;
+                }
+
+                input {
+                    padding-left: 25px;
+                }
+            }
         }
     }
 
