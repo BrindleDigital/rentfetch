@@ -204,6 +204,12 @@
         }
     }
 
+    fieldset.move-in {
+        .input-wrap {
+            min-width: 225px;
+        }
+    }
+
     button#open-search-filters {
         margin-left: auto;
         position: relative;

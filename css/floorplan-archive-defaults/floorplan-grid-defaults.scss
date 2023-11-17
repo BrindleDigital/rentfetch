@@ -7,7 +7,8 @@
         grid-template-columns: 1fr;
     }
 
-    .entry {
+    .entry,
+    .hentry {
         margin: 0;
         box-shadow: 3px 3px 10px 0 var(--rentfetch-black-5-percent);
         transition: 0.5s box-shadow ease;
@@ -138,7 +139,8 @@
         }
     }
 
-    .entry:hover {
+    .entry:hover,
+    .hentry:hover {
         .overlay-link {
             box-shadow: 0 0 0 5px var(--rentfetch-dark);
         }

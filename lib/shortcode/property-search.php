@@ -169,8 +169,8 @@ function rentfetch_filter_properties(){
 	
 	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
 	
-	console_log( 'Property search args:' );
-	console_log( $property_args );
+	// console_log( 'Property search args:' );
+	// console_log( $property_args );
 		
 	$propertyquery = new WP_Query( $property_args );
 		
