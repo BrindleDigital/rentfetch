@@ -29,6 +29,7 @@ define ( 'RENTFETCH_VERSION', '0.1.1' );
 // Plugin directory
 define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RENTFETCH_PATH', plugin_dir_url( __FILE__ ) );
+define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
 
 // Define path and URL to the ACF plugin.
 define( 'RENTFETCH_ACF_PATH', plugin_dir_path( __FILE__ ) . 'vendor/acf/' );

@@ -142,8 +142,10 @@ function rentfetch_filter_properties(){
 	if ( empty( $property_ids ) )
 		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything – empty array will let us find everything, so let's pass nonsense to make the search find nothing
 		
-	// set null for $properties_posts_per_page
-	$properties_maximum_per_page = get_option( 'options_maximum_number_of_properties_to_show', 100 );
+	// set -1 for $properties_posts_per_page if it's not set
+	$properties_maximum_per_page = get_option( 'options_maximum_number_of_properties_to_show' );
+	if ( $properties_maximum_per_page == 0 )
+		$properties_maximum_per_page = -1;
 	
 	$orderby = apply_filters( 'rentfetch_get_property_orderby', $orderby = 'menu_order' );
 	$order = apply_filters( 'rentfetch_get_property_order', $order = 'ASC' );
@@ -167,8 +169,8 @@ function rentfetch_filter_properties(){
 	
 	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
 	
-	// console_log( 'Property search args:' );
-	// console_log( $property_args );
+	console_log( 'Property search args:' );
+	console_log( $property_args );
 		
 	$propertyquery = new WP_Query( $property_args );
 		

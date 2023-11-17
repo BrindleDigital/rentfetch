@@ -8,7 +8,8 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     padding: 0;
 
-    .entry {
+    .entry,
+    .hentry {
         background-color: var(--rentfetch-white);
         margin: 0;
         box-shadow: 3px 3px 10px 0 var(--rentfetch-black-5-percent);
@@ -21,19 +22,24 @@
             box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
         }
 
-        &.active {
+        &.active,
+        &:focus {
             box-shadow: 0 0 0 5px var(--rentfetch-dark);
         }
     }
 
     .property-single-image-wrap {
         width: 100%;
-        height: 150px;
+        height: 0;
+        padding-top: 55%;
+        position: relative;
 
         img.property-single-image {
             object-fit: cover;
             width: 100%;
             height: 100%;
+            position: absolute;
+            inset: 0;
         }
     }
 
@@ -143,6 +149,14 @@
 
     a.post-edit-link {
         margin: 0;
+        font-size: var(--rentfetch-font-size-small);
+        color: var(--rentfetch-white);
+        transition: 0.3s all ease;
+
+        &:hover {
+            background-color: var(--rentfetch-accent);
+            color: var(--rentfetch-white);
+        }
     }
 }
 
