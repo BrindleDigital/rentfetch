@@ -49,9 +49,10 @@ header.property-search-filters-header {
 form.property-search-filters {
     padding: 40px;
     height: calc(
-        100vh - 80px - 80px - 2.4em
+        100dvh - 80px - 80px - 2.4em
     ); // screen height less the margin we want top and bottom, and the header and footer height (both the padding and the font size)
     overflow-y: scroll;
+    margin-bottom: 0;
 
     fieldset {
         border: none;
@@ -88,6 +89,15 @@ form.property-search-filters {
     fieldset.amenities {
         .checkboxes {
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+            label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 1; /* number of lines to show */
+                line-clamp: 1;
+                -webkit-box-orient: vertical;
+            }
         }
     }
 
@@ -130,8 +140,7 @@ form.property-search-filters {
     input[type='date'] {
         display: block;
         line-height: 50px;
-        padding-left: 15px;
-        padding-right: 15px;
+        padding: 0 15px;
         width: 100%;
     }
 }

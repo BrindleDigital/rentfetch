@@ -1,5 +1,25 @@
 <?php
 
+/**
+ * Set defaults on activation
+ */
+function rentfetch_settings_set_defaults_properties_propertiessingle() {
+	
+	$default_options = array(
+		'property_title',
+		'property_images',
+		'basic_info_display',
+		'property_description',
+		'floorplans_display',
+		'amenities_display',
+		'lease_details_display',
+		'property_map',
+		'nearby_properties',
+	);
+    add_option( 'options_single_property_components[]', $default_options );
+    
+}
+register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties_propertiessingle' );
 
 /**
  * Adds the properties single settings subsection to the Rent Fetch settings page

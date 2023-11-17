@@ -1,6 +1,39 @@
 <?php
 
 /**
+ * Set defaults on activation
+ */
+function rentfetch_settings_set_defaults_properties() {
+    
+    // Add option if it doesn't exist
+    add_option( 'options_maximum_number_of_properties_to_show', -1 );
+    add_option( 'options_property_availability_display', 'all' );
+	
+	$defaultarray = [
+		'text_based_search',
+		'beds_search',
+		'price_search',
+	];
+    add_option( 'options_featured_filters[]', $defaultarray );
+	
+	$defaultarray = [
+		'text_based_search',
+		'beds_search',
+		'baths_search',
+		'type_search',
+		'date_search',
+		'price_search',
+		'amenities_search',
+		
+	];
+    add_option( 'options_dialog_filters[]', $defaultarray );
+	
+	add_option( 'options_number_of_amenities_to_show', 20 );
+    
+}
+register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties' );
+
+/**
  * Adds the property search settings subsection to the Rent Fetch settings page
  */
 function rent_fetch_settings_properties_property_search() {

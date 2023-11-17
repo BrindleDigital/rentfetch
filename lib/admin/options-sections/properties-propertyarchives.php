@@ -6,7 +6,7 @@
 function rentfetch_settings_set_defaults_properties_propertyarchives() {
         
     // Add options if they don't exist with default values
-    add_option( 'options_property_footer_grid_number_properties', '2' );    
+    add_option( 'options_property_footer_grid_number_properties', '9' );    
     add_option( 'options_property_pricing_display', 'range' );    
     add_option( 'options_property_orderby', 'menu_order' );
     add_option( 'options_property_order', 'ASC' );
