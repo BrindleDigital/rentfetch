@@ -28,6 +28,13 @@
         }
     }
 
+    .overlay {
+        z-index: 5;
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+    }
+
     .property-single-image-wrap {
         width: 100%;
         height: 0;

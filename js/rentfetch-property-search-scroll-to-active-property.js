@@ -12,7 +12,7 @@ function scrollToActiveProperty(i) {
             {
                 scrollTop: scrollTop,
             },
-            1000
+            250
         );
     }
 }

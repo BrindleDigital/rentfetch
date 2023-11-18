@@ -13,6 +13,11 @@ function rentfetch_properties_each_list() {
     $availability = rentfetch_get_property_availability();
     $specials = rentfetch_get_property_specials();
     
+    $permalink = get_the_permalink();
+    
+    if ( $permalink )
+        printf( '<a class="overlay" href="%s"></a>', esc_url( $permalink ) );
+    
     do_action( 'rentfetch_do_property_images' );
     
     if ( $specials )

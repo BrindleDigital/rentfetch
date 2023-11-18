@@ -15,7 +15,7 @@ function rentfetch_properties_each_map() {
     if ( $title )
         printf( '<h3>%s</h3>', esc_attr( $title ) );
         
-    if ( $permalink )
-        printf( '<a class="permalink" target="%s" href="%s">%s</a>', esc_html( $permalink_target ), esc_url( $permalink ), esc_attr( $permalink_label ) );
+    // if ( $permalink )
+    //     printf( '<a class="permalink" target="%s" href="%s">%s</a>', esc_html( $permalink_target ), esc_url( $permalink ), esc_attr( $permalink_label ) );
             
 }

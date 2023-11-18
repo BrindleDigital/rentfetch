@@ -95,6 +95,7 @@ jQuery(document).ready(function ($) {
                     '</div>',
             });
 
+            // We want the click event to do most of the same stuff as the hover, so that we can click on a .type-properties
             google.maps.event.addListener(marker, 'click', function () {
                 for (let i = 0; i < markers.length; i++) {
                     markers[i]['infowindow'].close(map, this);
@@ -106,6 +107,18 @@ jQuery(document).ready(function ($) {
                 $('.type-properties[data-id=' + i + ']').addClass('active');
 
                 scrollToActiveProperty(i);
+            });
+
+            // We want the click event to do most of the same stuff as the hover, so that we can click on a .type-properties
+            google.maps.event.addListener(marker, 'mouseover', function () {
+                for (let i = 0; i < markers.length; i++) {
+                    markers[i]['infowindow'].close(map, this);
+                }
+
+                this['infowindow'].open(map, this);
+
+                $('.type-properties').removeClass('active');
+                $('.type-properties[data-id=' + i + ']').addClass('active');
             });
 
             markers.push(marker);
@@ -125,25 +138,22 @@ jQuery(document).ready(function ($) {
         addMarkers();
     }
 
-    function openMarkerOnGridClick() {
+    function openMarkerOnGridHover() {
         let markerIndex = parseInt($(this).attr('data-id')); // Parse as integer
 
         if (markerIndex >= 0 && markerIndex < markers.length) {
-            google.maps.event.trigger(markers[markerIndex], 'click');
+            google.maps.event.trigger(markers[markerIndex], 'mouseover');
         }
     }
 
-    function activeOnClick() {
-        $('.type-properties').removeClass('active');
-        $(this).addClass('active');
-    }
+    $(document).on('mouseenter', '.type-properties', openMarkerOnGridHover);
 
-    $(document).on(
-        'click touchstart',
-        '.type-properties',
-        openMarkerOnGridClick
-    );
-    $(document).on('click touchstart', '.type-properties', activeOnClick);
+    // function activeOnClick() {
+    //     $('.type-properties').removeClass('active');
+    //     $(this).addClass('active');
+    // }
+
+    // $(document).on('click touchstart', '.type-properties', activeOnClick);
 
     $(document).ajaxComplete(function () {
         resetMap();
