@@ -1,9 +1,17 @@
 table.unit-details {
     margin-top: 25px;
+    border: none;
+
+    tbody {
+        border: none;
+    }
 
     th {
         font-size: var(--rentfetch-font-size-medium);
         font-weight: bold;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid var(--rentfetch-black-10-percent);
 
         @include mobile {
             font-size: var(--rentfetch-font-size-small);
@@ -12,6 +20,9 @@ table.unit-details {
 
     td {
         font-size: var(--rentfetch-font-size-medium);
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid var(--rentfetch-black-10-percent);
 
         @include mobile {
             font-size: var(--rentfetch-font-size-small);
@@ -20,6 +31,14 @@ table.unit-details {
 
     td.unit-buttons {
         text-align: right;
+    }
+
+    tr:last-child {
+        border-bottom: none;
+
+        td {
+            border-bottom: none;
+        }
     }
 
     tbody {

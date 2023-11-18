@@ -8,6 +8,7 @@ function rentfetch_settings_set_defaults_floorplans_buttons() {
 	add_option( 'rentfetch_options_availability_button_enabled', true  );	
 	add_option( 'rentfetch_options_availability_button_button_label', 'Lease now' );
 	add_option( 'rentfetch_options_contact_button_button_label', 'Contact' );
+	add_option( 'rentfetch_options_tour_button_button_label', 'Schedule a tour' );
     
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_floorplans_buttons' );

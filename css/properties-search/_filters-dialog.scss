@@ -53,6 +53,7 @@ form.property-search-filters {
     ); // screen height less the margin we want top and bottom, and the header and footer height (both the padding and the font size)
     overflow-y: scroll;
     margin-bottom: 0;
+    background-color: var(--rentfetch-base);
 
     fieldset {
         border: none;
@@ -142,6 +143,13 @@ form.property-search-filters {
         line-height: 50px;
         padding: 0 15px;
         width: 100%;
+        background-color: var(--rentfetch-white);
+        border: 1px solid var(--rentfetch-black-10-percent);
+
+        &:active,
+        &:focus {
+            border: 1px solid var(--rentfetch-black-20-percent);
+        }
     }
 }
 

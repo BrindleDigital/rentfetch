@@ -1,4 +1,4 @@
-.rentfetch-button {
+body a.rentfetch-button {
     text-decoration: none;
     line-height: 1;
     position: static;
@@ -6,7 +6,6 @@
     font-size: var(--rentfetch-font-size-medium);
     background-color: var(--rentfetch-accent);
     color: var(--rentfetch-white);
-    font-weight: bold;
     border: none;
     transition: 0.3s all ease;
     cursor: pointer;

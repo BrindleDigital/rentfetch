@@ -107,6 +107,10 @@ jQuery(document).ready(function ($) {
                 $('.type-properties[data-id=' + i + ']').addClass('active');
 
                 scrollToActiveProperty(i);
+
+                setTimeout(function () {
+                    $('.type-properties').removeClass('active');
+                }, 1000);
             });
 
             // We want the click event to do most of the same stuff as the hover, so that we can click on a .type-properties
@@ -118,7 +122,7 @@ jQuery(document).ready(function ($) {
                 this['infowindow'].open(map, this);
 
                 $('.type-properties').removeClass('active');
-                $('.type-properties[data-id=' + i + ']').addClass('active');
+                // $('.type-properties[data-id=' + i + ']').addClass('active');
             });
 
             markers.push(marker);

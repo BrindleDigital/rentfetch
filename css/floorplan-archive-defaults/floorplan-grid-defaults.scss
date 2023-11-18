@@ -10,7 +10,7 @@
     .entry,
     .hentry {
         margin: 0;
-        box-shadow: 3px 3px 10px 0 var(--rentfetch-black-5-percent);
+        box-shadow: var(--rentfetch-box-shadow);
         transition: 0.5s box-shadow ease;
         position: relative;
     }
@@ -116,7 +116,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: var(--rentfetch-black-90-percent);
+        background-color: var(--rentfetch-white-85-percent);
         opacity: 0;
         pointer-events: none;
         transition: 0.3s all ease;
@@ -141,9 +141,7 @@
 
     .entry:hover,
     .hentry:hover {
-        .overlay-link {
-            box-shadow: 0 0 0 5px var(--rentfetch-dark);
-        }
+        box-shadow: var(--rentfetch-box-shadow-hover);
 
         .buttons-outer {
             opacity: 1;

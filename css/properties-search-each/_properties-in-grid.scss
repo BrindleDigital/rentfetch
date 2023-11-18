@@ -24,6 +24,7 @@
 
         &.active,
         &:focus {
+            transition: 0.75s all ease;
             box-shadow: var(--rentfetch-box-shadow-active);
         }
     }

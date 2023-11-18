@@ -2,12 +2,20 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
+
+    @include tablet {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mobile {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
 
 .properties.type-properties {
     margin: 0;
     position: relative;
-    box-shadow: 3px 3px 10px 0 var(--rentfetch-black-5-percent);
+    box-shadow: var(--rentfetch-box-shadow);
     background-color: var(--rentfetch-white);
 
     .overlay {
@@ -19,7 +27,7 @@
     }
 
     &:hover .overlay {
-        box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
+        box-shadow: var(--rentfetch-box-shadow-hover);
     }
 
     .property-single-image-wrap {

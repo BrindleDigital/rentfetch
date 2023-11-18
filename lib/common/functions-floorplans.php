@@ -200,10 +200,6 @@ function rentfetch_floorplan_default_contact_button_markup() {
     $external = get_option( 'rentfetch_options_contact_button_link_target', false );
     $link = get_option( 'rentfetch_options_contact_button_link', false );
     
-    // bail if no link is set
-    if ( $link == false )
-        return;
-    
     if ( $external == true ) {
         $target = 'target="_blank"';
     } else {
@@ -217,9 +213,17 @@ add_filter( 'rentfetch_filter_floorplan_default_contact_button_markup', 'rentfet
 
 // Tour button
 function rentfetch_floorplan_default_tour_button() {
-    $contact_button = sprintf( '<a href="%s" class="rentfetch-button">Tour</a>', 'https://google.com/tour-button' ); 
     
-    echo apply_filters( 'rentfetch_floorplan_default_tour_button', $contact_button );
+    $button_enabled = get_option( 'rentfetch_options_tour_button_enabled' );
+    $fallback_link = get_option( 'rentfetch_options_tour_button_link' );
+    
+    // bail if the button is not enabled
+    if ( $button_enabled != 1 )
+        return;
+    
+    $button = sprintf( '<a href="%s" class="rentfetch-button">Tour</a>', $fallback_link ); 
+    
+    echo apply_filters( 'rentfetch_floorplan_default_tour_button', $button );
 }
 add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_tour_button' );
 
@@ -262,7 +266,7 @@ function rentfetch_floorplan_unit_table() {
                     echo '<th class="unit-availability">Date Available</th>';
                     echo '<th class="unit-tour-video"></th>';
                     echo '<th class="unit-buttons"></th>';
-                echo '<tr>';
+                echo '</tr>';
 
                 while ( $units_query->have_posts() ) {
                     
@@ -285,7 +289,7 @@ function rentfetch_floorplan_unit_table() {
                         echo '<td class="unit-buttons">';
                             do_action( 'rentfetch_do_unit_button' );
                         echo '</td>';
-                    echo '<tr>';
+                    echo '</tr>';
 
                 }
          
