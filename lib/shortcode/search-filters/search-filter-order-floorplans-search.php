@@ -4,7 +4,7 @@
 function rentfetch_search_floorplans_filters() {
     
     // get the options for which filters are enabled
-    $options_floorplan_filters = get_option( 'options_floorplan_filters' );
+    $options_floorplan_filters = get_option( 'rentfetch_options_floorplan_filters' );
                     
     if ( !empty( $options_floorplan_filters ) && in_array( 'beds_search', $options_floorplan_filters ) )
         add_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_beds' );

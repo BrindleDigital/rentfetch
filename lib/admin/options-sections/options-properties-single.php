@@ -6,17 +6,13 @@
 function rentfetch_settings_set_defaults_properties_propertiessingle() {
 	
 	$default_options = array(
-		'property_title',
 		'property_images',
-		'basic_info_display',
-		'property_description',
+		'section_navigation',
+		'property_details',
 		'floorplans_display',
 		'amenities_display',
-		'lease_details_display',
-		'property_map',
-		'nearby_properties',
 	);
-    add_option( 'options_single_property_components[]', $default_options );
+    add_option( 'rentfetch_options_single_property_components', $default_options );
     
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties_propertiessingle' );
@@ -29,7 +25,7 @@ function rent_fetch_settings_properties_property_single() {
 	
 	<div class="row">
 		<div class="column">
-			<label for="options_single_property_components">Single property components</label>
+			<label for="rentfetch_options_single_property_components">Single property components</label>
 			<p class="description">These settings control which default components of the page display. Please note that theme developers can also customize this display in several other ways. Each individual section can be replaced by removing the corresponding action, or you can simply add a single-properties.php file to the root of your theme.</p>
 			<p class="description">Please note that each individual section will only display if there's enough information to meaningfully display it. A property with no images set will not output a blank "images" section, for example.</p>
 		</div>
@@ -37,67 +33,54 @@ function rent_fetch_settings_properties_property_single() {
 			<?php
 			
 			// Get saved options
-			$options_single_property_components = get_option('options_single_property_components');
-			
-			// Define default values
-			$default_options = array(
-				'enable_property_title',
-				'enable_property_images',
-				'enable_basic_info_display',
-				'enable_property_description',
-				'enable_floorplans_display',
-				'enable_amenities_display',
-				'enable_lease_details_display',
-				'enable_property_map',
-				'enable_nearby_properties',
-			);
-			
+			$options_single_property_components = get_option( 'rentfetch_options_single_property_components');
+						
 			// Make it an array just in case it isn't (for example, if it's a new install)
 			if (!is_array($options_single_property_components)) {
-				$options_single_property_components = $default_options;
+				$options_single_property_components = array();
 			}
 						
 			?>
 			<ul class="checkboxes">
 				<li>
 					<label>
-						<input type="checkbox" name="options_single_property_components[]" value="property_images" <?php checked( in_array( 'property_images', $options_single_property_components ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="property_images" <?php checked( in_array( 'property_images', $options_single_property_components ) ); ?>>
 						Enable property images
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="options_single_property_components[]" value="section_navigation" <?php checked( in_array( 'section_navigation', $options_single_property_components ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="section_navigation" <?php checked( in_array( 'section_navigation', $options_single_property_components ) ); ?>>
 						Enable section navigation
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="options_single_property_components[]" value="property_details" <?php checked( in_array( 'property_details', $options_single_property_components ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="property_details" <?php checked( in_array( 'property_details', $options_single_property_components ) ); ?>>
 						Enable property details 
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="options_single_property_components[]" value="floorplans_display" <?php checked( in_array( 'floorplans_display', $options_single_property_components ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="floorplans_display" <?php checked( in_array( 'floorplans_display', $options_single_property_components ) ); ?>>
 						Enable floorplan display
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="options_single_property_components[]" value="amenities_display" <?php checked( in_array( 'amenities_display', $options_single_property_components ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="amenities_display" <?php checked( in_array( 'amenities_display', $options_single_property_components ) ); ?>>
 						Enable amenities display
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="options_single_property_components[]" value="property_map" <?php checked( in_array( 'property_map', $options_single_property_components ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="property_map" <?php checked( in_array( 'property_map', $options_single_property_components ) ); ?>>
 						Enable property map
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="options_single_property_components[]" value="nearby_properties" <?php checked( in_array( 'nearby_properties', $options_single_property_components ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="nearby_properties" <?php checked( in_array( 'nearby_properties', $options_single_property_components ) ); ?>>
 						Enable nearby properties
 					</label>
 				</li>
@@ -121,11 +104,11 @@ function rent_fetch_save_settings_property_single() {
 		return;
 	
 	// Checkboxes field
-	if ( isset ( $_POST['options_single_property_components'] ) ) {
-		$enabled_integrations = array_map('sanitize_text_field', $_POST['options_single_property_components']);
-		update_option('options_single_property_components', $enabled_integrations);
+	if ( isset ( $_POST[ 'rentfetch_options_single_property_components'] ) ) {
+		$enabled_integrations = array_map('sanitize_text_field', $_POST[ 'rentfetch_options_single_property_components']);
+		update_option( 'rentfetch_options_single_property_components', $enabled_integrations);
 	} else {
-		update_option('options_single_property_components', array());
+		update_option( 'rentfetch_options_single_property_components', array());
 	}
 }
 add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_single' );

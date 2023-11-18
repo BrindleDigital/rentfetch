@@ -9,13 +9,13 @@ function rentfetch_get_properties_yardi() {
         return;
     }
     
-    $properties = get_option( 'options_yardi_integration_creds_yardi_property_code' );
+    $properties = get_option( 'rentfetch_options_yardi_integration_creds_yardi_property_code' );
     $properties = preg_replace('/\s+/', '', $properties);      
     $properties = explode( ',', $properties );
-    $yardi_api_key = get_option( 'options_yardi_integration_creds_yardi_api_key' );
-    $sync_term = get_option( 'options_sync_term' );
-    $data_sync = get_option( 'options_data_sync' );
-    $site_type = get_option( 'options_apartment_site_type' );    
+    $yardi_api_key = get_option( 'rentfetch_options_yardi_integration_creds_yardi_api_key' );
+    $sync_term = get_option( 'rentfetch_options_sync_term' );
+    $data_sync = get_option( 'rentfetch_options_data_sync' );
+    $site_type = get_option( 'rentfetch_options_apartment_site_type' );    
         
     foreach( $properties as $property ) {
             

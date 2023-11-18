@@ -156,7 +156,7 @@ function rentfetch_floorplan_buttons() {
 
 // Availability button
 function rentfetch_floorplan_default_availability_button() {
-    $button_enabled = get_option( 'options_availability_button_enabled', false );
+    $button_enabled = get_option( 'rentfetch_options_availability_button_enabled', false );
 
     // bail if the button is not enabled
     if ( $button_enabled != 1 )
@@ -168,7 +168,7 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_avail
 
 function rentfetch_floorplan_default_availability_button_markup() {
     
-    $button_label = get_option( 'options_availability_button_button_label', 'availability' );
+    $button_label = get_option( 'rentfetch_options_availability_button_button_label', 'availability' );
     
     $link = get_post_meta( get_the_ID(), 'availability_url', true );
         
@@ -184,7 +184,7 @@ add_filter( 'rentfetch_floorplan_default_availability_button_markup', 'rentfetch
 // Contact button
 function rentfetch_floorplan_default_contact_button() {
     
-    $button_enabled = get_option( 'options_contact_button_enabled', false );
+    $button_enabled = get_option( 'rentfetch_options_contact_button_enabled', false );
 
     // bail if the button is not enabled
     if ( $button_enabled != 1 )
@@ -196,9 +196,9 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_conta
 
 function rentfetch_floorplan_default_contact_button_markup() {
     
-    $button_label = get_option( 'options_contact_button_button_label', 'Contact' );
-    $external = get_option( 'options_contact_button_link_target', false );
-    $link = get_option( 'options_contact_button_link', false );
+    $button_label = get_option( 'rentfetch_options_contact_button_button_label', 'Contact' );
+    $external = get_option( 'rentfetch_options_contact_button_link_target', false );
+    $link = get_option( 'rentfetch_options_contact_button_link', false );
     
     // bail if no link is set
     if ( $link == false )

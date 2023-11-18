@@ -7,8 +7,8 @@
 add_action( 'rentfetch_do_remove_old_data', 'rentfetch_appfolio_remove_unused_properties' );
 function rentfetch_appfolio_remove_unused_properties() {
     
-    $sync_term = get_option( 'options_sync_term' );
-    $data_sync = get_option( 'options_data_sync' );
+    $sync_term = get_option( 'rentfetch_options_sync_term' );
+    $data_sync = get_option( 'rentfetch_options_data_sync' );
         
     // bail if we're paused
     if ( $sync_term == 'paused' || $data_sync == 'delete' || $data_sync == 'nosync' )
@@ -19,8 +19,8 @@ function rentfetch_appfolio_remove_unused_properties() {
     $property_ids_attached_to_properties = array_map('strtolower', $property_ids_attached_to_properties); // lowercase everything, as case mismatches can give us bad results
         
     // get the property ids from the setting
-    $integration_creds = get_option( 'options_appfolio_integration_creds' );
-    $properties_in_setting = get_option( 'options_appfolio_integration_creds_appfolio_property_ids' );
+    $integration_creds = get_option( 'rentfetch_options_appfolio_integration_creds' );
+    $properties_in_setting = get_option( 'rentfetch_options_appfolio_integration_creds_appfolio_property_ids' );
     
     //* bail if we're not using the setting
     if ( !$properties_in_setting )
@@ -78,8 +78,8 @@ function rentfetch_appfolio_remove_unused_properties() {
 add_action( 'rentfetch_do_remove_old_data', 'rentfetch_appfolio_remove_unused_floorplans' );
 function rentfetch_appfolio_remove_unused_floorplans() {
     
-    $sync_term = get_option( 'options_sync_term' );
-    $data_sync = get_option( 'options_data_sync' );
+    $sync_term = get_option( 'rentfetch_options_sync_term' );
+    $data_sync = get_option( 'rentfetch_options_data_sync' );
         
     // bail if we're paused
     if ( $sync_term == 'paused' || $data_sync == 'delete' || $data_sync == 'nosync' )
@@ -90,8 +90,8 @@ function rentfetch_appfolio_remove_unused_floorplans() {
     $property_ids_attached_to_floorplans = array_map('strtolower', $property_ids_attached_to_floorplans); // lowercase everything, as case mismatches can give us bad results
         
     // get the property ids from the setting
-    $integration_creds = get_option( 'options_appfolio_integration_creds' );
-    $properties_in_setting = get_option( 'options_appfolio_integration_creds_appfolio_property_ids' );
+    $integration_creds = get_option( 'rentfetch_options_appfolio_integration_creds' );
+    $properties_in_setting = get_option( 'rentfetch_options_appfolio_integration_creds_appfolio_property_ids' );
     
     //* bail if we're not using the setting
     if ( !$properties_in_setting )

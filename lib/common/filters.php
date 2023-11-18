@@ -14,7 +14,7 @@ function rentfetch_bedroom_number_label( $beds ) {
     $beds = intval( $beds ); 
         
     // get the desired labels from the settings
-    $bedroom_numbers = get_option( 'options_bedroom_numbers' );
+    $bedroom_numbers = get_option( 'rentfetch_options_bedroom_numbers' );
     
     if ( isset( $bedroom_numbers[ $beds . '_bedroom' ] ) )
         $newlabel = $bedroom_numbers[ $beds . '_bedroom' ];
@@ -98,7 +98,7 @@ function rentfetch_google_maps_api_key( $key ) {
         return RENTFETCH_GOOGLE_MAPS_API_KEY;
     
     // otherwise, just get the field the normal way
-    $key = get_option( 'options_google_maps_api_key' );
+    $key = get_option( 'rentfetch_options_google_maps_api_key' );
     if ( $key )
         return $key;
         

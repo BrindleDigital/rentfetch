@@ -56,13 +56,13 @@ function rentfetch_floorplangrid_block_render( $block, $content = '', $is_previe
     
     //* Get settings and put them in an object so that we can use them elsewhere
     $settings = array(
-        'columns' => get_option( 'options_columns' ),
-        'floorplan_filter' => get_option( 'options_floorplan_filter' ),
-        'floorplan_limit' => get_option( 'options_floorplan_limit' ),
-        'limit_number_of_bedrooms' => get_option( 'options_limit_number_of_bedrooms' ),
-        'limit_floorplan_type' => get_option( 'options_limit_floorplan_type' ),
-        'maximum_number_of_floorplans_to_show' => get_option( 'options_maximum_number_of_floorplans_to_show' ),
-        'display_floorplans_from_specific_properties' => get_option( 'options_display_floorplans_from_specific_properties' ),
+        'columns' => get_option( 'rentfetch_options_columns' ),
+        'floorplan_filter' => get_option( 'rentfetch_options_floorplan_filter' ),
+        'floorplan_limit' => get_option( 'rentfetch_options_floorplan_limit' ),
+        'limit_number_of_bedrooms' => get_option( 'rentfetch_options_limit_number_of_bedrooms' ),
+        'limit_floorplan_type' => get_option( 'rentfetch_options_limit_floorplan_type' ),
+        'maximum_number_of_floorplans_to_show' => get_option( 'rentfetch_options_maximum_number_of_floorplans_to_show' ),
+        'display_floorplans_from_specific_properties' => get_option( 'rentfetch_options_display_floorplans_from_specific_properties' ),
     );
 
     // Create id attribute allowing for custom "anchor" value.
@@ -120,9 +120,9 @@ function rentfetch_floorplangrid_render_each_floorplan( $post_id ) {
     
     //* Grab the data
     $title = get_the_title( $post_id );
-    $available_units = get_option( 'options_available_units', $post_id );
-    $number_of_baths = get_option( 'options_baths', $post_id );
-    $number_of_beds = get_option( 'options_beds', $post_id );
+    $available_units = get_option( 'rentfetch_options_available_units', $post_id );
+    $number_of_baths = get_option( 'rentfetch_options_baths', $post_id );
+    $number_of_beds = get_option( 'rentfetch_options_beds', $post_id );
         
     //* Set up the classes
     $floorplanclass = get_post_class( $post_id );
@@ -202,7 +202,7 @@ function rentfetch_floorplangrid_render_each_floorplan( $post_id ) {
 add_action( 'rentfetch_do_each_floorplan_show_property_label', 'rentfetch_each_floorplan_show_property_label' );
 function rentfetch_each_floorplan_show_property_label() {
     
-    $display_floorplans_from_specific_properties = get_option( 'options_display_floorplans_from_specific_properties' );
+    $display_floorplans_from_specific_properties = get_option( 'rentfetch_options_display_floorplans_from_specific_properties' );
     
     // bail if we're not limiting by property
     if ( empty( $display_floorplans_from_specific_properties ) )
@@ -255,11 +255,11 @@ function rentfetch_floorplansgrid_customize_beds_text( $beds ) {
 function rentfetch_floorplangrid_output_gform() {    
     
     // get the options
-    $contact_button = get_option( 'options_contact_button' ); 
+    $contact_button = get_option( 'rentfetch_options_contact_button' ); 
             
-    $enabled = get_option( 'options_contact_button_enabled' );
+    $enabled = get_option( 'rentfetch_options_contact_button_enabled' );
         
-    $gravity_form_id = get_option( 'options_contact_button_gravity_form_id' );
+    $gravity_form_id = get_option( 'rentfetch_options_contact_button_gravity_form_id' );
         
     //* bail if this button isn't enabled
     if ( $enabled !== true )

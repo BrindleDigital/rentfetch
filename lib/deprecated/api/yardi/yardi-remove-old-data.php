@@ -3,8 +3,8 @@
 add_action( 'rentfetch_do_remove_old_data', 'rentfetch_do_remove_floorplans_from_orphan_yardi_properties' );
 function rentfetch_do_remove_floorplans_from_orphan_yardi_properties() {
             
-    $sync_term = get_option( 'options_sync_term' );
-    $data_sync = get_option( 'options_data_sync' );
+    $sync_term = get_option( 'rentfetch_options_sync_term' );
+    $data_sync = get_option( 'rentfetch_options_data_sync' );
     
     // if syncing is paused or data dync is off, then then bail, as we won't be restarting anything
     if ( $sync_term == 'paused' || $data_sync == 'delete' || $data_sync == 'nosync' )
@@ -28,9 +28,9 @@ function rentfetch_remove_orphan_yardi_properties() {
     // var_dump( $property_ids_attached_to_properties );
 
     // get the property ids from the setting
-    $yardi_integration_creds = get_option( 'options_yardi_integration_creds' );
-    $yardi_api_key = get_option( 'options_yardi_integration_creds_yardi_api_key' );
-    $properties_in_setting = get_option( 'options_yardi_integration_creds_yardi_property_code' );
+    $yardi_integration_creds = get_option( 'rentfetch_options_yardi_integration_creds' );
+    $yardi_api_key = get_option( 'rentfetch_options_yardi_integration_creds_yardi_api_key' );
+    $properties_in_setting = get_option( 'rentfetch_options_yardi_integration_creds_yardi_property_code' );
     $properties_in_setting = preg_replace('/\s+/', '', $properties_in_setting);
     $properties_in_setting = explode( ',', $properties_in_setting );
     $properties_in_setting = array_unique( $properties_in_setting );
@@ -98,9 +98,9 @@ function rentfetch_remove_floorplans_from_orphan_yardi_properties_specific() {
     $property_ids_attached_to_floorplans = array_unique( $property_ids_attached_to_floorplans );
     
     // get the property ids from the setting
-    $yardi_integration_creds = get_option( 'options_yardi_integration_creds' );
-    $yardi_api_key = get_option( 'options_yardi_integration_creds_yardi_api_key' );
-    $properties_in_setting = get_option( 'options_yardi_integration_creds_yardi_property_code' );
+    $yardi_integration_creds = get_option( 'rentfetch_options_yardi_integration_creds' );
+    $yardi_api_key = get_option( 'rentfetch_options_yardi_integration_creds_yardi_api_key' );
+    $properties_in_setting = get_option( 'rentfetch_options_yardi_integration_creds_yardi_property_code' );
     $properties_in_setting = preg_replace('/\s+/', '', $properties_in_setting);
     $properties_in_setting = explode( ',', $properties_in_setting );
     

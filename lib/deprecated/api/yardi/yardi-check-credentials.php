@@ -7,8 +7,8 @@
  */
 function rentfetch_check_creds_yardi() {
     
-    $yardi_api_key = get_option( 'options_yardi_integration_creds_yardi_api_key' );
-    $yardi_property_code = get_option( 'options_yardi_integration_creds_yardi_property_code' );
+    $yardi_api_key = get_option( 'rentfetch_options_yardi_integration_creds_yardi_api_key' );
+    $yardi_property_code = get_option( 'rentfetch_options_yardi_integration_creds_yardi_property_code' );
     
     // return false if there's no api key set
     if ( !$yardi_api_key )      

@@ -49,7 +49,7 @@ function rentfetch_propertysearchfilters() {
 	
 	// // Localize the search filters general script, then enqueue that
 	// $search_options = array(
-	// 	'maximum_bedrooms_to_search' => intval( get_option( 'options_maximum_bedrooms_to_search' ) ),
+	// 	'maximum_bedrooms_to_search' => intval( get_option( 'rentfetch_options_maximum_bedrooms_to_search' ) ),
 	// );
 	// wp_localize_script( 'rentfetch-search-filters-general', 'searchoptions', $search_options );
 	// wp_enqueue_script( 'rentfetch-search-filters-general' );
@@ -103,10 +103,10 @@ function rentfetch_propertysearchmap() {
 				
 	// Localize the google maps script, then enqueue that
 	$maps_options = array(
-		'json_style' => json_decode( get_option( 'options_google_maps_styles' ) ),
-		'marker_url' => get_option( 'options_google_map_marker' ),
-		'google_maps_default_latitude' => get_option( 'options_google_maps_default_latitude' ),
-		'google_maps_default_longitude' => get_option( 'options_google_maps_default_longitude' ),
+		'json_style' => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
+		'marker_url' => get_option( 'rentfetch_options_google_map_marker' ),
+		'google_maps_default_latitude' => get_option( 'rentfetch_options_google_maps_default_latitude' ),
+		'google_maps_default_longitude' => get_option( 'rentfetch_options_google_maps_default_longitude' ),
 	);
 	
 	wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
@@ -143,7 +143,7 @@ function rentfetch_filter_properties(){
 		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything – empty array will let us find everything, so let's pass nonsense to make the search find nothing
 		
 	// set -1 for $properties_posts_per_page if it's not set
-	$properties_maximum_per_page = get_option( 'options_maximum_number_of_properties_to_show' );
+	$properties_maximum_per_page = get_option( 'rentfetch_options_maximum_number_of_properties_to_show' );
 	if ( $properties_maximum_per_page == 0 )
 		$properties_maximum_per_page = -1;
 	

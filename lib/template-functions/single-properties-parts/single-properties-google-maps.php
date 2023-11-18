@@ -35,8 +35,8 @@ function rentfetch_single_properties_parts_map() {
 
 			// Localize the google maps script, then enqueue that
 			$maps_options = array(
-				'json_style' => json_decode( get_option( 'options_google_maps_styles' ) ),
-				'marker_url' => get_option( 'options_google_map_marker' ),
+				'json_style' => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
+				'marker_url' => get_option( 'rentfetch_options_google_map_marker' ),
 				'latitude' => $latitude,
 				'longitude' => $longitude,
 				'content' => $content,
@@ -58,7 +58,7 @@ add_filter( 'rentfetch_maybe_do_property_part_maps', 'rentfetch_maybe_property_p
 function rentfetch_maybe_property_part_maps() {
     
     // bail if this section is not enabled
-    $property_components = get_option( 'options_single_property_components' );
+    $property_components = get_option( 'rentfetch_options_single_property_components' );
 		
     if ( !is_array( $property_components ) || !in_array( 'property_map', $property_components ) )
         return false;

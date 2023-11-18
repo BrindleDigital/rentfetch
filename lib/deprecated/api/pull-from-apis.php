@@ -5,7 +5,7 @@ function rentfetch_start_the_sync() {
     
     do_action( 'rentfetch_do_geocode' );
     
-    $enabled_integrations = get_option( 'options_enabled_integrations' );
+    $enabled_integrations = get_option( 'rentfetch_options_enabled_integrations' );
     
     if ( is_array( $enabled_integrations ) ) {
         foreach ( $enabled_integrations as $enabled_integration ) {

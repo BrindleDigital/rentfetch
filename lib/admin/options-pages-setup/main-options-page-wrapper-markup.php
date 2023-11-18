@@ -16,7 +16,7 @@ function rent_fetch_options_page_html() {
 			<h1>Rent Fetch Options</h1>
 			<nav class="nav-tab-wrapper">
 				<a href="?page=rent_fetch_options" class="nav-tab<?php if (!isset($_GET['tab']) || $_GET['tab'] === 'general') { echo ' nav-tab-active'; } ?>">General</a>
-				<a href="?page=rent_fetch_options&tab=google" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'google') { echo ' nav-tab-active'; } ?>">Google</a>
+				<a href="?page=rent_fetch_options&tab=maps" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'maps') { echo ' nav-tab-active'; } ?>">Maps</a>
 				<a href="?page=rent_fetch_options&tab=properties" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'properties') { echo ' nav-tab-active'; } ?>">Properties</a>
 				<a href="?page=rent_fetch_options&tab=floorplans" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'floorplans') { echo ' nav-tab-active'; } ?>">Floorplans</a>
 				<a href="?page=rent_fetch_options&tab=labels" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'labels') { echo ' nav-tab-active'; } ?>">Labels</a>
@@ -30,8 +30,8 @@ function rent_fetch_options_page_html() {
 			
 			if ( !isset($_GET['tab']) || $_GET['tab'] === 'general') {
 				do_action( 'rent_fetch_do_settings_general' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'google') {
-				do_action( 'rent_fetch_do_settings_google' );
+			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'maps') {
+				do_action( 'rent_fetch_do_settings_maps' );
 			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'properties') {
 				do_action( 'rent_fetch_do_settings_properties' );
 			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'property_search') {

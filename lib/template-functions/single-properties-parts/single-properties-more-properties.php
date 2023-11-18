@@ -95,7 +95,7 @@ add_filter( 'rentfetch_maybe_do_property_part_more_properties', 'rentfetch_maybe
 function rentfetch_maybe_property_part_more_properties() {
     
     // bail if this section is not enabled
-    $property_components = get_option( 'options_single_property_components' );
+    $property_components = get_option( 'rentfetch_options_single_property_components' );
     if ( !is_array( $property_components ) || !in_array( 'nearby_properties', $property_components ) )
         return false;
         

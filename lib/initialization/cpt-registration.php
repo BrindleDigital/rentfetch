@@ -8,7 +8,7 @@ add_action( 'init', 'rentfetch_register_content_types' );
 function rentfetch_register_content_types() {
             
     //* figure out whether this is a single 
-    $apartment_site_type = get_option( 'options_apartment_site_type' );
+    $apartment_site_type = get_option( 'rentfetch_options_apartment_site_type' );
             
     //* only register the properties and neighborhoods post types if this is a 'multiple' site
     if ( $apartment_site_type == 'multiple' ) {

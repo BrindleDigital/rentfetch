@@ -6,8 +6,8 @@ function rentfetch_search_filters_price() {
 	$valueBig = null;
 			
 	// figure out our min/max values
-	// $valueSmall = get_option( 'options_price_filter_minimum', null );
-	// $valueBig = get_option( 'options_price_filter_maximum', null );	
+	// $valueSmall = get_option( 'rentfetch_options_price_filter_minimum', null );
+	// $valueBig = get_option( 'rentfetch_options_price_filter_maximum', null );	
 	// $step = 50;
 		
 	// if pricesmall isset, then use that value for $valueSmall
@@ -64,8 +64,8 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 	if ( !isset( $_POST['pricesmall'] ) && !isset( $_POST['pricebig'] ) )
 		return $floorplans_args;
 	
-	$defaultpricesmall = get_option( 'options_price_filter_minimum' );
-	$defaultpricebig = get_option( 'options_price_filter_maximum' );
+	$defaultpricesmall = get_option( 'rentfetch_options_price_filter_minimum' );
+	$defaultpricebig = get_option( 'rentfetch_options_price_filter_maximum' );
 	
 	$pricesmall = null;
 	$pricebig = null;

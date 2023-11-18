@@ -38,7 +38,7 @@ add_filter( 'rentfetch_maybe_do_property_part_amenities', 'rentfetch_maybe_prope
 function rentfetch_maybe_property_part_amenities() {
     
     // bail if this section is not enabled
-    $property_components = get_option( 'options_single_property_components' );
+    $property_components = get_option( 'rentfetch_options_single_property_components' );
     if ( !is_array( $property_components ) || !in_array( 'amenities_display', $property_components ) )
         return false;
 		

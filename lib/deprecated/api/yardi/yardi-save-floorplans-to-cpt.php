@@ -3,11 +3,11 @@
 add_action( 'rentfetch_do_save_yardi_floorplans_to_cpt', 'rentfetch_save_yardi_floorplans_to_cpt' );
 function rentfetch_save_yardi_floorplans_to_cpt() {
             
-    $properties = get_option( 'options_yardi_integration_creds_yardi_property_code' );
+    $properties = get_option( 'rentfetch_options_yardi_integration_creds_yardi_property_code' );
     $properties = preg_replace('/\s+/', '', $properties);
     $properties = explode( ',', $properties );
-    $sync_term = get_option( 'options_sync_term' );
-    $data_sync = get_option( 'options_data_sync' );
+    $sync_term = get_option( 'rentfetch_options_sync_term' );
+    $data_sync = get_option( 'rentfetch_options_data_sync' );
     
     foreach( $properties as $property ) {
           
@@ -326,8 +326,8 @@ function rentfetch_update_yardi_floorplan( $floorplan, $matchingposts, $voyagerc
 // add_action( 'init', 'rentfetch_get_availability_information' );
 function rentfetch_get_availability_information( $floorplan = 'hello', $voyager_property_code = 'world' ) {
     
-    $yardi_integration_creds = get_option( 'options_yardi_integration_creds' );
-    $yardi_api_key = get_option( 'options_yardi_integration_creds_yardi_api_key' );
+    $yardi_integration_creds = get_option( 'rentfetch_options_yardi_integration_creds' );
+    $yardi_api_key = get_option( 'rentfetch_options_yardi_integration_creds_yardi_api_key' );
     
     $floorplan_Id = $floorplan['FloorplanId'];
     

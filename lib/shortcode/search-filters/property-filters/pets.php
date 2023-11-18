@@ -3,7 +3,7 @@
 function rentfetch_search_filters_pets() {
 	
 	// check whether beds search is enabled
-	$map_search_components = get_option( 'options_map_search_components' );
+	$map_search_components = get_option( 'rentfetch_options_map_search_components' );
 	
 	// this needs to be set to an array even if the option isn't set
 	if ( !is_array( $map_search_components ) )

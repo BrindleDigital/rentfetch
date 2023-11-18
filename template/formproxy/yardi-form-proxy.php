@@ -6,7 +6,7 @@ $path =  $_POST['path']; // because the yardi-form-proxy.php file doesn't have a
 require_once( $path );
 
 // //* Google reCAPTCHA (we're validating this on the frontend and removed for now)
-// $google_recaptcha = get_option( 'options_google_recaptcha' );
+// $google_recaptcha = get_option( 'rentfetch_options_google_recaptcha' );
 // $google_recaptcha_v2_site_key = $google_recaptcha['google_recaptcha_v2_site_key'];
 // $google_recaptcha_v2_secret = $google_recaptcha['google_recaptcha_v2_secret'];
 
@@ -52,7 +52,7 @@ if ( isset( $_POST['Source'] ) )
 	$source = urlencode( htmlspecialchars( $_POST['Source'] ) );
 	
 //* Get private information
-$yardi_integration_creds = get_option( 'options_yardi_integration_creds' );
+$yardi_integration_creds = get_option( 'rentfetch_options_yardi_integration_creds' );
 $username = $yardi_integration_creds['yardi_username'];
 $password = $yardi_integration_creds['yardi_password'];
 

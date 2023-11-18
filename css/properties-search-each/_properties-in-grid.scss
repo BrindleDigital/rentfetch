@@ -12,19 +12,19 @@
     .hentry {
         background-color: var(--rentfetch-white);
         margin: 0;
-        box-shadow: 3px 3px 10px 0 var(--rentfetch-black-5-percent);
+        box-shadow: var(--rentfetch-box-shadow);
         transition: 0.5s box-shadow ease;
         cursor: pointer;
         position: relative;
         overflow: visible;
 
         &:hover {
-            box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
+            box-shadow: var(--rentfetch-box-shadow-hover);
         }
 
         &.active,
         &:focus {
-            box-shadow: 0 0 0 5px var(--rentfetch-dark);
+            box-shadow: var(--rentfetch-box-shadow-active);
         }
     }
 

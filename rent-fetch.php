@@ -35,7 +35,7 @@ define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
 define( 'RENTFETCH_ACF_PATH', plugin_dir_path( __FILE__ ) . 'vendor/acf/' );
 define( 'RENTFETCH_ACF_URL', plugin_dir_url( __FILE__ ) . 'vendor/acf/' );
 
-$search_components = get_option( 'options_map_search_components' );
+$search_components = get_option( 'rentfetch_options_map_search_components' );
 
 //////////////////////////////
 // INCLUDE ACTION SCHEDULER //

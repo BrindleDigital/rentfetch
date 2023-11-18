@@ -6,7 +6,7 @@
 add_action( 'rentfetch_do_geocode', 'rentfetch_geocode' );
 function rentfetch_geocode() {
     
-    $google_geocoding_api_key = get_option( 'options_google_geocoding_api_key' );
+    $google_geocoding_api_key = get_option( 'rentfetch_options_google_geocoding_api_key' );
     
     // bail if we don't have an API key, because then we won't be able to geocode anyway
     if ( !$google_geocoding_api_key )
@@ -53,7 +53,7 @@ function test_geocoding() {
 add_action( 'rentfetch_geocoding_do_get_lat_long', 'rentfetch_geocoding_get_lat_long' );
 function rentfetch_geocoding_get_lat_long( $post_id ) {
         
-    $google_geocoding_api_key = get_option( 'options_google_geocoding_api_key' );
+    $google_geocoding_api_key = get_option( 'rentfetch_options_google_geocoding_api_key' );
         
     // bail if there's no maps api key set
     if ( !$google_geocoding_api_key )

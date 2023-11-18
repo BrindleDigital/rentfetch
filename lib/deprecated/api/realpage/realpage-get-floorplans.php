@@ -9,10 +9,10 @@ function rentfetch_get_floorplans_realpage() {
     if ( rentfetch_check_creds_realpage() == false )
         return;
             
-    $realpage_user = get_option( 'options_realpage_integration_creds_realpage_user' );
-    $realpage_pass = get_option( 'options_realpage_integration_creds_realpage_pass' );
-    $realpage_pmc_id = get_option( 'options_realpage_integration_creds_realpage_pmc_id' );
-    $realpage_site_ids = get_option( 'options_realpage_integration_creds_realpage_site_ids' );
+    $realpage_user = get_option( 'rentfetch_options_realpage_integration_creds_realpage_user' );
+    $realpage_pass = get_option( 'rentfetch_options_realpage_integration_creds_realpage_pass' );
+    $realpage_pmc_id = get_option( 'rentfetch_options_realpage_integration_creds_realpage_pmc_id' );
+    $realpage_site_ids = get_option( 'rentfetch_options_realpage_integration_creds_realpage_site_ids' );
     
     // remove all whitespace from $realpage_site_ids
     $realpage_site_ids = preg_replace('/\s+/', '', $realpage_site_ids);
@@ -43,12 +43,12 @@ function rentfetch_save_transient_realpage_floorplans( $realpage_site_id ) {
     if ( $floorplans )
         return;
     
-    $realpage_integration_creds = get_option( 'options_realpage_integration_creds' );
+    $realpage_integration_creds = get_option( 'rentfetch_options_realpage_integration_creds' );
     
     
-    $realpage_user = get_option( 'options_realpage_integration_creds_realpage_user' );
-    $realpage_pass = get_option( 'options_realpage_integration_creds_realpage_pass' );
-    $realpage_pmc_id = get_option( 'options_realpage_integration_creds_realpage_pmc_id' );
+    $realpage_user = get_option( 'rentfetch_options_realpage_integration_creds_realpage_user' );
+    $realpage_pass = get_option( 'rentfetch_options_realpage_integration_creds_realpage_pass' );
+    $realpage_pmc_id = get_option( 'rentfetch_options_realpage_integration_creds_realpage_pmc_id' );
             
     $curl = curl_init();
     
