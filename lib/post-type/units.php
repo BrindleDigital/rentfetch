@@ -4,7 +4,7 @@
  * Register the content stypes
  */
 
-add_action( 'init', 'rentfetch_register_units_cpt', 5 );
+add_action( 'init', 'rentfetch_register_units_cpt', 30 );
 function rentfetch_register_units_cpt() {
 
 	//* Units

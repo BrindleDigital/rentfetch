@@ -7,11 +7,12 @@ table.unit-details {
     }
 
     th {
-        font-size: var(--rentfetch-font-size-medium);
+        font-size: var(--rentfetch-font-size-small);
         font-weight: bold;
         text-align: left;
         border: none;
         border-bottom: 1px solid var(--rentfetch-black-10-percent);
+        padding: 5px 0;
 
         @include mobile {
             font-size: var(--rentfetch-font-size-small);
@@ -19,10 +20,11 @@ table.unit-details {
     }
 
     td {
-        font-size: var(--rentfetch-font-size-medium);
+        font-size: var(--rentfetch-font-size-small);
         text-align: left;
         border: none;
         border-bottom: 1px solid var(--rentfetch-black-10-percent);
+        padding: 5px 0;
 
         @include mobile {
             font-size: var(--rentfetch-font-size-small);

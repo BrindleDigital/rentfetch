@@ -9,6 +9,7 @@ body a.rentfetch-button {
     border: none;
     transition: 0.3s all ease;
     cursor: pointer;
+    display: inline-block;
 
     &.rentfetch-button-small {
         font-size: var(--rentfetch-font-size-small);

@@ -3,7 +3,7 @@
 /**
  * Register the content stypes
  */
-add_action( 'init', 'rentfetch_register_floorplans_cpt' );
+add_action( 'init', 'rentfetch_register_floorplans_cpt', 25 );
 function rentfetch_register_floorplans_cpt() {
 
 	//* Floorplans
