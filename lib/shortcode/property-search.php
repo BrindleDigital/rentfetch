@@ -100,22 +100,23 @@ function rentfetch_propertysearchmap() {
 	$key = apply_filters( 'rentfetch_get_google_maps_api_key', null );
 	wp_enqueue_script( 'rentfetch-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $key, array(), null, true );
 				
-	// Localize the google maps script, then enqueue that
-	$maps_options = array(
-		'json_style' => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
-		'marker_url' => get_option( 'rentfetch_options_google_map_marker' ),
-		'google_maps_default_latitude' => get_option( 'rentfetch_options_google_maps_default_latitude' ),
-		'google_maps_default_longitude' => get_option( 'rentfetch_options_google_maps_default_longitude' ),
-	);
+	// // Localize the google maps script, then enqueue that
+	// $maps_options = array(
+	// 	'json_style' => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
+	// 	'marker_url' => get_option( 'rentfetch_options_google_map_marker' ),
+	// 	'google_maps_default_latitude' => get_option( 'rentfetch_options_google_maps_default_latitude' ),
+	// 	'google_maps_default_longitude' => get_option( 'rentfetch_options_google_maps_default_longitude' ),
+	// );
 		
-	wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
-	wp_enqueue_script( 'rentfetch-property-map');
+	// wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
+	// wp_enqueue_script( 'rentfetch-property-map');
 	
 	echo '<div id="map"></div>';
 	
 	return ob_get_clean();
 }
 add_shortcode( 'propertysearchmap', 'rentfetch_propertysearchmap' );
+
 
 /**
  * Add the [propertysearchresults] shortcode

@@ -33,6 +33,19 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	
 	// Properties map (the map itself)
 	wp_register_script( 'rentfetch-property-map', RENTFETCH_PATH . 'js/rentfetch-property-map.js', array( 'jquery', 'rentfetch-google-maps' ), RENTFETCH_VERSION, true );
+	
+	// Localize the google maps script, then enqueue that
+	$maps_options = array(
+		'json_style' => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
+		'marker_url' => get_option( 'rentfetch_options_google_map_marker' ),
+		'google_maps_default_latitude' => get_option( 'rentfetch_options_google_maps_default_latitude' ),
+		'google_maps_default_longitude' => get_option( 'rentfetch_options_google_maps_default_longitude' ),
+	);
+		
+	wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
+	wp_enqueue_script( 'rentfetch-property-map');
+	
+	
 	wp_register_script( 'rentfetch-single-property-map', RENTFETCH_PATH . 'js/rentfetch-single-property-map.js', array( 'jquery', 'rentfetch-google-maps' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-property-search-scroll-to-active-property', RENTFETCH_PATH . 'js/rentfetch-property-search-scroll-to-active-property.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	
