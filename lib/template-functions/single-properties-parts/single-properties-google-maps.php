@@ -10,18 +10,18 @@ function rentfetch_single_properties_parts_map() {
 	if ( $maybe_do_map !== true )
 		return;
 	
+	$id = esc_attr( get_the_ID() );
+
+	$latitude = floatval( get_post_meta( $id, 'latitude', true ) );
+	$longitude = floatval( get_post_meta( $id, 'longitude', true ) );
+	
+	//* bail if there's not a lat or longitude
+	if ( empty( $latitude ) || empty( $longitude) )
+		return;
+	
 	echo '<div id="googlemaps" class="single-properties-section no-padding full-width">';
 		echo '<div class="wrap">';
 		
-			$id = esc_attr( get_the_ID() );
-
-			$latitude = floatval( get_post_meta( $id, 'latitude', true ) );
-			$longitude = floatval( get_post_meta( $id, 'longitude', true ) );
-			
-			//* bail if there's not a lat or longitude
-			if ( empty( $latitude ) || empty( $longitude) )
-				return;
-				
 			$title = esc_attr( rentfetch_get_property_title() );
 			$phone = esc_attr( rentfetch_get_property_phone() );
 			$location = esc_attr( rentfetch_get_property_location() );
