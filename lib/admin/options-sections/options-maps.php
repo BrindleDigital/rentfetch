@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * Set defaults on activation
+ */
+function rentfetch_settings_set_defaults_maps() {
+        
+    // Add options if they don't exist with default values (Denver, CO)
+    add_option( 'rentfetch_options_google_maps_default_latitude', 39.7392 );    
+    add_option( 'rentfetch_options_google_maps_default_longitude', 104.9903 );    
+    
+}
+register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_maps' );
+
+/**
  * Adds the Maps settings section to the Rent Fetch settings page
  */
 function rent_fetch_settings_maps() {    
