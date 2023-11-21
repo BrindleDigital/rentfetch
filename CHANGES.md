@@ -1,3 +1,7 @@
+## 0.4.3
+
+-   Minor style bugfixes
+
 ## 0.4.2
 
 -   Style fixes for images being too large in some spots
