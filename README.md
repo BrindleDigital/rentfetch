@@ -46,7 +46,6 @@ The built-in WordPress text search ... isn't good. Relevanssi fills in that gap.
 -   Properties
 -   Floorplans
 -   Units
--   Neighborhoods
 
 ### Included Taxonomies
 
