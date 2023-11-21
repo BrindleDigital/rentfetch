@@ -27,6 +27,14 @@ If you're having trouble with syncing down on a development environment, it migh
 
 Used for fancy columns allowing for birds-eye editing and seeing what data is in each floorplan/property/unit
 
+### Relevanssi
+
+The built-in WordPress text search ... isn't good. Relevanssi fills in that gap. It's important to:
+
+-   Make sure that the properties, floorplans, and units content types are indexed
+-   Index ALL custom fields (unless you know what you're doing and can meaningfully select which custom fields to index)
+-   Use Relevanssi for the admin search, since it's convenient to be able to easily display all of the floorplans attached to a given property and the built-in WordPress search won't typically handle this well enough to work right.
+
 ## Content types
 
 -   Properties
