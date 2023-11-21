@@ -25,7 +25,7 @@ If you're having trouble with syncing down on a development environment, it migh
 
 ### Admin Columns Pro
 
-Used for fancy columns allowing for birds-eye editing and seeing what data is in each floorplan/property/unit
+Used for fancy columns allowing for birds-eye editing and seeing what data is in each floorplan/property/unit. However, this is merely an enhancement for manual-entry properties; Rent Fetch doesn't require use of Admin Columns Pro
 
 ### Relevanssi
 
