@@ -15,8 +15,6 @@ jQuery(document).ready(function ($) {
 });
 
 jQuery(document).ready(function ($) {
-    console.log('hello');
-
     $('table.wp-list-table')
         .find('tr')
         .each(function () {
@@ -29,7 +27,5 @@ jQuery(document).ready(function ($) {
                     'background-color': '#066cd314',
                 });
             }
-
-            console.log('hello');
         });
 });

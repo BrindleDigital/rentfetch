@@ -4,7 +4,6 @@
 // CPT REGISTRATION //
 //////////////////////
 
-add_action( 'init', 'rentfetch_register_content_types' );
 function rentfetch_register_content_types() {
 			
 	//* figure out whether this is a single 
@@ -19,6 +18,7 @@ function rentfetch_register_content_types() {
 		// amenities property taxes
 		add_action( 'init', 'rentfetch_register_amenities_taxonomy', 20 );
 		add_action( 'init', 'rentfetch_register_propertytype_taxonomy', 20 );
-		
+				
 	}
 }
+add_action( 'init', 'rentfetch_register_content_types' );
