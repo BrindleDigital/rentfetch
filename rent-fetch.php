@@ -41,9 +41,9 @@ require_once( plugin_dir_path( __FILE__ ) . 'vendor/action-scheduler/action-sche
 // FILE INCLUDES //
 ///////////////////
 
-function rentfetch_require_files_recursive($directory) {
+function rentfetch_require_files_recursive( $directory ) {
 	$iterator = new RecursiveIteratorIterator(
-		new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
+		new RecursiveDirectoryIterator( $directory, RecursiveDirectoryIterator::SKIP_DOTS ),
 		RecursiveIteratorIterator::LEAVES_ONLY
 	);
 
@@ -55,7 +55,7 @@ function rentfetch_require_files_recursive($directory) {
 }
 
 // require_once all files in /lib and its subdirectories
-rentfetch_require_files_recursive(RENTFETCH_DIR . 'lib');
+rentfetch_require_files_recursive( RENTFETCH_DIR . 'lib' );
 
 ////////////////////
 // PLUGIN UPDATER //
@@ -64,7 +64,7 @@ rentfetch_require_files_recursive(RENTFETCH_DIR . 'lib');
 // Updater
 require RENTFETCH_DIR . 'vendor/plugin-update-checker/plugin-update-checker.php';
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-	'https://github.com/jonschr/rentfetch',
+	'https://github.com/BrindleDigital/rentfetch',
 	__FILE__,
 	'rentfetch'
 );
