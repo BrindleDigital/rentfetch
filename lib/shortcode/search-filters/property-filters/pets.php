@@ -41,7 +41,6 @@ function rentfetch_search_filters_pets() {
 		
 }
 
-
 function rentfetch_search_properties_args_pets( $property_args ) {
 
 	if ( isset( $_POST['pets'] ) ) {
