@@ -152,7 +152,7 @@ function rf_floorplans_identifiers_metabox_callback( $post ) {
 					
 					if ( $query->have_posts() ) {
 						echo '<ul class="unit-list">';
-						printf( '<li><a href="/wp-admin/edit.php?s=%s&post_status=all&post_type=units" target="_blank">View related floorplans</a></li>', $floorplan_id );
+						printf( '<li><a href="/wp-admin/edit.php?s=%s&post_status=all&post_type=units" target="_blank">View related units</a></li>', $floorplan_id );
 						while ( $query->have_posts() ) {
 							$query->the_post();
 							$unit_title = get_the_title();

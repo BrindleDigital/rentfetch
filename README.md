@@ -9,6 +9,8 @@ If you'll be entering your information manually, just start adding some properti
 
 It's also important to note that the default property search only will show properties with _available_ floorplans. That means if you don't have any floorplans with the number of available units set to a number above zero, no properties will display in the main properties search.
 
+For manual entry properties, **units are not required**. That means you just need to enter properties and floorplans; the various searches will always function even without any units ever being entered (because we want to keep things easy).
+
 ## Premium Addons
 
 ### Rent Fetch Sync
@@ -33,7 +35,7 @@ The built-in WordPress text search ... isn't good. Relevanssi fills in that gap.
 
 -   Make sure that the properties, floorplans, and units content types are indexed
 -   Index ALL custom fields (unless you know what you're doing and can meaningfully select which custom fields to index)
--   Use Relevanssi for the admin search, since it's convenient to be able to easily display all of the floorplans attached to a given property and the built-in WordPress search won't typically handle this well enough to work right.
+-   Use Relevanssi for the admin search. Please note that we've baked the truly vital search modifications into the plugin itself, but this can still help the admin search find better results.
 
 ## What's in the box
 
