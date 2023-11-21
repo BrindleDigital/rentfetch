@@ -107,7 +107,7 @@ function rentfetch_propertysearchmap() {
 		'google_maps_default_latitude' => get_option( 'rentfetch_options_google_maps_default_latitude' ),
 		'google_maps_default_longitude' => get_option( 'rentfetch_options_google_maps_default_longitude' ),
 	);
-	
+		
 	wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
 	wp_enqueue_script( 'rentfetch-property-map');
 	

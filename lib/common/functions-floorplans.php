@@ -42,8 +42,8 @@ function rentfetch_floorplan_bathrooms() {
 //* Square feet
 
 function rentfetch_get_floorplan_square_feet() {
-	$minimum_sqft = get_post_meta( get_the_ID(), 'minimum_sqft', true );
-	$maximum_sqft = get_post_meta( get_the_ID(), 'maximum_sqft', true );
+	$minimum_sqft = intval( get_post_meta( get_the_ID(), 'minimum_sqft', true ) );
+	$maximum_sqft = intval( get_post_meta( get_the_ID(), 'maximum_sqft', true ) );
 	
 	if ( $minimum_sqft == $maximum_sqft ) {
 		$square_feet = sprintf( '%s', number_format( $minimum_sqft ) );

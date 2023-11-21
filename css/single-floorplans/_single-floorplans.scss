@@ -27,5 +27,12 @@ body.floorplans-template-default {
         display: grid;
         grid-template-columns: 4fr 6fr;
         gap: 60px;
+
+        .images-column {
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
     }
 }
