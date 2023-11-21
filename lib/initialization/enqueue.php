@@ -66,8 +66,11 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_script( 'properties-single-collapse-subnav', RENTFETCH_PATH . 'js/rentfetch-property-single-collapse-subnav.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	
 	// Fancybox
-	wp_register_style( 'rentfetch-fancybox-style', RENTFETCH_PATH . 'vendor/fancybox/jquery.fancybox.min.css', array(), RENTFETCH_VERSION, 'screen' );
-	wp_register_script( 'rentfetch-fancybox-script', RENTFETCH_PATH . 'vendor/fancybox/jquery.fancybox.min.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	// TODO It appears that the fancybox license should work here, since this plugin is intended to be freeware. However, that might put users in a position of needing to license it for their use of this plugin. 
+	// TODO We're just going to comment this out and remove the files for now, and switch to magnific instead in a future version, which looks fully open-sourced.
+	// TODO This should degrade gracefully out of the box (just won't be able to click to enlarge images, which is fine)
+	// wp_register_style( 'rentfetch-fancybox-style', RENTFETCH_PATH . 'vendor/fancybox/jquery.fancybox.min.css', array(), RENTFETCH_VERSION, 'screen' );
+	// wp_register_script( 'rentfetch-fancybox-script', RENTFETCH_PATH . 'vendor/fancybox/jquery.fancybox.min.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 			
 	// Google reCAPTCHA
 	wp_register_script( 'rentfetch-google-recaptcha', 'https://www.google.com/recaptcha/api.js', array('jquery'), RENTFETCH_VERSION, true );

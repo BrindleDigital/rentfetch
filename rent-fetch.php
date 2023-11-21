@@ -56,18 +56,3 @@ function rentfetch_flush_permalinks_on_activation() {
 	add_action('init', 'flush_rewrite_rules', 999 );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_flush_permalinks_on_activation' );
-
-////////////////////
-// PLUGIN UPDATER //
-////////////////////
-
-// Updater
-require RENTFETCH_DIR . 'vendor/plugin-update-checker/plugin-update-checker.php';
-$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-	'https://github.com/BrindleDigital/rentfetch',
-	__FILE__,
-	'rentfetch'
-);
-
-// Optional: Set the branch that contains the stable release.
-$myUpdateChecker->setBranch( 'main' );
