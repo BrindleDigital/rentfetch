@@ -1,3 +1,8 @@
+## 0.4.2
+
+-   Style fixes for images being too large in some spots
+-   Fixed a fatal error when an expected number is a string instead
+
 ## 0.4.1
 
 -   Attempting to flush the permalinks on activation, as properties don't seem to be getting flushed automatically on new sites.
