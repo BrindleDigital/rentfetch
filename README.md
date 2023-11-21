@@ -13,7 +13,7 @@ It's also important to note that the default property search only will show prop
 
 ### Rent Fetch Sync
 
-Rent Fetch Sync allows for pulling properties, floorplans, and units down from a number of APIs, including Yardi/RentCafe, RealPage and Appfolio. It's not required for the base plugin to function normally, but can be helpful for automatically handling your data input needs and keeping availability up to date leveraging systems you're already updating regularly.
+Rent Fetch Sync allows for pulling properties, floorplans, and units down from a number of APIs, including Yardi/RentCafe, RealPage and Appfolio. It's not required for the base plugin to function normally, but can be helpful for automatically handling your data input needs and keeping availability up to date leveraging systems you're already updating regularly. [Get that right here](https://rentfetch.io)
 
 ## Helpful third-party WordPress plugins
 
