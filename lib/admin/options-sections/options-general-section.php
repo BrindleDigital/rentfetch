@@ -42,7 +42,7 @@ function rent_fetch_settings_sync_functionality_notice() {
 		<div class="column">
 			<div class="white-box" style="max-width: 400px;">
 				<h2 style="margin-top: 0;">Our premium availability syncing addon</h3>
-				<p class="description">You can already manually enter data for as many properties, floorplans, and units as you'd like, and all layouts are enabled for this information.</p><p>However, if you'd like to automate the addition of properties and sync availability information hourly, we offer the <strong>Rent Fetch Sync</strong> addon to sync data with Yardi/RentCafe, Realpage, Appfolio, and Entrata platforms. More information at <a href="https://rentfetch.io" target="_blank">rentfetch.io</a></p>
+				<p class="description">You can already manually enter data for as many properties, floorplans, and units as you'd like, and all layouts are enabled for this information.</p><p>However, if you'd like to automate the addition of properties and sync availability information hourly, we offer the <strong>Rent Fetch Sync</strong> addon to sync data with the Yardi/RentCafe, Realpage, Appfolio, and Entrata platforms. More information at <a href="https://rentfetch.io" target="_blank">rentfetch.io</a></p>
 			</div>
 		</div>
 	</div>
