@@ -3,6 +3,8 @@
 A plugin which displays property, floorplan and unit availability and information.
 [Visit the official site](https://rentfetch.io)
 
+We plan long-term to offer this plugin entirely free through the WordPress repo, and that will be the only place to get it. Until the plugin is approved, we'll offer it here on Github as well.
+
 ## Getting Started
 
 If you'll be entering your information manually, just start adding some properties and floorplans. Please note that the property ID for a given floorplan MUST match the property ID of one of the properties for it to be found in search.
