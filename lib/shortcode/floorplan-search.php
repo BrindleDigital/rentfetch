@@ -11,8 +11,8 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		
 	//* Our container markup for the results
 	echo '<div class="rent-fetch-floorplan-search-default-layout">';	
-        echo do_shortcode('[floorplansearchfilters]');
-        echo do_shortcode('[floorplansearchresults]');
+		echo do_shortcode('[floorplansearchfilters]');
+		echo do_shortcode('[floorplansearchresults]');
 		
 		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', site_url() );
 		
@@ -34,24 +34,24 @@ add_shortcode( 'floorplansearch', 'rentfetch_floorplan_search_default_layout' );
  *
  */
 function rentfetch_floorplansearchfilters() {
-    
-    ob_start();
-    
-    // enqueue the search floorplans ajax script
+	
+	ob_start();
+	
+	// enqueue the search floorplans ajax script
 	wp_enqueue_script( 'rentfetch-search-floorplans-ajax' );
 	
 	// needed for toggling the featured filters on and off
 	wp_enqueue_script( 'rentfetch-floorplan-search-featured-filters-toggle' );
-        
-    echo '<div class="filters-wrap">';
+		
+	echo '<div class="filters-wrap">';
 		echo '<div id="featured-filters">';
 			do_action( 'rentfetch_do_search_floorplans_filters' );
 		echo '</div>';
 		echo '<div id="filter-toggles"></div>';
-    echo '</div>'; // .filters-wrap
-    
-    return ob_get_clean();
-    
+	echo '</div>'; // .filters-wrap
+	
+	return ob_get_clean();
+	
 }
 add_shortcode( 'floorplansearchfilters', 'rentfetch_floorplansearchfilters' );
 
@@ -60,19 +60,19 @@ add_shortcode( 'floorplansearchfilters', 'rentfetch_floorplansearchfilters' );
  *
  */
 function rentfetch_floorplan_search_results() {
-    
-    ob_start();
+	
+	ob_start();
 		
 	echo '<div id="response"></div>';
 	
 	return ob_get_clean();
-    
+	
 }
 add_shortcode( 'floorplansearchresults', 'rentfetch_floorplan_search_results' );
 
 function rentfetch_filter_floorplans() {
-    
-    $orderby = apply_filters( 'rentfetch_get_floorplan_orderby', $orderby = 'menu_order' );
+	
+	$orderby = apply_filters( 'rentfetch_get_floorplan_orderby', $orderby = 'menu_order' );
 	$order = apply_filters( 'rentfetch_get_floorplan_order', $order = 'ASC' );
 	
 	//* The base floorplan query
@@ -105,7 +105,7 @@ function rentfetch_filter_floorplans() {
 								
 				printf( '<div class="%s">', $class );
 								
-                    do_action( 'rentfetch_floorplans_search_do_floorplans_each' );
+					do_action( 'rentfetch_floorplans_search_do_floorplans_each' );
 				
 				echo '</div>'; // post_class
 				
@@ -119,8 +119,8 @@ function rentfetch_filter_floorplans() {
 	} else {
 		echo 'No floorplans with availability were found matching the current search parameters.';
 	}
-    
-    die();
+	
+	die();
 }
 add_action( 'wp_ajax_floorplansearch', 'rentfetch_filter_floorplans' ); // wp_ajax_{ACTION HERE} 
 add_action( 'wp_ajax_nopriv_floorplansearch', 'rentfetch_filter_floorplans' );

@@ -86,7 +86,7 @@ function rent_fetch_settings_floorplans() {
 	<ul class="rent-fetch-options-submenu">
 		<li><a href="?page=rent_fetch_options&tab=floorplans&section=floorplan_search" class="tab<?php if (!isset($_GET['section']) || $_GET['section'] === 'floorplan_search') { echo ' tab-active'; } ?>">Floorplan Search</a></li>
 		<li><a href="?page=rent_fetch_options&tab=floorplans&section=floorplan_buttons" class="tab<?php if ( isset( $_GET['section']) && $_GET['section'] === 'floorplan_buttons') { echo ' tab-active'; } ?>">Floorplan Buttons</a></li>
-	</ul>    
+	</ul>
 	<?php
 	if ( !isset($_GET['section']) || $_GET['section'] === 'floorplan_search') {
 		do_action( 'rent_fetch_do_settings_floorplans_floorplan_search' );

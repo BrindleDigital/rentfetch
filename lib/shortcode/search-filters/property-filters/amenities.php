@@ -54,7 +54,6 @@ function rentfetch_search_filters_amenities() {
 	}
 }
 
-add_filter( 'rentfetch_search_property_map_properties_query_args', 'rentfetch_search_properties_args_amenities', 10, 1 );
 function rentfetch_search_properties_args_amenities( $property_args ) {
 	
 	if ( isset( $_POST['search-amenities'] ) && is_array( $_POST['search-amenities'] ) ) {
@@ -83,3 +82,4 @@ function rentfetch_search_properties_args_amenities( $property_args ) {
 		
 	return $property_args;
 }
+add_filter( 'rentfetch_search_property_map_properties_query_args', 'rentfetch_search_properties_args_amenities', 10, 1 );

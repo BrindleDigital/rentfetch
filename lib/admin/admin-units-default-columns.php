@@ -1,6 +1,5 @@
 <?php
 
-add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_units_admin_style' );
 function rentfetch_enqueue_units_admin_style() {
 	
 	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins
@@ -16,8 +15,8 @@ function rentfetch_enqueue_units_admin_style() {
 		wp_enqueue_style( 'units-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-units.css', array(), RENTFETCH_VERSION, 'screen' );
 	}
 }
+add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_units_admin_style' );
 
-add_filter( 'manage_units_posts_columns', 'rentfetch_default_units_admin_columns' );
 function rentfetch_default_units_admin_columns( $columns ) {
 	
 	$columns = array(
@@ -45,8 +44,8 @@ function rentfetch_default_units_admin_columns( $columns ) {
 	return $columns;
 	
 }
+add_filter( 'manage_units_posts_columns', 'rentfetch_default_units_admin_columns' );
 
-add_action( 'manage_units_posts_custom_column', 'rentfetch_units_default_column_content', 10, 2);
 function rentfetch_units_default_column_content( $column, $post_id ) {
 		
 	if ( 'title' === $column )
@@ -127,28 +126,29 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 		echo esc_attr( get_post_meta( $post_id, 'api_error', true ) );
 		
 	if ( 'api_response' === $column ) {
-        $api_response = get_post_meta( $post_id, 'api_response', true );
-		        
-        if ( !is_array( $api_response ) )
-            $api_response = [];
-            
-        echo '<div class="api-responses">';
-        
-        foreach( $api_response as $key => $value ) {
-            
-            echo '<div class="api-response">';
-            
-                printf( '<strong>%s:</strong><br/>', esc_attr( $key ) );
-                
-                foreach ( $value as $subkey => $subvalue ) {
-                    printf( '%s: %s<br/>', esc_attr( $subkey ), esc_attr( $subvalue ) );
-                }
-                
-            echo '</div>';
-        }   
-        
-        echo '</div>';
-        
-    }
+		$api_response = get_post_meta( $post_id, 'api_response', true );
+				
+		if ( !is_array( $api_response ) )
+			$api_response = [];
+			
+		echo '<div class="api-responses">';
+		
+		foreach( $api_response as $key => $value ) {
+			
+			echo '<div class="api-response">';
+			
+				printf( '<strong>%s:</strong><br/>', esc_attr( $key ) );
+				
+				foreach ( $value as $subkey => $subvalue ) {
+					printf( '%s: %s<br/>', esc_attr( $subkey ), esc_attr( $subvalue ) );
+				}
+				
+			echo '</div>';
+		}   
+		
+		echo '</div>';
+		
+	}
 	
 }
+add_action( 'manage_units_posts_custom_column', 'rentfetch_units_default_column_content', 10, 2);

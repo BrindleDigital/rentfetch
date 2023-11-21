@@ -5,12 +5,12 @@
  *
  */
 function rentfetch_single_properties_parts_map() {
-    
-    $maybe_do_map = apply_filters( 'rentfetch_maybe_do_property_part_maps', true );    
-    if ( $maybe_do_map !== true )
-        return;
-    
-    echo '<div id="googlemaps" class="single-properties-section no-padding full-width">';
+	
+	$maybe_do_map = apply_filters( 'rentfetch_maybe_do_property_part_maps', true );    
+	if ( $maybe_do_map !== true )
+		return;
+	
+	echo '<div id="googlemaps" class="single-properties-section no-padding full-width">';
 		echo '<div class="wrap">';
 		
 			$id = esc_attr( get_the_ID() );
@@ -48,23 +48,23 @@ function rentfetch_single_properties_parts_map() {
 		
 		echo '</div>'; // .wrap
 	echo '</div>'; // #googlemaps
-    
+	
 }
 
 /**
  * Decide whether to output the maps section
  */
-add_filter( 'rentfetch_maybe_do_property_part_maps', 'rentfetch_maybe_property_part_maps' );
 function rentfetch_maybe_property_part_maps() {
-    
-    // bail if this section is not enabled
-    $property_components = get_option( 'rentfetch_options_single_property_components' );
+	
+	// bail if this section is not enabled
+	$property_components = get_option( 'rentfetch_options_single_property_components' );
 		
-    if ( !is_array( $property_components ) || !in_array( 'property_map', $property_components ) )
-        return false;
-        
-    return true;
+	if ( !is_array( $property_components ) || !in_array( 'property_map', $property_components ) )
+		return false;
+		
+	return true;
 }
+add_filter( 'rentfetch_maybe_do_property_part_maps', 'rentfetch_maybe_property_part_maps' );
 
 function rentfetch_single_properties_parts_subnav_maps() {
 	$maybe_do_map = apply_filters( 'rentfetch_maybe_do_property_part_maps', true );

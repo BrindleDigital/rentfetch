@@ -1,6 +1,5 @@
 <?php
 
-add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_floorplans_admin_style' );
 function rentfetch_enqueue_floorplans_admin_style() {
 	
 	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins
@@ -18,8 +17,8 @@ function rentfetch_enqueue_floorplans_admin_style() {
 		wp_enqueue_script( 'floorplans-edit-admin-script', RENTFETCH_PATH . 'js/floorplans-edit-admin-script.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	}
 }
+add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_floorplans_admin_style' );
 
-add_filter( 'manage_floorplans_posts_columns', 'rentfetch_default_floorplans_admin_columns' );
 function rentfetch_default_floorplans_admin_columns( $columns ) {
 	
 	$columns = array(
@@ -53,8 +52,8 @@ function rentfetch_default_floorplans_admin_columns( $columns ) {
 	return $columns;
 	
 }
+add_filter( 'manage_floorplans_posts_columns', 'rentfetch_default_floorplans_admin_columns' );
 
-add_action( 'manage_floorplans_posts_custom_column', 'rentfetch_floorplans_default_column_content', 10, 2);
 function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 		
 	if ( 'title' === $column )
@@ -177,3 +176,4 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
     }
 	
 }
+add_action( 'manage_floorplans_posts_custom_column', 'rentfetch_floorplans_default_column_content', 10, 2);

@@ -31,12 +31,6 @@ define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RENTFETCH_PATH', plugin_dir_url( __FILE__ ) );
 define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
 
-// Define path and URL to the ACF plugin.
-define( 'RENTFETCH_ACF_PATH', plugin_dir_path( __FILE__ ) . 'vendor/acf/' );
-define( 'RENTFETCH_ACF_URL', plugin_dir_url( __FILE__ ) . 'vendor/acf/' );
-
-$search_components = get_option( 'rentfetch_options_map_search_components' );
-
 //////////////////////////////
 // INCLUDE ACTION SCHEDULER //
 //////////////////////////////
@@ -62,12 +56,6 @@ function rentfetch_require_files_recursive($directory) {
 
 // require_once all files in /lib and its subdirectories
 rentfetch_require_files_recursive(RENTFETCH_DIR . 'lib');
-
-//////////////////////
-// START THE ENGINE //
-//////////////////////
-
-add_action( 'wp_loaded', 'rentfetch_start_sync' );
 
 ////////////////////
 // PLUGIN UPDATER //

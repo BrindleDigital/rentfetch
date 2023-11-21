@@ -57,7 +57,6 @@ function rentfetch_search_filters_price() {
 
 }
 
-add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_price', 10, 1 );
 function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 	
 	// bail if we don't have a price search (neither are set)
@@ -150,3 +149,4 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 	return $floorplans_args;
 	
 }
+add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_price', 10, 1 );

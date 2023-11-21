@@ -4,7 +4,6 @@
 // ENQUEUES //
 //////////////
 
-add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
 function rentfetch_enqueue_scripts_stylesheets() {
 	
 	// Enqueue dashicons, since we use them on the frontend
@@ -82,8 +81,8 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	
 		
 }
+add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
 
-add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_in_admin_metabox_properties' );
 function rentfetch_enqueue_in_admin_metabox_properties() {
 	
 	wp_register_script( 
@@ -125,3 +124,4 @@ function rentfetch_enqueue_in_admin_metabox_properties() {
 	
 	
 }
+add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_in_admin_metabox_properties' );

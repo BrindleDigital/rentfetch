@@ -13,11 +13,6 @@ function rentfetch_property_title() {
         echo $title;
 }
 
-// add_filter( 'rentfetch_filter_property_title', 'my_custom_title', 10, 1 );
-// function my_custom_title( $title ) {
-//     return 'My Custom Title';
-// }
-
 //* PROPERTY LOCATION
 
 function rentfetch_get_property_address() {
@@ -266,7 +261,6 @@ function rentfetch_property_rent() {
         echo $rent;
 }
 
-add_filter( 'rentfetch_filter_property_rent', 'rentfetch_default_property_rent_label', 10, 1 );
 function rentfetch_default_property_rent_label( $rent ) {
     
     if ( $rent )
@@ -275,6 +269,7 @@ function rentfetch_default_property_rent_label( $rent ) {
     // This could return 'Call for Pricing' or 'Pricing unavailable' if pricing isn't available
     return 'Call for Pricing';
 }
+add_filter( 'rentfetch_filter_property_rent', 'rentfetch_default_property_rent_label', 10, 1 );
 
 //* PROPERTY AVAILABILITY
 
@@ -310,7 +305,6 @@ function rentfetch_property_availability() {
         echo $availability;
 }
 
-add_filter( 'rentfetch_filter_property_availabile_units', 'rentfetch_default_property_available_units_label', 10, 1 );
 function rentfetch_default_property_available_units_label( $availability ) {
     
     if ( $availability == 1 ) {
@@ -319,8 +313,9 @@ function rentfetch_default_property_available_units_label( $availability ) {
         return esc_html( $availability ) . ' units available';
     }        
 }
+add_filter( 'rentfetch_filter_property_availabile_units', 'rentfetch_default_property_available_units_label', 10, 1 );
 
-add_filter( 'rentfetch_filter_property_availability_date', 'rentfetch_default_property_availability_date', 10, 1 );
+
 function rentfetch_default_property_availability_date( $availability_date ) {
     
     if ( $availability_date )
@@ -328,6 +323,7 @@ function rentfetch_default_property_availability_date( $availability_date ) {
         
     return null;
 }
+add_filter( 'rentfetch_filter_property_availability_date', 'rentfetch_default_property_availability_date', 10, 1 );
 
 //* PROPERTY SPECIALS
 
@@ -351,7 +347,6 @@ function rentfetch_property_specials() {
         echo $specials;
 }
 
-add_filter( 'rentfetch_filter_property_specials', 'rentfetch_default_property_specials_label', 10, 1 );
 function rentfetch_default_property_specials_label( $specials ) {
     
     if ( $specials )
@@ -359,28 +354,30 @@ function rentfetch_default_property_specials_label( $specials ) {
         
     return null;
 }
+add_filter( 'rentfetch_filter_property_specials', 'rentfetch_default_property_specials_label', 10, 1 );
 
-add_filter( 'rentfetch_filter_property_permalink', 'rentfetch_default_property_permalink', 10, 1 );
 function rentfetch_default_property_permalink( $url ) {
     
     $url = get_the_permalink();
     
     return $url;
 }
+add_filter( 'rentfetch_filter_property_permalink', 'rentfetch_default_property_permalink', 10, 1 );
 
-add_filter( 'rentfetch_filter_property_permalink_label', 'rentfetch_default_property_permalink_label', 10, 1 );
+
 function rentfetch_default_property_permalink_label( $url ) {
     
     return 'View Property';
     
 }
+add_filter( 'rentfetch_filter_property_permalink_label', 'rentfetch_default_property_permalink_label', 10, 1 );
 
-add_filter( 'rentfetch_filter_property_permalink_target', 'rentfetch_default_property_permalink_target', 10, 1 );
 function rentfetch_default_property_permalink_target( $url ) {
     
     return '_self';
     
 }
+add_filter( 'rentfetch_filter_property_permalink_target', 'rentfetch_default_property_permalink_target', 10, 1 );
 
 //* PROPERTY DESCRIPTION
 

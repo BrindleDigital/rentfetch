@@ -45,8 +45,9 @@ function rentfetch_search_filters_order() {
 		
 }
 
-// add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_order', 10, 1);
 function rentfetch_search_floorplans_args_order( $floorplans_args ) {
+	
+	// TODO: needs work before adding this functionality; this one is both a floorplanarg and a propertyarg, which makes it a bit more complex than others
 		
 	if ( isset( $_POST['search-order'] ) && is_array( $_POST['search-order'] ) ) {
 		
@@ -71,3 +72,4 @@ function rentfetch_search_floorplans_args_order( $floorplans_args ) {
 	
 	return $floorplans_args;
 }
+// add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_order', 10, 1);

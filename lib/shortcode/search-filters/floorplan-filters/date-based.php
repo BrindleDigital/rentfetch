@@ -24,10 +24,9 @@ function rentfetch_search_filters_date() {
 	
 }
 
-add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_date', 10, 1 );
 function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	
-	//TODO this filter currently controls whether we do an availability search or not; we need to move that to a separate filter
+	// TODO: this filter currently controls whether we do an availability search or not; if possible this should maybe move to a separate filter
 		
 	if ( !isset( $_POST['dates'] ) )
 		return $floorplans_args;
@@ -59,3 +58,4 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	
 	return $floorplans_args;
 }
+add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_date', 10, 1 );

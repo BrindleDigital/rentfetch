@@ -3,7 +3,6 @@
 /**
  * Save the form data for ALL tabs on the Rent Fetch settings page
  */
-add_action( 'admin_post_rent_fetch_process_form', 'rent_fetch_process_form_data' );
 function rent_fetch_process_form_data() {
 	
 	//* Verify the nonce
@@ -31,3 +30,4 @@ function rent_fetch_process_form_data() {
 	exit;
 
 }
+add_action( 'admin_post_rent_fetch_process_form', 'rent_fetch_process_form_data' );

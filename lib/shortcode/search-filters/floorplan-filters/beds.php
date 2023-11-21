@@ -44,7 +44,6 @@ function rentfetch_search_filters_beds() {
 	echo '</fieldset>';
 }
 
-add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_beds', 10, 1);
 function rentfetch_search_floorplans_args_beds( $floorplans_args ) {
 		
 	if ( isset( $_POST['search-beds'] ) && is_array( $_POST['search-beds'] ) ) {
@@ -70,3 +69,4 @@ function rentfetch_search_floorplans_args_beds( $floorplans_args ) {
 	
 	return $floorplans_args;
 }
+add_filter('rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_beds', 10, 1);

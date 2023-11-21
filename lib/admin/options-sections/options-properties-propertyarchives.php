@@ -17,7 +17,6 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_p
 /**
  * Adds the properties archives settings subsection to the Rent Fetch settings page
  */
-add_action( 'rent_fetch_do_settings_properties_property_archives', 'rent_fetch_settings_properties_property_archives' );
 function rent_fetch_settings_properties_property_archives() {
 	?>
 	
@@ -132,11 +131,11 @@ function rent_fetch_settings_properties_property_archives() {
 	
 	<?php
 }
+add_action( 'rent_fetch_do_settings_properties_property_archives', 'rent_fetch_settings_properties_property_archives' );
 
 /**
  * Save the property archive settings
  */
-add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_archives' );
 function rent_fetch_save_settings_property_archives() {
 	
 	// Get the tab and section
@@ -170,3 +169,4 @@ function rent_fetch_save_settings_property_archives() {
 		update_option( 'rentfetch_options_property_order', $property_display );
 	}
 }
+add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_archives' );

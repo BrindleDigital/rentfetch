@@ -1,13 +1,13 @@
 <?php
 
 function rentfetch_single_properties_parts_subnav() {
-    
-    $maybe_do_subnav = apply_filters( 'rentfetch_maybe_do_property_part_subnav', true );    
-    if ( $maybe_do_subnav !== true )
-        return;
-    
-    wp_enqueue_script( 'properties-single-collapse-subnav' );
-    
+	
+	$maybe_do_subnav = apply_filters( 'rentfetch_maybe_do_property_part_subnav', true );    
+	if ( $maybe_do_subnav !== true )
+		return;
+	
+	wp_enqueue_script( 'properties-single-collapse-subnav' );
+	
 	echo '<div id="subnav" class="single-properties-section no-padding">';
 		echo '<div class="wrap">';
 		
@@ -20,5 +20,5 @@ function rentfetch_single_properties_parts_subnav() {
 			echo '</ul>'; // .subnav
 		echo '</div>'; // .wrap
 	echo '</div>'; // #subnav
-    
+	
 }

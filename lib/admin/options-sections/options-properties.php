@@ -234,7 +234,6 @@ add_action( 'rent_fetch_do_settings_properties_property_search', 'rent_fetch_set
 /**
  * Save the property search settings
  */
-add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_search' );
 function rent_fetch_save_settings_property_search() {
 	
 	// Get the tab and section
@@ -306,3 +305,4 @@ function rent_fetch_save_settings_property_search() {
 	}
 	
 }
+add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_search' );

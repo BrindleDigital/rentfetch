@@ -27,7 +27,6 @@ function rentfetch_propertysearch_default_layout( $atts ) {
 }
 add_shortcode( 'propertysearch', 'rentfetch_propertysearch_default_layout' );
 
-
 /**
  * Add the [propertysearchfilters] shortcode
  */
@@ -231,10 +230,11 @@ function rentfetch_filter_properties(){
 add_action( 'wp_ajax_propertysearch', 'rentfetch_filter_properties' ); // wp_ajax_{ACTION HERE} 
 add_action( 'wp_ajax_nopriv_propertysearch', 'rentfetch_filter_properties' );
 
-add_filter( 'rentfetch_get_property_search_query_parameter_name', 'rentfetch_property_search_query_parameter_name' ); 
+
 function rentfetch_property_search_query_parameter_name( $query_param_id, $query_param ) {
 	
 	$name = $query_param_id;
 	
 	return $name;	
 }
+add_filter( 'rentfetch_get_property_search_query_parameter_name', 'rentfetch_property_search_query_parameter_name' ); 

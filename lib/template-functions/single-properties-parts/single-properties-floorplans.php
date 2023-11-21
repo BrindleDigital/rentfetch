@@ -93,7 +93,6 @@ function rentfetch_single_properties_parts_floorplans() {
 /**
  * Decide whether to output the floorplans section
  */
-add_filter( 'rentfetch_maybe_do_property_part_floorplans', 'rentfetch_maybe_property_part_floorplans' );
 function rentfetch_maybe_property_part_floorplans() {
 	
 	// bail if this section is not enabled
@@ -123,6 +122,7 @@ function rentfetch_maybe_property_part_floorplans() {
 		
 	return true;
 }
+add_filter( 'rentfetch_maybe_do_property_part_floorplans', 'rentfetch_maybe_property_part_floorplans' );
 
 function rentfetch_single_properties_parts_subnav_floorplans() {
 	$maybe_do_floorplans = apply_filters( 'rentfetch_maybe_do_property_part_floorplans', true );
