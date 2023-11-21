@@ -49,7 +49,8 @@ function rentfetch_single_properties_parts_details() {
 					if ( $phone )
 						printf( '<a class="phone-link property-link" href="tel:%s">%s</a>', $phone, $phone );
 						
-					echo '<a href="#" class="property-link">(( contact leasing??? ))</a>';
+					// TODO - add contact leasing link
+					// echo '<a href="#" class="property-link">(( contact leasing??? ))</a>';
 					
 				echo '</div>'; // .property-links
 					
