@@ -1,3 +1,7 @@
+## 0.4.1
+
+-   Attempting to flush the permalinks on activation, as properties don't seem to be getting flushed automatically on new sites.
+
 ## 0.3
 
 -   Upgrading to WordPress coding standards throughout
