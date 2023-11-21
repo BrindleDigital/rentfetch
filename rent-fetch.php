@@ -31,12 +31,6 @@ define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RENTFETCH_PATH', plugin_dir_url( __FILE__ ) );
 define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
 
-//////////////////////////////
-// INCLUDE ACTION SCHEDULER //
-//////////////////////////////
-
-require_once( plugin_dir_path( __FILE__ ) . 'vendor/action-scheduler/action-scheduler.php' );
-
 ///////////////////
 // FILE INCLUDES //
 ///////////////////

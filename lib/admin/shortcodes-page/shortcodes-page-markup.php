@@ -62,7 +62,7 @@ function rent_fetch_documentation_shortcodes() {
 	<p><span class="shortcode"><!-- wp:shortcode -->[propertysearchmap]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[propertysearchfilters]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[propertysearchresults]<!-- /wp:shortcode --></span></p>
 	
 	<h2>Properties grid</h2>
-	<p>This layout ignores availability, and is most suitable for smaller ownership groups with 5-20 properties.</p>
+	<p>This layout ignores availability, and is most suitable for smaller ownership groups with 5-20 properties. <strong>We strongly recommend using this somewhere it can span the full width of the screen.</strong></p>
 	<p><span class="shortcode"><!-- wp:shortcode -->[properties]<!-- /wp:shortcode --></span></p>
 	
 	<h2>Floorplans search</h2>
