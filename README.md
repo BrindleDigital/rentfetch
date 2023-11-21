@@ -35,20 +35,22 @@ The built-in WordPress text search ... isn't good. Relevanssi fills in that gap.
 -   Index ALL custom fields (unless you know what you're doing and can meaningfully select which custom fields to index)
 -   Use Relevanssi for the admin search, since it's convenient to be able to easily display all of the floorplans attached to a given property and the built-in WordPress search won't typically handle this well enough to work right.
 
-## Content types
+## What's in the box
+
+### Included Content types
 
 -   Properties
 -   Floorplans
 -   Units
 -   Neighborhoods
 
-## Taxonomies
+### Included Taxonomies
 
 -   Property types (properties)
 -   Floorplan types
 -   Amenities (properties)
 
-## Included WordPress templates
+### Included WordPress templates
 
 -   single-properties.php (override this in your theme if you like by dropping a file into your main theme directory)
 -   single-floorplans.php (override this in your theme if you like by dropping a file into your main theme directory, currently not used for anything)
