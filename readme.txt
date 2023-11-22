@@ -52,7 +52,7 @@ Yes. You'll want to use the `[floorplansearch]` shorcode to show those.
 
 = Will this work if I have hundreds of properties? =
 
-Yes. You'll want to use the `[propertiessearch]' shortcode to show a full availability search.
+Yes. You'll want to use the `[propertysearch]' shortcode to show a full availability search.
 
 = Is there a way to show all of my properties, even if some of them don't have any availability at tht moment? =
 
