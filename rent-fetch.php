@@ -1,21 +1,14 @@
 <?php
 /*
-	Plugin Name: Rent Fetch
-	Plugin URI: https://github.com/BrindleDigital/rentfetch
-	Description: Displays rental properties, floorplans, and unit availability
-	Version: 0.4.3
-	Author: Brindle Digital
-	Author URI: https://www.brindledigital.com/
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-	GNU General Public License for more details.
+	Plugin Name:	Rent Fetch
+	Plugin URI:		http://wordpress.org/plugins/rent-fetch/
+	Description:	Displays searchable rental properties, floorplans, and unit availability.
+	Version:		0.4.3
+	Author:			Brindle Digital
+	Author URI:		https://www.brindledigital.com
+	Text Domain:	rentfetch
+	License:		GPLv2 or later
+	License URI:	http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 /* Prevent direct access to the plugin */
@@ -26,7 +19,7 @@ if ( !defined( 'ABSPATH' ) ) {
 // Define the version of the plugin
 define ( 'RENTFETCH_VERSION', '0.4.3' );
 
-// Plugin directory
+// Plugin directories 
 define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RENTFETCH_PATH', plugin_dir_url( __FILE__ ) );
 define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
