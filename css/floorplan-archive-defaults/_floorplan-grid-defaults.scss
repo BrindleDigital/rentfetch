@@ -1,156 +1,157 @@
 .floorplans-loop {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 25px;
 
-    @include mobile {
-        grid-template-columns: 1fr;
-    }
+	@include mobile {
+		grid-template-columns: 1fr;
+	}
 
-    .entry,
-    .hentry {
-        margin: 0;
-        box-shadow: var(--rentfetch-box-shadow);
-        transition: 0.5s box-shadow ease;
-        position: relative;
-        background-color: var(--rentfetch-white);
-    }
+	.entry,
+	.hentry {
+		margin: 0;
+		box-shadow: var(--rentfetch-box-shadow);
+		transition: 0.5s box-shadow ease;
+		position: relative;
+		background-color: var(--rentfetch-white);
+	}
 
-    .post-edit-link {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 3px 8px;
-        background-color: var(--rentfetch-black-90-percent);
-        color: var(--rentfetch-white);
-        font-size: var(--rentfetch-font-size-small);
-        text-decoration: none;
-        transition: 0.3s all ease;
-        z-index: 15;
-        line-height: 1;
-        margin: 0;
+	.post-edit-link {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		padding: 3px 8px;
+		background-color: var(--rentfetch-black-90-percent);
+		color: var(--rentfetch-white);
+		font-size: var(--rentfetch-font-size-small);
+		text-decoration: none;
+		transition: 0.3s all ease;
+		z-index: 15;
+		line-height: 1;
+		margin: 0;
 
-        &:hover {
-            background-color: var(--rentfetch-black-80-percent);
-        }
-    }
+		&:hover {
+			background-color: var(--rentfetch-black-80-percent);
+		}
+	}
 
-    .floorplan-details {
-        padding: 15px;
-    }
+	.floorplan-details {
+		padding: 15px;
+	}
 
-    .floorplan-single-image-wrap {
-        width: 100%;
-        height: 175px;
+	.floorplan-single-image-wrap {
+		width: 100%;
+		height: 0;
+		padding-top: 55%;
 
-        img.floorplan-single-image {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-        }
-    }
+		img.floorplan-single-image {
+			object-fit: cover;
+			width: 100%;
+			height: 100%;
+		}
+	}
 
-    h3 {
-        font-size: var(--rentfetch-font-size-large);
-        color: var(--rentfetch-dark);
-    }
+	h3 {
+		font-size: var(--rentfetch-font-size-large);
+		color: var(--rentfetch-dark);
+	}
 
-    p {
-        font-size: var(--rentfetch-font-size-medium);
-        color: var(--rentfetch-dark);
-        line-height: 1.2;
-    }
+	p {
+		font-size: var(--rentfetch-font-size-medium);
+		color: var(--rentfetch-dark);
+		line-height: 1.2;
+	}
 
-    h3,
-    p {
-        margin-bottom: 5px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1; /* number of lines to show */
-        line-clamp: 1;
-        -webkit-box-orient: vertical;
-    }
+	h3,
+	p {
+		margin-bottom: 5px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 1; /* number of lines to show */
+		line-clamp: 1;
+		-webkit-box-orient: vertical;
+	}
 
-    .floorplan-attributes {
-        line-height: 1;
-        // margin-bottom: 15px;
+	.floorplan-attributes {
+		line-height: 1;
+		// margin-bottom: 15px;
 
-        p {
-            display: inline-block;
-            margin-right: 10px;
-        }
-    }
+		p {
+			display: inline-block;
+			margin-right: 10px;
+		}
+	}
 
-    .floorplan-availability {
-        margin-top: 10px;
-        padding-top: 15px;
-        border-top: 1px solid rgba(0, 0, 0, 0.07);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
+	.floorplan-availability {
+		margin-top: 10px;
+		padding-top: 15px;
+		border-top: 1px solid rgba(0, 0, 0, 0.07);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
 
-    p.pricing {
-        font-size: var(--rentfetch-font-size-large);
-        font-weight: bold;
-        margin-bottom: 0;
-    }
+	p.pricing {
+		font-size: var(--rentfetch-font-size-large);
+		font-weight: bold;
+		margin-bottom: 0;
+	}
 
-    p.availability {
-        font-size: var(--rentfetch-font-size-small);
-        font-style: italic;
-        margin-bottom: 0;
-    }
+	p.availability {
+		font-size: var(--rentfetch-font-size-small);
+		font-style: italic;
+		margin-bottom: 0;
+	}
 
-    .overlay-link {
-        position: absolute;
-        inset: 0;
-        transition: 0.3s all ease;
-        z-index: 10;
-    }
+	.overlay-link {
+		position: absolute;
+		inset: 0;
+		transition: 0.3s all ease;
+		z-index: 10;
+	}
 
-    .buttons-outer {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: var(--rentfetch-white-85-percent);
-        opacity: 0;
-        pointer-events: none;
-        transition: 0.3s all ease;
-        z-index: 12;
+	.buttons-outer {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: var(--rentfetch-white-85-percent);
+		opacity: 0;
+		pointer-events: none;
+		transition: 0.3s all ease;
+		z-index: 12;
 
-        .buttons-inner {
-            width: 75%;
-            max-width: 300px;
+		.buttons-inner {
+			width: 75%;
+			max-width: 300px;
 
-            .rentfetch-button {
-                display: block;
-                width: 100%;
-                text-align: center;
-                margin-bottom: 5px;
+			.rentfetch-button {
+				display: block;
+				width: 100%;
+				text-align: center;
+				margin-bottom: 5px;
 
-                &:last-child {
-                    margin-bottom: 0;
-                }
-            }
-        }
-    }
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
 
-    .entry:hover,
-    .hentry:hover {
-        box-shadow: var(--rentfetch-box-shadow-hover);
+	.entry:hover,
+	.hentry:hover {
+		box-shadow: var(--rentfetch-box-shadow-hover);
 
-        .buttons-outer {
-            opacity: 1;
-            pointer-events: all;
-        }
-    }
+		.buttons-outer {
+			opacity: 1;
+			pointer-events: all;
+		}
+	}
 }
 
 .floorplan-search-filters {
-    display: none;
+	display: none;
 }
