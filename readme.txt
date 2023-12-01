@@ -88,6 +88,12 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.4.4 =
+
+* Style bug in the floorplans search (height of images)
+* Fixing bug where empty min/max rent or square footage was causing an error
+* Moving the AS tables check into Rentfetch Sync (because it's no longer relevant for the core plugin)
+
 = 0.4.3 =
 
 * Minor style bugfixes
