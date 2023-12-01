@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.4.9 =
+
+* Removing multiproperty settings, making that the default to remove a friction point
+
 = 0.4.8 =
 
 * Adding specials display on the floorplans search at the floorplan level 

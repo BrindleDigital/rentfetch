@@ -12,3 +12,4 @@ function rentfetch_register_amenities_taxonomy() {
 		)
 	);
 }
+add_action( 'init', 'rentfetch_register_amenities_taxonomy', 20 );
