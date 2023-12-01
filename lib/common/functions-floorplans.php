@@ -45,18 +45,24 @@ function rentfetch_get_floorplan_square_feet() {
 	$minimum_sqft = intval( get_post_meta( get_the_ID(), 'minimum_sqft', true ) );
 	$maximum_sqft = intval( get_post_meta( get_the_ID(), 'maximum_sqft', true ) );
 	
-	if ( $minimum_sqft == $maximum_sqft ) {
-		$square_feet = sprintf( '%s', number_format( $minimum_sqft ) );
-	} elseif ( $minimum_sqft < $maximum_sqft ) {
-		$square_feet = sprintf( '%s-%s', number_format( $minimum_sqft ), number_format( $maximum_sqft ) );
-	} elseif ( $minimum_sqft > $maximum_sqft) {
-		$square_feet = sprintf( '%s-%s', number_format( $maximum_sqft ), number_format( $minimum_sqft ) );
-	} elseif ( $minimum_sqft && !$maximum_sqft ) {
-		$square_feet = sprintf( '%s', number_format( $minimum_sqft ) );
-	} elseif ( !$minimum_sqft && $maximum_sqft ) {
-		$square_feet = sprintf( '%s', number_format( $maximum_sqft ) );
+	if ( $minimum_sqft && $maximum_sqft ) {
+		if ( $minimum_sqft == $maximum_sqft ) {
+			$square_feet = sprintf( '%s', number_format( $minimum_sqft ) );
+		} elseif ( $minimum_sqft < $maximum_sqft ) {
+			$square_feet = sprintf( '%s-%s', number_format( $minimum_sqft ), number_format( $maximum_sqft ) );
+		} elseif ( $minimum_sqft > $maximum_sqft) {
+			$square_feet = sprintf( '%s-%s', number_format( $maximum_sqft ), number_format( $minimum_sqft ) );
+		}
+	} else {
+		if ( $minimum_sqft && !$maximum_sqft ) {
+			$square_feet = sprintf( '%s', number_format( $minimum_sqft ) );
+		} elseif ( !$minimum_sqft && $maximum_sqft ) {
+			$square_feet = sprintf( '%s', number_format( $maximum_sqft ) );
+		} else {
+			$square_feet = null;
+		}
 	}
-	
+		
 	$square_feet = apply_filters( 'rentfetch_filter_floorplan_square_feet', $square_feet );
 	return apply_filters( 'rentfetch_get_square_feet_number_label', $square_feet );
 }
