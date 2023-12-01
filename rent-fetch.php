@@ -3,7 +3,7 @@
 	Plugin Name:	Rent Fetch
 	Plugin URI:		http://wordpress.org/plugins/rent-fetch/
 	Description:	Displays searchable rental properties, floorplans, and unit availability.
-	Version:		0.4.5
+	Version:		0.4.6
 	Author:			Brindle Digital
 	Author URI:		https://www.brindledigital.com
 	Text Domain:	rentfetch
@@ -17,7 +17,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // Define the version of the plugin
-define ( 'RENTFETCH_VERSION', '0.4.5' );
+define ( 'RENTFETCH_VERSION', '0.4.6' );
 
 // Plugin directories 
 define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
@@ -49,3 +49,19 @@ function rentfetch_flush_permalinks_on_activation() {
 	add_action('init', 'flush_rewrite_rules', 999 );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_flush_permalinks_on_activation' );
+
+
+////////////////////
+// PLUGIN UPDATER //
+////////////////////
+
+// Updater
+require RENTFETCH_DIR . 'vendor/plugin-update-checker/plugin-update-checker.php';
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+	'https://github.com/BrindleDigital/rentfetch',
+	__FILE__,
+	'rentfetch'
+);
+
+// Optional: Set the branch that contains the stable release.
+$myUpdateChecker->setBranch( 'main' );

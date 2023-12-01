@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.4.6 =
+
+* Adding PUC back in since it's going to be like 70 days until we could possibly be on WP.org
+
 = 0.4.5 =
 
 * Removed an errant 'echo 3' statement that wasn't ever running in any of our test environments, since they define a constant for Google Maps
