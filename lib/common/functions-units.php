@@ -101,14 +101,12 @@ function rentfetch_get_floorplan_units_count_from_cpt() {
 		'meta_key' => 'floorplan_id',
 		'meta_value' => $floorplan_id,
 	);
-
-	$query = new WP_Query( $args );
-
-	$count = $query->found_posts;
-
-	wp_reset_postdata();
-
+	
+	$posts = get_posts( $args );
+	
+	$count = count( $posts );
 	return $count;
+
 }
 
 //* Buttons

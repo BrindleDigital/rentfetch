@@ -10,7 +10,7 @@ function rentfetch_floorplans_each_list_default() {
 	$links = rentfetch_get_floorplan_links();
 	$pricing = rentfetch_get_floorplan_pricing();     
 	$units_count = rentfetch_get_floorplan_units_count_from_meta(); 
-	
+			
 	echo '<div class="images-column">';
 		do_action( 'rentfetch_do_floorplan_images' );
 		
