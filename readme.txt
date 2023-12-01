@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.4.8 =
+
+* Adding specials display on the floorplans search at the floorplan level 
+
 = 0.4.7 =
 
 * Changing the default on the Floorplan search images to contain instead of cover

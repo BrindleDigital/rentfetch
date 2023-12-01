@@ -122,6 +122,30 @@
 		}
 	}
 
+	p.specials {
+		position: absolute;
+		top: 15px;
+		left: 15px;
+		padding: 5px 10px 5px 30px;
+		background-color: var(--rentfetch-gold-pale);
+		z-index: 5;
+		font-size: var(--rentfetch-font-size-small);
+		border-radius: 3px;
+		color: var(--rentfetch-dark);
+		margin: 0;
+
+		&:before {
+			content: '\f155';
+			font-family: 'dashicons';
+			color: var(--rentfetch-gold);
+			font-size: var(--rentfetch-font-size-medium);
+			position: absolute;
+			left: 10px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+	}
+
 	.floorplan-availability {
 		margin-top: 10px;
 		padding-top: 15px;

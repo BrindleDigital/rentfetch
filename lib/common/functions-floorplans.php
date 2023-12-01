@@ -119,7 +119,22 @@ function rentfetch_floorplan_pricing() {
 
 //* Move in special
 
-// TODO: Add move-in specials to floorplan
+function rentfetch_get_floorplan_specials() {	
+		
+	$specials = get_post_meta( get_the_ID(), 'has_specials', true );
+		
+	return apply_filters( 'rentfetch_filter_floorplan_specials', $specials );
+
+}
+
+function rentfetch_floorplan_property_specials_label( $specials ) {
+	
+	if ( $specials )
+		return 'Specials available';
+		
+	return null;
+}
+add_filter( 'rentfetch_filter_floorplan_specials', 'rentfetch_floorplan_property_specials_label', 10, 1 );
 
 //* Tour
 
