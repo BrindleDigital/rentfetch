@@ -88,6 +88,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.4.7 =
+
+* Changing the default on the Floorplan search images to contain instead of cover
+* Adding the dividers between floorplan attributes in the floorplans search
+
 = 0.4.6 =
 
 * Adding PUC back in since it's going to be like 70 days until we could possibly be on WP.org
