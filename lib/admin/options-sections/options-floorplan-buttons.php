@@ -27,7 +27,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
 			// on change of input[name="rentfetch_options_enabled_integrations[]"], show/hide the integration options
 			$( 'input[name="rentfetch_options_availability_button_enabled"]' ).on( 'change', function() {
 				
-				console.log( this );
+				// console.log( this );
 								
 				if( this.checked ) {
 					$( '.availability .white-box:not(.always-visible)' ).show();
@@ -66,7 +66,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
 			// on change of input[name="rentfetch_options_enabled_integrations[]"], show/hide the integration options
 			$( 'input[name="rentfetch_options_contact_button_enabled"]' ).on( 'change', function() {
 				
-				console.log( this );
+				// console.log( this );
 								
 				if( this.checked ) {
 					$( '.contact .white-box:not(.always-visible)' ).show();
@@ -110,7 +110,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
 			// on change of input[name="rentfetch_options_enabled_integrations[]"], show/hide the integration options
 			$( 'input[name="rentfetch_options_tour_button_enabled"]' ).on( 'change', function() {
 				
-				console.log( this );
+				// console.log( this );
 								
 				if( this.checked ) {
 					$( '.tour .white-box:not(.always-visible)' ).show();
