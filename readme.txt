@@ -88,6 +88,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.4.5 =
+
+* Removed an errant 'echo 3' statement that wasn't ever running in any of our test environments, since they define a constant for Google Maps
+* Fixed button width in the floorplan grid when used in a small space
+
 = 0.4.4 =
 
 * Style bug in the floorplans search (height of images)

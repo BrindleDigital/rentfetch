@@ -96,9 +96,7 @@ function rentfetch_google_maps_api_key( $key ) {
 	$key = get_option( 'rentfetch_options_google_maps_api_key' );
 	if ( $key )
 		return $key;
-		
-	echo '3';
-		
+				
 	return null;
 	
 }
