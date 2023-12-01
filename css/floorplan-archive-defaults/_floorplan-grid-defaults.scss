@@ -44,11 +44,14 @@
 		width: 100%;
 		height: 0;
 		padding-top: 55%;
+		position: relative;
 
 		img.floorplan-single-image {
 			object-fit: cover;
 			width: 100%;
 			height: 100%;
+			position: absolute;
+			inset: 0;
 		}
 	}
 
