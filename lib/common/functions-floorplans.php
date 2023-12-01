@@ -129,7 +129,7 @@ function rentfetch_floorplan_pricing() {
 
 function rentfetch_get_floorplan_links() {
 	
-	$units_count = rentfetch_get_floorplan_units_count();
+	$units_count = rentfetch_get_floorplan_units_count_from_cpt();
 	
 	ob_start();    
 	

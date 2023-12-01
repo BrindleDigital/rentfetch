@@ -40,16 +40,21 @@
 		}
 	}
 
+	.floorplan-content {
+		margin-bottom: -15px;
+	}
+
 	.floorplan-details {
 		padding: 15px;
 	}
 
 	.floorplan-single-image-wrap {
-		width: 100%;
+		// width: 100%;
 		height: 0;
 		padding-top: 55%;
 		position: relative;
 		margin: 15px 15px 0;
+		// max-width: 100%;
 
 		img.floorplan-single-image {
 			object-fit: contain;
@@ -73,7 +78,7 @@
 
 	h3,
 	p {
-		margin-bottom: 5px;
+		margin-bottom: 15px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;
@@ -88,8 +93,8 @@
 
 		p {
 			display: inline-block;
-			padding-left: 0.8em;
-			padding-right: 0.8em;
+			padding: 0 0.8em;
+			margin: 0 0 15px 0;
 			position: relative;
 
 			&:first-child {
