@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.4.10 = 
+
+* Fixing the enqueue for Google Maps such that it no longer is loading on every page, but still works with FSE themes
+
 = 0.4.9 =
 
 * Removing multiproperty settings, making that the default to remove a friction point

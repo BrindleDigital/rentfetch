@@ -49,7 +49,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 		
 	// we must localize and enqueue this script here instead of within the shortcode because doing it in the shortcode breaks in FSE themes
 	wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
-	wp_enqueue_script( 'rentfetch-property-map');
+	// wp_enqueue_script( 'rentfetch-property-map');
 	
 	
 	wp_register_script( 'rentfetch-single-property-map', RENTFETCH_PATH . 'js/rentfetch-single-property-map.js', array( 'jquery', 'rentfetch-google-maps' ), RENTFETCH_VERSION, true );

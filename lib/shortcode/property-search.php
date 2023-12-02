@@ -107,7 +107,7 @@ function rentfetch_propertysearchmap() {
 	// );
 		
 	// wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
-	// wp_enqueue_script( 'rentfetch-property-map');
+	wp_enqueue_script( 'rentfetch-property-map');
 	
 	echo '<div id="map"></div>';
 	
