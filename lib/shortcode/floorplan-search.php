@@ -8,6 +8,12 @@
 function rentfetch_floorplan_search_default_layout( $atts ) {
 	
 	ob_start();
+	
+	// because these are loaded over ajax, we need to enqueue the lightbox scripts here (they're enqueue automatically when loaded normally)
+	wp_enqueue_style( 'rentfetch-glightbox-style' );
+	wp_enqueue_script( 'rentfetch-glightbox-script' );
+	wp_enqueue_script( 'rentfetch-glightbox-init' );
+	
 		
 	//* Our container markup for the results
 	echo '<div class="rent-fetch-floorplan-search-default-layout">';	

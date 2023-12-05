@@ -124,33 +124,33 @@ function rf_floorplans_identifiers_metabox_callback( $post ) {
 								
 			<?php 
 			//* Unit Type Mapping
-			$unit_type_mapping = get_post_meta( $post->ID, 'unit_type_mapping', true ); ?>
-			<div class="field">
-				<div class="column">
-					<label for="unit_type_mapping">Unit Type Mapping</label>
-				</div>
-				<div class="column">
-					<input type="text" id="unit_type_mapping" name="unit_type_mapping" value="<?php echo esc_attr( $unit_type_mapping ); ?>">
-					<?php
-					$floorplan_id = get_post_meta( $post->ID, 'floorplan_id', true );
-					$args = array(
-						'post_type' => 'units',
-						'posts_per_page' => -1,
-						'post_status' => 'publish',
-						'orderby' => 'title',
-						'order' => 'ASC',
-						'meta_query' => array(
-							array(
-								'key' => 'floorplan_id',
-								'value' => $floorplan_id,
-								'compare' => '=',
-							)
-						)
-					);
-					
-					$query = new WP_Query( $args );
-					
-					if ( $query->have_posts() ) {
+			// $unit_type_mapping = get_post_meta( $post->ID, 'unit_type_mapping', true ); ?>
+			<!-- <input type="text" id="unit_type_mapping" name="unit_type_mapping" value="<?php // echo esc_attr( $unit_type_mapping ); ?>"> -->
+			<?php
+			$floorplan_id = get_post_meta( $post->ID, 'floorplan_id', true );
+			$args = array(
+				'post_type' => 'units',
+				'posts_per_page' => -1,
+				'post_status' => 'publish',
+				'orderby' => 'title',
+				'order' => 'ASC',
+				'meta_query' => array(
+					array(
+						'key' => 'floorplan_id',
+						'value' => $floorplan_id,
+						'compare' => '=',
+					)
+				)
+			);
+			
+			$query = new WP_Query( $args );
+			
+			if ( $query->have_posts() ) {
+				echo '<div class="field">';
+					echo '<div class="column">';
+						echo '<label for="units">Units</label>';
+					echo '</div>';
+					echo '<div class="column">';
 						echo '<ul class="unit-list">';
 						printf( '<li><a href="/wp-admin/edit.php?s=%s&post_status=all&post_type=units" target="_blank">View related units</a></li>', $floorplan_id );
 						while ( $query->have_posts() ) {
@@ -160,13 +160,12 @@ function rf_floorplans_identifiers_metabox_callback( $post ) {
 							printf( '<li>%s (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</li>', $unit_title, get_the_ID() );
 						}
 						echo '</ul>';
-					} else {
-						// echo '<p class="description">When this is filled out, just save and refresh the page to see a link to the associated property.</p>';
-					}
-					?>
-				</div>
-			</div>
-			
+					echo '</div>'; // .column
+				echo '</div>'; // .field
+			} else {
+				// echo '<p class="description">When this is filled out, just save and refresh the page to see a link to the associated property.</p>';
+			}
+			?>			
 		</div>
 	</div>
 	
@@ -267,14 +266,22 @@ function rf_floorplans_display_metabox_callback( $post ) {
 		</div>
 			
 		<?php 
-		//* Floorplan Video or Tour
-		$floorplan_video_or_tour = get_post_meta( $post->ID, 'floorplan_video_or_tour', true ); ?>
+		//* Tour
+		wp_enqueue_script( 'rentfetch-metabox-properties-tour' );
+		$tour = get_post_meta( $post->ID, 'tour', true ); ?>
 		<div class="field">
 			<div class="column">
-				<label for="floorplan_video_or_tour">Floorplan Video or Tour</label>
+				<label for="tour">Tour embed code (Matterport or Youtube iframe)</label>
 			</div>
 			<div class="column">
-				<input type="text" id="floorplan_video_or_tour" name="floorplan_video_or_tour" value="<?php echo esc_attr( $floorplan_video_or_tour ); ?>">
+				<input type="text" id="tour" name="tour" value="<?php echo esc_attr( $tour ); ?>">
+				<?php 
+				$iframeCode = '<iframe src="https://my.matterport.com/showcase-beta?m=VBHn8iJQ1h4" width="640" height="480" frameborder="0" allowfullscreen allow="vr"></iframe> or <iframe width="560" height="315" src="https://www.youtube.com/embed/C0DPdy98e4c?si=RltNyDXGANGUanKW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+				$escapedIframeCode = htmlspecialchars($iframeCode);
+				?>
+
+				<p class="description">Paste in a Matterport or Youtube iframe code. This code will look something like this: <?php echo $escapedIframeCode; ?></p>
+				<div id="tour-preview"></div>
 			</div>
 		</div>
 	</div>
@@ -435,15 +442,15 @@ function rf_floorplans_availability_metabox_callback( $post ) {
 		
 		<?php 
 		//* Property Show Specials
-		$property_show_specials = get_post_meta( $post->ID, 'property_show_specials', true ); ?>
-		<div class="field">
+		// $property_show_specials = get_post_meta( $post->ID, 'property_show_specials', true ); ?>
+		<!-- <div class="field">
 			<div class="column">
 				<label for="property_show_specials">Property Show Specials</label>
 			</div>
 			<div class="column">
-				<input type="checkbox" id="property_show_specials" name="property_show_specials" <?php checked( $property_show_specials, '1' ); ?>>
+				<input type="checkbox" id="property_show_specials" name="property_show_specials" <?php // checked( $property_show_specials, '1' ); ?>>
 			</div>
-		</div>
+		</div> -->
 						
 		<?php 
 		//* Has Specials
@@ -514,8 +521,22 @@ function rf_save_floorplans_metaboxes( $post_id ) {
 	if ( isset( $_POST['floorplan_description'] ) )
 		update_post_meta( $post_id, 'floorplan_description', sanitize_text_field( $_POST['floorplan_description'] ) );
 		
-	if ( isset( $_POST['floorplan_video_or_tour'] ) )
-		update_post_meta( $post_id, 'floorplan_video_or_tour', sanitize_text_field( $_POST['floorplan_video_or_tour'] ) );
+	if ( isset( $_POST['tour'] ) ) {
+		
+		$allowed_tags = array(
+			'iframe' => [
+				'src' => [],
+				'width' => [],
+				'height' => [],
+				'frameborder' => [],
+				'allowfullscreen' => [],
+				'allow' => [],
+			],
+		);
+		
+		update_post_meta( $post_id, 'tour', wp_kses( $_POST['tour'], $allowed_tags ) );
+		
+	}
 		
 	if ( isset( $_POST['beds'] ) )
 		update_post_meta( $post_id, 'beds', sanitize_text_field( $_POST['beds'] ) );

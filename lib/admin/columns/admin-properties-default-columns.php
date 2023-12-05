@@ -35,8 +35,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 		'url' =>                    __( 'URL', 'rentfetch' ),
 		'images' =>                 __( 'Images', 'rentfetch' ),
 		'description' =>            __( 'Description', 'rentfetch' ),
-		'matterport' =>             __( 'Matterport', 'rentfetch' ),
-		'video' =>                  __( 'Video', 'rentfetch' ),
+		'tour' =>                   __( 'Tour', 'rentfetch' ),
 		'pets' =>                   __( 'Pets', 'rentfetch' ),
 		'content_area' =>           __( 'Content Area', 'rentfetch' ),
 		'yardi_property_images' =>  __( 'Images (Yardi)', 'rentfetch' ),
@@ -106,12 +105,12 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	if ( 'description' === $column )
 		echo esc_attr( get_post_meta( $post_id, 'description', true ) );
 		
-	if ( 'matterport' === $column )
-		echo esc_attr( get_post_meta( $post_id, 'matterport', true ) );
-		
-	if ( 'video' === $column )
-		echo esc_attr( get_post_meta( $post_id, 'video', true ) );
-		
+	if ( 'tour' === $column ) {
+		if ( get_post_meta( $post_id, 'tour', true ) ) {
+			Echo 'Tour embed code added';
+		}
+	}
+				
 	if ( 'pets' === $column )
 		echo esc_attr( get_post_meta( $post_id, 'pets', true ) );
 		
@@ -182,3 +181,4 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	
 }
 add_action( 'manage_properties_posts_custom_column', 'rentfetch_properties_default_column_content', 10, 2);
+

@@ -40,6 +40,8 @@
 	}
 
 	.images-column {
+		position: relative;
+
 		img {
 			max-width: 100%;
 			height: auto;
@@ -49,7 +51,7 @@
 	.floorplan-single-image-wrap {
 		width: 100%;
 		height: 0;
-		padding-top: 70%;
+		padding-top: 63%;
 		position: relative;
 
 		img.floorplan-single-image {
@@ -58,6 +60,30 @@
 			height: 100%;
 			position: absolute;
 			inset: 0;
+		}
+	}
+
+	p.specials {
+		position: absolute;
+		top: 15px;
+		left: 15px;
+		padding: 5px 10px 5px 30px;
+		background-color: var(--rentfetch-gold-pale);
+		z-index: 5;
+		font-size: var(--rentfetch-font-size-small);
+		border-radius: 3px;
+		color: var(--rentfetch-dark);
+		margin: 0;
+
+		&:before {
+			content: '\f155';
+			font-family: 'dashicons';
+			color: var(--rentfetch-gold);
+			font-size: var(--rentfetch-font-size-medium);
+			position: absolute;
+			left: 10px;
+			top: 50%;
+			transform: translateY(-50%);
 		}
 	}
 

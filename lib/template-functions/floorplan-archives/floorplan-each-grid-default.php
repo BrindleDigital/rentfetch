@@ -11,11 +11,15 @@ function rentfetch_floorplans_each_grid_default() {
 	$pricing = rentfetch_get_floorplan_pricing();
 	$units_count = rentfetch_get_floorplan_units_count_from_meta();
 	$specials = rentfetch_get_floorplan_specials();
+	$tour = rentfetch_get_floorplan_tour();
 	
 	do_action( 'rentfetch_do_floorplan_images' );
 	
 	if ( $specials )
 		printf( '<p class="specials">%s</p>', esc_html( $specials ) );
+	
+	if ( $tour )
+		echo $tour;
 	
 	echo '<div class="floorplan-details">';
 		echo '<div class="floorplan-content">';

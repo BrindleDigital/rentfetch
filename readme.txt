@@ -88,6 +88,15 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.5 = 
+
+* Adding glightbox for use on matterport and youtube embeds
+* Adding tours field to both properties and floorplans and standardizing that
+* Adding the specials available element on the single-properties template for each floorplan
+* Adding fields for matterport/youtube and making those work reasonably well whether that's an iframe or an oembed, to support more use cases
+* Adding the new tours buttons on the single-properties layout
+* Adding the new tours buttons on the floorplans search
+
 = 0.4.10 = 
 
 * Fixing the enqueue for Google Maps such that it no longer is loading on every page, but still works with FSE themes

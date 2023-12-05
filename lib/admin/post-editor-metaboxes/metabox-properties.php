@@ -277,7 +277,7 @@ function rf_properties_contact_metabox_callback( $post ) {
 function rf_properties_display_information_metabox_callback( $post ) {
 	wp_enqueue_media();
 	wp_enqueue_script( 'rentfetch-metabox-properties-images' );
-	wp_enqueue_script( 'rentfetch-metabox-properties-matterport' );
+	wp_enqueue_script( 'rentfetch-metabox-properties-tour' );
 	wp_enqueue_script( 'rentfetch-metabox-properties-video' );
 	?>
 	<div class="rf-metabox rf-metabox-properties">
@@ -373,35 +373,21 @@ function rf_properties_display_information_metabox_callback( $post ) {
 		</div>
 
 		<?php 
-		//* Matterport
-		$matterport = get_post_meta( $post->ID, 'matterport', true ); ?>
+		//* Tour
+		$tour = get_post_meta( $post->ID, 'tour', true ); ?>
 		<div class="field">
 			<div class="column">
-				<label for="matterport">Tour Matterport embed code</label>
+				<label for="tour">Tour embed code (Matterport or Youtube iframe)</label>
 			</div>
 			<div class="column">
-				<input type="text" id="matterport" name="matterport" value="<?php echo esc_attr( $matterport ); ?>">
+				<input type="text" id="tour" name="tour" value="<?php echo esc_attr( $tour ); ?>">
 				<?php 
-				$iframeCode = '<iframe src="https://my.matterport.com/showcase-beta?m=VBHn8iJQ1h4" width="640" height="480" frameborder="0" allowfullscreen allow="vr"></iframe>';
+				$iframeCode = '<iframe src="https://my.matterport.com/showcase-beta?m=VBHn8iJQ1h4" width="640" height="480" frameborder="0" allowfullscreen allow="vr"></iframe> or <iframe width="560" height="315" src="https://www.youtube.com/embed/C0DPdy98e4c?si=RltNyDXGANGUanKW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
 				$escapedIframeCode = htmlspecialchars($iframeCode);
 				?>
 
-				<p class="description">Paste in a Matterport iframe code. This code will look something like this: <?php echo $escapedIframeCode; ?></p>
-				<div id="matterport-preview"></div>
-			</div>
-		</div>
-				
-		<?php 
-		//* Tour video
-		$video = get_post_meta( $post->ID, 'video', true ); ?>
-		<div class="field">
-			<div class="column">
-				<label for="video">Tour video oembed link</label>
-			</div>
-			<div class="column">
-				<input type="text" id="video" name="video" value="<?php echo esc_attr( $video ); ?>">
-				<p class="description">Just a Youtube link (e.g. <a href="https://www.youtube.com/watch?v=C0DPdy98e4c" target="_blank">https://www.youtube.com/watch?v=C0DPdy98e4c</a>). Vimeo videos will <em>usually</em> work as well, but be sure to test these on the frontend.</p>
-				<div id="video-container" style="width:100%; max-width: 300px;"></div> <!-- a container to hold the video -->
+				<p class="description">Paste in a Matterport or Youtube iframe code. This code will look something like this: <?php echo $escapedIframeCode; ?></p>
+				<div id="tour-preview"></div>
 			</div>
 		</div>
 				
@@ -500,7 +486,7 @@ function rf_save_properties_metaboxes( $post_id ) {
 	if ( isset( $_POST['description'] ) )
 		update_post_meta( $post_id, 'description', sanitize_text_field( $_POST['description'] ) );
 		
-	if ( isset( $_POST['matterport'] ) ) {
+	if ( isset( $_POST['tour'] ) ) {
 		
 		$allowed_tags = array(
 			'iframe' => [
@@ -513,7 +499,7 @@ function rf_save_properties_metaboxes( $post_id ) {
 			],
 		);
 		
-		update_post_meta( $post_id, 'matterport', wp_kses( $_POST['matterport'], $allowed_tags ) );
+		update_post_meta( $post_id, 'tour', wp_kses( $_POST['tour'], $allowed_tags ) );
 		
 	}
 		
