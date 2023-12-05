@@ -5,7 +5,7 @@
 //////////////
 
 function rentfetch_enqueue_scripts_stylesheets() {
-	
+		
 	// Enqueue dashicons, since we use them on the frontend
 	wp_enqueue_style( 'dashicons' );
 	
@@ -20,7 +20,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	// glightbox (open source): https://biati-digital.github.io/glightbox/
 	wp_register_style( 'rentfetch-glightbox-style', 'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css', array(), RENTFETCH_VERSION, 'screen' );
 	wp_register_script( 'rentfetch-glightbox-script', 'https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js', '', RENTFETCH_VERSION, true );
-	wp_register_script( 'rentfetch-glightbox-init', RENTFETCH_PATH . 'js/rentfetch-glightbox-init.js', array( 'rentfetch-glightbox-script' ), RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-glightbox-init', RENTFETCH_PATH . 'js/rentfetch-glightbox-init.js', array( 'rentfetch-glightbox-script', 'jquery' ), RENTFETCH_VERSION, true );
 	
 	// Flatpickr
 	wp_register_style( 'rentfetch-flatpickr-style', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css', array(), RENTFETCH_VERSION, 'screen' );
