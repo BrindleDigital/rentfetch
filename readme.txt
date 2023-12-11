@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.6.1 
+
+* Fixing a bug where the square footage search wasn't showing up in the properties search when enabled.
+
 = 0.6 = 
 
 * Adding the square footage search everywhere

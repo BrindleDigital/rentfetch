@@ -5,7 +5,7 @@ function rentfetch_search_properties_dialog_filters() {
 	
 	// check whether text-based search is enabled
 	$options_dialog_filters = get_option( 'rentfetch_options_dialog_filters' );
-		
+			
 	if ( !empty( $options_dialog_filters ) && in_array( 'text_based_search', $options_dialog_filters ) )
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_text_search' );
 		

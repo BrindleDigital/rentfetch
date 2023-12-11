@@ -20,6 +20,7 @@ function rentfetch_settings_set_defaults_properties() {
 		'text_based_search',
 		'beds_search',
 		'baths_search',
+		'squarefoot_search',
 		'type_search',
 		'date_search',
 		'price_search',
@@ -171,7 +172,7 @@ function rent_fetch_settings_properties_property_search() {
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_featured_filters ) ); ?>>
 						Square footage search
 					</label>
 				</li>
