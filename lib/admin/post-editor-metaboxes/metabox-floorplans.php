@@ -360,6 +360,7 @@ function rf_floorplans_info_metabox_callback( $post ) {
 				</div>
 				<div class="column">
 					<input type="text" id="minimum_rent" name="minimum_rent" value="<?php echo esc_attr( $minimum_rent ); ?>">
+					<p class="description">Typically an API will set both the minimum and maximum numbers. The minimim is required for the pricing search to operate normally, so if you're entering information manually, use the minimum values.</p>
 				</div>
 			</div>
 			
@@ -388,6 +389,7 @@ function rf_floorplans_info_metabox_callback( $post ) {
 				</div>
 				<div class="column">
 					<input type="text" id="minimum_sqft" name="minimum_sqft" value="<?php echo esc_attr( $minimum_sqft ); ?>">
+					<p class="description">Typically an API will set both the minimum and maximum numbers. The minimim is required for the square footage search to operate normally, so if you're entering information manually, use the minimum values.</p>
 				</div>
 			</div>
 			

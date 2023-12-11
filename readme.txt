@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.6 = 
+
+* Adding the square footage search everywhere
+
 = 0.5.1 =
 
 * Assign the single-floorplans and single-properties templates in cases where the $template is not being passed in, for whatever reason.

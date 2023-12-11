@@ -40,16 +40,16 @@ function rentfetch_search_filters_price() {
 	// wp_enqueue_script( 'rentfetch-nouislider-init-script' );
 	
 	//* build the price search
-	echo '<fieldset class="price">';
+	echo '<fieldset class="price number-range">';
 		echo '<legend>Price Range</legend>';
 		echo '<button class="toggle">Price Range</button>';
 		echo '<div class="input-wrap slider inactive">';
 			echo '<div>';
-				echo '<div class="price-slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';
-				echo '<div class="inputs-prices">';
-					printf( '<div class="input-price-wrap"><span class="input-group-addon">$</span><input type="number" min="1" name="pricesmall" data-default-value="%s" id="pricesmall" value="%s" /></div>', $valueSmall, $valueSmall );
-					echo '<div class="price-dash"></div>';
-					printf( '<div class="input-price-wrap"><span class="input-group-addon">$</span><input type="number" min="1" name="pricebig" data-default-value="%s" id="pricebig" value="%s" /></div>', $valueBig, $valueBig );
+				echo '<div class="price-slider-wrap slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';
+				echo '<div class="inputs-prices inputs-slider">';
+					printf( '<div class="input-price-wrap input-slider-wrap"><span class="input-group-addon-price">$</span><input type="number" min="1" name="pricesmall" data-default-value="%s" id="pricesmall" value="%s" /></div>', $valueSmall, $valueSmall );
+					echo '<div class="price-dash dash"></div>';
+					printf( '<div class="input-price-wrap input-slider-wrap"><span class="input-group-addon-price">$</span><input type="number" min="1" name="pricebig" data-default-value="%s" id="pricebig" value="%s" /></div>', $valueBig, $valueBig );
 				echo '</div>'; // .inputs-prices
 			echo '</div>';
 		echo '</div>'; // .slider

@@ -160,25 +160,25 @@
 		}
 	}
 
-	fieldset.price {
-		.inputs-prices {
+	fieldset.number-range {
+		.inputs-slider {
 			display: grid;
 			grid-template-columns: 1fr 20px 1fr;
 			align-items: center;
 			justify-content: center;
 			gap: 10px;
 
-			.price-dash {
+			.dash {
 				height: 1px;
 				background-color: black;
 			}
 
-			.input-price-wrap {
+			.input-slider-wrap {
 				position: relative;
 				display: flex;
 				align-items: center;
 
-				span.input-group-addon {
+				span.input-group-addon-price {
 					padding: 5px 10px;
 					display: inline-block;
 					opacity: 0.2;
@@ -186,7 +186,8 @@
 					position: absolute;
 				}
 
-				input {
+				input#pricesmall,
+				input#pricebig {
 					padding-left: 25px;
 				}
 			}
