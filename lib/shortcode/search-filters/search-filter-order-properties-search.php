@@ -14,6 +14,9 @@ function rentfetch_search_properties_dialog_filters() {
 		
 	if ( !empty( $options_dialog_filters ) && in_array( 'baths_search', $options_dialog_filters ) )
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_baths' );
+	
+	if ( !empty( $options_dialog_filters ) && in_array( 'squarefoot_search', $options_dialog_filters ) )
+	    add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_squarefoot' );
 				
 	if ( !empty( $options_dialog_filters ) && in_array( 'type_search', $options_dialog_filters ) )
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_property_types' );
@@ -43,6 +46,9 @@ function rentfetch_search_properties_featured_filters() {
 		
 	if ( !empty( $options_featured_filters ) && in_array( 'baths_search', $options_featured_filters ) )
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_baths' );
+	
+	if ( !empty( $options_featured_filters ) && in_array( 'squarefoot_search', $options_featured_filters ) )
+	    add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_squarefoot' );
 				
 	if ( !empty( $options_featured_filters ) && in_array( 'type_search', $options_featured_filters ) )
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_property_types' );
