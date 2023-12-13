@@ -90,11 +90,10 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 	if ( 'yardi_unit_image_urls' === $column ) {
 		
 		$yardi_unit_image_urls = get_post_meta( $post_id, 'yardi_unit_image_urls', true );
+		$unit_image_urls = array();
 		
 		// escape the array of image urls
-		if ( is_array( $yardi_unit_image_urls ) ) {
-			$unit_image_urls = array();
-
+		if ( is_array( $yardi_unit_image_urls ) ) {			
 			foreach ($yardi_unit_image_urls as $url) {
 				$unit_image_urls[] = esc_url($url);
 			}
@@ -113,7 +112,6 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 			}
 				
 		}
-		
 	}
 
 	if ( 'unit_source' === $column )

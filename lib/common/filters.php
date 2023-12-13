@@ -73,7 +73,7 @@ function rentfetch_square_feet_number_label( $number ) {
 add_filter( 'rentfetch_get_square_feet_number_label', 'rentfetch_square_feet_number_label' );
 
 function rentfetch_available_units_label( $number ) {
-	if ( $number == 0 ) {
+	if ( $number == 0 || empty( $number ) ) {
 		$available = 'No units available';
 	} elseif ( $number == 1 ) {
 		$available = '1 unit available';

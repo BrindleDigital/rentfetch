@@ -69,7 +69,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 	
 	if ( 'property_name' === $column ) {
 		
-		$property_id = get_post_meta( $post_id, 'property_id', true );
+		$property_id = intval( get_post_meta( $post_id, 'property_id', true ) );
 		
 		// do a query for properties with this property_id
 		$args = array(
@@ -87,14 +87,14 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 			)
 		);
 		
-		$query = new WP_Query( $args );
+		$property_name_query = new WP_Query( $args );
 		
-		if ( $query->have_posts() ) {
-			while ( $query->have_posts() ) {
-				$query->the_post();
-				$property_title = get_the_title();
-				$property_link = get_the_permalink();
-				$property_id = get_post_meta( get_the_ID(), 'property_id', true );
+		if ( $property_name_query->have_posts() ) {
+			while ( $property_name_query->have_posts() ) {
+				$property_name_query->the_post();
+				$property_title = get_the_title( get_the_ID() );
+				$property_link = get_the_permalink( get_the_ID() );
+				// $property_id = get_post_meta( get_the_ID(), 'property_id', true );
 				printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', $property_link, $property_title, get_the_ID() );
 			}
 		}
