@@ -60,16 +60,16 @@ if ( have_posts() ) {
 				echo '</div>'; // .current-floorplan-info
 			echo '</div>'; // .container-inner
 		echo '</div>'; // .container-outer
-		echo '<div class="single-floorplans-container-outer">';
-			echo '<div class="single-floorplans-container-inner">';
-				echo '<h2>Take a look around</h2>';
-			echo '</div>'; // .container-inner
-		echo '</div>'; // .container-outer
-		echo '<div class="single-floorplans-container-outer">';
-			echo '<div class="single-floorplans-container-inner">';
-				echo '<h2>Similar floorplans</h2>';
-			echo '</div>'; // .container-inner
-		echo '</div>'; // .container-outer
+		// echo '<div class="single-floorplans-container-outer">';
+		// 	echo '<div class="single-floorplans-container-inner">';
+		// 		echo '<h2>Take a look around</h2>';
+		// 	echo '</div>'; // .container-inner
+		// echo '</div>'; // .container-outer
+		// echo '<div class="single-floorplans-container-outer">';
+		// 	echo '<div class="single-floorplans-container-inner">';
+		// 		echo '<h2>Similar floorplans</h2>';
+		// 	echo '</div>'; // .container-inner
+		// echo '</div>'; // .container-outer
 		
 		
 	} // end while

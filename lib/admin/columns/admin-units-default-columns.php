@@ -24,6 +24,7 @@ function rentfetch_default_units_admin_columns( $columns ) {
 		'title' =>                     __( 'Title', 'rentfetch' ),
 		'unit_id' =>                   __( 'Unit ID', 'rentfetch' ),
 		'floorplan_id' =>              __( 'Floorplan ID', 'rentfetch' ),
+		'floorplan_name' =>            __( 'Floorplan Name', 'rentfetch' ),
 		'property_id' =>               __( 'Property ID', 'rentfetch' ),
 		'apply_online_url' =>          __( 'Apply URL', 'rentfetch' ),
 		'availability_date' =>         __( 'Availability date', 'rentfetch' ),
@@ -56,6 +57,47 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 
 	if ( 'floorplan_id' === $column )
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_id', true ) );
+	
+	if ( 'floorplan_name' === $column ) {
+		
+		$property_id = intval( get_post_meta( $post_id, 'property_id', true ) );
+		$floorplan_id = intval( get_post_meta( $post_id, 'floorplan_id', true ) );
+				
+		// do a query for properties with this property_id
+		$args = array(
+			'post_type' => 'floorplans',
+			'posts_per_page' => 1,
+			'post_status' => 'publish',
+			'orderby' => 'title',
+			'order' => 'ASC',
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key' => 'property_id',
+					'value' => $property_id,
+					'compare' => '=',
+				),
+				array(
+					'key' => 'floorplan_id',
+					'value' => $floorplan_id,
+					'compare' => '=',
+				)
+			)
+		);
+		
+		$floorplan_name_query = new WP_Query( $args );
+		
+		if ( $floorplan_name_query->have_posts() ) {
+			while ( $floorplan_name_query->have_posts() ) {
+				$floorplan_name_query->the_post();
+				$floorplan_title = get_the_title( get_the_ID() );
+				$floorplan_link = get_the_permalink( get_the_ID() );
+				// $floorplan_id = get_post_meta( get_the_ID(), 'floorplan_id', true );
+				printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', $floorplan_link, $floorplan_title, get_the_ID() );
+			}
+		}
+		
+	}
 
 	if ( 'property_id' === $column )
 		echo esc_attr( get_post_meta( $post_id, 'property_id', true ) );
