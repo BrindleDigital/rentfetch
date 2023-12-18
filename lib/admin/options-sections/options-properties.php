@@ -58,7 +58,7 @@ function rent_fetch_settings_properties_property_search() {
 			
 		</div>
 		<div class="column">
-			<p class="description">Select whether you'd like to show properties that are available or all properties. This setting applies to the properties search and to the "nearby properties" listing on the properties single template.</p>
+			<p class="description">Select whether you'd like to show properties that are available or all properties. <strong>If this is set to ignore availability, all filters involving floorplans (e.g. beds, baths, price, move-in date, etc.) will not function. ALL availability information will be ignored.</strong> This setting applies to the properties search and to the "nearby properties" listing on the properties single template.</p>
 			<select name="rentfetch_options_property_availability_display" id="rentfetch_options_property_availability_display" value="<?php echo esc_attr( get_option( 'rentfetch_options_property_availability_display' ) ); ?>">
 				<option value="available" <?php selected( get_option( 'rentfetch_options_property_availability_display' ), 'available' ); ?>>Availability</option>
 				<option value="all" <?php selected( get_option( 'rentfetch_options_property_availability_display' ), 'all' ); ?>>All properties ignoring availability</option>

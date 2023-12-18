@@ -46,6 +46,6 @@ function rent_fetch_options_page() {
 		'manage_options', // Capability required to access the menu.
 		'rent_fetch_documentation', // Menu slug.
 		'rent_fetch_documentation_page_html' // Callback function to render the page.
-	);
+	);	
 }
 add_action( 'admin_menu', 'rent_fetch_options_page' );

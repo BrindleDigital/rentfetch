@@ -157,13 +157,18 @@ function rentfetch_filter_properties(){
 		'no_found_rows' => true,
 	);
 	
-	//* Add all of our property IDs into the property search
-	$property_args['meta_query'] = array(
-		array(
-			'key' => 'property_id',
-			'value' => $property_ids,
-		),
-	);
+	$display_availability = get_option( 'rentfetch_options_property_availability_display' );
+	if ( $display_availability != 'all' ) {
+		
+		//* Add all of our property IDs into the property search
+		$property_args['meta_query'] = array(
+			array(
+				'key' => 'property_id',
+				'value' => $property_ids,
+			),
+		);
+		
+	}
 	
 	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
 			
