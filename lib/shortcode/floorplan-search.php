@@ -82,11 +82,21 @@ function rentfetch_filter_floorplans() {
 	$order = apply_filters( 'rentfetch_get_floorplan_order', $order = 'ASC' );
 	
 	//* The base floorplan query
+	// $floorplan_args = array(
+	// 	'post_type' => 'floorplans',
+	// 	'orderby' => $orderby,
+	// 	'order'	=> $order, // ASC or DESC
+	// 	'no_found_rows' => true,
+	// 	'posts_per_page' => -1,
+	// );
+	
+	//* The base floorplan query
 	$floorplan_args = array(
-		'post_type' => 'floorplans',
-		'orderby' => $orderby,
-		'order'	=> $order, // ASC or DESC
-		'no_found_rows' => true,
+		'post_type'      => 'floorplans',
+		'meta_key'       => 'available_units', // Sort by the 'available_units' meta field
+		'orderby'        => 'meta_value_num',  // Sort as numeric values
+		'order'          => 'DESC',           // Descending order (most to least)
+		'no_found_rows'  => true,
 		'posts_per_page' => -1,
 	);
 	

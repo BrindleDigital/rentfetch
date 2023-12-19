@@ -50,7 +50,7 @@ if ( have_posts() ) {
 						echo '</div>';
 						
 						if ( $units_count > 0 ) {
-							printf( '<p class="availability">%s</p>', $available_units );
+							// printf( '<p class="availability">%s</p>', $available_units );
 							
 							// typically there will be two things hooked to this, a desktop <table> and a mobile <details>
 							do_action( 'rentfetch_floorplan_do_unit_table' );

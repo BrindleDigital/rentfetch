@@ -33,6 +33,8 @@ function rentfetch_properties_each_list() {
 	
 		if ( $title )
 			printf( '<h3>%s</h3>', esc_html( $title ) );
+		
+		echo 'Property ID temp: ' . get_post_meta( get_the_ID(), 'property_id', true );
 					
 		if ( $property_location )
 			printf( '<p class="property-location">%s</p>', esc_html( $property_location ) );

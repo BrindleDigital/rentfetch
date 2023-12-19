@@ -97,6 +97,13 @@ function rentfetch_enqueue_scripts_stylesheets() {
 		array( 'blaze-script' ),
 		RENTFETCH_VERSION 
 	);
+		
+	wp_register_script(
+		'rentfetch-floorplan-images-slider-init',
+		RENTFETCH_PATH . 'js/rentfetch-blaze-floorplan-images-init.js', 
+		array( 'blaze-script' ),
+		RENTFETCH_VERSION 
+	);
 	
 		
 }

@@ -1,0 +1,38 @@
+.blaze-buttons {
+	display: block;
+	margin-top: 25px;
+
+	@include notmobile {
+		text-align: center;
+	}
+}
+
+button.blaze-prev,
+button.blaze-next {
+	border: none;
+	background-color: transparent;
+	color: var(--rentfetch-default);
+	cursor: pointer;
+	transition: 0.3s color ease-in-out;
+	font-size: var(--rentfetch-font-size-large);
+	// text-indent: -999px;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: var(--rentfetch-dark);
+		background-color: transparent;
+	}
+}
+
+button.blaze-prev:after {
+	content: '\f340';
+	font-family: 'dashicons';
+	display: block;
+}
+
+button.blaze-next:after {
+	content: '\f344';
+	font-family: 'dashicons';
+	display: block;
+}

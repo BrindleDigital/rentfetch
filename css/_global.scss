@@ -7,38 +7,38 @@ $default: #999999;
 $dark: #000000;
 
 html {
-    // colors
-    --rentfetch-white: #ffffff;
-    --rentfetch-base: #f7f7f7;
-    --rentfetch-default: #999999;
-    --rentfetch-dark: #000000;
-    --rentfetch-gold-pale: #ffebb1;
-    --rentfetch-gold: #fbbc00;
-    --rentfetch-orange: #e57a3a;
-    --rentfetch-accent: #086ddb;
-    --rentfetch-accent-active: #1f88fa;
-    --rentfetch-black-5-percent: rgba(0, 0, 0, 0.05);
-    --rentfetch-black-7-percent: rgba(0, 0, 0, 0.07);
-    --rentfetch-black-10-percent: rgba(0, 0, 0, 0.1);
-    --rentfetch-black-20-percent: rgba(0, 0, 0, 0.2);
-    --rentfetch-black-30-percent: rgba(0, 0, 0, 0.3);
-    --rentfetch-black-40-percent: rgba(0, 0, 0, 0.4);
-    --rentfetch-black-50-percent: rgba(0, 0, 0, 0.5);
-    --rentfetch-black-60-percent: rgba(0, 0, 0, 0.6);
-    --rentfetch-black-70-percent: rgba(0, 0, 0, 0.7);
-    --rentfetch-black-80-percent: rgba(0, 0, 0, 0.8);
-    --rentfetch-black-90-percent: rgba(0, 0, 0, 0.9);
-    --rentfetch-white-85-percent: rgba(255, 255, 255, 0.85);
-    // --rentfetch-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-    --rentfetch-box-shadow: rgba(0, 0, 0, 0.12) 0px 3px 12px;
-    --rentfetch-box-shadow-hover: rgba(0, 0, 0, 0.07) 0px 8px 15px;
-    --rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
+	// colors
+	--rentfetch-white: #ffffff;
+	--rentfetch-base: #f7f7f7;
+	--rentfetch-default: #999999;
+	--rentfetch-dark: #000000;
+	--rentfetch-gold-pale: #ffebb1;
+	--rentfetch-gold: #fbbc00;
+	--rentfetch-orange: #e57a3a;
+	--rentfetch-accent: #086ddb;
+	--rentfetch-accent-active: #1f88fa;
+	--rentfetch-black-5-percent: rgba(0, 0, 0, 0.05);
+	--rentfetch-black-7-percent: rgba(0, 0, 0, 0.07);
+	--rentfetch-black-10-percent: rgba(0, 0, 0, 0.1);
+	--rentfetch-black-20-percent: rgba(0, 0, 0, 0.2);
+	--rentfetch-black-30-percent: rgba(0, 0, 0, 0.3);
+	--rentfetch-black-40-percent: rgba(0, 0, 0, 0.4);
+	--rentfetch-black-50-percent: rgba(0, 0, 0, 0.5);
+	--rentfetch-black-60-percent: rgba(0, 0, 0, 0.6);
+	--rentfetch-black-70-percent: rgba(0, 0, 0, 0.7);
+	--rentfetch-black-80-percent: rgba(0, 0, 0, 0.8);
+	--rentfetch-black-90-percent: rgba(0, 0, 0, 0.9);
+	--rentfetch-white-85-percent: rgba(255, 255, 255, 0.85);
+	// --rentfetch-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+	--rentfetch-box-shadow: rgba(0, 0, 0, 0.07) 0px 3px 12px;
+	--rentfetch-box-shadow-hover: rgba(0, 0, 0, 0.12) 0px 8px 15px;
+	--rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
 
-    // font sizes
-    --rentfetch-font-size-small: 15px;
-    --rentfetch-font-size-medium: 18px;
-    --rentfetch-font-size-large: 22px;
-    --rentfetch-font-size-larger: 25px;
+	// font sizes
+	--rentfetch-font-size-small: 15px;
+	--rentfetch-font-size-medium: 18px;
+	--rentfetch-font-size-large: 22px;
+	--rentfetch-font-size-larger: 25px;
 }
 
 /* ==========================================================================
@@ -50,42 +50,42 @@ $medium: 960px;
 $wide: 1200px;
 
 @mixin mobile {
-    @media (max-width: #{$thin}) {
-        @content;
-    }
+	@media (max-width: #{$thin}) {
+		@content;
+	}
 }
 
 @mixin tablet {
-    @media (min-width: #{$thin}) and (max-width: #{$medium}) {
-        @content;
-    }
+	@media (min-width: #{$thin}) and (max-width: #{$medium}) {
+		@content;
+	}
 }
 
 @mixin notdesktop {
-    @media (max-width: #{$medium}) {
-        @content;
-    }
+	@media (max-width: #{$medium}) {
+		@content;
+	}
 }
 
 @mixin notmobile {
-    @media (min-width: #{$thin}) {
-        @content;
-    }
+	@media (min-width: #{$thin}) {
+		@content;
+	}
 }
 
 @mixin desktop {
-    @media (min-width: #{$medium}) {
-        @content;
-    }
+	@media (min-width: #{$medium}) {
+		@content;
+	}
 }
 
 @mixin desktop-wide {
-    @media (min-width: #{$wide}) {
-        @content;
-    }
+	@media (min-width: #{$wide}) {
+		@content;
+	}
 }
 
 pre {
-    font-size: 13px;
-    line-height: 1.2em;
+	font-size: 13px;
+	line-height: 1.2em;
 }

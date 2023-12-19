@@ -1,38 +1,87 @@
 body.floorplans-template-default {
-    .site-content {
-        display: block;
-    }
-    // .site-inner {
-    //     padding-left: 0;
-    //     padding-right: 0;
-    //     width: 100%;
-    //     max-width: 100%;
-    //     margin-bottom: 0;
-    // }
+	.site-content {
+		display: block;
+	}
 
-    .single-floorplans-container-outer {
-        margin: 0 calc(50% - 50vw);
-        max-width: 100vw;
-        width: 100vw;
-        padding: 60px 25px;
+	p.pricing {
+		font-size: var(--rentfetch-font-size-large);
+	}
 
-        .single-floorplans-container-inner {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-    }
+	.floorplan-attributes {
+		line-height: 1;
+		// margin-bottom: 15px;
 
-    .current-floorplan-info {
-        display: grid;
-        grid-template-columns: 4fr 6fr;
-        gap: 60px;
+		p {
+			font-size: var(--rentfetch-font-size-large);
+			display: inline-block;
+			padding: 0 0.8em;
+			margin: 0 0 15px 0;
+			position: relative;
 
-        .images-column {
-            img {
-                max-width: 100%;
-                height: auto;
-            }
-        }
-    }
+			&:first-child {
+				padding-left: 0;
+			}
+
+			&:last-child {
+				padding-right: 0;
+
+				&:after {
+					display: none;
+				}
+			}
+
+			&:after {
+				height: 50%;
+				position: absolute;
+				content: '';
+				width: 1px;
+				background-color: var(--rentfetch-black-20-percent);
+				right: 0;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+		}
+	}
+	// .site-inner {
+	//     padding-left: 0;
+	//     padding-right: 0;
+	//     width: 100%;
+	//     max-width: 100%;
+	//     margin-bottom: 0;
+	// }
+
+	.single-floorplans-container-outer {
+		margin: 0 calc(50% - 50vw);
+		max-width: 100vw;
+		width: 100vw;
+		padding: 60px 25px;
+
+		@include notdesktop {
+			padding: 25px;
+		}
+
+		.single-floorplans-container-inner {
+			width: 100%;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+	}
+
+	.current-floorplan-info {
+		display: grid;
+		grid-template-columns: 4fr 6fr;
+		gap: 60px;
+
+		@include notdesktop {
+			grid-template-columns: 1fr;
+			gap: 20px;
+		}
+
+		.images-column {
+			img {
+				max-width: 100%;
+				height: auto;
+			}
+		}
+	}
 }
