@@ -39,7 +39,7 @@ function rentfetch_floorplan_single_image() {
 
 function rentfetch_floorplan_image_slider() {
 	$images = rentfetch_get_floorplan_images();
-	
+		
 	wp_enqueue_script( 'blaze-script' );
 	wp_enqueue_script( 'rentfetch-floorplan-images-slider-init' );
 	wp_enqueue_style( 'blaze-style' );
@@ -60,10 +60,13 @@ function rentfetch_floorplan_image_slider() {
 				echo '</div>'; // .blaze-track
 			echo '</div>'; // .blaze-track-container
 			
-			echo '<div class="blaze-buttons">';
-				echo '<button class="blaze-prev"></button>';
-				echo '<button class="blaze-next"></button>';
-			echo '</div>';
+			if ( count( $images ) > 1 ) {
+				echo '<div class="blaze-buttons">';
+					echo '<button class="blaze-prev"></button>';
+					echo '<button class="blaze-next"></button>';
+				echo '</div>';
+			}
+			
 
 			// echo '<div class="blaze-pagination"></div>';
 			
