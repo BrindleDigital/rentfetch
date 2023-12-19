@@ -48,13 +48,15 @@
 		}
 	}
 
-	.floorplan-single-image-wrap {
+	.floorplan-single-image-wrap,
+	.floorplan-image-slide {
 		width: 100%;
 		height: 0;
 		padding-top: 66.7%;
 		position: relative;
 
-		img.floorplan-single-image {
+		img.floorplan-single-image,
+		img.floorplan-image {
 			object-fit: contain;
 			width: 100%;
 			height: 100%;
