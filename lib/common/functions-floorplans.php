@@ -300,9 +300,7 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_tour_
 
 //* Unit table (this always must be in the context of a floorplan, which is why it's in this file)
 function rentfetch_floorplan_unit_table() {
-	
-	echo '<p>Output the unit table</p>';
-	
+		
 	// get the current post 
 	global $post;
 		
@@ -384,9 +382,7 @@ add_action( 'rentfetch_floorplan_do_unit_table', 'rentfetch_floorplan_unit_table
 
 //* Unit table (this always must be in the context of a floorplan, which is why it's in this file)
 function rentfetch_floorplan_unit_list() {
-	
-	echo '<p>Output the unit list</p>';
-			
+				
 	$floorplan_id = get_post_meta( get_the_ID(), 'floorplan_id', true );
 	$property_id = get_post_meta( get_the_ID(), 'property_id', true );
 	
@@ -426,9 +422,9 @@ function rentfetch_floorplan_unit_list() {
 				$floor = null;
 				$tour_video = null;
 				
-				echo '<details>';
-					echo '<summary>';
-						printf( '<p class="unit-title"><span class="label">Unit No.</span> %s, <span class="label">starting at</span> %s</p>', $title, $pricing );
+				echo '<details class="unit-details">';
+					echo '<summary class="unit-summary">';
+						printf( '<p class="unit-title">%s, <span class="label">starting at</span> %s<span class="dropdown"></span></p>', $title, $pricing );
 					echo '</summary>';
 					echo '<ul class="unit-details-list-wrap">';
 					

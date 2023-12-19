@@ -88,6 +88,12 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.7 = 
+
+* Adding functionality for more mobile-friendly displays on the single-floorplans view and on the properties list view.
+* Adding the image sliders where appropriate for floorplans
+* Minor bugfixes throughout
+
 = 0.6.1 
 
 * Fixing a bug where the square footage search wasn't showing up in the properties search when enabled.

@@ -2,9 +2,9 @@ table.unit-details-table {
 	margin-top: 25px;
 	border: none;
 
-	// @include notdesktop {
-	// 	display: none;
-	// }
+	@include notdesktop {
+		display: none;
+	}
 
 	tbody {
 		border: none;
