@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.7.1 =
+
+* Improving the performance of the pricing filter when it's not set. Previously, it was still only finding floorplans that had pricing, and if it's null, then it really should be fully ignored.
+
 = 0.7 = 
 
 * Adding functionality for more mobile-friendly displays on the single-floorplans view and on the properties list view.

@@ -58,14 +58,11 @@ function rentfetch_search_filters_price() {
 }
 
 function rentfetch_search_floorplans_args_price( $floorplans_args ) {
-	
+					
 	// bail if we don't have a price search (neither are set)
 	if ( !isset( $_POST['pricesmall'] ) && !isset( $_POST['pricebig'] ) )
 		return $floorplans_args;
-	
-	$defaultpricesmall = get_option( 'rentfetch_options_price_filter_minimum' );
-	$defaultpricebig = get_option( 'rentfetch_options_price_filter_maximum' );
-	
+		
 	$pricesmall = null;
 	$pricebig = null;
 	
@@ -78,29 +75,19 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 		$pricebig = intval( sanitize_text_field( $_POST['pricebig'] ) );
 	
 	// let's block any values that are less than 1
-	if ( $pricesmall < 1 && $pricesmall != null )
+	if ( $pricesmall < 1 )
 		$pricesmall = null;
 	
 	// let's block any values that are less than 1
-	if ( $pricebig < 1 && $pricebig != null )
+	if ( $pricebig < 1 )
 		$pricebig = null;
-		
-	// // if neither are set, then bail
-	// if ( $pricesmall == $defaultpricesmall && $pricebig == $defaultpricebig )
-	// 	return $floorplans_args;
-	
+			
+	// if there are no values here, let's bail and return the original args
 	if ( $pricesmall == null && $pricebig == null ) {
-		// if no values are set, just make sure that the minimum rent is greater than 0
-		$floorplans_args['meta_query'][] = array(
-			array(
-				'key' => 'minimum_rent',
-				'value' => '1',
-				'type' => 'numeric',
-				'compare' => '>=',
-			),
-		);
+		return $floorplans_args;
 	}
 	
+	// if both values are set, then do a between query
 	elseif ( intval( $pricesmall ) > 0 && intval( $pricebig ) > 0 ) {
 		// if both values are set, then do a between query
 		$floorplans_args['meta_query'][] = array(
@@ -113,8 +100,9 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 		);
 	} 
 	
-	elseif ( intval( $pricesmall ) > 0 && empty( $pricebig)) {
-		// if only the small value is set, then do a greater than or equal to query
+	// if only the small value is set, then do a greater than or equal to query
+	elseif ( intval( $pricesmall ) > 0 && $pricebig == null ) {
+		
 		$floorplans_args['meta_query'][] = array(
 			'relation' => 'AND',
 			array(
@@ -130,11 +118,12 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 				'compare' => '>=',
 			),
 		);
+		
 	} 
 	
+	// if only the big value is set, then do a between query between 1 and the big value
 	elseif ( intval( $pricebig ) > 0 && empty( $pricesmall ) ) {
-		
-		// if only the big value is set, then do a between query between 1 and the big value
+				
 		$floorplans_args['meta_query'][] = array(
 			array(
 				'key' => 'minimum_rent',
@@ -143,8 +132,8 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 				'compare' => 'BETWEEN',
 			),
 		);
+		
 	}
-	
 		
 	return $floorplans_args;
 	
