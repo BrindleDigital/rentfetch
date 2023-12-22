@@ -69,6 +69,7 @@ function rent_fetch_documentation_shortcodes() {
 	<p>This layout ignores availability, and is most suitable for very small ownership groups, listing 1-5 properties.</p>
 	<h3>Default search</h3>
 	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearch]<!-- /wp:shortcode --></span></p>
+	<p>You can use a parameter to customize by property, so that only a given property will display, like this: <strong>[floorplansearch property_id=p1234]</strong>. For multiple properties, use a comma-separated list with no commas: <strong>[floorplansearch property_id=p1234,p2345]</strong></p>
 	<h3>Individual components</h3>
 	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearchfilters]<!-- /wp:shortcode --></span><span class="shortcode"><!-- wp:shortcode -->[floorplansearchresults]<!-- /wp:shortcode --></span></p>
 	<?php

@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.8 = 
+
+* Adding parameters to the [floorplansearch] shortcode, like this: [floorplansearch property_id=p1671482]
+
 = 0.7.1 =
 
 * Improving the performance of the pricing filter when it's not set. Previously, it was still only finding floorplans that had pricing, and if it's null, then it really should be fully ignored.

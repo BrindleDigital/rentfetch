@@ -36,7 +36,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		// create the second shortcode
 		$floorplansearchresults_shortcode = sprintf( '[floorplansearchresults %s]', $string_atts );
 		echo do_shortcode( $floorplansearchresults_shortcode );
-		
+				
 		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', site_url() );
 		
 			echo '<input type="hidden" name="action" value="floorplansearch">';
@@ -59,13 +59,15 @@ add_shortcode( 'floorplansearch', 'rentfetch_floorplan_search_default_layout' );
 function rentfetch_floorplansearchfilters( $atts ) {
 			
 	ob_start();
-	
+		
 	// enqueue the search floorplans ajax script
 	wp_enqueue_script( 'rentfetch-search-floorplans-ajax' );
 	
+	wp_localize_script( 'rentfetch-search-floorplans-ajax', 'shortcodeAttributes', $atts );
+	
 	// needed for toggling the featured filters on and off
 	wp_enqueue_script( 'rentfetch-floorplan-search-featured-filters-toggle' );
-			
+				
 	echo '<div class="filters-wrap">';
 		echo '<div id="featured-filters">';
 			do_action( 'rentfetch_do_search_floorplans_filters' );
@@ -94,7 +96,7 @@ function rentfetch_floorplan_search_results() {
 add_shortcode( 'floorplansearchresults', 'rentfetch_floorplan_search_results' );
 
 function rentfetch_filter_floorplans() {
-	
+		
 	$orderby = apply_filters( 'rentfetch_get_floorplan_orderby', $orderby = 'menu_order' );
 	$order = apply_filters( 'rentfetch_get_floorplan_order', $order = 'ASC' );
 	
@@ -117,9 +119,10 @@ function rentfetch_filter_floorplans() {
 		'posts_per_page' => -1,
 	);
 	
-	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_filter_shortcode_args', $floorplan_args );
 	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
-		
+	
+	
+	
 	$floorplanquery = new WP_Query( $floorplan_args );
 		
 	if( $floorplanquery->have_posts() ) {
@@ -154,5 +157,14 @@ function rentfetch_filter_floorplans() {
 	
 	die();
 }
-add_action( 'wp_ajax_floorplansearch', 'rentfetch_filter_floorplans' ); // wp_ajax_{ACTION HERE} 
+add_action( 'wp_ajax_floorplansearch', 'rentfetch_filter_floorplans' );
 add_action( 'wp_ajax_nopriv_floorplansearch', 'rentfetch_filter_floorplans' );
+
+// function rentfetch_search_floorplans_args_shortcodes( $floorplans_args ) {
+	
+// 	global $post;
+// 	var_dump( $post );
+	
+// 	return $floorplans_args;
+// }
+// add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_shortcodes' );

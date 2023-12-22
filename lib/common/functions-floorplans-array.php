@@ -13,7 +13,6 @@ function rentfetch_get_floorplans_array() {
 	);
 	
 	$floorplans_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplans_args );
-	$floorplans_args = apply_filters( 'rentfetch_search_floorplans_query_shortcode_args', $floorplans_args );
 			
 	$floorplans_query = new WP_Query( $floorplans_args );
 		
@@ -67,7 +66,7 @@ function rentfetch_get_floorplans_array() {
 		wp_reset_postdata();
 		
 	endif;
-		
+			
 	foreach ( $floorplans as $key => $floorplan ) {
 		
 		//* BEDS 

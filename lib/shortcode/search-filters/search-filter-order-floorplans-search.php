@@ -29,4 +29,4 @@ function rentfetch_search_floorplans_filters() {
 		
 		
 }
-add_action( 'init', 'rentfetch_search_floorplans_filters' );
+add_action( 'wp', 'rentfetch_search_floorplans_filters' );

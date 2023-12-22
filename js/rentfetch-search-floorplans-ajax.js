@@ -1,3 +1,6 @@
+// these come from the shortcode
+var shortcodeAttributes;
+
 jQuery(function ($) {
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
@@ -130,15 +133,22 @@ jQuery(function ($) {
 
 	// Function to perform AJAX search
 	function performAJAXSearch(queryParams) {
+		// get the data from the form
 		var filter = $('#filter');
-		var toggleData = filter;
+		var filterSerialized = filter.serialize();
 
-		// console.log(filter);
+		// shortcodeData should be the serialized version of the shortcode attributes
+		var shortcodeData = $.param(shortcodeAttributes);
+
+		// join the two together
+		var postData = filterSerialized + '&' + shortcodeData;
+
+		var toggleData = filter;
 
 		$.ajax({
 			url: filter.attr('action'),
-			data: filter.serialize(), // form data
-			toggleData: filter.serialize(),
+			data: postData, // form data
+			// toggleData: filter.serialize(),
 			type: filter.attr('method'), // POST
 			beforeSend: function (xhr) {
 				// filter.find('#reset').text('Searching...'); // changing the button label
