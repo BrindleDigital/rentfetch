@@ -225,6 +225,12 @@
 		}
 	}
 
+	fieldset.sort {
+		@include desktop {
+			margin-left: auto;
+		}
+	}
+
 	button#open-search-filters {
 		margin-left: auto;
 		position: relative;

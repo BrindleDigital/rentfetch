@@ -8,35 +8,35 @@ function rent_fetch_shortcodes_page_html() {
 	?>
 	<script>
 		jQuery(document).ready(function($) {
-    // Get all .shortcode elements
-    const shortcodes = document.querySelectorAll('.shortcode');
+	// Get all .shortcode elements
+	const shortcodes = document.querySelectorAll('.shortcode');
 
-    // Add event listener to each .shortcode element
-    shortcodes.forEach(shortcode => {
-        shortcode.addEventListener('click', () => {
-            // Create a new textarea element to hold the full shortcode markup
-            const textarea = document.createElement('textarea');
-            textarea.value = shortcode.textContent;
+	// Add event listener to each .shortcode element
+	shortcodes.forEach(shortcode => {
+		shortcode.addEventListener('click', () => {
+			// Create a new textarea element to hold the full shortcode markup
+			const textarea = document.createElement('textarea');
+			textarea.value = shortcode.textContent;
 
-            // Append the textarea to the document and select its contents
-            document.body.appendChild(textarea);
-            textarea.select();
+			// Append the textarea to the document and select its contents
+			document.body.appendChild(textarea);
+			textarea.select();
 
-            // Copy the selected content to the clipboard
-            document.execCommand('copy');
+			// Copy the selected content to the clipboard
+			document.execCommand('copy');
 
-            // Remove the textarea from the document
-            document.body.removeChild(textarea);
+			// Remove the textarea from the document
+			document.body.removeChild(textarea);
 
-            // Add the .copied class to the clicked .shortcode element
-            shortcode.classList.add('copied');
+			// Add the .copied class to the clicked .shortcode element
+			shortcode.classList.add('copied');
 
-            // Remove the .copied class after 5 seconds
-            setTimeout(() => {
-                shortcode.classList.remove('copied');
-            }, 5000);
-        });
-    });
+			// Remove the .copied class after 5 seconds
+			setTimeout(() => {
+				shortcode.classList.remove('copied');
+			}, 5000);
+		});
+	});
 });
 
 

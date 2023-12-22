@@ -63,7 +63,8 @@ function rentfetch_floorplansearchfilters( $atts ) {
 	// enqueue the search floorplans ajax script
 	wp_enqueue_script( 'rentfetch-search-floorplans-ajax' );
 	
-	wp_localize_script( 'rentfetch-search-floorplans-ajax', 'shortcodeAttributes', $atts );
+	if ( $atts )
+		wp_localize_script( 'rentfetch-search-floorplans-ajax', 'shortcodeAttributes', $atts );
 	
 	// needed for toggling the featured filters on and off
 	wp_enqueue_script( 'rentfetch-floorplan-search-featured-filters-toggle' );
@@ -96,32 +97,19 @@ function rentfetch_floorplan_search_results() {
 add_shortcode( 'floorplansearchresults', 'rentfetch_floorplan_search_results' );
 
 function rentfetch_filter_floorplans() {
-		
-	$orderby = apply_filters( 'rentfetch_get_floorplan_orderby', $orderby = 'menu_order' );
-	$order = apply_filters( 'rentfetch_get_floorplan_order', $order = 'ASC' );
-	
-	//* The base floorplan query
-	// $floorplan_args = array(
-	// 	'post_type' => 'floorplans',
-	// 	'orderby' => $orderby,
-	// 	'order'	=> $order, // ASC or DESC
-	// 	'no_found_rows' => true,
-	// 	'posts_per_page' => -1,
-	// );
-	
+			
 	//* The base floorplan query
 	$floorplan_args = array(
 		'post_type'      => 'floorplans',
-		'meta_key'       => 'available_units', // Sort by the 'available_units' meta field
-		'orderby'        => 'meta_value_num',  // Sort as numeric values
-		'order'          => 'DESC',           // Descending order (most to least)
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC',
 		'no_found_rows'  => true,
 		'posts_per_page' => -1,
 	);
 	
 	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
 	
-	
+	// console_log( $floorplan_args );
 	
 	$floorplanquery = new WP_Query( $floorplan_args );
 		

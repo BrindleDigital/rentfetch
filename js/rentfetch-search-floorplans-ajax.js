@@ -12,29 +12,33 @@ jQuery(function ($) {
 
 	// Function to get query parameters from POST request
 	function getQueryParametersFromForm() {
-		var queryParams = {};
+		var queryParams = {}; // Initialize queryParams as an empty object
+		var $filter = $('#filter'); // Cache the jQuery selector
 
-		// Loop through all form inputs
-		$('#filter')
-			.find('input, select')
-			.each(function () {
-				var inputName = $(this).attr('name');
-				if (inputName) {
-					var inputValue = $(this).val();
+		$filter.find('input, select').each(function () {
+			var inputName = $(this).attr('name');
+			var inputId = $(this).attr('id');
 
-					// Handle checkboxes and multiple values
-					if ($(this).is(':checkbox')) {
-						if (!queryParams[inputName]) {
-							queryParams[inputName] = [];
-						}
-						if ($(this).is(':checked')) {
-							queryParams[inputName].push(inputValue);
-						}
-					} else {
+			if (inputName) {
+				var inputValue = $(this).val();
+
+				if ($(this).is(':checkbox')) {
+					if (!queryParams[inputName]) {
+						queryParams[inputName] = [];
+					}
+					if ($(this).is(':checked')) {
+						queryParams[inputName].push(inputValue);
+					}
+				} else if ($(this).is(':radio')) {
+					// Handle radio buttons separately
+					if ($(this).is(':checked') && inputId) {
 						queryParams[inputName] = inputValue;
 					}
+				} else {
+					queryParams[inputName] = inputValue;
 				}
-			});
+			}
+		});
 
 		// Remove empty and unwanted parameters
 		$.each(queryParams, function (key, value) {
@@ -56,7 +60,20 @@ jQuery(function ($) {
 		var fieldset = correspondingFields.closest('fieldset'); // Find the fieldset containing the correspondingFields
 
 		fieldset.find(':checkbox').prop('checked', false); // Clear checkbox inputs within the fieldset
-		fieldset.find(':input:not(:checkbox)').val('').trigger('change'); // Clear non-checkbox inputs within the fieldset and trigger change event
+
+		// Clear non-checkbox inputs within the fieldset and trigger change event
+		fieldset.find(':input:not(:checkbox)').each(function () {
+			var elementType = $(this).prop('type');
+
+			if (elementType === 'radio') {
+				// For radio buttons, clear the checked status
+				$(this).prop('checked', false);
+			} else {
+				// For other inputs, clear the value and trigger change event
+				$(this).val('').trigger('change');
+			}
+		});
+
 		submitForm();
 	});
 
@@ -269,35 +286,49 @@ jQuery(function ($) {
 		}
 
 		var elementName = $(this).attr('name');
+		var elementId = $(this).attr('id');
 		var newValue = $(this).val();
 		var isChecked = $(this).is(':checked');
 
-		// Update identically named elements with the new value and checked status
-		$inputs
-			.filter('[name="' + elementName + '"]')
-			.not(this)
-			.each(function () {
-				var elementType = $(this).prop('tagName').toLowerCase();
-
-				if (
-					elementType === 'input' &&
-					$(this).attr('type') === 'checkbox'
-				) {
-					// For checkboxes, update the checked status
-					var otherValue = $(this).val();
-					if (otherValue === newValue) {
+		if ($(this).is(':radio')) {
+			// If it's a radio input, only update the checked status for radios with the same name and id
+			$inputs
+				.filter('[name="' + elementName + '"]')
+				.not(this)
+				.each(function () {
+					if ($(this).attr('id') === elementId) {
 						$(this).prop('checked', isChecked);
 					}
-				} else {
-					// For other elements, update the value
-					if ($(this).val() !== newValue) {
-						$(this).off('change input'); // Temporarily remove the event handler
-						$(this).val(newValue);
-						$(this).trigger('change');
-						// $(this).on('change input', changeInputHandler); // Reattach the event handler
+				});
+		} else {
+			// For other input types (e.g., text, checkbox), update their values
+			$inputs
+				.filter('[name="' + elementName + '"]')
+				.not(this)
+				.not(':radio') // Exclude radios
+				.each(function () {
+					var elementType = $(this).prop('tagName').toLowerCase();
+
+					if (
+						elementType === 'input' &&
+						$(this).attr('type') === 'checkbox'
+					) {
+						// For checkboxes, update the checked status
+						var otherValue = $(this).val();
+						if (otherValue === newValue) {
+							$(this).prop('checked', isChecked);
+						}
+					} else {
+						// For other elements, update the value
+						if ($(this).val() !== newValue) {
+							$(this).off('change input'); // Temporarily remove the event handler
+							$(this).val(newValue);
+							$(this).trigger('change');
+							// $(this).on('change input', changeInputHandler); // Reattach the event handler
+						}
 					}
-				}
-			});
+				});
+		}
 
 		submitFormAfterInactivity();
 	});

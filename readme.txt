@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.9 = 
+
+* Adding sorting capability to the floorplans search
+
 = 0.8 = 
 
 * Adding parameters to the [floorplansearch] shortcode, like this: [floorplansearch property_id=p1671482]

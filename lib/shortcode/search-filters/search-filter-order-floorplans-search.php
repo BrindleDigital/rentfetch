@@ -21,7 +21,7 @@ function rentfetch_search_floorplans_filters() {
 	if ( !empty( $options_floorplan_filters ) && in_array( 'date_search', $options_floorplan_filters ) )
 		add_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_date' );
 		
-	
+	add_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_sort_floorplans' );
 	
 	//TODO - add sort for the floorplans
 	// if ( !empty( $options_floorplan_filters ) && in_array( 'sort', $options_floorplan_filters ) )
