@@ -6,19 +6,36 @@
  * so this can be easily replicated if you want to customize the layout
  */
 function rentfetch_floorplan_search_default_layout( $atts ) {
-	
+		
 	ob_start();
-	
+		
 	// because these are loaded over ajax, we need to enqueue the lightbox scripts here (they're enqueue automatically when loaded normally)
 	wp_enqueue_style( 'rentfetch-glightbox-style' );
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
 	wp_enqueue_script( 'rentfetch-glightbox-init' );
 	
-		
+	// get the attributes so that we can pass them to the child shortcodes
+	$string_atts = '';
+	
+	if ( $atts ) {
+		foreach ($atts as $key => $value) {
+			if (!empty($queryString)) {
+				$string_atts .= ' ';
+			}
+			$string_atts .= ' ' . $key . '=' . $value;
+		}
+	}
+	
 	//* Our container markup for the results
-	echo '<div class="rent-fetch-floorplan-search-default-layout">';	
-		echo do_shortcode('[floorplansearchfilters]');
-		echo do_shortcode('[floorplansearchresults]');
+	echo '<div class="rent-fetch-floorplan-search-default-layout">';
+	
+		// create the first shortcode 
+		$floorplansearchfilters_shortcode = sprintf( '[floorplansearchfilters %s]', $string_atts );
+		echo do_shortcode( $floorplansearchfilters_shortcode );
+		
+		// create the second shortcode
+		$floorplansearchresults_shortcode = sprintf( '[floorplansearchresults %s]', $string_atts );
+		echo do_shortcode( $floorplansearchresults_shortcode );
 		
 		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', site_url() );
 		
@@ -39,8 +56,8 @@ add_shortcode( 'floorplansearch', 'rentfetch_floorplan_search_default_layout' );
  * Output the search filters
  *
  */
-function rentfetch_floorplansearchfilters() {
-	
+function rentfetch_floorplansearchfilters( $atts ) {
+			
 	ob_start();
 	
 	// enqueue the search floorplans ajax script
@@ -48,7 +65,7 @@ function rentfetch_floorplansearchfilters() {
 	
 	// needed for toggling the featured filters on and off
 	wp_enqueue_script( 'rentfetch-floorplan-search-featured-filters-toggle' );
-		
+			
 	echo '<div class="filters-wrap">';
 		echo '<div id="featured-filters">';
 			do_action( 'rentfetch_do_search_floorplans_filters' );
@@ -100,6 +117,7 @@ function rentfetch_filter_floorplans() {
 		'posts_per_page' => -1,
 	);
 	
+	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_filter_shortcode_args', $floorplan_args );
 	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
 		
 	$floorplanquery = new WP_Query( $floorplan_args );
