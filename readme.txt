@@ -88,6 +88,13 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.9.1 =
+
+* Bugfix: The default number of floorplans pulled by the floorplans search (should be -1, not 10)
+* Changing the alignment of the sorting filter dropdown on the floorplans search so that its right side aligns with the right side
+* Extremely rough version of a new floorplans grid shortcode enabled (this is incomplete and shouldn't be used yet)
+* Minor updates to the markup for the floorplans search loop to bring it into alignment with the new grid
+
 = 0.9 = 
 
 * Adding sorting capability to the floorplans search

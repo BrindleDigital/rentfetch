@@ -63,3 +63,4 @@ function rentfetch_floorplans_each_grid_default() {
 	
 }
 add_action( 'rentfetch_floorplans_search_do_floorplans_each', 'rentfetch_floorplans_each_grid_default' );
+add_action( 'rentfetch_do_each_floorplan_in_archive', 'rentfetch_floorplans_each_grid_default' );

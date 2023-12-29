@@ -228,6 +228,10 @@
 	fieldset.sort {
 		@include desktop {
 			margin-left: auto;
+
+			.input-wrap {
+				right: 0;
+			}
 		}
 	}
 
