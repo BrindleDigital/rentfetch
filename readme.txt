@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.10 =
+
+* Adding styles for the floorplans grid to match up with the floorplans search
+
 = 0.9.2 =
 
 * Bugfix: the tour link referred to settings which don't presently exist. Those references were removed.
