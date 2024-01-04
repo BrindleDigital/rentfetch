@@ -285,7 +285,7 @@ add_filter( 'rentfetch_filter_floorplan_default_contact_button_markup', 'rentfet
 function rentfetch_floorplan_default_tour_button() {
 	
 	$button_enabled = get_option( 'rentfetch_options_tour_button_enabled' );
-	$fallback_link = get_option( 'rentfetch_options_tour_button_link' );
+	$fallback_link = get_option( 'rentfetch_options_tour_button_fallback_link' );
 	
 	// bail if the button is not enabled
 	if ( $button_enabled != 1 )

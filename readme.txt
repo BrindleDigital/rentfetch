@@ -88,6 +88,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.9.2 =
+
+* Bugfix: the tour link referred to settings which don't presently exist. Those references were removed.
+* Bugfix: the tour link wasn't being inherited properly; that's now fixed, and there's currently just a global default for this.
+
 = 0.9.1 =
 
 * Bugfix: The default number of floorplans pulled by the floorplans search (should be -1, not 10)

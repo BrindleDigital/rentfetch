@@ -125,7 +125,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
 	<div class="row floorplan-archive-buttons tour">
 		<div class="column">
 			<label>Tour button</label>
-			<p class="description">A typically-external link, set on a per-property basis, to schedule a tour. You can set a global fallback link below.</p>
+			<p class="description">A typically-external link to schedule a tour. You can set a global link below.</p>
 		</div>
 		<div class="column">
 			<div class="white-box always-visible">
@@ -139,7 +139,7 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
 				<input type="text" name="rentfetch_options_tour_button_button_label" id="rentfetch_options_tour_button_button_label" value="<?php echo esc_attr( get_option( 'rentfetch_options_tour_button_button_label' ) ); ?>">
 			</div>
 			<div class="white-box">
-				<label for="rentfetch_options_tour_button_fallback_link">Fallback link</label>
+				<label for="rentfetch_options_tour_button_fallback_link">Link</label>
 				<input type="url" name="rentfetch_options_tour_button_fallback_link" id="rentfetch_options_tour_button_fallback_link" value="<?php echo esc_attr( get_option( 'rentfetch_options_tour_button_fallback_link' ) ); ?>">
 			</div>
 		</div>
