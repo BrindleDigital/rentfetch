@@ -88,6 +88,12 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.11 =
+
+* Adding shortcode parameters for the [floorplans] shortcode to allow selection of one/multiple properties
+* Adding shortcode parameters for the [floorplans] shortcode to allow selection of one/multiple numbers of bedrooms
+* Adding default sort for the [floorplans] shortcode to sort DESC by beds
+
 = 0.10 =
 
 * Adding styles for the floorplans grid to match up with the floorplans search
