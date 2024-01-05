@@ -68,10 +68,14 @@ function rent_fetch_documentation_shortcodes() {
 	<h2>Floorplans search</h2>
 	<p>This layout ignores availability, and is most suitable for very small ownership groups, listing 1-5 properties.</p>
 	<h3>Default search</h3>
-	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearch]<!-- /wp:shortcode --></span></p>
-	<p>You can use a parameter to customize by property, so that only a given property will display, like this: <strong>[floorplansearch property_id=p1234]</strong>. For multiple properties, use a comma-separated list with no commas: <strong>[floorplansearch property_id=p1234,p2345]</strong></p>
+	<p>You can use a parameter to customize by property, so that only a given property (or multiple properties) will display:</p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearch]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplansearch property_id=p1234]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplansearch property_id=p1234,p2345]<!-- /wp:shortcode --></span></p>
 	<h3>Individual components</h3>
 	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearchfilters]<!-- /wp:shortcode --></span><span class="shortcode"><!-- wp:shortcode -->[floorplansearchresults]<!-- /wp:shortcode --></span></p>
+	
+	<h2>Floorplans grid</h2>
+	<p>This layout ignores availability, and is useful for displaying arbitrary groupings of floorplans. Several available parameters are shown below:</p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[floorplans]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans property_id=p1234,p5678 beds=2,3]<!-- /wp:shortcode --></span></p>
 	<?php
 }
 add_action( 'rent_fetch_do_documentation_shortcodes', 'rent_fetch_documentation_shortcodes' );
