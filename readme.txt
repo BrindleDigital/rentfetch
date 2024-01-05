@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.11.1 =
+
+* Updating shortcode documentation
+
 = 0.11 =
 
 * Adding shortcode parameters for the [floorplans] shortcode to allow selection of one/multiple properties
