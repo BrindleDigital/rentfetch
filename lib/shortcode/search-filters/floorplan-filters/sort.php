@@ -86,6 +86,11 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 	// get the sort value
 	if ( isset( $_POST['sort'] ) ) {
 		$sort = $_POST['sort'];
+	} else {
+		$default_order = get_option( 'rentfetch_options_floorplan_default_order' );
+		if ( $default_order ) {
+			$sort = $default_order;
+		}
 	}
 	
 	// console_log( $sort );

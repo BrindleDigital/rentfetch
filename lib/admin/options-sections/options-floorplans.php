@@ -12,6 +12,9 @@ function rentfetch_settings_set_defaults_floorplans() {
 		'squarefoot_search',
 	);
 	add_option( 'rentfetch_options_floorplan_filters', $default_values );	
+	
+	$default_values = 'beds';
+	add_option( 'rentfetch_options_floorplan_default_order', $default_values );	
     
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_floorplans' );
@@ -21,6 +24,19 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_f
  */
 function rent_fetch_settings_floorplans_floorplan_search() {
 	?>
+	<div class="row">
+		<div class="column">
+			<label for="rentfetch_options_floorplan_default_order">Floorplan default order</label>
+		</div>
+		<div class="column">
+			<p class="description">The default order in which the floorplans search should display. (NOTE: the floorplans grid order can be set <a target="_blank" href="/wp-admin/admin.php?page=rent-fetch-shortcodes">through shortcode parameters)</a>.</p>
+			<select name="rentfetch_options_floorplan_default_order" id="rentfetch_options_floorplan_default_order" value="<?php echo esc_attr( get_option( 'rentfetch_options_floorplan_default_order' ) ); ?>">
+				<option value="beds" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'beds' ); ?>>Beds</option>
+				<option value="baths" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'baths' ); ?>>Baths</option>
+				<option value="availability" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'availability' ); ?>>Availability</option>
+			</select>
+		</div>
+	</div>
 	<div class="row">
 		<div class="column">
 			<label for="rentfetch_options_floorplan_filters">Floorplan search filters</label>
@@ -87,6 +103,12 @@ function rent_fetch_save_settings_floorplan_search() {
 	
 	if ( $tab !== 'floorplans' || !empty( $section ) )
 		return;
+	
+	// Select field
+	if ( isset( $_POST[ 'rentfetch_options_floorplan_default_order'] ) ) {
+		$floorplan_default_order = sanitize_text_field( $_POST[ 'rentfetch_options_floorplan_default_order'] );
+		update_option( 'rentfetch_options_floorplan_default_order', $floorplan_default_order );
+	}
 		
 	// Checkboxes field
 	if ( isset ( $_POST[ 'rentfetch_options_floorplan_filters'] ) ) {

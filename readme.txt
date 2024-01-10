@@ -88,6 +88,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.12 =
+
+* Adding a setting for the default sort to the floorplans search
+* Adding a parameter to the [floorplans] shortcode for sort (beds or availability are currently supported)
+
 = 0.11.1 =
 
 * Updating shortcode documentation

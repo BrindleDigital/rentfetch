@@ -75,7 +75,7 @@ function rent_fetch_documentation_shortcodes() {
 	
 	<h2>Floorplans grid</h2>
 	<p>This layout ignores availability, and is useful for displaying arbitrary groupings of floorplans. Several available parameters are shown below:</p>
-	<p><span class="shortcode"><!-- wp:shortcode -->[floorplans]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans property_id=p1234,p5678 beds=2,3]<!-- /wp:shortcode --></span></p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[floorplans]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans property_id=p1234,p5678 beds=2,3]<!-- /wp:shortcode --></span>  <span class="shortcode"><!-- wp:shortcode -->[floorplans sort=beds]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans sort=availability]<!-- /wp:shortcode --></span></p>
 	<?php
 }
 add_action( 'rent_fetch_do_documentation_shortcodes', 'rent_fetch_documentation_shortcodes' );

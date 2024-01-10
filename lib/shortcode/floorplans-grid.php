@@ -8,6 +8,7 @@ function rentfetch_floorplans( $atts ) {
 	$a = shortcode_atts( array(
 		'property_id' => null,
 		'beds' => null,
+		'sort' => null,
 	), $atts );
 
 	ob_start();
@@ -94,3 +95,43 @@ function rentfetch_floorplans_simple_grid_query_args_beds( $args, $atts ) {
 	
 }
 add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_beds', 10, 2 );
+
+/**
+ * Filter the order and pass it to the query args appropriately
+ */
+function rentfetch_floorplans_simple_grid_query_args_order( $floorplans_args, $atts ) {
+	
+	if ( isset( $atts['sort'] ) ) {
+		
+		$sort = $atts['sort'];
+		
+		// if it's beds...
+		if ( $sort == 'beds' ) {
+			// console_log( 'Sorting by beds...' );
+			$floorplans_args['orderby'] = 'meta_value_num';
+			$floorplans_args['meta_key'] = 'beds';
+			$floorplans_args['order'] = 'ASC';
+		}
+		
+		// if it's baths
+		if ( $sort == 'baths' ) {
+			// console_log( 'Sorting by baths...' );
+			$floorplans_args['orderby'] = 'meta_value_num';
+			$floorplans_args['meta_key'] = 'baths';
+			$floorplans_args['order'] = 'ASC';
+		}
+		
+		// if it's available units
+		if ( $sort == 'availability' ) {
+			// console_log( 'Sorting by availability...' );
+			$floorplans_args['orderby'] = 'meta_value_num';
+			$floorplans_args['meta_key'] = 'available_units';
+			$floorplans_args['order'] = 'DESC';
+		}
+		
+	}
+	
+	return $floorplans_args;
+	
+}
+add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_order', 10, 2 );
