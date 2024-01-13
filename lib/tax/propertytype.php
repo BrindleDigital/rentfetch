@@ -12,3 +12,4 @@ function rentfetch_register_propertytype_taxonomy() {
 		)
 	);
 }
+add_action( 'init', 'rentfetch_register_propertytype_taxonomy', 20 );

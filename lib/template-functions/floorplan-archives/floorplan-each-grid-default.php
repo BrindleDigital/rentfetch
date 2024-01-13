@@ -8,10 +8,18 @@ function rentfetch_floorplans_each_grid_default() {
 	$square_feet = rentfetch_get_floorplan_square_feet();
 	$available_units = rentfetch_get_floorplan_available_units();
 	$links = rentfetch_get_floorplan_links();
-	$pricing = rentfetch_get_floorplan_pricing();     
-	$units_count = rentfetch_get_floorplan_units_count();   
+	$pricing = rentfetch_get_floorplan_pricing();
+	$units_count = rentfetch_get_floorplan_units_count_from_meta();
+	$specials = rentfetch_get_floorplan_specials();
+	$tour = rentfetch_get_floorplan_tour();
 	
 	do_action( 'rentfetch_do_floorplan_images' );
+	
+	if ( $specials )
+		printf( '<p class="specials">%s</p>', esc_html( $specials ) );
+	
+	if ( $tour )
+		echo $tour;
 	
 	echo '<div class="floorplan-details">';
 		echo '<div class="floorplan-content">';
@@ -55,3 +63,4 @@ function rentfetch_floorplans_each_grid_default() {
 	
 }
 add_action( 'rentfetch_floorplans_search_do_floorplans_each', 'rentfetch_floorplans_each_grid_default' );
+add_action( 'rentfetch_do_each_floorplan_in_archive', 'rentfetch_floorplans_each_grid_default' );

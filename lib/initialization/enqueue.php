@@ -5,7 +5,7 @@
 //////////////
 
 function rentfetch_enqueue_scripts_stylesheets() {
-	
+		
 	// Enqueue dashicons, since we use them on the frontend
 	wp_enqueue_style( 'dashicons' );
 	
@@ -16,6 +16,11 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_style( 'rentfetch-nouislider-style', RENTFETCH_PATH . 'vendor/nouislider/nouislider.min.css', array(), RENTFETCH_VERSION, 'screen' );
 	wp_register_script( 'rentfetch-nouislider-script', RENTFETCH_PATH . 'vendor/nouislider/nouislider.min.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-nouislider-init-script', RENTFETCH_PATH . 'js/rentfetch-search-map-nouislider-init.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	
+	// glightbox (open source): https://biati-digital.github.io/glightbox/
+	wp_register_style( 'rentfetch-glightbox-style', 'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css', array(), RENTFETCH_VERSION, 'screen' );
+	wp_register_script( 'rentfetch-glightbox-script', 'https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js', '', RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-glightbox-init', RENTFETCH_PATH . 'js/rentfetch-glightbox-init.js', array( 'rentfetch-glightbox-script', 'jquery' ), RENTFETCH_VERSION, true );
 	
 	// Flatpickr
 	wp_register_style( 'rentfetch-flatpickr-style', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css', array(), RENTFETCH_VERSION, 'screen' );
@@ -49,7 +54,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 		
 	// we must localize and enqueue this script here instead of within the shortcode because doing it in the shortcode breaks in FSE themes
 	wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
-	wp_enqueue_script( 'rentfetch-property-map');
+	// wp_enqueue_script( 'rentfetch-property-map');
 	
 	
 	wp_register_script( 'rentfetch-single-property-map', RENTFETCH_PATH . 'js/rentfetch-single-property-map.js', array( 'jquery', 'rentfetch-google-maps' ), RENTFETCH_VERSION, true );
@@ -95,6 +100,13 @@ function rentfetch_enqueue_scripts_stylesheets() {
 		array( 'blaze-script' ),
 		RENTFETCH_VERSION 
 	);
+		
+	wp_register_script(
+		'rentfetch-floorplan-images-slider-init',
+		RENTFETCH_PATH . 'js/rentfetch-blaze-floorplan-images-init.js', 
+		array( 'blaze-script' ),
+		RENTFETCH_VERSION 
+	);
 	
 		
 }
@@ -110,8 +122,8 @@ function rentfetch_enqueue_in_admin_metabox_properties() {
 	);
 	
 	wp_register_script( 
-		'rentfetch-metabox-properties-matterport', 
-		RENTFETCH_PATH . 'js/metabox-properties-matterport.js', 
+		'rentfetch-metabox-properties-tour', 
+		RENTFETCH_PATH . 'js/metabox-properties-tour.js', 
 		array( 'jquery' ),
 		RENTFETCH_VERSION
 	);

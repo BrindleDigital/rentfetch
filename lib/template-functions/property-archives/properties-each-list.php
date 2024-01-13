@@ -10,6 +10,12 @@ function rentfetch_properties_each_list() {
 	$rent = rentfetch_get_property_rent();
 	$availability = rentfetch_get_property_availability();
 	$specials = rentfetch_get_property_specials();
+	$allowed_tags = array(
+		'p' => array(),
+		'span' => array(
+			'style' => array(),
+		),
+	);
 	
 	$permalink = get_the_permalink();
 	
@@ -27,20 +33,20 @@ function rentfetch_properties_each_list() {
 	
 		if ( $title )
 			printf( '<h3>%s</h3>', esc_html( $title ) );
-					
+							
 		if ( $property_location )
 			printf( '<p class="property-location">%s</p>', esc_html( $property_location ) );
 			
 		echo '<div class="property-attributes">';
 			
 			if ( $bedrooms )
-				printf( '<p class="bedsrange">%s</p>', esc_html( $bedrooms ) );
+				printf( '<p class="bedsrange">%s</p>', wp_kses( $bedrooms, $allowed_tags ) );
 				
 			if ( $bathrooms )
-				printf( '<p class="bathsrange">%s</p>', esc_html( $bathrooms ) );
+				printf( '<p class="bathsrange">%s</p>', wp_kses( $bathrooms, $allowed_tags ) );
 				
 			if ( $square_feet )
-				printf( '<p class="square-feet">%s</p>', esc_html( $square_feet ) );
+				printf( '<p class="square-feet">%s</p>', wp_kses( $square_feet, $allowed_tags ) );
 			
 		echo '</div>'; // .property-attributes
 		

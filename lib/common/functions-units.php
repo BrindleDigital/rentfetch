@@ -82,10 +82,31 @@ function rentfetch_get_unit_availability_date() {
 
 //* Units count
 
-function rentfetch_get_floorplan_units_count() {
+function rentfetch_get_floorplan_units_count_from_meta() {
 	$floorplan_wordpress_id = get_the_ID();
 	$available_units = get_post_meta( $floorplan_wordpress_id, 'available_units', true );
 	return intval( $available_units );    
+}
+
+function rentfetch_get_floorplan_units_count_from_cpt() {
+	
+	$floorplan_wordpress_id = get_the_ID();
+	$floorplan_id = get_post_meta( $floorplan_wordpress_id, 'floorplan_id', true );
+	
+	if ( !$floorplan_id )
+		return null;
+	
+	$args = array(
+		'post_type' => 'units', // Replace 'your_custom_post_type' with the actual post type name
+		'meta_key' => 'floorplan_id',
+		'meta_value' => $floorplan_id,
+	);
+	
+	$posts = get_posts( $args );
+	
+	$count = count( $posts );
+	return $count;
+
 }
 
 //* Buttons

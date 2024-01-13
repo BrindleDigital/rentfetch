@@ -1,28 +1,30 @@
 #filter-toggles {
-    button {
-        border: none;
-        background-color: var(--rentfetch-base);
-        display: inline-block;
-        padding: 10px 10px 10px 30px;
-        line-height: 1em;
-        font-size: var(--rentfetch-font-size-small);
-        margin: 20px 5px 5px 0;
-        cursor: pointer;
-        transition: 0.3s all ease;
-        position: relative;
-        color: var(--rentfetch-dark);
+	button {
+		border: none;
+		background-color: var(--rentfetch-base);
+		display: inline-block;
+		padding: 10px 10px 10px 30px;
+		line-height: 1em;
+		font-size: var(--rentfetch-font-size-small);
+		margin: 20px 5px 5px 0;
+		cursor: pointer;
+		transition: 0.3s all ease;
+		position: relative;
+		color: var(--rentfetch-dark);
+		text-transform: capitalize;
+		// letter-spacing: 0.05em;
 
-        &:hover {
-            background-color: black;
-            color: white;
-        }
+		&:hover {
+			background-color: black;
+			color: white;
+		}
 
-        &:before {
-            content: '\f158';
-            font-family: 'dashicons';
-            display: inline-block;
-            position: absolute;
-            left: 10px;
-        }
-    }
+		&:before {
+			content: '\f158';
+			font-family: 'dashicons';
+			display: inline-block;
+			position: absolute;
+			left: 10px;
+		}
+	}
 }

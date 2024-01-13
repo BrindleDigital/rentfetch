@@ -1,68 +1,32 @@
 .more-properties-slider.blaze-slider {
-    --slides-to-show: 3;
+	--slides-to-show: 3;
 
-    .blaze-track-container {
-        padding: 12px !important;
-        margin: -12px !important;
-    }
+	.blaze-track-container {
+		padding: 12px !important;
+		margin: -12px !important;
+	}
 
-    .entry {
-        .overlay {
-            transition: box-shadow 0.3s ease-in-out;
-        }
-    }
+	.entry {
+		.overlay {
+			transition: box-shadow 0.3s ease-in-out;
+		}
+	}
 
-    .entry:hover {
-        .overlay {
-            box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
-        }
-    }
-
-    .blaze-buttons {
-        display: block;
-        margin-top: 25px;
-
-        @include notmobile {
-            text-align: center;
-        }
-    }
-
-    button.blaze-prev,
-    button.blaze-next {
-        border: none;
-        background-color: transparent;
-        color: var(--rentfetch-default);
-        cursor: pointer;
-        transition: 0.3s color ease-in-out;
-        font-size: var(--rentfetch-font-size-large);
-        // text-indent: -999px;
-
-        &:hover {
-            color: var(--rentfetch-dark);
-        }
-    }
-
-    button.blaze-prev:after {
-        content: '\f340';
-        font-family: 'dashicons';
-        display: block;
-    }
-
-    button.blaze-next:after {
-        content: '\f344';
-        font-family: 'dashicons';
-        display: block;
-    }
+	.entry:hover {
+		.overlay {
+			box-shadow: 0 0 0 5px var(--rentfetch-black-10-percent);
+		}
+	}
 }
 
 @media (max-width: 900px) {
-    .more-properties-slider.blaze-slider {
-        --slides-to-show: 2;
-    }
+	.more-properties-slider.blaze-slider {
+		--slides-to-show: 2;
+	}
 }
 
 @media (max-width: 500px) {
-    .more-properties-slider.blaze-slider {
-        --slides-to-show: 1;
-    }
+	.more-properties-slider.blaze-slider {
+		--slides-to-show: 1;
+	}
 }

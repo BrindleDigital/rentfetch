@@ -8,35 +8,35 @@ function rent_fetch_shortcodes_page_html() {
 	?>
 	<script>
 		jQuery(document).ready(function($) {
-    // Get all .shortcode elements
-    const shortcodes = document.querySelectorAll('.shortcode');
+	// Get all .shortcode elements
+	const shortcodes = document.querySelectorAll('.shortcode');
 
-    // Add event listener to each .shortcode element
-    shortcodes.forEach(shortcode => {
-        shortcode.addEventListener('click', () => {
-            // Create a new textarea element to hold the full shortcode markup
-            const textarea = document.createElement('textarea');
-            textarea.value = shortcode.textContent;
+	// Add event listener to each .shortcode element
+	shortcodes.forEach(shortcode => {
+		shortcode.addEventListener('click', () => {
+			// Create a new textarea element to hold the full shortcode markup
+			const textarea = document.createElement('textarea');
+			textarea.value = shortcode.textContent;
 
-            // Append the textarea to the document and select its contents
-            document.body.appendChild(textarea);
-            textarea.select();
+			// Append the textarea to the document and select its contents
+			document.body.appendChild(textarea);
+			textarea.select();
 
-            // Copy the selected content to the clipboard
-            document.execCommand('copy');
+			// Copy the selected content to the clipboard
+			document.execCommand('copy');
 
-            // Remove the textarea from the document
-            document.body.removeChild(textarea);
+			// Remove the textarea from the document
+			document.body.removeChild(textarea);
 
-            // Add the .copied class to the clicked .shortcode element
-            shortcode.classList.add('copied');
+			// Add the .copied class to the clicked .shortcode element
+			shortcode.classList.add('copied');
 
-            // Remove the .copied class after 5 seconds
-            setTimeout(() => {
-                shortcode.classList.remove('copied');
-            }, 5000);
-        });
-    });
+			// Remove the .copied class after 5 seconds
+			setTimeout(() => {
+				shortcode.classList.remove('copied');
+			}, 5000);
+		});
+	});
 });
 
 
@@ -68,9 +68,14 @@ function rent_fetch_documentation_shortcodes() {
 	<h2>Floorplans search</h2>
 	<p>This layout ignores availability, and is most suitable for very small ownership groups, listing 1-5 properties.</p>
 	<h3>Default search</h3>
-	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearch]<!-- /wp:shortcode --></span></p>
+	<p>You can use a parameter to customize by property, so that only a given property (or multiple properties) will display:</p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearch]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplansearch property_id=p1234]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplansearch property_id=p1234,p2345]<!-- /wp:shortcode --></span></p>
 	<h3>Individual components</h3>
 	<p><span class="shortcode"><!-- wp:shortcode -->[floorplansearchfilters]<!-- /wp:shortcode --></span><span class="shortcode"><!-- wp:shortcode -->[floorplansearchresults]<!-- /wp:shortcode --></span></p>
+	
+	<h2>Floorplans grid</h2>
+	<p>This layout ignores availability, and is useful for displaying arbitrary groupings of floorplans. Several available parameters are shown below:</p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[floorplans]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans property_id=p1234,p5678 beds=2,3]<!-- /wp:shortcode --></span>  <span class="shortcode"><!-- wp:shortcode -->[floorplans sort=beds]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans sort=availability]<!-- /wp:shortcode --></span></p>
 	<?php
 }
 add_action( 'rent_fetch_do_documentation_shortcodes', 'rent_fetch_documentation_shortcodes' );

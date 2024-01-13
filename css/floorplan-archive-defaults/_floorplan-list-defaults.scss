@@ -1,95 +1,166 @@
 .floorplan-group {
-    box-shadow: var(--rentfetch-box-shadow);
-    margin-bottom: 50px;
+	box-shadow: var(--rentfetch-box-shadow);
+	margin-bottom: 50px;
 
-    &:last-child {
-        margin-bottom: 0;
-    }
+	&:last-child {
+		margin-bottom: 0;
+	}
 
-    > h3 {
-        border-bottom: 1px solid var(--rentfetch-black-10-percent);
-        padding: 25px;
-    }
+	> h3 {
+		border-bottom: 1px solid var(--rentfetch-black-10-percent);
+		padding: 25px;
+	}
 }
 
 .floorplans-in-archive {
-    .entry,
-    .hentry {
-        margin-bottom: 0;
-        width: 100%;
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        grid-column-gap: 60px;
-        border-bottom: 1px solid var(--rentfetch-black-10-percent);
-        margin: 0;
-        padding: 25px;
-        background-color: white;
+	.entry,
+	.hentry {
+		margin-bottom: 0;
+		width: 100%;
+		display: grid;
+		grid-template-columns: 300px 1fr;
+		grid-column-gap: 60px;
+		border-bottom: 1px solid var(--rentfetch-black-10-percent);
+		margin: 0;
+		padding: 25px;
+		background-color: white;
 
-        @include mobile {
-            grid-template-columns: 1fr;
-            margin-bottom: 25px;
-        }
+		@include mobile {
+			grid-template-columns: 1fr;
+			margin-bottom: 25px;
+		}
 
-        &:last-child {
-            border: none;
-        }
+		&:last-child {
+			border: none;
+		}
 
-        &:before {
-            display: none;
-        }
-    }
+		&:before {
+			display: none;
+		}
+	}
 
-    .images-column {
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    }
+	.images-column {
+		position: relative;
 
-    .floorplan-attributes {
-        p {
-            display: inline-block;
-            margin: 0 20px 10px 0;
-        }
-    }
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+	}
 
-    p {
-        font-size: var(--rentfetch-font-size-medium);
-    }
+	.floorplan-single-image-wrap,
+	.floorplan-image-slide {
+		width: 100%;
+		height: 0;
+		padding-top: 66.7%;
+		position: relative;
 
-    p.availability {
-        font-style: italic;
-    }
+		img.floorplan-single-image,
+		img.floorplan-image {
+			object-fit: contain;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			inset: 0;
+		}
+	}
 
-    p.pricing {
-        font-weight: bold;
-    }
+	p.specials {
+		position: absolute;
+		top: 15px;
+		left: 15px;
+		padding: 5px 10px 5px 30px;
+		background-color: var(--rentfetch-gold-pale);
+		z-index: 5;
+		font-size: var(--rentfetch-font-size-small);
+		border-radius: 3px;
+		color: var(--rentfetch-dark);
+		margin: 0;
 
-    summary.rentfetch-button {
-        display: inline-block;
+		&:before {
+			content: '\f155';
+			font-family: 'dashicons';
+			color: var(--rentfetch-gold);
+			font-size: var(--rentfetch-font-size-medium);
+			position: absolute;
+			left: 10px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+	}
 
-        span.dropdown {
-            margin-left: 5px;
-            display: inline-block;
-            line-height: 1em;
-            transition: all 0.3s ease;
-            height: 1em;
-            width: 1em;
-        }
+	.floorplan-attributes {
+		line-height: 1;
+		// margin-bottom: 15px;
 
-        span.dropdown:after {
-            content: '\f347';
-            font-family: 'dashicons';
+		p {
+			display: inline-block;
+			padding-left: 0.8em;
+			padding-right: 0.8em;
+			position: relative;
 
-            transition: 0.3s all ease;
-        }
-    }
+			&:first-child {
+				padding-left: 0;
+			}
 
-    details[open] {
-        summary.rentfetch-button {
-            span.dropdown {
-                transform: rotate(-180deg);
-            }
-        }
-    }
+			&:last-child {
+				padding-right: 0;
+
+				&:after {
+					display: none;
+				}
+			}
+
+			&:after {
+				height: 50%;
+				position: absolute;
+				content: '';
+				width: 1px;
+				background-color: var(--rentfetch-black-20-percent);
+				right: 0;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+		}
+	}
+
+	p {
+		font-size: var(--rentfetch-font-size-medium);
+	}
+
+	p.availability {
+		font-style: italic;
+	}
+
+	p.pricing {
+		font-weight: bold;
+	}
+
+	summary.rentfetch-button {
+		display: inline-block;
+
+		span.dropdown {
+			margin-left: 5px;
+			display: inline-block;
+			line-height: 1em;
+			transition: all 0.3s ease;
+			height: 1em;
+			width: 1em;
+		}
+
+		span.dropdown:after {
+			content: '\f347';
+			font-family: 'dashicons';
+
+			transition: 0.3s all ease;
+		}
+	}
+
+	details[open] {
+		summary.rentfetch-button {
+			span.dropdown {
+				transform: rotate(-180deg);
+			}
+		}
+	}
 }

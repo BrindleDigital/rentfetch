@@ -107,7 +107,7 @@ function rentfetch_propertysearchmap() {
 	// );
 		
 	// wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
-	// wp_enqueue_script( 'rentfetch-property-map');
+	wp_enqueue_script( 'rentfetch-property-map');
 	
 	echo '<div id="map"></div>';
 	
@@ -157,19 +157,21 @@ function rentfetch_filter_properties(){
 		'no_found_rows' => true,
 	);
 	
-	//* Add all of our property IDs into the property search
-	$property_args['meta_query'] = array(
-		array(
-			'key' => 'property_id',
-			'value' => $property_ids,
-		),
-	);
+	$display_availability = get_option( 'rentfetch_options_property_availability_display' );
+	if ( $display_availability != 'all' ) {
+		
+		//* Add all of our property IDs into the property search
+		$property_args['meta_query'] = array(
+			array(
+				'key' => 'property_id',
+				'value' => $property_ids,
+			),
+		);
+		
+	}
 	
 	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
-	
-	// console_log( 'Property search args:' );
-	// console_log( $property_args );
-		
+			
 	$propertyquery = new WP_Query( $property_args );
 		
 	if( $propertyquery->have_posts() ) {

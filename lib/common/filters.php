@@ -13,11 +13,12 @@ function rentfetch_bedroom_number_label( $beds ) {
 	// force the number of beds to be an integer in case it was passed as a string
 	$beds = intval( $beds ); 
 		
-	// get the desired labels from the settings
-	$bedroom_numbers = get_option( 'rentfetch_options_bedroom_numbers' );
-	
-	if ( isset( $bedroom_numbers[ $beds . '_bedroom' ] ) )
-		$newlabel = $bedroom_numbers[ $beds . '_bedroom' ];
+	//TODO add the settings back in for bedroom labels
+	// // get the desired labels from the settings
+	// $bedroom_numbers = get_option( 'rentfetch_options_bedroom_numbers' );
+		
+	// if ( isset( $bedroom_numbers[ $beds . '_bedroom' ] ) )
+	// 	$newlabel = $bedroom_numbers[ $beds . '_bedroom' ];
 		
 	// if the setting is set, then update the label
 	if ( !empty($newlabel) ) {
@@ -26,12 +27,14 @@ function rentfetch_bedroom_number_label( $beds ) {
 		
 		// set defaults
 		if ( $beds == '0' ) {
-			$label = 'Studio';
+			$label = '<span class="label bedroom-label studio-label">Studio</span>';
+		} elseif ( $beds == '1' ) {
+			$label = '1 <span class="label bedroom-label">Bedroom</span>';
 		} else {
-			$label = $beds . ' Bedroom';
+			$label = $beds . ' <span class="label bedroom-label">Bedrooms</span>';
 		}
 	}
-		
+			
 	// return the label
 	return $label;
 	
@@ -51,11 +54,11 @@ function rentfetch_bathroom_number_label( $baths ) {
 	if ( $baths == 0 ) {
 		$label = null;
 	} elseif ( $baths == 1 ) {
-		$label = '1 Bath';
+		$label = '1 <span class="label bathroom-label">Bath</span>';
 	}  else {
-		$label = $baths . ' Baths';
+		$label = $baths . ' <span class="label bathroom-label">Baths</span>';
 	}
-	
+		
 	return $label;
 	
 }
@@ -65,12 +68,12 @@ function rentfetch_square_feet_number_label( $number ) {
 	if ( !$number || $number == null || $number == 0 )
 		return null;
 	
-	return $number . ' sq. ft.';
+	return $number . ' <span class="label square-feet-label">sq. ft.</span>';
 }
 add_filter( 'rentfetch_get_square_feet_number_label', 'rentfetch_square_feet_number_label' );
 
 function rentfetch_available_units_label( $number ) {
-	if ( $number == 0 ) {
+	if ( $number == 0 || empty( $number ) ) {
 		$available = 'No units available';
 	} elseif ( $number == 1 ) {
 		$available = '1 unit available';
@@ -96,9 +99,7 @@ function rentfetch_google_maps_api_key( $key ) {
 	$key = get_option( 'rentfetch_options_google_maps_api_key' );
 	if ( $key )
 		return $key;
-		
-	echo '3';
-		
+				
 	return null;
 	
 }

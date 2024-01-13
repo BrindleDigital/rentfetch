@@ -6,7 +6,6 @@
 function rentfetch_settings_set_defaults_general() {
     
     // Add option if it doesn't exist
-    add_option( 'rentfetch_options_apartment_site_type', 'multiple' );
     add_option( 'rentfetch_options_data_sync', 'nosync' );
     
 }
@@ -15,21 +14,11 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_g
 /**
  * Adds the general settings section to the Rent Fetch settings page.
  */
-function rent_fetch_settings_general() {    
-	?>
+function rent_fetch_settings_general() {
 	
-	<div class="row">
-		<div class="column">
-			<label for="rentfetch_options_apartment_site_type">Site type</label>
-		</div>
-		<div class="column">
-			<select name="rentfetch_options_apartment_site_type" id="rentfetch_options_apartment_site_type" value="<?php echo esc_attr( get_option( 'rentfetch_options_apartment_site_type' ) ); ?>">
-				<option value="single" <?php selected( get_option( 'rentfetch_options_apartment_site_type' ), 'single' ); ?>>This site is for a single property</option>
-				<option value="multiple" <?php selected( get_option( 'rentfetch_options_apartment_site_type' ), 'multiple' ); ?>>This site is for multiple properties</option>
-			</select>
-		</div>
-	</div>
-	<?php
+	
+	// Silence is golden
+	
 }
 add_action( 'rent_fetch_do_settings_general', 'rent_fetch_settings_general' );
 
@@ -62,13 +51,7 @@ function rent_fetch_save_settings_general() {
 	// this particular settings page has no tab or section, and it's the only one that doesn't
 	if ( $tab || $section )
 		return;
-	
-	// Select field
-	if ( isset( $_POST[ 'rentfetch_options_apartment_site_type']) ) {
-		$options_apartment_site_type = sanitize_text_field( $_POST[ 'rentfetch_options_apartment_site_type'] );
-		update_option( 'rentfetch_options_apartment_site_type', $options_apartment_site_type );
-	}
-	
+		
 	// Radio field
 	if ( isset( $_POST[ 'rentfetch_options_data_sync'] ) ) {
 		$options_data_sync = sanitize_text_field( $_POST[ 'rentfetch_options_data_sync'] );

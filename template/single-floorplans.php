@@ -27,7 +27,7 @@ if ( have_posts() ) {
 						$available_units = rentfetch_get_floorplan_available_units();
 						$links = rentfetch_get_floorplan_links();
 						$pricing = rentfetch_get_floorplan_pricing();     
-						$units_count = rentfetch_get_floorplan_units_count(); 
+						$units_count = rentfetch_get_floorplan_units_count_from_meta(); 
 						
 						
 						if ( $title )
@@ -50,7 +50,7 @@ if ( have_posts() ) {
 						echo '</div>';
 						
 						if ( $units_count > 0 ) {
-							printf( '<p class="availability">%s</p>', $available_units );
+							// printf( '<p class="availability">%s</p>', $available_units );
 							
 							// typically there will be two things hooked to this, a desktop <table> and a mobile <details>
 							do_action( 'rentfetch_floorplan_do_unit_table' );
@@ -60,16 +60,16 @@ if ( have_posts() ) {
 				echo '</div>'; // .current-floorplan-info
 			echo '</div>'; // .container-inner
 		echo '</div>'; // .container-outer
-		echo '<div class="single-floorplans-container-outer">';
-			echo '<div class="single-floorplans-container-inner">';
-				echo '<h2>Take a look around</h2>';
-			echo '</div>'; // .container-inner
-		echo '</div>'; // .container-outer
-		echo '<div class="single-floorplans-container-outer">';
-			echo '<div class="single-floorplans-container-inner">';
-				echo '<h2>Similar floorplans</h2>';
-			echo '</div>'; // .container-inner
-		echo '</div>'; // .container-outer
+		// echo '<div class="single-floorplans-container-outer">';
+		// 	echo '<div class="single-floorplans-container-inner">';
+		// 		echo '<h2>Take a look around</h2>';
+		// 	echo '</div>'; // .container-inner
+		// echo '</div>'; // .container-outer
+		// echo '<div class="single-floorplans-container-outer">';
+		// 	echo '<div class="single-floorplans-container-inner">';
+		// 		echo '<h2>Similar floorplans</h2>';
+		// 	echo '</div>'; // .container-inner
+		// echo '</div>'; // .container-outer
 		
 		
 	} // end while

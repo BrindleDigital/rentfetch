@@ -60,4 +60,4 @@ function rentfetch_register_properties_cpt() {
 	register_post_type( $post_type, $args );
 
 }
-
+add_action( 'init', 'rentfetch_register_properties_cpt', 20 );

@@ -88,6 +88,108 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.12 =
+
+* Adding a setting for the default sort to the floorplans search
+* Adding a parameter to the [floorplans] shortcode for sort (beds or availability are currently supported)
+
+= 0.11.1 =
+
+* Updating shortcode documentation
+
+= 0.11 =
+
+* Adding shortcode parameters for the [floorplans] shortcode to allow selection of one/multiple properties
+* Adding shortcode parameters for the [floorplans] shortcode to allow selection of one/multiple numbers of bedrooms
+* Adding default sort for the [floorplans] shortcode to sort DESC by beds
+
+= 0.10 =
+
+* Adding styles for the floorplans grid to match up with the floorplans search
+
+= 0.9.2 =
+
+* Bugfix: the tour link referred to settings which don't presently exist. Those references were removed.
+* Bugfix: the tour link wasn't being inherited properly; that's now fixed, and there's currently just a global default for this.
+
+= 0.9.1 =
+
+* Bugfix: The default number of floorplans pulled by the floorplans search (should be -1, not 10)
+* Changing the alignment of the sorting filter dropdown on the floorplans search so that its right side aligns with the right side
+* Extremely rough version of a new floorplans grid shortcode enabled (this is incomplete and shouldn't be used yet)
+* Minor updates to the markup for the floorplans search loop to bring it into alignment with the new grid
+
+= 0.9 = 
+
+* Adding sorting capability to the floorplans search
+
+= 0.8 = 
+
+* Adding parameters to the [floorplansearch] shortcode, like this: [floorplansearch property_id=p1671482]
+
+= 0.7.1 =
+
+* Improving the performance of the pricing filter when it's not set. Previously, it was still only finding floorplans that had pricing, and if it's null, then it really should be fully ignored.
+
+= 0.7 = 
+
+* Adding functionality for more mobile-friendly displays on the single-floorplans view and on the properties list view.
+* Adding the image sliders where appropriate for floorplans
+* Minor bugfixes throughout
+
+= 0.6.1 
+
+* Fixing a bug where the square footage search wasn't showing up in the properties search when enabled.
+
+= 0.6 = 
+
+* Adding the square footage search everywhere
+
+= 0.5.1 =
+
+* Assign the single-floorplans and single-properties templates in cases where the $template is not being passed in, for whatever reason.
+
+= 0.5 = 
+
+* Adding glightbox for use on matterport and youtube embeds
+* Adding tours field to both properties and floorplans and standardizing that
+* Adding the specials available element on the single-properties template for each floorplan
+* Adding fields for matterport/youtube and making those work reasonably well whether that's an iframe or an oembed, to support more use cases
+* Adding the new tours buttons on the single-properties layout
+* Adding the new tours buttons on the floorplans search
+
+= 0.4.10 = 
+
+* Fixing the enqueue for Google Maps such that it no longer is loading on every page, but still works with FSE themes
+
+= 0.4.9 =
+
+* Removing multiproperty settings, making that the default to remove a friction point
+
+= 0.4.8 =
+
+* Adding specials display on the floorplans search at the floorplan level 
+
+= 0.4.7 =
+
+* Changing the default on the Floorplan search images to contain instead of cover
+* Adding the dividers between floorplan attributes in the floorplans search
+
+= 0.4.6 =
+
+* Adding PUC back in since it's going to be like 70 days until we could possibly be on WP.org
+
+= 0.4.5 =
+
+* Removed an errant 'echo 3' statement that wasn't ever running in any of our test environments, since they define a constant for Google Maps
+* Fixed button width in the floorplan grid when used in a small space
+
+= 0.4.4 =
+
+* Style bug in the floorplans search (height of images)
+* Fixing bug where empty min/max rent or square footage was causing an error
+* Moving the AS tables check into Rentfetch Sync (because it's no longer relevant for the core plugin)
+
 = 0.4.3 =
 
 * Minor style bugfixes
