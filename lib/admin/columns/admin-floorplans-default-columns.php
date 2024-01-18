@@ -46,7 +46,7 @@ function rentfetch_default_floorplans_admin_columns( $columns ) {
 		// 'property_show_specials' =>     __( 'Show Specials', 'rentfetch' ),
 		'has_specials' =>               __( 'Has Specials', 'rentfetch' ),
 		'availability_url' =>           __( 'Availability URL', 'rentfetch' ),
-		'available_units' =>            __( 'Availiable Units', 'rentfetch' ),
+		'available_units' =>            __( 'Available Units', 'rentfetch' ),
 		// 'api_error' =>                  __( 'API error', 'rentfetch' ),
 		'api_response' =>               __( 'API response', 'rentfetch' ),
 	);
