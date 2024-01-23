@@ -88,6 +88,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.12.5 =
+
+* Adding prefixed versions of the shortcodes (unprefixed to be removed as soon as a few sites are updated)
+* Escaping an admin notice
+
 = 0.12.4 =
 
 * Changing all instances of rf_ and rent_fetch_ to rentfetch_
