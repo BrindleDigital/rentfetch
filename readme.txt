@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.12.4 =
+
+* Changing all instances of rf_ and rent_fetch_ to rentfetch_
+
 = 0.12.2 = 
 
 * Exiting all php files if accessed directly (changes made in all php files)

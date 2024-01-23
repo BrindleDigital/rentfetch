@@ -2,49 +2,49 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-function rf_register_properties_details_metabox() {
+function rentfetch_register_properties_details_metabox() {
 		
 	add_meta_box(
-		'rf_properties_identifiers', // ID of the metabox
+		'rentfetch_properties_identifiers', // ID of the metabox
 		'Property Identifiers', // Title of the metabox
-		'rf_properties_identifiers_metabox_callback', // Callback function to render the metabox
+		'rentfetch_properties_identifiers_metabox_callback', // Callback function to render the metabox
 		'properties', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
    
 	add_meta_box(
-		'rf_properties_contact', // ID of the metabox
+		'rentfetch_properties_contact', // ID of the metabox
 		'Property Contact Information', // Title of the metabox
-		'rf_properties_contact_metabox_callback', // Callback function to render the metabox
+		'rentfetch_properties_contact_metabox_callback', // Callback function to render the metabox
 		'properties', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
 	
 	add_meta_box(
-		'rf_properties_location', // ID of the metabox
+		'rentfetch_properties_location', // ID of the metabox
 		'Property Location', // Title of the metabox
-		'rf_properties_location_metabox_callback', // Callback function to render the metabox
+		'rentfetch_properties_location_metabox_callback', // Callback function to render the metabox
 		'properties', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
 	
 	add_meta_box(
-		'rf_properties_details', // ID of the metabox
+		'rentfetch_properties_details', // ID of the metabox
 		'Property Display Information', // Title of the metabox
-		'rf_properties_display_information_metabox_callback', // Callback function to render the metabox
+		'rentfetch_properties_display_information_metabox_callback', // Callback function to render the metabox
 		'properties', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
 		
 }
-add_action( 'add_meta_boxes', 'rf_register_properties_details_metabox' );
+add_action( 'add_meta_boxes', 'rentfetch_register_properties_details_metabox' );
 
-function rf_properties_identifiers_metabox_callback( $post ) {
-	wp_nonce_field( 'rf_properties_metabox_nonce', 'rf_properties_metabox_nonce' );
+function rentfetch_properties_identifiers_metabox_callback( $post ) {
+	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
 	
 	
 	?>
@@ -140,7 +140,7 @@ function rf_properties_identifiers_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_properties_location_metabox_callback( $post ) {
+function rentfetch_properties_location_metabox_callback( $post ) {
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
@@ -228,7 +228,7 @@ function rf_properties_location_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_properties_contact_metabox_callback( $post ) {
+function rentfetch_properties_contact_metabox_callback( $post ) {
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
@@ -276,7 +276,7 @@ function rf_properties_contact_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_properties_display_information_metabox_callback( $post ) {
+function rentfetch_properties_display_information_metabox_callback( $post ) {
 	wp_enqueue_media();
 	wp_enqueue_script( 'rentfetch-metabox-properties-images' );
 	wp_enqueue_script( 'rentfetch-metabox-properties-tour' );
@@ -432,12 +432,12 @@ function rf_properties_display_information_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_save_properties_metaboxes( $post_id ) {
+function rentfetch_save_properties_metaboxes( $post_id ) {
 	
-	if ( !isset( $_POST['rf_properties_metabox_nonce'] ) )
+	if ( !isset( $_POST['rentfetch_properties_metabox_nonce'] ) )
 		return;
 
-	if ( ! wp_verify_nonce( $_POST['rf_properties_metabox_nonce'], 'rf_properties_metabox_nonce' ) )
+	if ( ! wp_verify_nonce( $_POST['rentfetch_properties_metabox_nonce'], 'rentfetch_properties_metabox_nonce' ) )
 		return;
 	
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -533,4 +533,4 @@ function rf_save_properties_metaboxes( $post_id ) {
 	}
 
 }
-add_action( 'save_post', 'rf_save_properties_metaboxes' );
+add_action( 'save_post', 'rentfetch_save_properties_metaboxes' );

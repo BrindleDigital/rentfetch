@@ -2,49 +2,49 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-function rf_register_floorplans_details_metabox() {
+function rentfetch_register_floorplans_details_metabox() {
 		
 	add_meta_box(
-		'rf_floorplans_identifiers', // ID of the metabox
+		'rentfetch_floorplans_identifiers', // ID of the metabox
 		'Floorplan Identifiers', // Title of the metabox
-		'rf_floorplans_identifiers_metabox_callback', // Callback function to render the metabox
+		'rentfetch_floorplans_identifiers_metabox_callback', // Callback function to render the metabox
 		'floorplans', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
 	
 	add_meta_box(
-		'rf_floorplans_display', // ID of the metabox
+		'rentfetch_floorplans_display', // ID of the metabox
 		'Floorplan Display Information', // Title of the metabox
-		'rf_floorplans_display_metabox_callback', // Callback function to render the metabox
+		'rentfetch_floorplans_display_metabox_callback', // Callback function to render the metabox
 		'floorplans', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
 	
 	add_meta_box(
-		'rf_floorplans_info', // ID of the metabox
+		'rentfetch_floorplans_info', // ID of the metabox
 		'Floorplan Information', // Title of the metabox
-		'rf_floorplans_info_metabox_callback', // Callback function to render the metabox
+		'rentfetch_floorplans_info_metabox_callback', // Callback function to render the metabox
 		'floorplans', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
 	
 	add_meta_box(
-		'rf_floorplans_availability', // ID of the metabox
+		'rentfetch_floorplans_availability', // ID of the metabox
 		'Floorplan Availability', // Title of the metabox
-		'rf_floorplans_availability_metabox_callback', // Callback function to render the metabox
+		'rentfetch_floorplans_availability_metabox_callback', // Callback function to render the metabox
 		'floorplans', // Post type to add the metabox to
 		'normal', // Priority of the metabox
 		'default' // Context of the metabox
 	);
 		
 }
-add_action( 'add_meta_boxes', 'rf_register_floorplans_details_metabox' );
+add_action( 'add_meta_boxes', 'rentfetch_register_floorplans_details_metabox' );
 
-function rf_floorplans_identifiers_metabox_callback( $post ) {
-	wp_nonce_field( 'rf_floorplans_metabox_nonce', 'rf_floorplans_metabox_nonce' );
+function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
+	wp_nonce_field( 'rentfetch_floorplans_metabox_nonce', 'rentfetch_floorplans_metabox_nonce' );
 	?>
 	
 	<div class="rf-metabox rf-metabox-floorplans">
@@ -174,7 +174,7 @@ function rf_floorplans_identifiers_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_floorplans_display_metabox_callback( $post ) {
+function rentfetch_floorplans_display_metabox_callback( $post ) {
 	wp_enqueue_media();
 	wp_enqueue_script( 'rentfetch-metabox-floorplans-images' );
 	?>
@@ -291,7 +291,7 @@ function rf_floorplans_display_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_floorplans_info_metabox_callback( $post ) {
+function rentfetch_floorplans_info_metabox_callback( $post ) {
 	?>
 	
 	<div class="rf-metabox rf-metabox-floorplans">
@@ -414,7 +414,7 @@ function rf_floorplans_info_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_floorplans_availability_metabox_callback( $post ) {
+function rentfetch_floorplans_availability_metabox_callback( $post ) {
 	?>
 	
 	<div class="rf-metabox rf-metabox-floorplans">
@@ -496,12 +496,12 @@ function rf_floorplans_availability_metabox_callback( $post ) {
 	<?php
 }
 
-function rf_save_floorplans_metaboxes( $post_id ) {
+function rentfetch_save_floorplans_metaboxes( $post_id ) {
 	
-	if ( !isset( $_POST['rf_floorplans_metabox_nonce'] ) )
+	if ( !isset( $_POST['rentfetch_floorplans_metabox_nonce'] ) )
 		return;
 
-	if ( ! wp_verify_nonce( $_POST['rf_floorplans_metabox_nonce'], 'rf_floorplans_metabox_nonce' ) )
+	if ( ! wp_verify_nonce( $_POST['rentfetch_floorplans_metabox_nonce'], 'rentfetch_floorplans_metabox_nonce' ) )
 		return;
 	
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -596,4 +596,4 @@ function rf_save_floorplans_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'manual_images', $property_images );
 	}
 }
-add_action( 'save_post', 'rf_save_floorplans_metaboxes' );
+add_action( 'save_post', 'rentfetch_save_floorplans_metaboxes' );

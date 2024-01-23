@@ -9,7 +9,7 @@ function rentfetch_documentation_submenu_open_new_tab() {
 	?>
 	<script type="text/javascript">
 	jQuery(document).ready(function($) {
-		$('a[href="admin.php?page=rent_fetch_documentation"').each(function () {
+		$('a[href="admin.php?page=rentfetch-documentation"').each(function () {
 			if ($(this).text() == 'Documentation') {
 				$(this).css('color', 'yellow');
 				$(this).attr('href', 'https://github.com/BrindleDigital/rentfetch');

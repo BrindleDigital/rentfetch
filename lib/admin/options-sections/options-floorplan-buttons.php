@@ -18,7 +18,7 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_f
 /**
  * Output floorplan button settings
  */
-function rent_fetch_settings_floorplans_floorplan_buttons() {
+function rentfetch_settings_floorplans_floorplan_buttons() {
 	?>
 	
 	<script type="text/javascript">
@@ -149,12 +149,12 @@ function rent_fetch_settings_floorplans_floorplan_buttons() {
 
 	<?php
 }
-add_action( 'rent_fetch_do_settings_floorplans_floorplan_buttons', 'rent_fetch_settings_floorplans_floorplan_buttons' );
+add_action( 'rentfetch_do_settings_floorplans_floorplan_buttons', 'rentfetch_settings_floorplans_floorplan_buttons' );
 
 /**
  * Save the floorplan button settings
  */
-function rent_fetch_save_settings_floorplan_buttons() {
+function rentfetch_save_settings_floorplan_buttons() {
 	
 	// Get the tab and section
 	$tab = rentfetch_settings_get_tab();
@@ -206,4 +206,4 @@ function rent_fetch_save_settings_floorplan_buttons() {
 	}
 	
 }
-add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_floorplan_buttons' );
+add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_floorplan_buttons' );

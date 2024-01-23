@@ -5,18 +5,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Save the form data for ALL tabs on the Rent Fetch settings page
  */
-function rent_fetch_process_form_data() {
+function rentfetch_process_form_data() {
 	
 	//* Verify the nonce
-	if ( ! wp_verify_nonce( $_POST['rent_fetch_form_nonce'], 'rent_fetch_nonce' ) ) {
+	if ( ! wp_verify_nonce( $_POST['rentfetch_form_nonce'], 'rentfetch_nonce' ) ) {
 		die( 'Security check failed' );
 	}
 	
 	//* Save the settings
-	do_action( 'rent_fetch_save_settings' );
+	do_action( 'rentfetch_save_settings' );
 	
 	//* Redirect back to the form page with a success message
-	// wp_redirect( add_query_arg( 'rent_fetch_message', 'success', 'admin.php?page=rent_fetch_options' ) );
+	// wp_redirect( add_query_arg( 'rentfetch_message', 'success', 'admin.php?page=rentfetch-options' ) );
 		
 	//* Redirect back to the current page with a success message
 	$referrer = $_SERVER['HTTP_REFERER'];
@@ -27,9 +27,9 @@ function rent_fetch_process_form_data() {
 	// remove /wp-admin/ from the referrer
 	$referrer = preg_replace('/\/wp-admin\//', '', $referrer);
 		
-	wp_redirect( add_query_arg( 'rent_fetch_message', 'success', $referrer ) );
+	wp_redirect( add_query_arg( 'rentfetch_message', 'success', $referrer ) );
 	
 	exit;
 
 }
-add_action( 'admin_post_rent_fetch_process_form', 'rent_fetch_process_form_data' );
+add_action( 'admin_post_rentfetch_process_form', 'rentfetch_process_form_data' );

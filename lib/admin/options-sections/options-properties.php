@@ -41,7 +41,7 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_p
 /**
  * Adds the property search settings subsection to the Rent Fetch settings page
  */
-function rent_fetch_settings_properties_property_search() {
+function rentfetch_settings_properties_property_search() {
 	?>
 	
 	 <div class="row">
@@ -245,12 +245,12 @@ function rent_fetch_settings_properties_property_search() {
 	</div>        
 	<?php
 }
-add_action( 'rent_fetch_do_settings_properties_property_search', 'rent_fetch_settings_properties_property_search' );
+add_action( 'rentfetch_do_settings_properties_property_search', 'rentfetch_settings_properties_property_search' );
 
 /**
  * Save the property search settings
  */
-function rent_fetch_save_settings_property_search() {
+function rentfetch_save_settings_property_search() {
 	
 	// Get the tab and section
 	$tab = rentfetch_settings_get_tab();
@@ -321,4 +321,4 @@ function rent_fetch_save_settings_property_search() {
 	}
 	
 }
-add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_property_search' );
+add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_property_search' );
