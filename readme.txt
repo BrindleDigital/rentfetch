@@ -48,15 +48,15 @@ Our [Rent Fetch Sync](https://rentfetch.io) addon works with Yardi/RentCafe (Ent
 
 = Will this work on a site showing just one property and a handful of floorplans? =
 
-Yes. You'll want to use the `[floorplansearch]` shorcode to show those.
+Yes. You'll want to use the `[rentfetch_floorplansearch]` shorcode to show those.
 
 = Will this work if I have hundreds of properties? =
 
-Yes. You'll want to use the `[propertysearch]' shortcode to show a full availability search.
+Yes. You'll want to use the `[rentfetch_propertysearch]' shortcode to show a full availability search.
 
 = Is there a way to show all of my properties, even if some of them don't have any availability at tht moment? =
 
-Yes. You can use the `[properties]` shortcode, or you can build your own display – all the data is saved in WordPress.
+Yes. You can use the `[rentfetch_properties]` shortcode, or you can build your own display – all the data is saved in WordPress.
 
 = What APIs do you work with? =
 

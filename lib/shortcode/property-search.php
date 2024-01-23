@@ -17,17 +17,18 @@ function rentfetch_propertysearch_default_layout( $atts ) {
 	//* Our container markup for the results
 	echo '<div class="rent-fetch-property-search-default-layout">';	
 		echo '<div class="filters-and-properties-container">';
-			echo do_shortcode('[propertysearchfilters]');
-			echo do_shortcode('[propertysearchresults]');
+			echo do_shortcode('[rentfetch_propertysearchfilters]');
+			echo do_shortcode('[rentfetch_propertysearchresults]');
 		echo '</div>';
 		echo '<div class="map-container">';
-			echo do_shortcode('[propertysearchmap]');
+			echo do_shortcode('[rentfetch_propertysearchmap]');
 		echo '</div>';
 	echo '</div>';
 
 	return ob_get_clean();
 }
 add_shortcode( 'propertysearch', 'rentfetch_propertysearch_default_layout' );
+add_shortcode( 'rentfetch_propertysearch', 'rentfetch_propertysearch_default_layout' );
 
 /**
  * Add the [propertysearchfilters] shortcode
@@ -66,6 +67,7 @@ function rentfetch_propertysearchfilters() {
 	return ob_get_clean();
 }
 add_shortcode( 'propertysearchfilters', 'rentfetch_propertysearchfilters' );
+add_shortcode( 'rentfetch_propertysearchfilters', 'rentfetch_propertysearchfilters' );
 
 /**
  * Outupt the dialog element for the search filters
@@ -116,6 +118,7 @@ function rentfetch_propertysearchmap() {
 	return ob_get_clean();
 }
 add_shortcode( 'propertysearchmap', 'rentfetch_propertysearchmap' );
+add_shortcode( 'rentfetch_propertysearchmap', 'rentfetch_propertysearchmap' );
 
 
 /**
@@ -129,6 +132,7 @@ function rentfetch_propertysearchresults() {
 	return ob_get_clean();
 }
 add_shortcode( 'propertysearchresults', 'rentfetch_propertysearchresults' );
+add_shortcode( 'rentfetch_propertysearchresults', 'rentfetch_propertysearchresults' );
 
 /**
  * Do the property query and render outer markup for each property found in the search (if there is a location set)

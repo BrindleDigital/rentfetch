@@ -32,11 +32,11 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 	echo '<div class="rent-fetch-floorplan-search-default-layout">';
 	
 		// create the first shortcode 
-		$floorplansearchfilters_shortcode = sprintf( '[floorplansearchfilters %s]', $string_atts );
+		$floorplansearchfilters_shortcode = sprintf( '[rentfetch_floorplansearchfilters %s]', $string_atts );
 		echo do_shortcode( $floorplansearchfilters_shortcode );
 		
 		// create the second shortcode
-		$floorplansearchresults_shortcode = sprintf( '[floorplansearchresults %s]', $string_atts );
+		$floorplansearchresults_shortcode = sprintf( '[rentfetch_floorplansearchresults %s]', $string_atts );
 		echo do_shortcode( $floorplansearchresults_shortcode );
 				
 		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', site_url() );
@@ -53,6 +53,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 	return ob_get_clean();
 }
 add_shortcode( 'floorplansearch', 'rentfetch_floorplan_search_default_layout' );
+add_shortcode( 'rentfetch_floorplansearch', 'rentfetch_floorplan_search_default_layout' );
 
 /**
  * Output the search filters
@@ -82,6 +83,7 @@ function rentfetch_floorplansearchfilters( $atts ) {
 	
 }
 add_shortcode( 'floorplansearchfilters', 'rentfetch_floorplansearchfilters' );
+add_shortcode( 'rentfetch_floorplansearchfilters', 'rentfetch_floorplansearchfilters' );
 
 /**
  * Output the search results
@@ -97,6 +99,7 @@ function rentfetch_floorplan_search_results() {
 	
 }
 add_shortcode( 'floorplansearchresults', 'rentfetch_floorplan_search_results' );
+add_shortcode( 'rentfetch_floorplansearchresults', 'rentfetch_floorplan_search_results' );
 
 function rentfetch_filter_floorplans() {
 			
