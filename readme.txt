@@ -88,8 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-<<<<<<< HEAD
-=======
+= 0.12.3 = 
+
+* Fixing a merge error that caused a crash
+
 = 0.12.2 = 
 
 * Exiting all php files if accessed directly (changes made in all php files)
@@ -98,7 +100,6 @@ Start from your WordPress dashboard.
 
 * Removing third-party update capabilities from the Wordpress.org version of the plugin (this is the version that will become canonical once it's on the repo.)
 
->>>>>>> 53339a3 (Exiting all php files if accessed directly)
 = 0.12 =
 
 * Adding a setting for the default sort to the floorplans search
