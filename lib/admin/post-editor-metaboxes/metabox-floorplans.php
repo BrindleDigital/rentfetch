@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rf_register_floorplans_details_metabox() {
 		
 	add_meta_box(

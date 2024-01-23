@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_get_property_images( $args = null ) {
 	global $post;
 	

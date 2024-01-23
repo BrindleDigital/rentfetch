@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 //* Allow the units search to find metadata values
 
 function units_search_join ( $join ) {

@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 //* Allow the properties search to find metadata values
 function properties_search_join ( $join ) {
 	global $pagenow, $wpdb;

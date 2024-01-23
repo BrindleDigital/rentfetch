@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_search_filters_property_types() {
 		   
 	// bail if propertytypes taxonomy does not exist

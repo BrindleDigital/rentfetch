@@ -88,7 +88,13 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.12.1 = Removing third-party update capabilities from the Wordpress.org version of the plugin (this is the version that will become canonical once it's on the repo.)
+= 0.12.2 = 
+
+* Exiting all php files if accessed directly (changes made in all php files)
+
+= 0.12.1 = 
+
+* Removing third-party update capabilities from the Wordpress.org version of the plugin (this is the version that will become canonical once it's on the repo.)
 
 = 0.12 =
 

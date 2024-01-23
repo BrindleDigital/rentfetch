@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_search_filters_pets() {
 	
 	// check whether beds search is enabled

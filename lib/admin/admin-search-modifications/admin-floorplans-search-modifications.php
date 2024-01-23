@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 //* Allow the floorplans search to find metadata values
 
 function floorplans_search_join ( $join ) {

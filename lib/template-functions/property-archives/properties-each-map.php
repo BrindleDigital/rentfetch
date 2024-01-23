@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_properties_each_map() {
 	
 	$title = rentfetch_get_property_title();
