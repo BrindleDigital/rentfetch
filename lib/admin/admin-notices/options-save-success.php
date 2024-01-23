@@ -9,7 +9,7 @@ function rentfetch_options_page_notice() {
 	if ( isset( $_GET['rentfetch_message'] ) && $_GET['rentfetch_message'] === 'success' ) {
 		?>
 		<div class="notice notice-success is-dismissible">
-			<p><?php _e( 'Rent Fetch settings successfully saved.', 'rent-fetch' ); ?></p>
+			<p><?php esc_html_e( 'Rent Fetch settings successfully saved.', 'rentfetch' ); ?></p>
 		</div>
 		<?php
 	}
