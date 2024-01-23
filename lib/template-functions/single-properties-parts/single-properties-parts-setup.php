@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_single_properties_set_up_parts() {
 	
 	add_action( 'rentfetch_do_single_properties_parts', 'rentfetch_single_properties_parts_images' );

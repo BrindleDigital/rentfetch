@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 //* PROPERTY TITLE
 
 function rentfetch_get_property_title() {

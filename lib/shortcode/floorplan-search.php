@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 /**
  * Add markup for a default floorplan search layout. 
  * We're basically just doing two shortcodes here, 

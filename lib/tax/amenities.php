@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_register_amenities_taxonomy() {
 	register_taxonomy(
 		'amenities',

@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rent_fetch_shortcodes_page_html() {
 	if (!current_user_can('manage_options')) {
 		return;

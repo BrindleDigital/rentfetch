@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_enqueue_properties_admin_style() {
 	
 	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins

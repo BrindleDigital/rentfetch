@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_search_floorplans_args_shortcode( $floorplans_args ) {
 		
 	//! Property IDs

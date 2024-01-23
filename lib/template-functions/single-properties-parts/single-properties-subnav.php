@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_single_properties_parts_subnav() {
 	
 	$maybe_do_subnav = apply_filters( 'rentfetch_maybe_do_property_part_subnav', true );    

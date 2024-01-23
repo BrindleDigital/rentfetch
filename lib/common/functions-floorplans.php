@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 //* Title
 
 function rentfetch_get_floorplan_title() {
@@ -345,7 +347,7 @@ function rentfetch_floorplan_unit_table() {
 				
 				$units_table_query->the_post();
 				
-				$title = rentfetch_get_floorplan_title();
+				$title = rentfetch_get_unit_title();
 				$pricing = rentfetch_get_unit_pricing();
 				$deposit = rentfetch_get_unit_deposit();
 				$availability_date = rentfetch_get_unit_availability_date();
@@ -415,7 +417,7 @@ function rentfetch_floorplan_unit_list() {
 					
 				$units_list_query->the_post();
 				
-				$title = rentfetch_get_floorplan_title();
+				$title = rentfetch_get_unit_title();
 				$pricing = rentfetch_get_unit_pricing();
 				$deposit = rentfetch_get_unit_deposit();
 				$availability_date = rentfetch_get_unit_availability_date();

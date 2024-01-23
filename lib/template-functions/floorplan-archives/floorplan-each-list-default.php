@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_floorplans_each_list_default() {
 	
 	$title = rentfetch_get_floorplan_title();

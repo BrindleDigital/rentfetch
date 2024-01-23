@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_settings_get_tab() {
 	
 	if ( isset( $_REQUEST['_wp_http_referer'] ) ) {

@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function rentfetch_search_filters_sort_floorplans() {
 					
 	// get the sort parameter if it exists
