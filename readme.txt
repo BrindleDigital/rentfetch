@@ -88,9 +88,9 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.12.3 = 
+= 0.12.4 =
 
-* Fixing a merge error that caused a crash
+* Changing all instances of rf_ and rent_fetch_ to rentfetch_
 
 = 0.12.2 = 
 

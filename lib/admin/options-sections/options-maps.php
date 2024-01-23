@@ -17,7 +17,7 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_m
 /**
  * Adds the Maps settings section to the Rent Fetch settings page
  */
-function rent_fetch_settings_maps() {    
+function rentfetch_settings_maps() {    
 	?>
 	
 	<div class="row">
@@ -85,13 +85,13 @@ function rent_fetch_settings_maps() {
 		   
 	<?php
 }
-add_action( 'rent_fetch_do_settings_maps', 'rent_fetch_settings_maps' );
+add_action( 'rentfetch_do_settings_maps', 'rentfetch_settings_maps' );
 
 /**
  * Save the Google settings
  */
-add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_maps' );
-function rent_fetch_save_settings_maps() {
+add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_maps' );
+function rentfetch_save_settings_maps() {
 	
 	// Get the tab and section
 	$tab = rentfetch_settings_get_tab();

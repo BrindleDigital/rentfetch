@@ -16,15 +16,15 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_g
 /**
  * Adds the general settings section to the Rent Fetch settings page.
  */
-function rent_fetch_settings_general() {
+function rentfetch_settings_general() {
 	
 	
 	// Silence is golden
 	
 }
-add_action( 'rent_fetch_do_settings_general', 'rent_fetch_settings_general' );
+add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_general' );
 
-function rent_fetch_settings_sync_functionality_notice() {
+function rentfetch_settings_sync_functionality_notice() {
 	?>
 	<div class="row">
 		<div class="column">
@@ -39,12 +39,12 @@ function rent_fetch_settings_sync_functionality_notice() {
 	</div>
 	<?php
 }
-add_action( 'rent_fetch_do_settings_general', 'rent_fetch_settings_sync_functionality_notice', 25 );
+add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_sync_functionality_notice', 25 );
 
 /**
  * Save the general settings
  */
-function rent_fetch_save_settings_general() {
+function rentfetch_save_settings_general() {
 	
 	// Get the tab and section
 	$tab = rentfetch_settings_get_tab();
@@ -219,4 +219,4 @@ function rent_fetch_save_settings_general() {
 	}
 	
 }
-add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_general' );
+add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_general' );

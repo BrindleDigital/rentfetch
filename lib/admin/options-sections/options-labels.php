@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Adds the labels settings section to the Rent Fetch settings page
  */
-function rent_fetch_settings_labels() {
+function rentfetch_settings_labels() {
 	?>
 		
 	<div class="row">
@@ -58,13 +58,13 @@ function rent_fetch_settings_labels() {
 	</div>
 	<?php
 }
-add_action( 'rent_fetch_do_settings_labels', 'rent_fetch_settings_labels' );
+add_action( 'rentfetch_do_settings_labels', 'rentfetch_settings_labels' );
 
 /**
  * Save the label settings
  */
 
-function rent_fetch_save_settings_labels() {
+function rentfetch_save_settings_labels() {
 	
 	// Get the tab and section
 	$tab = rentfetch_settings_get_tab();
@@ -109,4 +109,4 @@ function rent_fetch_save_settings_labels() {
 		update_option( 'rentfetch_options_bedroom_numbers_5_bedroom', $options_bedroom_numbers_5_bedroom );
 	}
 }
-add_action( 'rent_fetch_save_settings', 'rent_fetch_save_settings_labels' );
+add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_labels' );

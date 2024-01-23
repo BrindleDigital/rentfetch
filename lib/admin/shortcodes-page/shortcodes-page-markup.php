@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-function rent_fetch_shortcodes_page_html() {
+function rentfetch_shortcodes_page_html() {
 	if (!current_user_can('manage_options')) {
 		return;
 	}
@@ -48,11 +48,11 @@ function rent_fetch_shortcodes_page_html() {
 	echo '<div class="wrap">';
 		echo '<h1>Rent Fetch Shortcodes</h1>';
 		echo '<p>Rent Fetch includes a number of shortcodes that can be used wherever you\'d like on your site. <strong>Click any of them below to copy them.</strong></p>';
-		do_action( 'rent_fetch_do_documentation_shortcodes' );
+		do_action( 'rentfetch_do_documentation_shortcodes' );
 	echo '</div>';
 }
 
-function rent_fetch_documentation_shortcodes() {
+function rentfetch_documentation_shortcodes() {
 	?>
 	<h2>Multiple properties search</h2>
 	<p>The main properties search can be rendered using the default shortcode, which will create a side-by-side layout with the properties and search filters next to the map, or you can render each component individually to make the layout work however you'd like it to.</p>
@@ -80,4 +80,4 @@ function rent_fetch_documentation_shortcodes() {
 	<p><span class="shortcode"><!-- wp:shortcode -->[floorplans]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans property_id=p1234,p5678 beds=2,3]<!-- /wp:shortcode --></span>  <span class="shortcode"><!-- wp:shortcode -->[floorplans sort=beds]<!-- /wp:shortcode --></span> <span class="shortcode"><!-- wp:shortcode -->[floorplans sort=availability]<!-- /wp:shortcode --></span></p>
 	<?php
 }
-add_action( 'rent_fetch_do_documentation_shortcodes', 'rent_fetch_documentation_shortcodes' );
+add_action( 'rentfetch_do_documentation_shortcodes', 'rentfetch_documentation_shortcodes' );

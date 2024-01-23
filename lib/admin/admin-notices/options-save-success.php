@@ -3,10 +3,10 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * If the rent_fetch_message parameter is set to 'success', display a success message.
+ * If the rentfetch_message parameter is set to 'success', display a success message.
  */
-function rent_fetch_options_page_notice() {
-	if ( isset( $_GET['rent_fetch_message'] ) && $_GET['rent_fetch_message'] === 'success' ) {
+function rentfetch_options_page_notice() {
+	if ( isset( $_GET['rentfetch_message'] ) && $_GET['rentfetch_message'] === 'success' ) {
 		?>
 		<div class="notice notice-success is-dismissible">
 			<p><?php _e( 'Rent Fetch settings successfully saved.', 'rent-fetch' ); ?></p>
@@ -14,4 +14,4 @@ function rent_fetch_options_page_notice() {
 		<?php
 	}
 }
-add_action( 'admin_notices', 'rent_fetch_options_page_notice' );
+add_action( 'admin_notices', 'rentfetch_options_page_notice' );
