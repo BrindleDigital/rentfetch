@@ -25,6 +25,17 @@ function rentfetch_search_floorplans_args_shortcode( $floorplans_args ) {
 		$floorplans_args['meta_query'][] = $meta_query;
 				
 	}
+	
+	//! Posts per page
+	if ( isset( $_POST['posts_per_page'] ) ) {
+				
+		// Get the values
+		$posts_per_page = intval( $_POST['posts_per_page'] );
+				
+		// Add the meta query to the property args
+		$floorplans_args['posts_per_page'] = $posts_per_page;
+				
+	}
 		
 	return $floorplans_args;
 }
