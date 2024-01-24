@@ -112,6 +112,9 @@ function rentfetch_get_floorplans_array() {
 			$min = 0;
 		}
 		
+		$max = (float)$max;
+		$min = (float)$min;
+		
 		//* RENT RANGE
 		
 		if ( $max == $min ) {
