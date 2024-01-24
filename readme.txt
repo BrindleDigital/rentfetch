@@ -88,6 +88,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.12.6 =
+
+* Bugfix: Fixed a fatal error that could happen in some environments when manually entering values for rent (string to float conversion wasn't happening)
+
 = 0.12.5 =
 
 * Adding prefixed versions of the shortcodes (unprefixed to be removed as soon as a few sites are updated)
