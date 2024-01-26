@@ -24,9 +24,7 @@ define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RENTFETCH_PATH', plugin_dir_url( __FILE__ ) );
 define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
 
-//
-// FILE INCLUDES //
-//
+//* FILE INCLUDES //
 
 function rentfetch_require_files_recursive( $directory ) {
 	$iterator = new RecursiveIteratorIterator(
@@ -50,9 +48,7 @@ function rentfetch_flush_permalinks_on_activation() {
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_flush_permalinks_on_activation' );
 
-//
-// PLUGIN UPDATER //
-//
+//* PLUGIN UPDATER //
 
 // Updater
 require RENTFETCH_DIR . 'vendor/plugin-update-checker/plugin-update-checker.php';
