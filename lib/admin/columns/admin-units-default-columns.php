@@ -1,6 +1,14 @@
 <?php
+/**
+ * This file sets up the default columns for the Units custom post type in the admin.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 
 function rentfetch_enqueue_units_admin_style() {
 	

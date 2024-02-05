@@ -1,43 +1,97 @@
 <?php
+/**
+ * This file contains modifications to the search functionality for the Properties custom post type.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
-//* Allow the properties search to find metadata values
-function properties_search_join ( $join ) {
-	global $pagenow, $wpdb;
-
-	// I want the filter only when performing a search on edit page of Custom Post Type named "properties".
-	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {    
-		$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
-	}
-	return $join;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
 }
-add_filter( 'posts_join', 'properties_search_join' );
 
-function properties_search_where( $where ) {
+/**
+ * Allow the properties search to find metadata values
+ *
+ * @param string $join The SQL JOIN clause.
+ *
+ * @return string $join.
+ */
+function rentfetch_properties_search_join( $join ) {
+
 	global $pagenow, $wpdb;
+
+	if ( ! isset( $_GET['s'] ) ) {
+		return;
+	}
+
+	if ( ! isset( $_GET['post_type'] ) ) {
+		return;
+	}
 
 	// I want the filter only when performing a search on edit page of Custom Post Type named "properties".
 	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
+		$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+	}
+
+	return $join;
+}
+add_filter( 'posts_join', 'rentfetch_properties_search_join' );
+
+/**
+ * Filters the WHERE clause of the query
+ *
+ * @param string $where The SQL WHERE clause.
+ *
+ * @return string $where.
+ */
+function rentfetch_properties_search_where( $where ) {
+
+	global $pagenow, $wpdb;
+
+	if ( ! isset( $_GET['s'] ) ) {
+		return;
+	}
+
+	if ( ! isset( $_GET['post_type'] ) ) {
+		return;
+	}
+
+	// I want the filter only when performing a search on edit page of Custom Post Type named "properties".
+	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
+
 		$where = preg_replace(
-			"/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-			"(" . $wpdb->posts . ".post_title LIKE $1) OR (" . $wpdb->postmeta . ".meta_value LIKE $1)", $where );
-		// $where.= " GROUP BY {$wpdb->posts}.id"; // Solves duplicated results
-		
+			'/\(\s*' . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
+			'(' . $wpdb->posts . '.post_title LIKE $1) OR (' . $wpdb->postmeta . '.meta_value LIKE $1)',
+			$where
+		);
+
 	}
 	return $where;
 }
-add_filter( 'posts_where', 'properties_search_where' );
+add_filter( 'posts_where', 'rentfetch_properties_search_where' );
 
-function properties_limits($groupby) {
+/**
+ * Filter he GROUP BY clause of the query.
+ *
+ * @param string $groupby The SQL GROUP BY clause.
+ *
+ * @return string $groupby.
+ */
+function rentfetch_properties_limits( $groupby ) {
+
 	global $pagenow, $wpdb;
-	
-	if ( !isset( $_GET['s']) )
+
+	if ( ! isset( $_GET['s'] ) ) {
 		return;
-	
-	if ( is_admin() && $pagenow == 'edit.php' && $_GET['post_type']=='properties' && $_GET['s'] != '' ) {
+	}
+
+	if ( ! isset( $_GET['post_type'] ) ) {
+		return;
+	}
+
+	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && '' !== $_GET['s'] ) {
 		$groupby = "$wpdb->posts.ID";
 	}
 	return $groupby;
 }
-add_filter( 'posts_groupby', 'properties_limits' );
+add_filter( 'posts_groupby', 'rentfetch_properties_limits' );

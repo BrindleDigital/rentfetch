@@ -1,224 +1,244 @@
 <?php
+/**
+ * This file sets up the default columns for the Floorplans custom post type in the admin.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Set up the admin style for the floorplans custom post type.
+ *
+ * @return none
+ */
 function rentfetch_enqueue_floorplans_admin_style() {
-	
-	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins
-	if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) )
+
+	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
+	if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
 		return;
-	
+	}
+
 	$current_screen = get_current_screen();
-  
-	// Check if the current screen is the admin archive page of the floorplans content type
-	if ( $current_screen->base === 'edit' && $current_screen->post_type === 'floorplans' ) {
-		
-		// Enqueue your custom admin style
+
+	// Check if the current screen is the admin archive page of the floorplans content type.
+	if ( 'edit' === $current_screen->base && 'floorplans' === $current_screen->post_type ) {
+
 		wp_enqueue_style( 'floorplans-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-floorplans.css', array(), RENTFETCH_VERSION, 'screen' );
-		
 		wp_enqueue_script( 'floorplans-edit-admin-script', RENTFETCH_PATH . 'js/floorplans-edit-admin-script.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+
 	}
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_floorplans_admin_style' );
 
+/**
+ * Set the admin columns order.
+ *
+ * @param array $columns an array of the columns we'd like to use.
+ *
+ * @return array $columns.
+ */
 function rentfetch_default_floorplans_admin_columns( $columns ) {
-	
+
 	$columns = array(
-		'cb' =>                         '<input type="checkbox" />',
-		'title' =>                      __( 'Title', 'rentfetch' ),
-		'floorplan_source' =>           __( 'Floorplan Source', 'rentfetch' ),
-		'property_id' =>                __( 'Property ID', 'rentfetch' ),
-		'property_name' =>              __( 'Property Name', 'rentfetch' ),
-		'floorplan_id' =>               __( 'Floorplan ID', 'rentfetch' ),
-		// 'unit_type_mapping' =>          __( 'Unit Type', 'rentfetch' ),
-		'tour' =>                       __( 'Tour', 'rentfetch' ),
-		'manual_images' =>              __( 'Manual Images', 'rentfetch' ),
-		'floorplan_images' =>           __( 'Synced Images', 'rentfetch' ),
-		'floorplan_description' =>      __( 'Floorplan Description', 'rentfetch' ),
-		'beds' =>                       __( 'Beds', 'rentfetch' ),
-		'baths' =>                      __( 'Baths', 'rentfetch' ),
-		'minimum_deposit' =>            __( 'Min Deposit', 'rentfetch' ),
-		'maximum_deposit' =>            __( 'Max Deposit', 'rentfetch' ),
-		'minimum_rent' =>               __( 'Min Rent', 'rentfetch' ),
-		'maximum_rent' =>               __( 'Max Rent', 'rentfetch' ),
-		'minimum_sqft' =>               __( 'Min Sqrft', 'rentfetch' ),
-		'maximum_sqft' =>               __( 'Max Sqrft', 'rentfetch' ),
-		'availability_date' =>          __( 'Availability Date', 'rentfetch' ),
-		
-		// 'property_show_specials' =>     __( 'Show Specials', 'rentfetch' ),
-		'has_specials' =>               __( 'Has Specials', 'rentfetch' ),
-		'availability_url' =>           __( 'Availability URL', 'rentfetch' ),
-		'available_units' =>            __( 'Available Units', 'rentfetch' ),
-		// 'api_error' =>                  __( 'API error', 'rentfetch' ),
-		'api_response' =>               __( 'API response', 'rentfetch' ),
+		'cb'                    => '<input type="checkbox" />',
+		'title'                 => __( 'Title', 'rentfetch' ),
+		'floorplan_source'      => __( 'Floorplan Source', 'rentfetch' ),
+		'property_id'           => __( 'Property ID', 'rentfetch' ),
+		'property_name'         => __( 'Property Name', 'rentfetch' ),
+		'floorplan_id'          => __( 'Floorplan ID', 'rentfetch' ),
+		'tour'                  => __( 'Tour', 'rentfetch' ),
+		'manual_images'         => __( 'Manual Images', 'rentfetch' ),
+		'floorplan_images'      => __( 'Synced Images', 'rentfetch' ),
+		'floorplan_description' => __( 'Floorplan Description', 'rentfetch' ),
+		'beds'                  => __( 'Beds', 'rentfetch' ),
+		'baths'                 => __( 'Baths', 'rentfetch' ),
+		'minimum_deposit'       => __( 'Min Deposit', 'rentfetch' ),
+		'maximum_deposit'       => __( 'Max Deposit', 'rentfetch' ),
+		'minimum_rent'          => __( 'Min Rent', 'rentfetch' ),
+		'maximum_rent'          => __( 'Max Rent', 'rentfetch' ),
+		'minimum_sqft'          => __( 'Min Sqrft', 'rentfetch' ),
+		'maximum_sqft'          => __( 'Max Sqrft', 'rentfetch' ),
+		'availability_date'     => __( 'Availability Date', 'rentfetch' ),
+		'has_specials'          => __( 'Has Specials', 'rentfetch' ),
+		'availability_url'      => __( 'Availability URL', 'rentfetch' ),
+		'available_units'       => __( 'Available Units', 'rentfetch' ),
+		'api_response'          => __( 'API response', 'rentfetch' ),
 	);
-	
+
 	return $columns;
-	
 }
 add_filter( 'manage_floorplans_posts_columns', 'rentfetch_default_floorplans_admin_columns' );
 
+/**
+ * Set up the content of the columns
+ *
+ * @param string $column the label for the column.
+ * @param int    $post_id the WordPress post ID.
+ *
+ * @return void
+ */
 function rentfetch_floorplans_default_column_content( $column, $post_id ) {
-		
-	if ( 'title' === $column )
+
+	if ( 'title' === $column ) {
 		echo esc_attr( get_the_title( $post_id ) );
-		
-	if ( 'floorplan_source' === $column )
+	}
+
+	if ( 'floorplan_source' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_source', true ) );
-	
-	if ( 'property_id' === $column )
+	}
+
+	if ( 'property_id' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'property_id', true ) );
-	
+	}
+
 	if ( 'property_name' === $column ) {
-		
+
 		$property_id = get_post_meta( $post_id, 'property_id', true );
-		
-		// do a query for properties with this property_id
+
+		// do a query for properties with this property_id.
 		$args = array(
-			'post_type' => 'properties',
+			'post_type'      => 'properties',
 			'posts_per_page' => 1,
-			// 'post_status' => 'publish',
-			'orderby' => 'title',
-			'order' => 'ASC',
-			'meta_query' => array(
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+			'meta_query'     => array(
 				array(
-					'key' => 'property_id',
+					'key'   => 'property_id',
 					'value' => $property_id,
-				)
-			)
+				),
+			),
 		);
-		
+
 		$property_name_query = new WP_Query( $args );
-				
+
 		if ( $property_name_query->have_posts() ) {
 			while ( $property_name_query->have_posts() ) {
 				$property_name_query->the_post();
 				$property_title = get_the_title( get_the_ID() );
-				$property_link = get_the_permalink( get_the_ID() );
-				// $property_id = get_post_meta( get_the_ID(), 'property_id', true );
-				printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', $property_link, $property_title, get_the_ID() );
+				$property_link  = get_the_permalink( get_the_ID() );
+				printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', esc_url( $property_link ), esc_attr( $property_title ), (int) get_the_ID() );
 			}
-		} else {
-			
 		}
-		
 	}
-	
-	if ( 'floorplan_id' === $column )
+
+	if ( 'floorplan_id' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_id', true ) );
-	
+	}
+
 	if ( 'tour' === $column ) {
 		if ( get_post_meta( $post_id, 'tour', true ) ) {
-			Echo 'Tour embed code added';
+			echo 'Tour embed code added';
 		}
 	}
-	
-	// if ( 'unit_type_mapping' === $column )
-	// 	echo esc_attr( get_post_meta( $post_id, 'unit_type_mapping', true ) );
-	
-	// if ( 'manual_images' === $column )
-	//     echo esc_attr( get_post_meta( $post_id, 'manual_images', true ) );   
-		
+
 	if ( 'manual_images' === $column ) {
 		$images = get_post_meta( $post_id, 'manual_images', true );
-		
-		if ( is_array( $images ) ) {    
+
+		if ( is_array( $images ) ) {
 			foreach ( $images as $image ) {
 				$image = wp_get_attachment_image_url( $image, 'thumbnail' );
 				echo '<img src="' . esc_attr( $image ) . '" style="width: 40px; height: 40px;" />';
 			}
 		}
 	}
-	
-	if ( 'floorplan_images' === $column )
+
+	if ( 'floorplan_images' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_images', true ) );
-	
-	if ( 'floorplan_description' === $column )
+	}
+
+	if ( 'floorplan_description' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_description', true ) );
-	
-	if ( 'floorplan_video_or_tour' === $column )
+	}
+
+	if ( 'floorplan_video_or_tour' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_video_or_tour', true ) );
-	
-	if ( 'beds' === $column )
+	}
+
+	if ( 'beds' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'beds', true ) );
-	
-	if ( 'baths' === $column )
+	}
+
+	if ( 'baths' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'baths', true ) );
-	
-	if ( 'minimum_deposit' === $column )
+	}
+
+	if ( 'minimum_deposit' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'minimum_deposit', true ) );
-	
-	if ( 'maximum_deposit' === $column )
+	}
+
+	if ( 'maximum_deposit' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'maximum_deposit', true ) );
-	
-	if ( 'minimum_rent' === $column )
+	}
+
+	if ( 'minimum_rent' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'minimum_rent', true ) );
-	
-	if ( 'maximum_rent' === $column )
+	}
+
+	if ( 'maximum_rent' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'maximum_rent', true ) );
-	
-	if ( 'minimum_sqft' === $column )
+	}
+
+	if ( 'minimum_sqft' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'minimum_sqft', true ) );
-	
-	if ( 'maximum_sqft' === $column )
+	}
+
+	if ( 'maximum_sqft' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'maximum_sqft', true ) );
-	
-	if ( 'availability_date' === $column )
+	}
+
+	if ( 'availability_date' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'availability_date', true ) );
-	
-	// if ( 'property_show_specials' === $column ) {
-	// 	$property_show_specials = get_post_meta( $post_id, 'property_show_specials', true );
-		
-	// 	if ( $property_show_specials ) {
-	// 		echo 'Yes';
-	// 	} else {
-	// 		echo 'No';
-	// 	}
-	// }
-			
+	}
+
 	if ( 'has_specials' === $column ) {
 		$has_specials = get_post_meta( $post_id, 'has_specials', true );
-		
+
 		if ( $has_specials ) {
 			echo 'Yes';
 		} else {
 			echo 'No';
 		}
 	}
-		
-	if ( 'availability_url' === $column )
+
+	if ( 'availability_url' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'availability_url', true ) );
-	
-	if ( 'available_units' === $column )
+	}
+
+	if ( 'available_units' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'available_units', true ) );
-		
-	if ( 'api_error' === $column )
+	}
+
+	if ( 'api_error' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'api_error', true ) );
-		
+	}
+
 	if ( 'api_response' === $column ) {
 		$api_response = get_post_meta( $post_id, 'api_response', true );
-				
-		if ( !is_array( $api_response ) )
-			$api_response = [];
-			
+
+		if ( ! is_array( $api_response ) ) {
+			$api_response = array();
+		}
+
 		echo '<div class="api-responses">';
-		
-		foreach( $api_response as $key => $value ) {
-			
+
+		foreach ( $api_response as $key => $value ) {
+
 			echo '<div class="api-response">';
-			
+
 				printf( '<strong>%s:</strong><br/>', esc_attr( $key ) );
-				
-				foreach ( $value as $subkey => $subvalue ) {
-					printf( '%s: %s<br/>', esc_attr( $subkey ), esc_attr( $subvalue ) );
-				}
-				
+
+			foreach ( $value as $subkey => $subvalue ) {
+				printf( '%s: %s<br/>', esc_attr( $subkey ), esc_attr( $subvalue ) );
+			}
+
 			echo '</div>';
-		}   
-		
+		}
+
 		echo '</div>';
-		
+
 	}
-	
 }
-add_action( 'manage_floorplans_posts_custom_column', 'rentfetch_floorplans_default_column_content', 10, 2);
+add_action( 'manage_floorplans_posts_custom_column', 'rentfetch_floorplans_default_column_content', 10, 2 );

@@ -1,6 +1,13 @@
 <?php
+/**
+ * This file sets up admin area for Rent Fetch.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Adds Rent Fetch options page to the admin menu.
