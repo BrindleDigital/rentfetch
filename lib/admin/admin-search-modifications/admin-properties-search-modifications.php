@@ -21,11 +21,11 @@ function rentfetch_properties_search_join( $join ) {
 	global $pagenow, $wpdb;
 
 	if ( ! isset( $_GET['s'] ) ) {
-		return;
+		return $join;
 	}
 
 	if ( ! isset( $_GET['post_type'] ) ) {
-		return;
+		return $join;
 	}
 
 	// I want the filter only when performing a search on edit page of Custom Post Type named "properties".
@@ -34,6 +34,7 @@ function rentfetch_properties_search_join( $join ) {
 	}
 
 	return $join;
+
 }
 add_filter( 'posts_join', 'rentfetch_properties_search_join' );
 
@@ -49,11 +50,11 @@ function rentfetch_properties_search_where( $where ) {
 	global $pagenow, $wpdb;
 
 	if ( ! isset( $_GET['s'] ) ) {
-		return;
+		return $where;
 	}
 
 	if ( ! isset( $_GET['post_type'] ) ) {
-		return;
+		return $where;
 	}
 
 	// I want the filter only when performing a search on edit page of Custom Post Type named "properties".
@@ -66,7 +67,9 @@ function rentfetch_properties_search_where( $where ) {
 		);
 
 	}
+
 	return $where;
+
 }
 add_filter( 'posts_where', 'rentfetch_properties_search_where' );
 
@@ -82,16 +85,18 @@ function rentfetch_properties_limits( $groupby ) {
 	global $pagenow, $wpdb;
 
 	if ( ! isset( $_GET['s'] ) ) {
-		return;
+		return $groupby;
 	}
 
 	if ( ! isset( $_GET['post_type'] ) ) {
-		return;
+		return $groupby;
 	}
 
 	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && '' !== $_GET['s'] ) {
 		$groupby = "$wpdb->posts.ID";
 	}
+
 	return $groupby;
+
 }
 add_filter( 'posts_groupby', 'rentfetch_properties_limits' );

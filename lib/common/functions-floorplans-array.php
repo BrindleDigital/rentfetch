@@ -3,11 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 function rentfetch_get_floorplans_array() {
-	
-	// Don't run this function if we're in the admin
-	if ( is_admin() )
-		return;
-	
+		
 	global $floorplans;
 		
 	$floorplans_args = array(
