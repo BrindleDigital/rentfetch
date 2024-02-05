@@ -1,81 +1,117 @@
 <?php
+/**
+ * This file outputs the main options page wrapper markup.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Callback for the Rent Fetch options page
  */
 function rentfetch_options_page_html() {
-	if (!current_user_can('manage_options')) {
+
+	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	?>
-	<div class="wrap">
-		<form method="post" class="rent-fetch-options" action="<?php echo esc_url( admin_url( 'admin-post.php' ) );  ?>">
-			<div class="top-right-submit">
-				<?php submit_button(); ?>
-			</div>
-			<h1>Rent Fetch Options</h1>
-			<nav class="nav-tab-wrapper">
-				<a href="?page=rentfetch-options" class="nav-tab<?php if (!isset($_GET['tab']) || $_GET['tab'] === 'general') { echo ' nav-tab-active'; } ?>">General</a>
-				<a href="?page=rentfetch-options&tab=maps" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'maps') { echo ' nav-tab-active'; } ?>">Maps</a>
-				<a href="?page=rentfetch-options&tab=properties" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'properties') { echo ' nav-tab-active'; } ?>">Properties</a>
-				<a href="?page=rentfetch-options&tab=floorplans" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'floorplans') { echo ' nav-tab-active'; } ?>">Floorplans</a>
-				<a href="?page=rentfetch-options&tab=labels" class="nav-tab<?php if (isset($_GET['tab']) && $_GET['tab'] === 'labels') { echo ' nav-tab-active'; } ?>">Labels</a>
-			</nav>
-		
-			<input type="hidden" name="action" value="rentfetch_process_form">
-			<?php wp_nonce_field( 'rentfetch_nonce', 'rentfetch_form_nonce' ); ?>
-			<?php $rentfetch_options_nonce = wp_create_nonce( 'rentfetch_options_nonce' );  ?>
-			
-			<?php
-			
-			if ( !isset($_GET['tab']) || $_GET['tab'] === 'general') {
+
+	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
+
+	echo '<div class="wrap">';
+
+		$action = esc_url( admin_url( 'admin-post.php' ) );
+
+		printf( '<form method="post" class="rent-fetch-options" action="%s">', esc_url( $action ) );
+			echo ' <div class="top-right-submit">';
+				submit_button();
+			echo '</div>';
+
+			echo '<h1>Rent Fetch Options</h1>';
+			echo '<nav class="nav-tab-wrapper">';
+
+				$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
+
+				$active = ( 'maps' === $tab ) ? 'nav-tab-active' : '';
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=maps' ) ), esc_html( $active ), esc_html( 'Maps' ) );
+
+				$active = ( 'properties' === $tab ) ? 'nav-tab-active' : '';
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Properties' ) );
+
+				$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floorplans' ) );
+
+				$active = ( 'labels' === $tab ) ? 'nav-tab-active' : '';
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=labels' ) ), esc_html( $active ), esc_html( 'Labels' ) );
+
+			echo '</nav>';
+
+			echo '<input type="hidden" name="action" value="rentfetch_process_form">';
+
+			wp_nonce_field( 'rentfetch_nonce', 'rentfetch_form_nonce' );
+			$rentfetch_options_nonce = wp_create_nonce( 'rentfetch_options_nonce' );
+
+			if ( 'general' === $tab ) {
 				do_action( 'rentfetch_do_settings_general' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'maps') {
+			} elseif ( 'maps' === $tab ) {
 				do_action( 'rentfetch_do_settings_maps' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'properties') {
+			} elseif ( 'properties' === $tab ) {
 				do_action( 'rentfetch_do_settings_properties' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'property-search') {
+			} elseif ( 'property-search' === $tab ) {
 				do_action( 'rentfetch_do_settings_property_search' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'property-archives') {
+			} elseif ( 'property-archives' === $tab ) {
 				do_action( 'rentfetch_do_settings_property_archives' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'single-property-template') {
+			} elseif ( 'single-property-template' === $tab ) {
 				do_action( 'rentfetch_do_settings_single_property_template' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'floorplans') {
+			} elseif ( 'floorplans' === $tab ) {
 				do_action( 'rentfetch_do_settings_floorplans' );
-			} elseif (isset($_GET['tab']) && $_GET['tab'] === 'labels') {
+			} elseif ( 'labels' === $tab ) {
 				do_action( 'rentfetch_do_settings_labels' );
 			} else {
-
+				do_action( 'rentfetch_do_settings_general' );
 			}
-			
-			submit_button(); 
-			?>
-			
-		</form>
-	</div>
 
-	<?php
+			submit_button();
+
+		echo '</form>';
+	echo '</div>';
 }
 
 /**
  * Adds the properties settings section to the Rent Fetch settings page
  */
-function rentfetch_settings_properties() {    
-	?>
-	<ul class="rent-fetch-options-submenu">
-		<li><a href="?page=rentfetch-options&tab=properties&section=property-search" class="tab<?php if (!isset($_GET['section']) || $_GET['section'] === 'property-search') { echo ' tab-active'; } ?>">Property Search</a></li>
-		<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab<?php if ( isset( $_GET['section']) && $_GET['section'] === 'property-archives') { echo ' tab-active'; } ?>">Property Archives</a></li>
-		<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab<?php if ( isset( $_GET['section']) && $_GET['section'] === 'property-single') { echo ' tab-active'; } ?>">Property Single Template</a></li>
-	</ul>    
-	<?php
-	if ( !isset($_GET['section']) || $_GET['section'] === 'property-search') {
+function rentfetch_settings_properties() {
+
+	// set the tab to 'properties' if it's not set.
+	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'properties';
+
+	// set the section to 'property-search' if it's not set.
+	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : 'property-search';
+
+	echo '<ul class="rent-fetch-options-submenu">';
+
+		$active = ( 'property-search' === $section ) ? 'tab-active' : '';
+		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-search" class="tab %s">Property Search</a></li>', esc_html( $active ) );
+
+		$active = ( 'property-archives' === $section ) ? 'tab-active' : '';
+		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab %s">Property Archives</a></li>', esc_html( $active ) );
+
+		$active = ( 'property-single' === $section ) ? 'tab-active' : '';
+		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property Single Template</a></li>', esc_html( $active ) );
+
+	echo '</ul>';
+
+	if ( 'property-search' === $section ) {
 		do_action( 'rentfetch_do_settings_properties_property_search' );
-	} elseif (isset($_GET['section']) && $_GET['section'] === 'property-archives') {
+	} elseif ( 'property-archives' === $section ) {
 		do_action( 'rentfetch_do_settings_properties_property_archives' );
-	} elseif (isset($_GET['section']) && $_GET['section'] === 'property-single') {
+	} elseif ( 'property-single' === $section ) {
 		do_action( 'rentfetch_do_settings_properties_property_single' );
+	} else {
+		do_action( 'rentfetch_do_settings_properties_property_search' );
 	}
 }
 add_action( 'rentfetch_do_settings_properties', 'rentfetch_settings_properties' );
@@ -84,16 +120,29 @@ add_action( 'rentfetch_do_settings_properties', 'rentfetch_settings_properties' 
  * Adds the floorplans settings section to the Rent Fetch settings page
  */
 function rentfetch_settings_floorplans() {
-	?>
-	<ul class="rent-fetch-options-submenu">
-		<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab<?php if (!isset($_GET['section']) || $_GET['section'] === 'floorplan-search') { echo ' tab-active'; } ?>">Floorplan Search</a></li>
-		<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-buttons" class="tab<?php if ( isset( $_GET['section']) && $_GET['section'] === 'floorplan-buttons') { echo ' tab-active'; } ?>">Floorplan Buttons</a></li>
-	</ul>
-	<?php
-	if ( !isset($_GET['section']) || $_GET['section'] === 'floorplan-search') {
+
+	// set the tab to 'properties' if it's not set.
+	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'floorplans';
+
+	// set the section to 'property-search' if it's not set.
+	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : 'floorplan-search';
+
+	echo '<ul class="rent-fetch-options-submenu">';
+
+		$active = ( 'floorplan-search' === $section ) ? 'tab-active' : '';
+		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floorplan Search</a></li>', esc_html( $active ) );
+
+		$active = ( 'floorplan-buttons' === $section ) ? 'tab-active' : '';
+		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-buttons" class="tab %s">Floorplan Buttons</a></li>', esc_html( $active ) );
+
+	echo '</ul>';
+
+	if ( 'floorplan-search' === $section ) {
 		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
-	} elseif (isset($_GET['section']) && $_GET['section'] === 'floorplan-buttons') {
+	} elseif ( 'floorplan-buttons' === $section ) {
 		do_action( 'rentfetch_do_settings_floorplans_floorplan_buttons' );
+	} else {
+		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
 	}
 }
 add_action( 'rentfetch_do_settings_floorplans', 'rentfetch_settings_floorplans' );
