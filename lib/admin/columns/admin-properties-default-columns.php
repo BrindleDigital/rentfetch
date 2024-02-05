@@ -9,32 +9,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
+/**
+ * Enqueue the admin style for the properties custom post type.
+ *
+ * @return void
+ */
 function rentfetch_enqueue_properties_admin_style() {
 
-	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins
+	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
 	if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
 		return;
 	}
 
 	$current_screen = get_current_screen();
 
-	// Check if the current screen is the admin archive page of the properties content type
-	if ( $current_screen->base === 'edit' && $current_screen->post_type === 'properties' ) {
+	// Check if the current screen is the admin archive page of the properties content type.
+	if ( 'edit' === $current_screen->base && 'properties' === $current_screen->post_type ) {
 
-		// Enqueue your custom admin style
+		// Enqueue your custom admin style.
 		wp_enqueue_style( 'properties-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-properties.css', array(), RENTFETCH_VERSION, 'screen' );
+
 	}
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_properties_admin_style' );
 
+/**
+ * Set up the admin columns order.
+ *
+ * @param array $columns an array of the columns we'd like to use.
+ *
+ * @return array $columns.
+ */
 function rentfetch_default_properties_admin_columns( $columns ) {
 
 	$columns = array(
 		'cb'                    => '<input type="checkbox" />',
 		'title'                 => __( 'Title', 'rentfetch' ),
 		'property_id'           => __( 'Property ID', 'rentfetch' ),
-		// 'property_code' =>      __( 'Property Code', 'rentfetch' ),
 		'address'               => __( 'Address', 'rentfetch' ),
 		'city'                  => __( 'City', 'rentfetch' ),
 		'state'                 => __( 'State', 'rentfetch' ),
@@ -51,8 +62,6 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 		'content_area'          => __( 'Content Area', 'rentfetch' ),
 		'yardi_property_images' => __( 'Images (Yardi)', 'rentfetch' ),
 		'property_source'       => __( 'Property Source', 'rentfetch' ),
-		// 'updated' =>                __( 'Last API update', 'rentfetch' ),
-		// 'api_error' =>              __( 'API error', 'rentfetch' ),
 		'api_response'          => __( 'API response', 'rentfetch' ),
 	);
 
@@ -60,6 +69,14 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 }
 add_filter( 'manage_properties_posts_columns', 'rentfetch_default_properties_admin_columns' );
 
+/**
+ * Set up the content for the admin columns.
+ *
+ * @param string $column  The column name.
+ * @param int    $post_id The post ID.
+ *
+ * @return void
+ */
 function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 	if ( 'title' === $column ) {
@@ -187,11 +204,11 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 		if ( $terms ) {
 			foreach ( $terms as $term ) {
-				if ( $count != 0 ) {
+				if ( 0 !== $count ) {
 					echo ', ';
 				}
 
-				echo $term->name;
+				echo esc_html( $term->name );
 				++$count;
 			}
 		}
