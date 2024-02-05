@@ -34,7 +34,6 @@ function floorplans_search_join( $join ) {
 	}
 
 	return $join;
-
 }
 add_filter( 'posts_join', 'floorplans_search_join' );
 
@@ -69,7 +68,6 @@ function floorplans_search_where( $where ) {
 	}
 
 	return $where;
-
 }
 add_filter( 'posts_where', 'floorplans_search_where' );
 
@@ -96,6 +94,5 @@ function floorplans_limits( $groupby ) {
 	}
 
 	return $groupby;
-
 }
 add_filter( 'posts_groupby', 'floorplans_limits' );

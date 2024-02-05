@@ -34,7 +34,6 @@ function rentfetch_properties_search_join( $join ) {
 	}
 
 	return $join;
-
 }
 add_filter( 'posts_join', 'rentfetch_properties_search_join' );
 
@@ -69,7 +68,6 @@ function rentfetch_properties_search_where( $where ) {
 	}
 
 	return $where;
-
 }
 add_filter( 'posts_where', 'rentfetch_properties_search_where' );
 
@@ -97,6 +95,5 @@ function rentfetch_properties_limits( $groupby ) {
 	}
 
 	return $groupby;
-
 }
 add_filter( 'posts_groupby', 'rentfetch_properties_limits' );
