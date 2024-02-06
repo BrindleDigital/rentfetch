@@ -1,7 +1,12 @@
 <?php
+/**
+ * This file includes the options for the maps
+ *
+ * @package rentfetch
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -9,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_settings_set_defaults_maps() {
 
-	// Add options if they don't exist with default values (Denver, CO)
+	// Add options if they don't exist with default values (Denver, CO).
 	add_option( 'rentfetch_options_google_maps_default_latitude', 39.7392 );
 	add_option( 'rentfetch_options_google_maps_default_longitude', 104.9903 );
 }
@@ -91,69 +96,69 @@ add_action( 'rentfetch_do_settings_maps', 'rentfetch_settings_maps' );
 /**
  * Save the Google settings
  */
-add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_maps' );
 function rentfetch_save_settings_maps() {
 
-	// Get the tab and section
+	// Get the tab and section.
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( $tab !== 'maps' || ! empty( $section ) ) {
+	if ( 'maps' !== $tab || ! empty( $section ) ) {
 		return;
 	}
 
 	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
 
-	// * Verify the nonce
+	// * Verify the nonce.
 	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
 		die( 'Security check failed' );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_google_maps_api_key'] ) ) {
-		$options_google_maps_api_key = sanitize_text_field( $_POST['rentfetch_options_google_maps_api_key'] );
+		$options_google_maps_api_key = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_maps_api_key'] ) );
 		update_option( 'rentfetch_options_google_maps_api_key', $options_google_maps_api_key );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_google_geocoding_api_key'] ) ) {
-		$options_google_geocoding_api_key = sanitize_text_field( $_POST['rentfetch_options_google_geocoding_api_key'] );
+		$options_google_geocoding_api_key = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_geocoding_api_key'] ) );
 		update_option( 'rentfetch_options_google_geocoding_api_key', $options_google_geocoding_api_key );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_google_map_marker'] ) ) {
-		$options_google_map_marker = sanitize_text_field( $_POST['rentfetch_options_google_map_marker'] );
+		$options_google_map_marker = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_map_marker'] ) );
 		update_option( 'rentfetch_options_google_map_marker', $options_google_map_marker );
 	}
 
-	// Textarea field
+	// Textarea field.
 	if ( isset( $_POST['rentfetch_options_google_maps_styles'] ) ) {
-		$options_google_maps_styles = sanitize_text_field( $_POST['rentfetch_options_google_maps_styles'] );
+		$options_google_maps_styles = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_maps_styles'] ) );
 		update_option( 'rentfetch_options_google_maps_styles', $options_google_maps_styles );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_google_maps_default_latitude'] ) ) {
-		$options_google_maps_default_latitude = sanitize_text_field( $_POST['rentfetch_options_google_maps_default_latitude'] );
+		$options_google_maps_default_latitude = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_maps_default_latitude'] ) );
 		update_option( 'rentfetch_options_google_maps_default_latitude', $options_google_maps_default_latitude );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_google_maps_default_longitude'] ) ) {
-		$options_google_maps_default_longitude = sanitize_text_field( $_POST['rentfetch_options_google_maps_default_longitude'] );
+		$options_google_maps_default_longitude = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_maps_default_longitude'] ) );
 		update_option( 'rentfetch_options_google_maps_default_longitude', $options_google_maps_default_longitude );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key'] ) ) {
-		$options_google_recaptcha_google_recaptcha_v2_site_key = sanitize_text_field( $_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key'] );
+		$options_google_recaptcha_google_recaptcha_v2_site_key = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key'] ) );
 		update_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key', $options_google_recaptcha_google_recaptcha_v2_site_key );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_secret'] ) ) {
-		$options_google_recaptcha_google_recaptcha_v2_secret = sanitize_text_field( $_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_secret'] );
+		$options_google_recaptcha_google_recaptcha_v2_secret = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_secret'] ) );
 		update_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_secret', $options_google_recaptcha_google_recaptcha_v2_secret );
 	}
 }
+add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_maps' );

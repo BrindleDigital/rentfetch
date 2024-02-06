@@ -1,7 +1,12 @@
 <?php
+/**
+ * This file includes the options for the property archives
+ *
+ * @package rentfetch
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -9,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_settings_set_defaults_properties_propertyarchives() {
 
-	// Add options if they don't exist with default values
+	// Add options if they don't exist with default values.
 	add_option( 'rentfetch_options_property_footer_grid_number_properties', '9' );
 	add_option( 'rentfetch_options_property_pricing_display', 'range' );
 	add_option( 'rentfetch_options_property_orderby', 'menu_order' );
@@ -141,11 +146,11 @@ add_action( 'rentfetch_do_settings_properties_property_archives', 'rentfetch_set
  */
 function rentfetch_save_settings_property_archives() {
 
-	// Get the tab and section
+	// Get the tab and section.
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( $tab !== 'properties' || $section !== 'property_archives' ) {
+	if ( 'properties' !== $tab || 'property_archives' !== $section ) {
 		return;
 	}
 
@@ -156,27 +161,27 @@ function rentfetch_save_settings_property_archives() {
 		die( 'Security check failed' );
 	}
 
-	// Number field
+	// Number field.
 	if ( isset( $_POST['rentfetch_options_property_footer_grid_number_properties'] ) ) {
 		$max_properties = intval( $_POST['rentfetch_options_property_footer_grid_number_properties'] );
 		update_option( 'rentfetch_options_property_footer_grid_number_properties', $max_properties );
 	}
 
-	// Select field
+	// Select field.
 	if ( isset( $_POST['rentfetch_options_property_pricing_display'] ) ) {
-		$property_display = sanitize_text_field( $_POST['rentfetch_options_property_pricing_display'] );
+		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_pricing_display'] ) );
 		update_option( 'rentfetch_options_property_pricing_display', $property_display );
 	}
 
-	// Select field
+	// Select field.
 	if ( isset( $_POST['rentfetch_options_property_orderby'] ) ) {
-		$property_display = sanitize_text_field( $_POST['rentfetch_options_property_orderby'] );
+		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_orderby'] ) );
 		update_option( 'rentfetch_options_property_orderby', $property_display );
 	}
 
-	// Select field
+	// Select field.
 	if ( isset( $_POST['rentfetch_options_property_order'] ) ) {
-		$property_display = sanitize_text_field( $_POST['rentfetch_options_property_order'] );
+		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_order'] ) );
 		update_option( 'rentfetch_options_property_order', $property_display );
 	}
 }

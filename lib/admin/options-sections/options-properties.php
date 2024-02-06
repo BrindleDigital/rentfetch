@@ -1,15 +1,19 @@
 <?php
+/**
+ * This file includes the options for the properties search
+ *
+ * @package rentfetch
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
-
 /**
  * Set defaults on activation
  */
 function rentfetch_settings_set_defaults_properties() {
 
-	// Add option if it doesn't exist
+	// Add option if it doesn't exist.
 	add_option( 'rentfetch_options_maximum_number_of_properties_to_show', -1 );
 	add_option( 'rentfetch_options_property_availability_display', 'all' );
 
@@ -51,7 +55,7 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 		<div class="column">
 			<p class="description">The most properties we should attempt to show while matching a search. We recommend for performance reasons that this number is not set above ~200 properties.</p>
-			<input type="text" name="rentfetch_options_maximum_number_of_properties_to_show" id="rentfetch_options_maximum_number_of_properties_to_show" value="<?php echo esc_attr( get_option( 'rentfetch_options_maximum_number_of_properties_to_show' ), '-1' ); ?>">
+			<input type="text" name="rentfetch_options_maximum_number_of_properties_to_show" id="rentfetch_options_maximum_number_of_properties_to_show" value="<?php echo esc_attr( get_option( 'rentfetch_options_maximum_number_of_properties_to_show' ) ); ?>">
 		</div>
 	</div>
 	
@@ -77,7 +81,7 @@ function rentfetch_settings_properties_property_search() {
 		<div class="column">
 			<?php
 
-			// Get saved options
+			// Get saved options.
 			$options_featured_filters = get_option( 'rentfetch_options_featured_filters' );
 			if ( ! is_array( $options_featured_filters ) ) {
 				$options_featured_filters = array();
@@ -87,49 +91,49 @@ function rentfetch_settings_properties_property_search() {
 			<ul class="checkboxes">
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="text_based_search" <?php checked( in_array( 'text_based_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="text_based_search" <?php checked( in_array( 'text_based_search', $options_featured_filters, true ) ); ?>>
 						Text-based search (this works best with the Relevanssi plugin enhancing your search)
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="beds_search" <?php checked( in_array( 'beds_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="beds_search" <?php checked( in_array( 'beds_search', $options_featured_filters, true ) ); ?>>
 						Beds search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="baths_search" <?php checked( in_array( 'baths_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="baths_search" <?php checked( in_array( 'baths_search', $options_featured_filters, true ) ); ?>>
 						Baths search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_featured_filters, true ) ); ?>>
 						Square footage search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_featured_filters, true ) ); ?>>
 						Type search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="date_search" <?php checked( in_array( 'date_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="date_search" <?php checked( in_array( 'date_search', $options_featured_filters, true ) ); ?>>
 						Date search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="price_search" <?php checked( in_array( 'price_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="price_search" <?php checked( in_array( 'price_search', $options_featured_filters, true ) ); ?>>
 						Price search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="amenities_search" <?php checked( in_array( 'amenities_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="amenities_search" <?php checked( in_array( 'amenities_search', $options_featured_filters, true ) ); ?>>
 						Amenities search
 					</label>
 				</li>
@@ -145,10 +149,10 @@ function rentfetch_settings_properties_property_search() {
 		<div class="column">
 			<?php
 
-			// Get saved options
+			// Get saved options.
 			$options_dialog_filters = get_option( 'rentfetch_options_dialog_filters' );
 
-			// Make it an array just in case it isn't (for example, if it's a new install)
+			// Make it an array just in case it isn't (for example, if it's a new install).
 			if ( ! is_array( $options_dialog_filters ) ) {
 				$options_dialog_filters = array();
 			}
@@ -157,49 +161,49 @@ function rentfetch_settings_properties_property_search() {
 			<ul class="checkboxes">
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="text_based_search" <?php checked( in_array( 'text_based_search', $options_dialog_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="text_based_search" <?php checked( in_array( 'text_based_search', $options_dialog_filters, true ) ); ?>>
 						Text-based search (this works best with the Relevanssi plugin enhancing your search)
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="beds_search" <?php checked( in_array( 'beds_search', $options_dialog_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="beds_search" <?php checked( in_array( 'beds_search', $options_dialog_filters, true ) ); ?>>
 						Beds search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="baths_search" <?php checked( in_array( 'baths_search', $options_dialog_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="baths_search" <?php checked( in_array( 'baths_search', $options_dialog_filters, true ) ); ?>>
 						Baths search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_featured_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_featured_filters, true ) ); ?>>
 						Square footage search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_dialog_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_dialog_filters, true ) ); ?>>
 						Type search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="date_search" <?php checked( in_array( 'date_search', $options_dialog_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="date_search" <?php checked( in_array( 'date_search', $options_dialog_filters, true ) ); ?>>
 						Date search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="price_search" <?php checked( in_array( 'price_search', $options_dialog_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="price_search" <?php checked( in_array( 'price_search', $options_dialog_filters, true ) ); ?>>
 						Price search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="amenities_search" <?php checked( in_array( 'amenities_search', $options_dialog_filters ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="amenities_search" <?php checked( in_array( 'amenities_search', $options_dialog_filters, true ) ); ?>>
 						Amenities search
 					</label>
 				</li>
@@ -241,7 +245,7 @@ function rentfetch_settings_properties_property_search() {
 			<label for="rentfetch_options_number_of_amenities_to_show">Number of amenities to show</label>
 		</div>
 		<div class="column">
-			<input type="text" name="rentfetch_options_number_of_amenities_to_show" id="rentfetch_options_number_of_amenities_to_show" value="<?php echo esc_attr( get_option( 'rentfetch_options_number_of_amenities_to_show' ), 10 ); ?>">
+			<input type="text" name="rentfetch_options_number_of_amenities_to_show" id="rentfetch_options_number_of_amenities_to_show" value="<?php echo esc_attr( get_option( 'rentfetch_options_number_of_amenities_to_show' ) ); ?>">
 		</div>
 	</div>        
 	<?php
@@ -253,11 +257,11 @@ add_action( 'rentfetch_do_settings_properties_property_search', 'rentfetch_setti
  */
 function rentfetch_save_settings_property_search() {
 
-	// Get the tab and section
+	// Get the tab and section.
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( $tab !== 'properties' || ! empty( $section ) ) {
+	if ( 'properties' !== $tab || ! empty( $section ) ) {
 		return;
 	}
 
@@ -268,41 +272,41 @@ function rentfetch_save_settings_property_search() {
 		die( 'Security check failed' );
 	}
 
-	// Number field
+	// Number field.
 	if ( isset( $_POST['rentfetch_options_maximum_number_of_properties_to_show'] ) ) {
 		$max_properties = intval( $_POST['rentfetch_options_maximum_number_of_properties_to_show'] );
 		update_option( 'rentfetch_options_maximum_number_of_properties_to_show', $max_properties );
 	}
 
-	// Select field
+	// Select field.
 	if ( isset( $_POST['rentfetch_options_property_availability_display'] ) ) {
-		$property_display = sanitize_text_field( $_POST['rentfetch_options_property_availability_display'] );
+		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_availability_display'] ) );
 		update_option( 'rentfetch_options_property_availability_display', $property_display );
 	}
 
-	// Checkboxes field
+	// Checkboxes field.
 	if ( isset( $_POST['rentfetch_options_dialog_filters'] ) ) {
-		$options_dialog_filters = array_map( 'sanitize_text_field', $_POST['rentfetch_options_dialog_filters'] );
+		$options_dialog_filters = array_map( 'sanitize_text_field', wp_unslash( $_POST['rentfetch_options_dialog_filters'] ) );
 		update_option( 'rentfetch_options_dialog_filters', $options_dialog_filters );
 	} else {
 		update_option( 'rentfetch_options_dialog_filters', array() );
 	}
 
-	// Checkboxes field
+	// Checkboxes field.
 	if ( isset( $_POST['rentfetch_options_featured_filters'] ) ) {
-		$options_featured_filters = array_map( 'sanitize_text_field', $_POST['rentfetch_options_featured_filters'] );
+		$options_featured_filters = array_map( 'sanitize_text_field', wp_unslash( $_POST['rentfetch_options_featured_filters'] ) );
 		update_option( 'rentfetch_options_featured_filters', $options_featured_filters );
 	} else {
 		update_option( 'rentfetch_options_featured_filters', array() );
 	}
 
-	// Number field
+	// Number field.
 	if ( isset( $_POST['rentfetch_options_maximum_bedrooms_to_search'] ) ) {
 		$max_bedrooms = intval( $_POST['rentfetch_options_maximum_bedrooms_to_search'] );
 		update_option( 'rentfetch_options_maximum_bedrooms_to_search', $max_bedrooms );
 	}
 
-	// Number field
+	// Number field.
 	if ( isset( $_POST['rentfetch_options_price_filter_minimum'] ) ) {
 		$price_filter_minimum = intval( $_POST['rentfetch_options_price_filter_minimum'] );
 		update_option( 'rentfetch_options_price_filter_minimum', $price_filter_minimum );
@@ -311,19 +315,19 @@ function rentfetch_save_settings_property_search() {
 		update_option( 'rentfetch_options_price_filter_minimum', $price_filter_minimum );
 	}
 
-	// Number field
+	// Number field.
 	if ( isset( $_POST['rentfetch_options_price_filter_maximum'] ) ) {
 		$price_filter_maximum = intval( $_POST['rentfetch_options_price_filter_maximum'] );
 		update_option( 'rentfetch_options_price_filter_maximum', $price_filter_maximum );
 	}
 
-	// Number field
+	// Number field.
 	if ( isset( $_POST['rentfetch_options_price_filter_step'] ) ) {
 		$price_filter_step = intval( $_POST['rentfetch_options_price_filter_step'] );
 		update_option( 'rentfetch_options_price_filter_step', $price_filter_step );
 	}
 
-	// Number field
+	// Number field.
 	if ( isset( $_POST['rentfetch_options_number_of_amenities_to_show'] ) ) {
 		$number_of_amenities_to_show = intval( $_POST['rentfetch_options_number_of_amenities_to_show'] );
 		update_option( 'rentfetch_options_number_of_amenities_to_show', $number_of_amenities_to_show );

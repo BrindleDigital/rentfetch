@@ -166,7 +166,7 @@ function rentfetch_save_settings_floorplan_buttons() {
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( 'floorplans' !== $tab || 'floorplan_buttons' !== $section ) {
+	if ( 'floorplans' !== $tab || 'floorplan-buttons' !== $section ) {
 		return;
 	}
 

@@ -1,9 +1,13 @@
 <?php
+/**
+ * This file includes the options for the labels
+ *
+ * @package rentfetch
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
-
 /**
  * Adds the labels settings section to the Rent Fetch settings page
  */
@@ -67,11 +71,11 @@ add_action( 'rentfetch_do_settings_labels', 'rentfetch_settings_labels' );
  */
 function rentfetch_save_settings_labels() {
 
-	// Get the tab and section
+	// Get the tab and section.
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( $tab !== 'properties' || ! empty( $section ) ) {
+	if ( 'labels' !== $tab || ! empty( $section ) ) {
 		return;
 	}
 
@@ -82,39 +86,39 @@ function rentfetch_save_settings_labels() {
 		die( 'Security check failed' );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_bedroom_numbers_0_bedroom'] ) ) {
-		$options_bedroom_numbers_0_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_0_bedroom'] );
+		$options_bedroom_numbers_0_bedroom = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_bedroom_numbers_0_bedroom'] ) );
 		update_option( 'rentfetch_options_bedroom_numbers_0_bedroom', $options_bedroom_numbers_0_bedroom );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_bedroom_numbers_1_bedroom'] ) ) {
-		$options_bedroom_numbers_1_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_1_bedroom'] );
+		$options_bedroom_numbers_1_bedroom = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_bedroom_numbers_1_bedroom'] ) );
 		update_option( 'rentfetch_options_bedroom_numbers_1_bedroom', $options_bedroom_numbers_1_bedroom );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_bedroom_numbers_2_bedroom'] ) ) {
-		$options_bedroom_numbers_2_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_2_bedroom'] );
+		$options_bedroom_numbers_2_bedroom = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_bedroom_numbers_2_bedroom'] ) );
 		update_option( 'rentfetch_options_bedroom_numbers_2_bedroom', $options_bedroom_numbers_2_bedroom );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_bedroom_numbers_3_bedroom'] ) ) {
-		$options_bedroom_numbers_3_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_3_bedroom'] );
+		$options_bedroom_numbers_3_bedroom = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_bedroom_numbers_3_bedroom'] ) );
 		update_option( 'rentfetch_options_bedroom_numbers_3_bedroom', $options_bedroom_numbers_3_bedroom );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_bedroom_numbers_4_bedroom'] ) ) {
-		$options_bedroom_numbers_4_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_4_bedroom'] );
+		$options_bedroom_numbers_4_bedroom = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_bedroom_numbers_4_bedroom'] ) );
 		update_option( 'rentfetch_options_bedroom_numbers_4_bedroom', $options_bedroom_numbers_4_bedroom );
 	}
 
-	// Text field
+	// Text field.
 	if ( isset( $_POST['rentfetch_options_bedroom_numbers_5_bedroom'] ) ) {
-		$options_bedroom_numbers_5_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_5_bedroom'] );
+		$options_bedroom_numbers_5_bedroom = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_bedroom_numbers_5_bedroom'] ) );
 		update_option( 'rentfetch_options_bedroom_numbers_5_bedroom', $options_bedroom_numbers_5_bedroom );
 	}
 }
