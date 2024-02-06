@@ -1,12 +1,14 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Set defaults on activation
  */
 function rentfetch_settings_set_defaults_properties_propertiessingle() {
-	
+
 	$default_options = array(
 		'property_images',
 		'section_navigation',
@@ -14,8 +16,7 @@ function rentfetch_settings_set_defaults_properties_propertiessingle() {
 		'floorplans_display',
 		'amenities_display',
 	);
-    add_option( 'rentfetch_options_single_property_components', $default_options );
-    
+	add_option( 'rentfetch_options_single_property_components', $default_options );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties_propertiessingle' );
 
@@ -33,15 +34,15 @@ function rentfetch_settings_properties_property_single() {
 		</div>
 		<div class="column">
 			<?php
-			
+
 			// Get saved options
-			$options_single_property_components = get_option( 'rentfetch_options_single_property_components');
-						
+			$options_single_property_components = get_option( 'rentfetch_options_single_property_components' );
+
 			// Make it an array just in case it isn't (for example, if it's a new install)
-			if (!is_array($options_single_property_components)) {
+			if ( ! is_array( $options_single_property_components ) ) {
 				$options_single_property_components = array();
 			}
-						
+
 			?>
 			<ul class="checkboxes">
 				<li>
@@ -97,20 +98,28 @@ add_action( 'rentfetch_do_settings_properties_property_single', 'rentfetch_setti
  * Save the property single settings
  */
 function rentfetch_save_settings_property_single() {
-	
+
 	// Get the tab and section
-	$tab = rentfetch_settings_get_tab();
+	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
-	
-	if ( $tab !== 'properties' || $section !== 'property_single' )
+
+	if ( $tab !== 'properties' || $section !== 'property_single' ) {
 		return;
-	
+	}
+
+	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
+
+	// * Verify the nonce
+	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
+		die( 'Security check failed' );
+	}
+
 	// Checkboxes field
-	if ( isset ( $_POST[ 'rentfetch_options_single_property_components'] ) ) {
-		$enabled_integrations = array_map('sanitize_text_field', $_POST[ 'rentfetch_options_single_property_components']);
-		update_option( 'rentfetch_options_single_property_components', $enabled_integrations);
+	if ( isset( $_POST['rentfetch_options_single_property_components'] ) ) {
+		$enabled_integrations = array_map( 'sanitize_text_field', $_POST['rentfetch_options_single_property_components'] );
+		update_option( 'rentfetch_options_single_property_components', $enabled_integrations );
 	} else {
-		update_option( 'rentfetch_options_single_property_components', array());
+		update_option( 'rentfetch_options_single_property_components', array() );
 	}
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_property_single' );

@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_process_form_data() {
 
-	$nonce = isset( $_POST['rentfetch_form_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_form_nonce'] ) ) : '';
+	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
 
 	// * Verify the nonce
-	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_nonce' ) ) {
+	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
 		die( 'Security check failed' );
 	}
 

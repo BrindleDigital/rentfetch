@@ -1,6 +1,8 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Adds the labels settings section to the Rent Fetch settings page
@@ -63,49 +65,56 @@ add_action( 'rentfetch_do_settings_labels', 'rentfetch_settings_labels' );
 /**
  * Save the label settings
  */
-
 function rentfetch_save_settings_labels() {
-	
+
 	// Get the tab and section
-	$tab = rentfetch_settings_get_tab();
+	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
-	
-	if ( $tab !== 'properties' || !empty( $section ) )
+
+	if ( $tab !== 'properties' || ! empty( $section ) ) {
 		return;
-	
+	}
+
+	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
+
+	// * Verify the nonce
+	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
+		die( 'Security check failed' );
+	}
+
 	// Text field
-	if ( isset( $_POST[ 'rentfetch_options_bedroom_numbers_0_bedroom']) ) {
-		$options_bedroom_numbers_0_bedroom = sanitize_text_field( $_POST[ 'rentfetch_options_bedroom_numbers_0_bedroom'] );
+	if ( isset( $_POST['rentfetch_options_bedroom_numbers_0_bedroom'] ) ) {
+		$options_bedroom_numbers_0_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_0_bedroom'] );
 		update_option( 'rentfetch_options_bedroom_numbers_0_bedroom', $options_bedroom_numbers_0_bedroom );
 	}
-	
+
 	// Text field
-	if ( isset( $_POST[ 'rentfetch_options_bedroom_numbers_1_bedroom']) ) {
-		$options_bedroom_numbers_1_bedroom = sanitize_text_field( $_POST[ 'rentfetch_options_bedroom_numbers_1_bedroom'] );
+	if ( isset( $_POST['rentfetch_options_bedroom_numbers_1_bedroom'] ) ) {
+		$options_bedroom_numbers_1_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_1_bedroom'] );
 		update_option( 'rentfetch_options_bedroom_numbers_1_bedroom', $options_bedroom_numbers_1_bedroom );
 	}
-	
+
 	// Text field
-	if ( isset( $_POST[ 'rentfetch_options_bedroom_numbers_2_bedroom']) ) {
-		$options_bedroom_numbers_2_bedroom = sanitize_text_field( $_POST[ 'rentfetch_options_bedroom_numbers_2_bedroom'] );
+	if ( isset( $_POST['rentfetch_options_bedroom_numbers_2_bedroom'] ) ) {
+		$options_bedroom_numbers_2_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_2_bedroom'] );
 		update_option( 'rentfetch_options_bedroom_numbers_2_bedroom', $options_bedroom_numbers_2_bedroom );
 	}
-	
+
 	// Text field
-	if ( isset( $_POST[ 'rentfetch_options_bedroom_numbers_3_bedroom']) ) {
-		$options_bedroom_numbers_3_bedroom = sanitize_text_field( $_POST[ 'rentfetch_options_bedroom_numbers_3_bedroom'] );
+	if ( isset( $_POST['rentfetch_options_bedroom_numbers_3_bedroom'] ) ) {
+		$options_bedroom_numbers_3_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_3_bedroom'] );
 		update_option( 'rentfetch_options_bedroom_numbers_3_bedroom', $options_bedroom_numbers_3_bedroom );
 	}
-	
+
 	// Text field
-	if ( isset( $_POST[ 'rentfetch_options_bedroom_numbers_4_bedroom']) ) {
-		$options_bedroom_numbers_4_bedroom = sanitize_text_field( $_POST[ 'rentfetch_options_bedroom_numbers_4_bedroom'] );
+	if ( isset( $_POST['rentfetch_options_bedroom_numbers_4_bedroom'] ) ) {
+		$options_bedroom_numbers_4_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_4_bedroom'] );
 		update_option( 'rentfetch_options_bedroom_numbers_4_bedroom', $options_bedroom_numbers_4_bedroom );
 	}
-	
+
 	// Text field
-	if ( isset( $_POST[ 'rentfetch_options_bedroom_numbers_5_bedroom']) ) {
-		$options_bedroom_numbers_5_bedroom = sanitize_text_field( $_POST[ 'rentfetch_options_bedroom_numbers_5_bedroom'] );
+	if ( isset( $_POST['rentfetch_options_bedroom_numbers_5_bedroom'] ) ) {
+		$options_bedroom_numbers_5_bedroom = sanitize_text_field( $_POST['rentfetch_options_bedroom_numbers_5_bedroom'] );
 		update_option( 'rentfetch_options_bedroom_numbers_5_bedroom', $options_bedroom_numbers_5_bedroom );
 	}
 }

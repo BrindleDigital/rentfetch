@@ -51,8 +51,8 @@ function rentfetch_options_page_html() {
 
 			echo '<input type="hidden" name="action" value="rentfetch_process_form">';
 
-			wp_nonce_field( 'rentfetch_nonce', 'rentfetch_form_nonce' );
-			$rentfetch_options_nonce = wp_create_nonce( 'rentfetch_options_nonce' );
+			//* Create the nonce field
+			wp_nonce_field( 'rentfetch_main_options_nonce_action', 'rentfetch_main_options_nonce_field' );
 
 			if ( 'general' === $tab ) {
 				do_action( 'rentfetch_do_settings_general' );

@@ -1,24 +1,26 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 /**
  * Set defaults on activation
  */
 function rentfetch_settings_set_defaults_properties() {
-    
-    // Add option if it doesn't exist
-    add_option( 'rentfetch_options_maximum_number_of_properties_to_show', -1 );
-    add_option( 'rentfetch_options_property_availability_display', 'all' );
-	
-	$defaultarray = [
+
+	// Add option if it doesn't exist
+	add_option( 'rentfetch_options_maximum_number_of_properties_to_show', -1 );
+	add_option( 'rentfetch_options_property_availability_display', 'all' );
+
+	$defaultarray = array(
 		'text_based_search',
 		'beds_search',
 		'price_search',
-	];
-    add_option( 'rentfetch_options_featured_filters', $defaultarray );
-	
-	$defaultarray = [
+	);
+	add_option( 'rentfetch_options_featured_filters', $defaultarray );
+
+	$defaultarray = array(
 		'text_based_search',
 		'beds_search',
 		'baths_search',
@@ -28,12 +30,11 @@ function rentfetch_settings_set_defaults_properties() {
 		'price_search',
 		'squarefoot_search',
 		'amenities_search',
-		
-	];
-    add_option( 'rentfetch_options_dialog_filters', $defaultarray );
-	
+
+	);
+	add_option( 'rentfetch_options_dialog_filters', $defaultarray );
+
 	add_option( 'rentfetch_options_number_of_amenities_to_show', 20 );
-    
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties' );
 
@@ -44,7 +45,7 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_p
 function rentfetch_settings_properties_property_search() {
 	?>
 	
-	 <div class="row">
+	<div class="row">
 		<div class="column">
 			<label for="rentfetch_options_maximum_number_of_properties_to_show">Maximum number of properties to show</label>
 		</div>
@@ -75,13 +76,13 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 		<div class="column">
 			<?php
-			
+
 			// Get saved options
-			$options_featured_filters = get_option( 'rentfetch_options_featured_filters');
-			if ( !is_array($options_featured_filters) ) {
+			$options_featured_filters = get_option( 'rentfetch_options_featured_filters' );
+			if ( ! is_array( $options_featured_filters ) ) {
 				$options_featured_filters = array();
 			}
-			
+
 			?>
 			<ul class="checkboxes">
 				<li>
@@ -143,15 +144,15 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 		<div class="column">
 			<?php
-			
+
 			// Get saved options
-			$options_dialog_filters = get_option( 'rentfetch_options_dialog_filters');
-			
+			$options_dialog_filters = get_option( 'rentfetch_options_dialog_filters' );
+
 			// Make it an array just in case it isn't (for example, if it's a new install)
-			if (!is_array($options_dialog_filters)) {
+			if ( ! is_array( $options_dialog_filters ) ) {
 				$options_dialog_filters = array();
 			}
-			
+
 			?>
 			<ul class="checkboxes">
 				<li>
@@ -251,74 +252,81 @@ add_action( 'rentfetch_do_settings_properties_property_search', 'rentfetch_setti
  * Save the property search settings
  */
 function rentfetch_save_settings_property_search() {
-	
+
 	// Get the tab and section
-	$tab = rentfetch_settings_get_tab();
+	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
-	
-	if ( $tab !== 'properties' || !empty( $section ) )
+
+	if ( $tab !== 'properties' || ! empty( $section ) ) {
 		return;
-	
+	}
+
+	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
+
+	// * Verify the nonce
+	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
+		die( 'Security check failed' );
+	}
+
 	// Number field
-	if ( isset( $_POST[ 'rentfetch_options_maximum_number_of_properties_to_show'] ) ) {
-		$max_properties = intval( $_POST[ 'rentfetch_options_maximum_number_of_properties_to_show'] );
+	if ( isset( $_POST['rentfetch_options_maximum_number_of_properties_to_show'] ) ) {
+		$max_properties = intval( $_POST['rentfetch_options_maximum_number_of_properties_to_show'] );
 		update_option( 'rentfetch_options_maximum_number_of_properties_to_show', $max_properties );
 	}
-	
+
 	// Select field
-	if ( isset( $_POST[ 'rentfetch_options_property_availability_display'] ) ) {
-		$property_display = sanitize_text_field( $_POST[ 'rentfetch_options_property_availability_display'] );
+	if ( isset( $_POST['rentfetch_options_property_availability_display'] ) ) {
+		$property_display = sanitize_text_field( $_POST['rentfetch_options_property_availability_display'] );
 		update_option( 'rentfetch_options_property_availability_display', $property_display );
 	}
-			
+
 	// Checkboxes field
-	if (isset($_POST[ 'rentfetch_options_dialog_filters'])) {
-		$options_dialog_filters = array_map('sanitize_text_field', $_POST[ 'rentfetch_options_dialog_filters']);
-		update_option( 'rentfetch_options_dialog_filters', $options_dialog_filters);
+	if ( isset( $_POST['rentfetch_options_dialog_filters'] ) ) {
+		$options_dialog_filters = array_map( 'sanitize_text_field', $_POST['rentfetch_options_dialog_filters'] );
+		update_option( 'rentfetch_options_dialog_filters', $options_dialog_filters );
 	} else {
-		update_option( 'rentfetch_options_dialog_filters', array());
+		update_option( 'rentfetch_options_dialog_filters', array() );
 	}
-	
+
 	// Checkboxes field
-	if (isset($_POST[ 'rentfetch_options_featured_filters'])) {
-		$options_featured_filters = array_map('sanitize_text_field', $_POST[ 'rentfetch_options_featured_filters']);
-		update_option( 'rentfetch_options_featured_filters', $options_featured_filters);
+	if ( isset( $_POST['rentfetch_options_featured_filters'] ) ) {
+		$options_featured_filters = array_map( 'sanitize_text_field', $_POST['rentfetch_options_featured_filters'] );
+		update_option( 'rentfetch_options_featured_filters', $options_featured_filters );
 	} else {
-		update_option( 'rentfetch_options_featured_filters', array());
+		update_option( 'rentfetch_options_featured_filters', array() );
 	}
-	
+
 	// Number field
-	if ( isset( $_POST[ 'rentfetch_options_maximum_bedrooms_to_search'] ) ) {
-		$max_bedrooms = intval( $_POST[ 'rentfetch_options_maximum_bedrooms_to_search'] );
+	if ( isset( $_POST['rentfetch_options_maximum_bedrooms_to_search'] ) ) {
+		$max_bedrooms = intval( $_POST['rentfetch_options_maximum_bedrooms_to_search'] );
 		update_option( 'rentfetch_options_maximum_bedrooms_to_search', $max_bedrooms );
 	}
-	
+
 	// Number field
-	if ( isset( $_POST[ 'rentfetch_options_price_filter_minimum'] ) ) {
-		$price_filter_minimum = intval( $_POST[ 'rentfetch_options_price_filter_minimum'] );
+	if ( isset( $_POST['rentfetch_options_price_filter_minimum'] ) ) {
+		$price_filter_minimum = intval( $_POST['rentfetch_options_price_filter_minimum'] );
 		update_option( 'rentfetch_options_price_filter_minimum', $price_filter_minimum );
 	} else {
 		$price_filter_minimum = null;
 		update_option( 'rentfetch_options_price_filter_minimum', $price_filter_minimum );
 	}
-	
+
 	// Number field
-	if ( isset( $_POST[ 'rentfetch_options_price_filter_maximum'] ) ) {
-		$price_filter_maximum = intval( $_POST[ 'rentfetch_options_price_filter_maximum'] );
+	if ( isset( $_POST['rentfetch_options_price_filter_maximum'] ) ) {
+		$price_filter_maximum = intval( $_POST['rentfetch_options_price_filter_maximum'] );
 		update_option( 'rentfetch_options_price_filter_maximum', $price_filter_maximum );
 	}
-	
+
 	// Number field
-	if ( isset( $_POST[ 'rentfetch_options_price_filter_step'] ) ) {
-		$price_filter_step = intval( $_POST[ 'rentfetch_options_price_filter_step'] );
+	if ( isset( $_POST['rentfetch_options_price_filter_step'] ) ) {
+		$price_filter_step = intval( $_POST['rentfetch_options_price_filter_step'] );
 		update_option( 'rentfetch_options_price_filter_step', $price_filter_step );
 	}
-	
+
 	// Number field
-	if ( isset( $_POST[ 'rentfetch_options_number_of_amenities_to_show'] ) ) {
-		$number_of_amenities_to_show = intval( $_POST[ 'rentfetch_options_number_of_amenities_to_show'] );
+	if ( isset( $_POST['rentfetch_options_number_of_amenities_to_show'] ) ) {
+		$number_of_amenities_to_show = intval( $_POST['rentfetch_options_number_of_amenities_to_show'] );
 		update_option( 'rentfetch_options_number_of_amenities_to_show', $number_of_amenities_to_show );
 	}
-	
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_property_search' );
