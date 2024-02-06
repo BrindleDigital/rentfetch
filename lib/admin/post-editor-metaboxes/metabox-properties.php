@@ -1,6 +1,13 @@
 <?php
+/**
+ * This file sets up the metaboxes for the properties post type
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_register_properties_details_metabox() {
 		
