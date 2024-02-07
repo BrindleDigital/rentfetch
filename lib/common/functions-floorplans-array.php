@@ -9,6 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Get the floorplans and return them as an array.
+ *
+ * @return array an array of floorplans.
+ */
 function rentfetch_get_floorplans_array() {
 
 	global $floorplans;
@@ -174,19 +179,19 @@ function rentfetch_get_floorplans_array() {
 				$date = DateTime::createFromFormat( 'Ymd', $date_string );
 
 				// Skip if date string is not a valid date.
-				if ( $date === false ) {
+				if ( false === $date ) {
 					continue;
 				}
 
 				// If available_date is null or the current date is earlier, update available_date.
-				if ( $floorplans[ $key ]['available_date'] === null || $date < $floorplans[ $key ]['available_date'] ) {
+				if ( null === $floorplans[ $key ]['available_date'] || $date < $floorplans[ $key ]['available_date'] ) {
 					$floorplans[ $key ]['available_date'] = $date;
 				}
 			}
 		}
 
 		// Convert the earliest date back to string format 'Ymd', if there's a valid date.
-		if ( $floorplans[ $key ]['available_date'] !== null ) {
+		if ( null !== $floorplans[ $key ]['available_date'] ) {
 			$floorplans[ $key ]['available_date'] = $floorplans[ $key ]['available_date']->format( 'F j' );
 		}
 
@@ -198,7 +203,7 @@ function rentfetch_get_floorplans_array() {
 		// if there are specials, save that.
 		$has_specials = $floorplan['has_specials'];
 
-		if ( in_array( true, $has_specials ) ) {
+		if ( in_array( true, $has_specials, true ) ) {
 			$floorplans[ $key ]['property_has_specials'] = true;
 		}
 	}
@@ -208,6 +213,8 @@ function rentfetch_get_floorplans_array() {
 
 /**
  * Get the floorplans using the default function and make them available globally.
+ *
+ * @return void.
  */
 function rentfetch_set_floorplans() {
 
@@ -218,6 +225,10 @@ add_action( 'wp_loaded', 'rentfetch_set_floorplans' );
 
 /**
  * Get the floorplans from the global variable, and return those for a particular property.
+ *
+ * @param int $property_id The property ID.
+ *
+ * @return array an array of floorplans.
  */
 function rentfetch_get_floorplans( $property_id = null ) {
 
