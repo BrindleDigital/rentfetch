@@ -1,50 +1,63 @@
 <?php
+/**
+ * This file sets up the shortcodes page in the admin area.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * The html for the shortcodes page.
+ *
+ * @return void.
+ */
 function rentfetch_shortcodes_page_html() {
-	if (!current_user_can('manage_options')) {
+	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	
+
 	?>
 	<script>
 		jQuery(document).ready(function($) {
-	// Get all .shortcode elements
-	const shortcodes = document.querySelectorAll('.shortcode');
 
-	// Add event listener to each .shortcode element
-	shortcodes.forEach(shortcode => {
-		shortcode.addEventListener('click', () => {
-			// Create a new textarea element to hold the full shortcode markup
-			const textarea = document.createElement('textarea');
-			textarea.value = shortcode.textContent;
+			// Get all .shortcode elements
+			const shortcodes = document.querySelectorAll('.shortcode');
 
-			// Append the textarea to the document and select its contents
-			document.body.appendChild(textarea);
-			textarea.select();
+			// Add event listener to each .shortcode element
+			shortcodes.forEach(shortcode => {
+				shortcode.addEventListener('click', () => {
+					// Create a new textarea element to hold the full shortcode markup
+					const textarea = document.createElement('textarea');
+					textarea.value = shortcode.textContent;
 
-			// Copy the selected content to the clipboard
-			document.execCommand('copy');
+					// Append the textarea to the document and select its contents
+					document.body.appendChild(textarea);
+					textarea.select();
 
-			// Remove the textarea from the document
-			document.body.removeChild(textarea);
+					// Copy the selected content to the clipboard
+					document.execCommand('copy');
 
-			// Add the .copied class to the clicked .shortcode element
-			shortcode.classList.add('copied');
+					// Remove the textarea from the document
+					document.body.removeChild(textarea);
 
-			// Remove the .copied class after 5 seconds
-			setTimeout(() => {
-				shortcode.classList.remove('copied');
-			}, 5000);
+					// Add the .copied class to the clicked .shortcode element
+					shortcode.classList.add('copied');
+
+					// Remove the .copied class after 5 seconds
+					setTimeout(() => {
+						shortcode.classList.remove('copied');
+					}, 5000);
+				});
+			});
 		});
-	});
-});
 
 
 	</script>
 	<?php
-	
+
 	echo '<div class="wrap">';
 		echo '<h1>Rent Fetch Shortcodes</h1>';
 		echo '<p>Rent Fetch includes a number of shortcodes that can be used wherever you\'d like on your site. <strong>Click any of them below to copy them.</strong></p>';
@@ -52,6 +65,11 @@ function rentfetch_shortcodes_page_html() {
 	echo '</div>';
 }
 
+/**
+ * Output the shortcodes content.
+ *
+ * @return void.
+ */
 function rentfetch_documentation_shortcodes() {
 	?>
 	<h2>Multiple properties search</h2>

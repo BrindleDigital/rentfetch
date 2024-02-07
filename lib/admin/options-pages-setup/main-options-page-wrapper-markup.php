@@ -44,8 +44,9 @@ function rentfetch_options_page_html() {
 				$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
 				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floorplans' ) );
 
-				$active = ( 'labels' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=labels' ) ), esc_html( $active ), esc_html( 'Labels' ) );
+				// TODO Removing this settings tab temporarily; we need to implement in a more flexible way.
+				// $active = ( 'labels' === $tab ) ? 'nav-tab-active' : '';
+				// printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=labels' ) ), esc_html( $active ), esc_html( 'Labels' ) );
 
 			echo '</nav>';
 
