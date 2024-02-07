@@ -9,6 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Get the meta values for a key for all posts of a given type.
+ *
+ * @param   string $key     the meta key.
+ * @param   string $type    the post type.
+ * @param   string $status  the post status.
+ *
+ * @return  array            the array of the meta values.
+ */
 function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publish' ) {
 
 	global $wpdb;
