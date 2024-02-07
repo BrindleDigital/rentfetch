@@ -1,6 +1,13 @@
 <?php
+/**
+ * This file has the Rent Fetch functions for getting unit data.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 //* Title
 

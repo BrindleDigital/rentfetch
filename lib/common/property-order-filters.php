@@ -1,6 +1,13 @@
 <?php
+/**
+ * This file gets the orderby stuff for the properties. Maybe deprecated?
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Get the orderby of the properties

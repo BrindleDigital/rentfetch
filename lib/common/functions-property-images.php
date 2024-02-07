@@ -1,6 +1,13 @@
 <?php
+/**
+ * This file has the Rent Fetch functions for getting property times.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_get_property_images( $args = null ) {
 	global $post;

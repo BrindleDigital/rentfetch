@@ -1,6 +1,13 @@
 <?php
+/**
+ * This file gets all meta values for a key.
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publish' ) {
 
