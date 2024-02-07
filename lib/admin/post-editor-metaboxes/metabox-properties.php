@@ -9,63 +9,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Register the property details metaboxes
+ *
+ * @return void.
+ */
 function rentfetch_register_properties_details_metabox() {
-		
+
 	add_meta_box(
-		'rentfetch_properties_identifiers', // ID of the metabox
-		'Property Identifiers', // Title of the metabox
-		'rentfetch_properties_identifiers_metabox_callback', // Callback function to render the metabox
-		'properties', // Post type to add the metabox to
-		'normal', // Priority of the metabox
-		'default' // Context of the metabox
+		'rentfetch_properties_identifiers', // ID of the metabox.
+		'Property Identifiers', // Title of the metabox.
+		'rentfetch_properties_identifiers_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
 	);
-   
+
 	add_meta_box(
-		'rentfetch_properties_contact', // ID of the metabox
-		'Property Contact Information', // Title of the metabox
-		'rentfetch_properties_contact_metabox_callback', // Callback function to render the metabox
-		'properties', // Post type to add the metabox to
-		'normal', // Priority of the metabox
-		'default' // Context of the metabox
+		'rentfetch_properties_contact', // ID of the metabox.
+		'Property Contact Information', // Title of the metabox.
+		'rentfetch_properties_contact_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
 	);
-	
+
 	add_meta_box(
-		'rentfetch_properties_location', // ID of the metabox
-		'Property Location', // Title of the metabox
-		'rentfetch_properties_location_metabox_callback', // Callback function to render the metabox
-		'properties', // Post type to add the metabox to
-		'normal', // Priority of the metabox
-		'default' // Context of the metabox
+		'rentfetch_properties_location', // ID of the metabox.
+		'Property Location', // Title of the metabox.
+		'rentfetch_properties_location_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
 	);
-	
+
 	add_meta_box(
-		'rentfetch_properties_details', // ID of the metabox
-		'Property Display Information', // Title of the metabox
-		'rentfetch_properties_display_information_metabox_callback', // Callback function to render the metabox
-		'properties', // Post type to add the metabox to
-		'normal', // Priority of the metabox
-		'default' // Context of the metabox
+		'rentfetch_properties_details', // ID of the metabox.
+		'Property Display Information', // Title of the metabox.
+		'rentfetch_properties_display_information_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
 	);
-		
 }
 add_action( 'add_meta_boxes', 'rentfetch_register_properties_details_metabox' );
 
+/**
+ * Markup for the properties identifiers metabox
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
 function rentfetch_properties_identifiers_metabox_callback( $post ) {
 	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
-	
-	
+
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
 		<div class="columns columns-2">
 		
-			<?php 
-			//* Property Source
-			$property_source = get_post_meta( $post->ID, 'property_source', true ); 
-			$last_updated = get_post_meta( $post->ID, 'updated', true );
-			$api_error = get_post_meta( $post->ID, 'api_error', true );
-			if ( !$property_source )
+			<?php
+			// * Property Source
+			$property_source = get_post_meta( $post->ID, 'property_source', true );
+			$last_updated    = get_post_meta( $post->ID, 'updated', true );
+			$api_error       = get_post_meta( $post->ID, 'api_error', true );
+			if ( ! $property_source ) {
 				$property_source = null;
+			}
 			?>
 			
 			<div class="field">
@@ -75,22 +86,25 @@ function rentfetch_properties_identifiers_metabox_callback( $post ) {
 				<div class="column">
 					<input disabled type="text" id="property_source" name="property_source" value="<?php echo esc_attr( $property_source ); ?>">
 					<p class="description">This isn't a field meant to be edited; it's here to show you how this property is currently being managed (whether it syncs from a data source or it's manually managed).</p>
-					<?php 
-					
-					if ( $last_updated )
-						printf( '<p class="description"><strong>Property metadata last updated:</strong> %s</p>', $last_updated );
-						
-					if ( $api_error )
-						printf( '<p class="description"><strong>API response:</strong> %s</p>', $api_error );
-					
+					<?php
+
+					if ( $last_updated ) {
+						printf( '<p class="description"><strong>Property metadata last updated:</strong> %s</p>', esc_html( $last_updated ) );
+					}
+
+					if ( $api_error ) {
+						printf( '<p class="description"><strong>API response:</strong> %s</p>', wp_kses_post( $api_error ) );
+					}
+
 					?>
 				</div>
 			</div>
 								
 			
-			<?php 
-			//* Property ID
-			$property_id = get_post_meta( $post->ID, 'property_id', true ); ?>
+			<?php
+			// * Property ID.
+			$property_id = get_post_meta( $post->ID, 'property_id', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="property_id">Property ID</label>
@@ -116,10 +130,10 @@ function rentfetch_properties_identifiers_metabox_callback( $post ) {
 								$('#view-related-units').html('<a href="' + unitLink + '" target="_blank">View Related Units</a>');
 							}
 
-							// On load
+							// On load.
 							updateLink();
 
-							// On change
+							// On change.
 							$('#property_id').on('change', function() {
 								updateLink();
 							});
@@ -128,34 +142,33 @@ function rentfetch_properties_identifiers_metabox_callback( $post ) {
 					
 				</div>
 			</div>
-			
-			<?php 
-			//* Property Code
-			$property_code = get_post_meta( $post->ID, 'property_code', true ); ?>
-			<!-- <div class="field">
-				<div class="column">
-					<label for="property_code">Voyager Property Code</label>
-				</div>
-				<div class="column">
-					<input type="text" id="property_code" name="property_code" value="<?php echo esc_attr( $property_code ); ?>">
-					<p class="description">In Yardi, properties also have a Voyager property code, so if this property is synced with Yardi, that may show below as well (if this is not a Yardi property, you can probably ignore this).</p>
-				</div>
-			</div> -->
-			
+
+			<?php
+			// * Property Code
+			$property_code = get_post_meta( $post->ID, 'property_code', true );
+			?>
 		</div>
 	</div>
 	<?php
 }
 
+/**
+ * Properties location metabox callback
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
 function rentfetch_properties_location_metabox_callback( $post ) {
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
 		<div class="columns columns-4">
 		
-			<?php 
-			//* Property Address
-			$address = get_post_meta( $post->ID, 'address', true ); ?>
+			<?php
+			// * Property Address
+			$address = get_post_meta( $post->ID, 'address', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="address">Address</label>
@@ -165,9 +178,10 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 				</div>
 			</div>
 			
-			<?php 
-			//* Property City
-			$city = get_post_meta( $post->ID, 'city', true ); ?>
+			<?php
+			// * Property City
+			$city = get_post_meta( $post->ID, 'city', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="city">City</label>
@@ -177,9 +191,10 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 				</div>
 			</div>
 			
-			<?php 
-			//* Property State
-			$state = get_post_meta( $post->ID, 'state', true ); ?>
+			<?php
+			// * Property State
+			$state = get_post_meta( $post->ID, 'state', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="state">State</label>
@@ -189,9 +204,10 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 				</div>
 			</div>
 			
-			<?php 
-			//* Property Zipcode
-			$zipcode = get_post_meta( $post->ID, 'zipcode', true ); ?>
+			<?php
+			// * Property Zipcode
+			$zipcode = get_post_meta( $post->ID, 'zipcode', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="zipcode">Zipcode</label>
@@ -205,9 +221,10 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 		
 		<div class="columns columns-2">
 		
-			<?php 
-			//* Property Latitude
-			$latitude = get_post_meta( $post->ID, 'latitude', true ); ?>
+			<?php
+			// * Property Latitude
+			$latitude = get_post_meta( $post->ID, 'latitude', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="latitude">Latitude</label>
@@ -217,9 +234,10 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 				</div>
 			</div>
 			
-			<?php 
-			//* Property Longitude
-			$longitude = get_post_meta( $post->ID, 'longitude', true ); ?>
+			<?php
+			// * Property Longitude
+			$longitude = get_post_meta( $post->ID, 'longitude', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="longitude">Longitude</label>
@@ -235,15 +253,23 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 	<?php
 }
 
+/**
+ * Properties contact metabox callback
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
 function rentfetch_properties_contact_metabox_callback( $post ) {
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
 		<div class="columns columns-3">
 			
-			<?php 
-			//* Property Email
-			$email = get_post_meta( $post->ID, 'email', true ); ?>
+			<?php
+			// * Property Email
+			$email = get_post_meta( $post->ID, 'email', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="email">Email</label>
@@ -253,9 +279,10 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 				</div>
 			</div>
 			
-			<?php 
-			//* Property Phone
-			$phone = get_post_meta( $post->ID, 'phone', true ); ?>
+			<?php
+			// * Property Phone
+			$phone = get_post_meta( $post->ID, 'phone', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="phone">Phone</label>
@@ -265,9 +292,10 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 				</div>
 			</div>
 			
-			<?php 
-			//* Property URL
-			$url = get_post_meta( $post->ID, 'url', true ); ?>
+			<?php
+			// * Property URL
+			$url = get_post_meta( $post->ID, 'url', true );
+			?>
 			<div class="field">
 				<div class="column">
 					<label for="url">URL</label>
@@ -283,6 +311,13 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 	<?php
 }
 
+/**
+ * Properties display information metabox callback
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
 function rentfetch_properties_display_information_metabox_callback( $post ) {
 	wp_enqueue_media();
 	wp_enqueue_script( 'rentfetch-metabox-properties-images' );
@@ -290,7 +325,9 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 	wp_enqueue_script( 'rentfetch-metabox-properties-video' );
 	?>
 	<div class="rf-metabox rf-metabox-properties">
-		<?php //* Property Images ?>
+		<?php
+		// * Property Images.
+		?>
 		<div class="field">
 			<div class="column">
 				<label for="images">Custom Images</label>
@@ -298,43 +335,43 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 			<div class="column"> 
 				<p class="description">These are custom images added to the site, and are never synced. Any image here will override any synced images.</p>               
 				<?php
-				
+
 				$images = get_post_meta( $post->ID, 'images', true );
-				
-				// convert to string
-				if ( is_array( $images ) )
+
+				// convert to string.
+				if ( is_array( $images ) ) {
 					$images = implode( ',', $images );
-									
+				}
+
 				$images_ids_array = explode( ',', $images );
-				$image_url = '';
-				
+
 				echo '<input type="hidden" id="images" name="images" value="' . esc_attr( $images ) . '">';
-				
+
 				if ( $images ) {
 					echo '<div id="gallery-container">';
-						foreach( $images_ids_array as $image_id ) {
-							$attachment_url = wp_get_attachment_image_src( $image_id, 'thumbnail' );
-							printf( '<div class="gallery-image" data-id="%s"><img src="%s"><button class="remove-image">Remove</button></div>', $image_id, $attachment_url[0] );
-						}
+					foreach ( $images_ids_array as $image_id ) {
+						$attachment_url = wp_get_attachment_image_src( $image_id, 'thumbnail' );
+						printf( '<div class="gallery-image" data-id="%s"><img src="%s"><button class="remove-image">Remove</button></div>', (int) $image_id, esc_url( $attachment_url[0] ) );
+					}
 					echo '</div>';
 				}
-				
-				echo '<div id="gallery-container">' . $image_url . '</div>';                
+
+				echo '<div id="gallery-container"></div>';
 				echo '<input type="button" id="images_button" class="button" value="Add Images">';
-		
+
 				?>
 				
 			</div>
 		</div>
 		
 		<?php
-		
-		$property_source = get_post_meta($post->ID, 'property_source', true );
-		if ( $property_source == 'yardi' ) {
-			
-			//* Property Images from Yardi
+
+		$property_source = get_post_meta( $post->ID, 'property_source', true );
+		if ( 'yardi' === $property_source ) {
+
+			// * Property Images from Yardi
 			$property_images_json = get_post_meta( $post->ID, 'yardi_property_images', true );
-			$property_images = json_decode( $property_images_json );
+			$property_images      = json_decode( $property_images_json );
 			?>
 			 
 			<div class="field">
@@ -346,15 +383,17 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 					<?php
 					if ( $property_images ) {
 						echo '<div class="property_images">';
-						
+
 						foreach ( $property_images as $property_image ) {
-							
-							if ( !property_exists( $property_image, 'ImageURL' ) ) {
-								printf( '<p>%s <em>An error typically indicates either a failed sync or a problem with API authentication. Be sure to look up your specific error code with the owner of this API.</em></p>', $property_images_json );
+
+							if ( ! property_exists( $property_image, 'ImageURL' ) ) {
+								printf( '<p>%s <em>An error typically indicates either a failed sync or a problem with API authentication. Be sure to look up your specific error code with the owner of this API.</em></p>', wp_json_encode( $property_images_json ) );
 								continue;
 							}
-														
-							printf( '<div class="property-image"><img src="%s"/><a href="%s" target="_blank" class="download" download>Download</a></div>', $property_image->ImageURL, $property_image->ImageURL );                
+
+							$property_image_url = $property_image->ImageURL;
+
+							printf( '<div class="property-image"><img src="%s"/><a href="%s" target="_blank" class="download" download>Download</a></div>', esc_url( $property_image_url ), esc_url( $property_image_url ) );
 						}
 						echo '</div>';
 					} else {
@@ -368,9 +407,10 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		}
 		?>
 			 
-		<?php 
-		//* Property Description
-		$description = get_post_meta( $post->ID, 'description', true ); ?>
+		<?php
+		// * Property Description
+		$description = get_post_meta( $post->ID, 'description', true );
+		?>
 		<div class="field">
 			<div class="column">
 				<label for="description">Description</label>
@@ -381,28 +421,29 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 			</div>
 		</div>
 
-		<?php 
-		//* Tour
-		$tour = get_post_meta( $post->ID, 'tour', true ); ?>
+		<?php
+		// * Tour
+		$tour = get_post_meta( $post->ID, 'tour', true );
+		?>
 		<div class="field">
 			<div class="column">
 				<label for="tour">Tour embed code (Matterport or Youtube iframe)</label>
 			</div>
 			<div class="column">
 				<input type="text" id="tour" name="tour" value="<?php echo esc_attr( $tour ); ?>">
-				<?php 
-				$iframeCode = '<iframe src="https://my.matterport.com/showcase-beta?m=VBHn8iJQ1h4" width="640" height="480" frameborder="0" allowfullscreen allow="vr"></iframe> or <iframe width="560" height="315" src="https://www.youtube.com/embed/C0DPdy98e4c?si=RltNyDXGANGUanKW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
-				$escapedIframeCode = htmlspecialchars($iframeCode);
+				<?php
+				$iframe_code = '<iframe src="https://my.matterport.com/showcase-beta?m=VBHn8iJQ1h4" width="640" height="480" frameborder="0" allowfullscreen allow="vr"></iframe> or <iframe width="560" height="315" src="https://www.youtube.com/embed/C0DPdy98e4c?si=RltNyDXGANGUanKW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
 				?>
 
-				<p class="description">Paste in a Matterport or Youtube iframe code. This code will look something like this: <?php echo $escapedIframeCode; ?></p>
+				<p class="description">Paste in a Matterport or Youtube iframe code. This code will look something like this: <?php echo esc_html( $iframe_code ); ?></p>
 				<div id="tour-preview"></div>
 			</div>
 		</div>
 				
-		<?php 
-		//* Property Pets
-		$pets = get_post_meta( $post->ID, 'pets', true ); ?>
+		<?php
+		// * Property Pets
+		$pets = get_post_meta( $post->ID, 'pets', true );
+		?>
 		<div class="field">
 			<div class="column">
 				<label for="pets">Pets</label>
@@ -412,9 +453,10 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 			</div>
 		</div>
 		
-		<?php 
-		//* Property Content Area
-		$content_area = get_post_meta( $post->ID, 'content_area', true ); ?>
+		<?php
+		// * Property Content Area
+		$content_area = get_post_meta( $post->ID, 'content_area', true );
+		?>
 		<div class="field">
 			<div class="column">
 				<label for="content_area">Content area</label>
@@ -422,13 +464,17 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 			</div>
 			<div class="column">
 				<?php
-				wp_editor( $content_area, 'content_area', array(
-					'textarea_name' => 'content_area',
-					'media_buttons' => false,
-					'textarea_rows' => 10,
-					'teeny' => false,
-					'tinymce' => true,
-				) );
+				wp_editor(
+					$content_area,
+					'content_area',
+					array(
+						'textarea_name' => 'content_area',
+						'media_buttons' => false,
+						'textarea_rows' => 10,
+						'teeny'         => false,
+						'tinymce'       => true,
+					)
+				);
 				?>
 				<p class="description">It's always recommended to start this section with a heading level 2. If this is empty, the content area section of the single-properties template will not be displayed (there won't be a blank space). By default, if there's something to say here, this section will display below the amenities.</p>
 			</div>
@@ -439,105 +485,128 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 	<?php
 }
 
+/**
+ * Rentfetch save properties metaboxes
+ *
+ * @param int $post_id The post ID.
+ *
+ * @return void.
+ */
 function rentfetch_save_properties_metaboxes( $post_id ) {
-	
-	if ( !isset( $_POST['rentfetch_properties_metabox_nonce'] ) )
-		return;
 
-	if ( ! wp_verify_nonce( $_POST['rentfetch_properties_metabox_nonce'], 'rentfetch_properties_metabox_nonce' ) )
+	if ( ! isset( $_POST['rentfetch_properties_metabox_nonce'] ) ) {
 		return;
-	
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+	}
+
+	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['rentfetch_properties_metabox_nonce'] ) ), 'rentfetch_properties_metabox_nonce' ) ) {
 		return;
-	
-	if ( isset( $_POST['property_id'] ) )
-		update_post_meta( $post_id, 'property_id', sanitize_text_field( $_POST['property_id'] ) );
-		
-	if ( isset( $_POST['property_code'] ) )
-		update_post_meta( $post_id, 'property_code', sanitize_text_field( $_POST['property_code'] ) );
-		
-	if ( isset( $_POST['address'] ) )
-		update_post_meta( $post_id, 'address', sanitize_text_field( $_POST['address'] ) );
-		
-	if ( isset( $_POST['city'] ) )
-		update_post_meta( $post_id, 'city', sanitize_text_field( $_POST['city'] ) );
-		
-	if ( isset( $_POST['state'] ) )
-		update_post_meta( $post_id, 'state', sanitize_text_field( $_POST['state'] ) );
-		
-	if ( isset( $_POST['zipcode'] ) )
-		update_post_meta( $post_id, 'zipcode', sanitize_text_field( $_POST['zipcode'] ) );
-		
-	if ( isset( $_POST['latitude'] ) )
-		update_post_meta( $post_id, 'latitude', sanitize_text_field( $_POST['latitude'] ) );
-		
-	if ( isset( $_POST['longitude'] ) )
-		update_post_meta( $post_id, 'longitude', sanitize_text_field( $_POST['longitude'] ) );
-		
-	if ( isset( $_POST['email'] ) )
-		update_post_meta( $post_id, 'email', sanitize_text_field( $_POST['email'] ) );
-		
-	if ( isset( $_POST['phone'] ) )
-		update_post_meta( $post_id, 'phone', sanitize_text_field( $_POST['phone'] ) );
-		
-	if ( isset( $_POST['url'] ) )
-		update_post_meta( $post_id, 'url', sanitize_text_field( $_POST['url'] ) );
-		
+	}
+
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+
+	if ( isset( $_POST['property_id'] ) ) {
+		update_post_meta( $post_id, 'property_id', sanitize_text_field( wp_unslash( $_POST['property_id'] ) ) );
+	}
+
+	if ( isset( $_POST['property_code'] ) ) {
+		update_post_meta( $post_id, 'property_code', sanitize_text_field( wp_unslash( $_POST['property_code'] ) ) );
+	}
+
+	if ( isset( $_POST['address'] ) ) {
+		update_post_meta( $post_id, 'address', sanitize_text_field( wp_unslash( $_POST['address'] ) ) );
+	}
+
+	if ( isset( $_POST['city'] ) ) {
+		update_post_meta( $post_id, 'city', sanitize_text_field( wp_unslash( $_POST['city'] ) ) );
+	}
+
+	if ( isset( $_POST['state'] ) ) {
+		update_post_meta( $post_id, 'state', sanitize_text_field( wp_unslash( $_POST['state'] ) ) );
+	}
+
+	if ( isset( $_POST['zipcode'] ) ) {
+		update_post_meta( $post_id, 'zipcode', sanitize_text_field( wp_unslash( $_POST['zipcode'] ) ) );
+	}
+
+	if ( isset( $_POST['latitude'] ) ) {
+		update_post_meta( $post_id, 'latitude', sanitize_text_field( wp_unslash( $_POST['latitude'] ) ) );
+	}
+
+	if ( isset( $_POST['longitude'] ) ) {
+		update_post_meta( $post_id, 'longitude', sanitize_text_field( wp_unslash( $_POST['longitude'] ) ) );
+	}
+
+	if ( isset( $_POST['email'] ) ) {
+		update_post_meta( $post_id, 'email', sanitize_text_field( wp_unslash( $_POST['email'] ) ) );
+	}
+
+	if ( isset( $_POST['phone'] ) ) {
+		update_post_meta( $post_id, 'phone', sanitize_text_field( wp_unslash( $_POST['phone'] ) ) );
+	}
+
+	if ( isset( $_POST['url'] ) ) {
+		update_post_meta( $post_id, 'url', sanitize_text_field( wp_unslash( $_POST['url'] ) ) );
+	}
+
 	if ( isset( $_POST['images'] ) ) {
-		$property_images = sanitize_text_field( $_POST['images'] );
-		$property_images = trim($property_images, ",");
-		$property_images = explode(",", $property_images);
+		$property_images = sanitize_text_field( wp_unslash( $_POST['images'] ) );
+		$property_images = trim( $property_images, ',' );
+		$property_images = explode( ',', $property_images );
 		$property_images = array_unique( $property_images );
-		
+
 		update_post_meta( $post_id, 'images', $property_images );
 	}
-		
-	if ( isset( $_POST['description'] ) )
-		update_post_meta( $post_id, 'description', sanitize_text_field( $_POST['description'] ) );
-		
-	if ( isset( $_POST['tour'] ) ) {
-		
-		$allowed_tags = array(
-			'iframe' => [
-				'src' => [],
-				'width' => [],
-				'height' => [],
-				'frameborder' => [],
-				'allowfullscreen' => [],
-				'allow' => [],
-			],
-		);
-		
-		update_post_meta( $post_id, 'tour', wp_kses( $_POST['tour'], $allowed_tags ) );
-		
-	}
-		
-	if ( isset( $_POST['video'] ) )
-		update_post_meta( $post_id, 'video', sanitize_text_field( $_POST['video'] ) );
-		
-	if ( isset( $_POST['pets'] ) )
-		update_post_meta( $post_id, 'pets', sanitize_text_field( $_POST['pets'] ) );
-		
-	if ( isset( $_POST['content_area'] ) ) {
-		$allowed_tags = array(
-			'h2' => [],
-			'h3' => [],
-			'p' => [],
-			'ul' => [],
-			'ol' => [],
-			'li' => [],
-			'a' => [
-				'href' => [],
-				'title' => [],
-				'target' => [],
-			],
-			'br' => [],
-			'em' => [],
-			'strong' => [],
-		);
-				
-		update_post_meta( $post_id, 'content_area', wp_kses( $_POST['content_area'], $allowed_tags ) );
+
+	if ( isset( $_POST['description'] ) ) {
+		update_post_meta( $post_id, 'description', sanitize_text_field( wp_unslash( $_POST['description'] ) ) );
 	}
 
+	if ( isset( $_POST['tour'] ) ) {
+
+		$allowed_tags = array(
+			'iframe' => array(
+				'src'             => array(),
+				'width'           => array(),
+				'height'          => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+				'allow'           => array(),
+			),
+		);
+
+		update_post_meta( $post_id, 'tour', wp_kses( wp_unslash( $_POST['tour'] ), $allowed_tags ) );
+
+	}
+
+	if ( isset( $_POST['video'] ) ) {
+		update_post_meta( $post_id, 'video', sanitize_text_field( wp_unslash( $_POST['video'] ) ) );
+	}
+
+	if ( isset( $_POST['pets'] ) ) {
+		update_post_meta( $post_id, 'pets', sanitize_text_field( wp_unslash( $_POST['pets'] ) ) );
+	}
+
+	if ( isset( $_POST['content_area'] ) ) {
+		$allowed_tags = array(
+			'h2'     => array(),
+			'h3'     => array(),
+			'p'      => array(),
+			'ul'     => array(),
+			'ol'     => array(),
+			'li'     => array(),
+			'a'      => array(
+				'href'   => array(),
+				'title'  => array(),
+				'target' => array(),
+			),
+			'br'     => array(),
+			'em'     => array(),
+			'strong' => array(),
+		);
+
+		update_post_meta( $post_id, 'content_area', wp_kses( wp_unslash( $_POST['content_area'] ), $allowed_tags ) );
+	}
 }
 add_action( 'save_post', 'rentfetch_save_properties_metaboxes' );
