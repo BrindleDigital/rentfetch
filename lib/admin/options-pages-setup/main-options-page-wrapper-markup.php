@@ -52,33 +52,45 @@ function rentfetch_options_page_html() {
 
 			echo '<input type="hidden" name="action" value="rentfetch_process_form">';
 
-			//* Create the nonce field
+			// * Create the nonce field
 			wp_nonce_field( 'rentfetch_main_options_nonce_action', 'rentfetch_main_options_nonce_field' );
 
-			if ( 'general' === $tab ) {
-				do_action( 'rentfetch_do_settings_general' );
-			} elseif ( 'maps' === $tab ) {
-				do_action( 'rentfetch_do_settings_maps' );
-			} elseif ( 'properties' === $tab ) {
-				do_action( 'rentfetch_do_settings_properties' );
-			} elseif ( 'property-search' === $tab ) {
-				do_action( 'rentfetch_do_settings_property_search' );
-			} elseif ( 'property-archives' === $tab ) {
-				do_action( 'rentfetch_do_settings_property_archives' );
-			} elseif ( 'single-property-template' === $tab ) {
-				do_action( 'rentfetch_do_settings_single_property_template' );
-			} elseif ( 'floorplans' === $tab ) {
-				do_action( 'rentfetch_do_settings_floorplans' );
-			} elseif ( 'labels' === $tab ) {
-				do_action( 'rentfetch_do_settings_labels' );
-			} else {
-				do_action( 'rentfetch_do_settings_general' );
-			}
+			rentfetch_settings_output_each_page_fields();
 
 			submit_button();
 
 		echo '</form>';
 	echo '</div>';
+}
+
+/**
+ * Output the settings fields for each tab
+ *
+ * @return void
+ */
+function rentfetch_settings_output_each_page_fields() {
+
+	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
+
+	if ( 'general' === $tab ) {
+		do_action( 'rentfetch_do_settings_general' );
+	} elseif ( 'maps' === $tab ) {
+		do_action( 'rentfetch_do_settings_maps' );
+	} elseif ( 'properties' === $tab ) {
+		do_action( 'rentfetch_do_settings_properties' );
+	} elseif ( 'property-search' === $tab ) {
+		do_action( 'rentfetch_do_settings_property_search' );
+	} elseif ( 'property-archives' === $tab ) {
+		do_action( 'rentfetch_do_settings_property_archives' );
+	} elseif ( 'single-property-template' === $tab ) {
+		do_action( 'rentfetch_do_settings_single_property_template' );
+	} elseif ( 'floorplans' === $tab ) {
+		do_action( 'rentfetch_do_settings_floorplans' );
+	} elseif ( 'labels' === $tab ) {
+		do_action( 'rentfetch_do_settings_labels' );
+	} else {
+		do_action( 'rentfetch_do_settings_general' );
+	}
 }
 
 /**
@@ -119,6 +131,8 @@ add_action( 'rentfetch_do_settings_properties', 'rentfetch_settings_properties' 
 
 /**
  * Adds the floorplans settings section to the Rent Fetch settings page
+ * 
+ * @return void.
  */
 function rentfetch_settings_floorplans() {
 
