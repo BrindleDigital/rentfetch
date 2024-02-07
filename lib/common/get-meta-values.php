@@ -13,16 +13,24 @@ function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publis
 
 	global $wpdb;
 
-	if( empty( $key ) )
+	if ( empty( $key ) ) {
 		return;
+	}
 
-	$r = $wpdb->get_col( $wpdb->prepare( "
+	$r = $wpdb->get_col(
+		$wpdb->prepare(
+			"
 		SELECT pm.meta_value FROM {$wpdb->postmeta} pm
 		LEFT JOIN {$wpdb->posts} p ON p.ID = pm.post_id
 		WHERE pm.meta_key = %s 
 		AND p.post_status = %s 
 		AND p.post_type = %s
-	", $key, $status, $type ) );
-	
+	",
+			$key,
+			$status,
+			$type
+		)
+	);
+
 	return $r;
 }
