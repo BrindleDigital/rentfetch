@@ -43,9 +43,9 @@ add_filter( 'rentfetch_get_bedroom_number_label', 'rentfetch_bedroom_number_labe
  * @return  string The label for the number of bathrooms.
  */
 function rentfetch_bathroom_number_label( $baths ) {
-	
+
 	$baths = floatval( $baths );
-	
+
 	if ( 0 === (int) $baths ) {
 		$label = null;
 	} elseif ( 1 === (int) $baths ) {
