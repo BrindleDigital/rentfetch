@@ -85,7 +85,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_script( 'rentfetch-google-recaptcha', 'https://www.google.com/recaptcha/api.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Blaze slider (MIT license).
-	wp_register_style( 'blaze-style', 'https://unpkg.com/blaze-slider@1.9.3/dist/blaze.css', array(), RENTFETCH_VERSION, true );
+	wp_register_style( 'blaze-style', 'https://unpkg.com/blaze-slider@1.9.3/dist/blaze.css', array(), RENTFETCH_VERSION );
 	wp_register_script( 'blaze-script', 'https://unpkg.com/blaze-slider@1.9.3/dist/blaze-slider.min.js', array(), RENTFETCH_VERSION, true );
 	wp_register_script( 'blaze-more-properties-init', RENTFETCH_PATH . 'js/rentfetch-blaze-more-properties-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-floorplan-images-slider-init', RENTFETCH_PATH . 'js/rentfetch-blaze-floorplan-images-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
