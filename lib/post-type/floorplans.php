@@ -1,56 +1,59 @@
 <?php
+/**
+ * Register the floorplans content type
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
- * Register the content stypes
+ * Register floorplans
  */
 function rentfetch_register_floorplans_cpt() {
 
-	//* Floorplans
-	$name_plural = 'Floorplans';
+	// * Floorplans
+	$name_plural   = 'Floorplans';
 	$name_singular = 'Floorplan';
-	$post_type = 'floorplans';
-	$slug = 'floorplans';
-	$supports = array( 'title' );
-	
-	$menu_icon = '<svg id="a" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M7.76119,10.84577v1.39303h1.59204v-.59702c0-.199,0-.39801,.0995-.59702-.29851,0-.49751-.0995-.69652-.199,0,0-.99503,0-.99503,0Z" fill="#f0f6fc99"/><rect x="7.76119" y="14.42786" width="1.59204" height="1.39303" fill="#f0f6fc99"/><path d="M5.97015,5.47264v1.29353h4.97512v-1.29353h-1.69154V1.39304h5.87065V3.68159h-1.79105v1.29353h1.79105v2.18905h-1.79105v.79602h1.09453c.79602,0,1.49254,.0995,2.08955,.199V0H.59701V15.8209H5.57214v-1.39303H1.99005v-3.9801h2.18905v1.79105h1.39304v-3.18408H1.99005V1.39303H7.76119V5.47264h-1.79105Z" fill="#f0f6fc99"/><path d="M13.43284,17.81095c-.199,0-.29851,.19901-.29851,.29851v1.09453h-1.79105v-7.16418h3.38308c.99502,0,1.19403,.39801,1.19403,.99502s-.49751,.99502-1.49254,.99502h-.89552c-.199,0-.29851,.199-.29851,.29851,0,.199,.199,.29851,.29851,.29851h.89552c1.99005,0,2.18905-1.19403,2.18905-1.69154,0-1.09453-.59702-1.69154-1.89055-1.69154h-3.68159c-.199,0-.29851,.199-.29851,.29851v7.8607c0,.19901,.199,.29851,.29851,.29851h2.48756c.199,0,.29851-.19901,.29851-.29851v-1.39303c-.0995,0-.199-.19901-.39801-.19901Z" fill="#f0f6fc99"/><path d="M19.40299,17.41294c0-.0995-.0995-.19901-.0995-.19901-.0995-.0995-.19901-.0995-.29851-.0995h-.19901c-.29851,0-.39801-.0995-.59702-.19901-.0995-.0995-.39801-.0995-.49751,0s-.0995,.39801,0,.49751c.29851,.29851,.69652,.39801,1.09453,.39801h0l.0995,1.39303c-.19901,0-.49751,.0995-.99502,.0995-1.59204,0-2.08955-.79602-2.48756-1.69154-.199-.29851-.29851-.59702-.49751-.79602,1.29353-.0995,1.99005-.39801,2.08955-.49751,1.29353-.59702,1.99005-1.59204,1.99005-3.08458,0-1.29353-.39801-2.28856-1.19403-2.98507-.79602-.59702-1.89055-.89552-3.38308-.89552h-4.77612c-.199,0-.29851,.199-.29851,.29851,0,.199,.199,.29851,.29851,.29851h4.67662c2.68657,0,3.8806,.99502,3.8806,3.28358,0,1.19403-.49751,1.99005-1.59204,2.48756h0s-.89552,.39801-3.08458,.49751c-.199,0-.29851,.19901-.29851,.29851,0,.19901,.199,.29851,.29851,.29851,.59702,0,.79602,.39801,1.19403,1.09453,.49751,.89552,1.09453,2.08955,3.08458,2.08955,.99502,0,1.39303-.0995,1.39303-.19901,.0995,0,.19901-.19901,.19901-.29851v-2.08955Z" fill="#f0f6fc99"/></svg>';
-	$menu_icon = base64_encode( $menu_icon );
-		
+	$post_type     = 'floorplans';
+	$slug          = 'floorplans';
+	$supports      = array( 'title' );
+	$menu_icon     = 'PHN2ZyBpZD0iYSIgaGVpZ2h0PSIyMCIgd2lkdGg9IjIwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PHBhdGggZD0iTTcuNzYxMTksMTAuODQ1Nzd2MS4zOTMwM2gxLjU5MjA0di0uNTk3MDJjMC0uMTk5LDAtLjM5ODAxLC4wOTk1LS41OTcwMi0uMjk4NTEsMC0uNDk3NTEtLjA5OTUtLjY5NjUyLS4xOTksMCwwLS45OTUwMywwLS45OTUwMywwWiIgZmlsbD0iI2YwZjZmYzk5Ii8+PHJlY3QgeD0iNy43NjExOSIgeT0iMTQuNDI3ODYiIHdpZHRoPSIxLjU5MjA0IiBoZWlnaHQ9IjEuMzkzMDMiIGZpbGw9IiNmMGY2ZmM5OSIvPjxwYXRoIGQ9Ik01Ljk3MDE1LDUuNDcyNjR2MS4yOTM1M2g0Ljk3NTEydi0xLjI5MzUzaC0xLjY5MTU0VjEuMzkzMDRoNS44NzA2NVYzLjY4MTU5aC0xLjc5MTA1djEuMjkzNTNoMS43OTEwNXYyLjE4OTA1aC0xLjc5MTA1di43OTYwMmgxLjA5NDUzYy43OTYwMiwwLDEuNDkyNTQsLjA5OTUsMi4wODk1NSwuMTk5VjBILjU5NzAxVjE1LjgyMDlINS41NzIxNHYtMS4zOTMwM0gxLjk5MDA1di0zLjk4MDFoMi4xODkwNXYxLjc5MTA1aDEuMzkzMDR2LTMuMTg0MDhIMS45OTAwNVYxLjM5MzAzSDcuNzYxMTlWNS40NzI2NGgtMS43OTEwNVoiIGZpbGw9IiNmMGY2ZmM5OSIvPjxwYXRoIGQ9Ik0xMy40MzI4NCwxNy44MTA5NWMtLjE5OSwwLS4yOTg1MSwuMTk5MDEtLjI5ODUxLC4yOTg1MXYxLjA5NDUzaC0xLjc5MTA1di03LjE2NDE4aDMuMzgzMDhjLjk5NTAyLDAsMS4xOTQwMywuMzk4MDEsMS4xOTQwMywuOTk1MDJzLS40OTc1MSwuOTk1MDItMS40OTI1NCwuOTk1MDJoLS44OTU1MmMtLjE5OSwwLS4yOTg1MSwuMTk5LS4yOTg1MSwuMjk4NTEsMCwuMTk5LC4xOTksLjI5ODUxLC4yOTg1MSwuMjk4NTFoLjg5NTUyYzEuOTkwMDUsMCwyLjE4OTA1LTEuMTk0MDMsMi4xODkwNS0xLjY5MTU0LDAtMS4wOTQ1My0uNTk3MDItMS42OTE1NC0xLjg5MDU1LTEuNjkxNTRoLTMuNjgxNTljLS4xOTksMC0uMjk4NTEsLjE5OS0uMjk4NTEsLjI5ODUxdjcuODYwN2MwLC4xOTkwMSwuMTk5LC4yOTg1MSwuMjk4NTEsLjI5ODUxaDIuNDg3NTZjLjE5OSwwLC4yOTg1MS0uMTk5MDEsLjI5ODUxLS4yOTg1MXYtMS4zOTMwM2MtLjA5OTUsMC0uMTk5LS4xOTkwMS0uMzk4MDEtLjE5OTAxWiIgZmlsbD0iI2YwZjZmYzk5Ii8+PHBhdGggZD0iTTE5LjQwMjk5LDE3LjQxMjk0YzAtLjA5OTUtLjA5OTUtLjE5OTAxLS4wOTk1LS4xOTkwMS0uMDk5NS0uMDk5NS0uMTk5MDEtLjA5OTUtLjI5ODUxLS4wOTk1aC0uMTk5MDFjLS4yOTg1MSwwLS4zOTgwMS0uMDk5NS0uNTk3MDItLjE5OTAxLS4wOTk1LS4wOTk1LS4zOTgwMS0uMDk5NS0uNDk3NTEsMHMtLjA5OTUsLjM5ODAxLDAsLjQ5NzUxYy4yOTg1MSwuMjk4NTEsLjY5NjUyLC4zOTgwMSwxLjA5NDUzLC4zOTgwMWgwbC4wOTk1LDEuMzkzMDNjLS4xOTkwMSwwLS40OTc1MSwuMDk5NS0uOTk1MDIsLjA5OTUtMS41OTIwNCwwLTIuMDg5NTUtLjc5NjAyLTIuNDg3NTYtMS42OTE1NC0uMTk5LS4yOTg1MS0uMjk4NTEtLjU5NzAyLS40OTc1MS0uNzk2MDIsMS4yOTM1My0uMDk5NSwxLjk5MDA1LS4zOTgwMSwyLjA4OTU1LS40OTc1MSwxLjI5MzUzLS41OTcwMiwxLjk5MDA1LTEuNTkyMDQsMS45OTAwNS0zLjA4NDU4LDAtMS4yOTM1My0uMzk4MDEtMi4yODg1Ni0xLjE5NDAzLTIuOTg1MDctLjc5NjAyLS41OTcwMi0xLjg5MDU1LS44OTU1Mi0zLjM4MzA4LS44OTU1MmgtNC43NzYxMmMtLjE5OSwwLS4yOTg1MSwuMTk5LS4yOTg1MSwuMjk4NTEsMCwuMTk5LC4xOTksLjI5ODUxLC4yOTg1MSwuMjk4NTFoNC42NzY2MmMyLjY4NjU3LDAsMy44ODA2LC45OTUwMiwzLjg4MDYsMy4yODM1OCwwLDEuMTk0MDMtLjQ5NzUxLDEuOTkwMDUtMS41OTIwNCwyLjQ4NzU2aDBzLS44OTU1MiwuMzk4MDEtMy4wODQ1OCwuNDk3NTFjLS4xOTksMC0uMjk4NTEsLjE5OTAxLS4yOTg1MSwuMjk4NTEsMCwuMTk5MDEsLjE5OSwuMjk4NTEsLjI5ODUxLC4yOTg1MSwuNTk3MDIsMCwuNzk2MDIsLjM5ODAxLDEuMTk0MDMsMS4wOTQ1MywuNDk3NTEsLjg5NTUyLDEuMDk0NTMsMi4wODk1NSwzLjA4NDU4LDIuMDg5NTUsLjk5NTAyLDAsMS4zOTMwMy0uMDk5NSwxLjM5MzAzLS4xOTkwMSwuMDk5NSwwLC4xOTkwMS0uMTk5MDEsLjE5OTAxLS4yOTg1MXYtMi4wODk1NVoiIGZpbGw9IiNmMGY2ZmM5OSIvPjwvc3ZnPg==';
+
 	$labels = array(
-		'name' => $name_plural,
-		'singular_name' => $name_singular,
-		'add_new' => 'Add new',
-		'add_new_item' => 'Add new ' . $name_singular,
-		'edit_item' => 'Edit ' . $name_singular,
-		'new_item' => 'New ' . $name_singular,
-		'view_item' => 'View ' . $name_singular,
-		'search_items' => 'Search ' . $name_plural,
-		'not_found' =>  'No ' . $name_plural . ' found',
+		'name'               => $name_plural,
+		'singular_name'      => $name_singular,
+		'add_new'            => 'Add new',
+		'add_new_item'       => 'Add new ' . $name_singular,
+		'edit_item'          => 'Edit ' . $name_singular,
+		'new_item'           => 'New ' . $name_singular,
+		'view_item'          => 'View ' . $name_singular,
+		'search_items'       => 'Search ' . $name_plural,
+		'not_found'          => 'No ' . $name_plural . ' found',
 		'not_found_in_trash' => 'No ' . $name_plural . ' found in trash',
-		'parent_item_colon' => '',
-		'menu_name' => $name_plural,
+		'parent_item_colon'  => '',
+		'menu_name'          => $name_plural,
 	);
 
 	$args = array(
-		'labels' => $labels,
-		'public' => true,
+		'labels'             => $labels,
+		'public'             => true,
 		'publicly_queryable' => true,
-		'show_ui' => true,
-		'show_in_menu' => true,
-		'query_var' => true,
-		'rewrite' => true,
-		'capability_type' => 'post',
-		'rewrite' => array( 'slug' => $slug ),
-		'has_archive' => false,
-		'hierarchical' => false,
-		'menu_position' => null,
-		"menu_icon" => 'data:image/svg+xml;base64,' . $menu_icon,
-		'show_in_rest' => true,
-		'supports' => $supports,
+		'show_ui'            => true,
+		'show_in_menu'       => true,
+		'query_var'          => true,
+		'capability_type'    => 'post',
+		'rewrite'            => array( 'slug' => $slug ),
+		'has_archive'        => false,
+		'hierarchical'       => false,
+		'menu_position'      => null,
+		'menu_icon'          => 'data:image/svg+xml;base64,' . $menu_icon,
+		'show_in_rest'       => true,
+		'supports'           => $supports,
 	);
 
 	register_post_type( $post_type, $args );
-
 }
 add_action( 'init', 'rentfetch_register_floorplans_cpt', 25 );
