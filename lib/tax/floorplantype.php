@@ -9,15 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Register the floorplantype taxonomy
+ *
+ * @return void
+ */
 function rentfetch_register_taxonomy_floorplantype() {
 	register_taxonomy(
 		'floorplantype',
 		'floorplans',
 		array(
-			'label' 			=> __( 'Floorplan types' ),
-			'rewrite' 		=> array( 'slug' => 'floorplantype' ),
-			'hierarchical' 	=> true,
-			'show_in_rest' 	=> true,
+			'label'        => __( 'Floorplan types' ),
+			'rewrite'      => array( 'slug' => 'floorplantype' ),
+			'hierarchical' => true,
+			'show_in_rest' => true,
 		)
 	);
 }
