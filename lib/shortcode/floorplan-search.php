@@ -29,14 +29,11 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 
 	if ( $atts ) {
 		foreach ( $atts as $key => $value ) {
-			if ( ! empty( $queryString ) ) {
-				$string_atts .= ' ';
-			}
 			$string_atts .= ' ' . $key . '=' . $value;
 		}
 	}
 
-	//* Our container markup for the results
+	// * Our container markup for the results
 	echo '<div class="rent-fetch-floorplan-search-default-layout">';
 
 		// create the first shortcode.
@@ -47,7 +44,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		$floorplansearchresults_shortcode = sprintf( '[rentfetch_floorplansearchresults %s]', $string_atts );
 		echo do_shortcode( $floorplansearchresults_shortcode );
 
-		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', site_url() );
+		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', esc_url( site_url() ) );
 
 			echo '<input type="hidden" name="action" value="floorplansearch">';
 
@@ -111,9 +108,14 @@ function rentfetch_floorplan_search_results() {
 add_shortcode( 'floorplansearchresults', 'rentfetch_floorplan_search_results' );
 add_shortcode( 'rentfetch_floorplansearchresults', 'rentfetch_floorplan_search_results' );
 
+/**
+ * Filter the floorplans
+ *
+ * @return void
+ */
 function rentfetch_filter_floorplans() {
 
-	//* The base floorplan query
+	// * The base floorplan query
 	$floorplan_args = array(
 		'post_type'      => 'floorplans',
 		'orderby'        => 'menu_order',
@@ -129,7 +131,7 @@ function rentfetch_filter_floorplans() {
 	if ( $floorplanquery->have_posts() ) {
 
 		$numberofposts = $floorplanquery->post_count;
-		printf( '<div class="results-count"><span id="floorplans-results-count-number">%s</span> results</div>', $numberofposts );
+		printf( '<div class="results-count"><span id="floorplans-results-count-number">%s</span> results</div>', (int) $numberofposts );
 
 		echo '<div class="floorplans-loop">';
 
@@ -139,7 +141,7 @@ function rentfetch_filter_floorplans() {
 
 			$class = implode( ' ', get_post_class() );
 
-			printf( '<div class="%s">', $class );
+			printf( '<div class="%s">', esc_attr( $class ) );
 
 				do_action( 'rentfetch_floorplans_search_do_floorplans_each' );
 
