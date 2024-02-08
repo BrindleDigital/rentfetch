@@ -10,29 +10,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Do the property images, selecting how to output those
+ * Output the property images
+ *
+ * @return void.
  */
-
 function rentfetch_property_images() {
-	
-	// get the single image
+
+	// get the single image.
 	rentfetch_property_single_image();
-	
-	// get the slider
-	//! TODO: add a slider capability and an option to toggle between these
-	
+
+	// TODO - add an option for a slider or other layout; this function would disambiguate for which one is being used.
 }
 add_action( 'rentfetch_do_property_images', 'rentfetch_property_images' );
 
 /**
- * Single image for each property
+ * Output the single property image
+ *
+ * @return void.
  */
 function rentfetch_property_single_image() {
-	$images = rentfetch_get_property_images();            
+	$images = rentfetch_get_property_images();
 
-	?>
-	<div class="property-single-image-wrap">
-		<img class="property-single-image" src="<?php echo $images[0]['url']; ?>" loading="lazy">
-	</div>
-	<?php
+	echo '<div class="property-single-image-wrap">';
+		printf( '<img class="property-single-image" src="%s" loading="lazy" />', esc_url( $images[0]['url'] ) );
+	echo '</div>';
 }
