@@ -1,6 +1,13 @@
 <?php
+/**
+ * The Floorplantype taxonomy
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_register_taxonomy_floorplantype() {
 	register_taxonomy(

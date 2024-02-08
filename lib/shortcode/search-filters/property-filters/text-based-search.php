@@ -1,6 +1,13 @@
-<?php 
+<?php
+/**
+ * Text-based search
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_search_filters_text_search() {
 	

@@ -1,6 +1,13 @@
 <?php
+/**
+ * Set up the sections for the single property page
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_single_properties_set_up_parts() {
 	

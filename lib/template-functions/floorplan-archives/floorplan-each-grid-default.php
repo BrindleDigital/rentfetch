@@ -1,6 +1,13 @@
 <?php
+/**
+ * Display each floorplan in the grid
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_floorplans_each_grid_default() {
 	

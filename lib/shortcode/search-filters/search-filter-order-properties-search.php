@@ -1,6 +1,13 @@
 <?php
+/**
+ * Set the order of the filters
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 // putting this on the init hook so that someone could remove it and readd it in whatever order they want
 function rentfetch_search_properties_dialog_filters() {

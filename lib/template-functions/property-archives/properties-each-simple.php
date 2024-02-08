@@ -1,6 +1,13 @@
-<?php 
+<?php
+/**
+ * Display the simple version of each property
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_each_property_in_archive_simple() {
 	

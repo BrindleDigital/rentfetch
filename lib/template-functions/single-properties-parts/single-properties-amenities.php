@@ -1,6 +1,13 @@
 <?php
+/**
+ * The Amenities seaction of the single property page
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Output the amenities section

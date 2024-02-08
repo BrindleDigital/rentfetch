@@ -1,6 +1,13 @@
 <?php
+/**
+ * Display each property in the map
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 function rentfetch_properties_each_map() {
 	

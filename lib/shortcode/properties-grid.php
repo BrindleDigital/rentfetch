@@ -1,6 +1,6 @@
 <?php
 /**
- * This file sets up the rentfetch_properties shortcode.
+ * Properties grid
  *
  * @package rentfetch
  */
