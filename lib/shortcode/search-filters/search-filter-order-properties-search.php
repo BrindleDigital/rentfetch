@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-// putting this on the init hook so that someone could remove it and readd it in whatever order they want
+// putting this on the wp hook so that someone could remove it and readd it in whatever order they want
 function rentfetch_search_properties_dialog_filters() {
 	
 	// check whether text-based search is enabled
