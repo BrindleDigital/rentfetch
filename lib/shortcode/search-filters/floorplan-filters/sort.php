@@ -1,17 +1,29 @@
 <?php
+/**
+ * Sorting parameters
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Output the form markup for the sorting option
+ *
+ * @return void.
+ */
 function rentfetch_search_filters_sort_floorplans() {
-					
-	// get the sort parameter if it exists
+
+	// get the sort parameter if it exists.
 	if ( isset( $_GET['sort'] ) ) {
 		$sort = $_GET['sort'];
 	} else {
 		$sort = null;
 	}
-			
-	// build the baths search
+
+	// build the baths search.
 	echo '<fieldset class="sort">';
 		echo '<legend>Sort by</legend>';
 		echo '<button class="toggle">Sorting</button>';

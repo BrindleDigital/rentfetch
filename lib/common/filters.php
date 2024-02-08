@@ -46,9 +46,9 @@ function rentfetch_bathroom_number_label( $baths ) {
 
 	$baths = floatval( $baths );
 
-	if ( 0 === (int) $baths ) {
+	if ( 0 === (float) $baths ) {
 		$label = null;
-	} elseif ( 1 === (int) $baths ) {
+	} elseif ( 1 === (float) $baths || 1.0 === (float) $baths ) {
 		$label = '1 <span class="label bathroom-label">Bath</span>';
 	} else {
 		$label = $baths . ' <span class="label bathroom-label">Baths</span>';

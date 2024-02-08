@@ -1,7 +1,19 @@
 <?php
+/**
+ * Date-based filter
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Output the form markup for the availability date
+ *
+ * @return void.
+ */
 function rentfetch_search_filters_date() {
 			
 	// enqueue date picker scripts
@@ -22,8 +34,6 @@ function rentfetch_search_filters_date() {
 			printf( '<input type="date" value="%s" name="dates" placeholder="Available date" style="width:auto;" data-input />', $date );
 		echo '</div>'; // .input-wrap
 	echo '</fieldset>';
-		
-	
 }
 
 function rentfetch_search_floorplans_args_date( $floorplans_args ) {

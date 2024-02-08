@@ -1,7 +1,19 @@
 <?php
+/**
+ * Price filter
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Output the form markup for the price
+ *
+ * @return void.
+ */
 function rentfetch_search_filters_price() {
 	
 	$valueSmall = null;

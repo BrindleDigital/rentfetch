@@ -1,7 +1,21 @@
 <?php
+/**
+ * Shortcode attribute filters
+ *
+ * @package rentfetch
+ */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
+/**
+ * Detect shortcode attributes and apply them to the floorplans query
+ *
+ * @param   array  $floorplans_args the floorplan args to be filtered.
+ *
+ * @return  array $floorplans_args the filtered floorplan args.
+ */
 function rentfetch_search_floorplans_args_shortcode( $floorplans_args ) {
 		
 	//! Property IDs
