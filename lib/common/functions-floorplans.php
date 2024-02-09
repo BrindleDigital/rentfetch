@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_get_floorplan_title() {
 	$title = apply_filters( 'rentfetch_filter_floorplan_title', get_the_title() );
-	return esc_html( $title );
+	return $title;
 }
 
 /**
@@ -44,7 +44,7 @@ function rentfetch_get_floorplan_bedrooms() {
 	$beds_number = get_post_meta( get_the_ID(), 'beds', true );
 
 	$beds_number = apply_filters( 'rentfetch_filter_floorplan_bedrooms', $beds_number );
-	return wp_kses_post( apply_filters( 'rentfetch_get_bedroom_number_label', $beds_number ) );
+	return apply_filters( 'rentfetch_get_bedroom_number_label', $beds_number );
 }
 
 /**
@@ -67,7 +67,7 @@ function rentfetch_get_floorplan_bathrooms() {
 	$baths_number = get_post_meta( get_the_ID(), 'baths', true );
 
 	$baths_number = apply_filters( 'rentfetch_filter_floorplan_bathrooms', $baths_number );
-	return wp_kses_post( apply_filters( 'rentfetch_get_bathroom_number_label', $baths_number ) );
+	return apply_filters( 'rentfetch_get_bathroom_number_label', $baths_number );
 }
 
 /**
@@ -107,7 +107,7 @@ function rentfetch_get_floorplan_square_feet() {
 	}
 
 	$square_feet = apply_filters( 'rentfetch_filter_floorplan_square_feet', $square_feet );
-	return wp_kses_post( apply_filters( 'rentfetch_get_square_feet_number_label', $square_feet ) );
+	return apply_filters( 'rentfetch_get_square_feet_number_label', $square_feet );
 }
 
 /**
@@ -129,7 +129,7 @@ function rentfetch_floorplan_square_feet() {
 function rentfetch_get_floorplan_available_units() {
 	$available_units = get_post_meta( get_the_ID(), 'available_units', true );
 
-	return wp_kses_post( apply_filters( 'rentfetch_get_available_units_label', $available_units ) );
+	return apply_filters( 'rentfetch_get_available_units_label', $available_units );
 }
 
 /**
@@ -173,7 +173,7 @@ function rentfetch_get_floorplan_pricing() {
 		$rent_range = null;
 	}
 
-	return esc_html( apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_range ) );
+	return apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_range );
 }
 
 /**
@@ -196,7 +196,7 @@ function rentfetch_get_floorplan_specials() {
 
 	$specials = get_post_meta( get_the_ID(), 'has_specials', true );
 
-	return esc_html( apply_filters( 'rentfetch_filter_floorplan_specials', $specials ) );
+	return apply_filters( 'rentfetch_filter_floorplan_specials', $specials );
 }
 
 /**
@@ -261,7 +261,7 @@ function rentfetch_get_floorplan_tour() {
 		}
 	}
 
-	return wp_kses_post( apply_filters( 'rentfetch_filter_floorplan_tour', $embedlink ) );
+	return apply_filters( 'rentfetch_filter_floorplan_tour', $embedlink );
 }
 
 // * Buttons
@@ -293,7 +293,7 @@ function rentfetch_get_floorplan_links() {
 		echo '</div>';
 	}
 
-	return wp_kses_post( ob_get_clean() );
+	return ob_get_clean();
 }
 
 /**
@@ -313,7 +313,7 @@ function rentfetch_floorplan_links() {
 function rentfetch_get_floorplan_buttons() {
 	ob_start();
 	do_action( 'rentfetch_do_floorplan_buttons' );
-	return wp_kses_post( ob_get_clean() );
+	return ob_get_clean();
 }
 
 /**
@@ -361,7 +361,7 @@ function rentfetch_floorplan_default_availability_button_markup() {
 		return false;
 	}
 
-	return wp_kses_post( sprintf( '<a href="%s" target="_blank" class="rentfetch-button">%s</a>', $link, $button_label ) );
+	return sprintf( '<a href="%s" target="_blank" class="rentfetch-button">%s</a>', $link, $button_label );
 }
 add_filter( 'rentfetch_floorplan_default_availability_button_markup', 'rentfetch_floorplan_default_availability_button_markup' );
 
@@ -400,7 +400,7 @@ function rentfetch_floorplan_default_contact_button_markup() {
 		$target = 'target="_self"';
 	}
 
-	return wp_kses_post( sprintf( '<a href="%s" %s class="rentfetch-button">%s</a>', $link, $target, $button_label ) );
+	return sprintf( '<a href="%s" %s class="rentfetch-button">%s</a>', $link, $target, $button_label );
 }
 add_filter( 'rentfetch_filter_floorplan_default_contact_button_markup', 'rentfetch_floorplan_default_contact_button_markup' );
 
