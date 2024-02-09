@@ -26,7 +26,7 @@ function rentfetch_single_properties_parts_amenities() {
 
 			echo '<h2>Amenities</h2>';
 
-			$terms = get_the_terms( get_the_ID(), 'amenities' );
+			$terms        = get_the_terms( get_the_ID(), 'amenities' );
 			$count        = count( $terms );
 			$even         = ( 0 === $count % 2 ) ? true : false;
 			$number_class = ( $even ) ? 'even' : 'odd';
