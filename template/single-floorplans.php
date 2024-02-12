@@ -62,17 +62,24 @@ if ( have_posts() ) {
 
 						echo '</div>';
 
-						if ( $units_count > 0 ) {
-							// printf( '<p class="availability">%s</p>', $available_units );
-
-							// typically there will be two things hooked to this, a desktop <table> and a mobile <details>.
-							do_action( 'rentfetch_floorplan_do_unit_table' );
-						}
-
 					echo '</div>'; // .content-column
 				echo '</div>'; // .current-floorplan-info
 			echo '</div>'; // .container-inner
 		echo '</div>'; // .container-outer
+
+		// if there are available units, show them.
+		if ( $units_count > 0 ) {
+			echo '<div class="single-floorplans-container-outer">';
+				echo '<div class="single-floorplans-container-inner">';
+					echo '<h2>Units</h2>';
+
+						// typically there will be two things hooked to this, a desktop <table> and a mobile <details>.
+						do_action( 'rentfetch_floorplan_do_unit_table' );
+									
+				echo '</div>'; // .container-inner.
+			echo '</div>'; // .container-outer.
+		}
+
 		// echo '<div class="single-floorplans-container-outer">';
 		// echo '<div class="single-floorplans-container-inner">';
 		// echo '<h2>Take a look around</h2>';
