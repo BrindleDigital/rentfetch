@@ -56,15 +56,31 @@ function rentfetch_floorplan_image_slider() {
 	wp_enqueue_script( 'rentfetch-floorplan-images-slider-init' );
 	wp_enqueue_style( 'blaze-style' );
 
+	wp_enqueue_style( 'rentfetch-glightbox-style' );
+	wp_enqueue_script( 'rentfetch-glightbox-script' );
+	wp_enqueue_script( 'rentfetch-glightbox-init' );
+	
+	// random number.
+	$rand = rand( 10, 10000 );
+	
 	echo '<div class="floorplan-images-slider blaze-slider">';
 		echo '<div class="blaze-container">';
 			echo '<div class="blaze-track-container">';
 				echo '<div class="blaze-track">';
 
 					foreach ( $images as $image ) {
-						echo '<div class="floorplan-image-slide">';
-							printf( '<img class="floorplan-image" src="%s" loading="lazy">', esc_url( $image['url'] ) );
-						echo '</div>';
+
+						// check if the image url includes "fallback".
+						if ( strpos( $image['url'], 'fallback' ) !== false ) {
+							echo '<div class="floorplan-image-slide">';
+								printf( '<img class="floorplan-image" src="%s" loading="lazy">', esc_url( $image['url'] ) );
+							echo '</div>';
+						} else {
+							echo '<div class="floorplan-image-slide">';
+								printf( '<img class="floorplan-image floorplan-image-gallery" data-dallery="gallery-%s" src="%s" loading="lazy">', (int) $rand, esc_url( $image['url'] ) );
+							echo '</div>';
+						}
+
 					}
 
 				echo '</div>'; // .blaze-track.

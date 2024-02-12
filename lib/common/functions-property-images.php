@@ -159,9 +159,10 @@ function rentfetch_property_images_grid( $args = null ) {
 	if ( ! $images ) {
 		return;
 	}
-
-	wp_enqueue_style( 'rentfetch-fancybox-style' );
-	wp_enqueue_script( 'rentfetch-fancybox-script' );
+	
+	wp_enqueue_style( 'rentfetch-glightbox-style' );
+	wp_enqueue_script( 'rentfetch-glightbox-script' );
+	wp_enqueue_script( 'rentfetch-glightbox-init' );
 
 	$number_of_images = count( $images );
 
@@ -180,11 +181,11 @@ function rentfetch_property_images_grid( $args = null ) {
 	printf( '<div class="property-images-grid %s">', esc_attr( $count_class ) );
 
 	foreach ( $images as $image ) {
-		printf( '<div class="image-item"><a data-fancybox="property-images-grid" href="%s"><img src="%s" alt="%s" title="%s" /></a></div>', esc_url( $image['url'] ), esc_url( $image['url'] ), esc_html( $image['alt'] ), esc_html( $image['title'] ) );
+		printf( '<div class="image-item"><a class="property-image-grid-link" data-gallery="property-images-grid" href="%s"><img src="%s" alt="%s" title="%s" /></a></div>', esc_url( $image['url'] ), esc_url( $image['url'] ), esc_html( $image['alt'] ), esc_html( $image['title'] ) );
 	}
 
 	if ( $number_of_images > 1 ) {
-		printf( '<a href="#" data-fancybox-trigger="property-images-grid" class="view-all-images">View %s images</a>', (int) $number_of_images );
+		printf( '<a href="#" class="view-all-images">View %s images</a>', (int) $number_of_images );
 	}
 
 	echo '</div>';

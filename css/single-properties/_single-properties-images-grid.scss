@@ -1,76 +1,77 @@
 .property-images-grid {
-    height: 60vh;
-    position: relative;
+	height: 60vh;
+	position: relative;
 
-    @include mobile {
-        height: 250px;
-    }
+	@include mobile {
+		height: 250px;
+	}
 
-    .image-item {
-        position: relative;
+	.image-item {
+		position: relative;
 
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            inset: 0;
-        }
-    }
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			position: absolute;
+			inset: 0;
+		}
+	}
 
-    .view-all-images {
-        position: absolute;
-        bottom: 25px;
-        left: 25px;
-        background-color: var(--rentfetch-white);
-        color: var(--rentfetch-black);
-        padding: 15px 25px;
-        text-decoration: none;
-        line-height: 1;
-        font-size: var(--rentfetch-font-size-medium);
-    }
+	.view-all-images {
+		position: absolute;
+		bottom: 25px;
+		left: 25px;
+		background-color: var(--rentfetch-white);
+		color: var(--rentfetch-black);
+		padding: 15px 25px;
+		text-decoration: none;
+		line-height: 1;
+		font-size: var(--rentfetch-font-size-medium);
+		pointer-events: none;
+	}
 
-    &.single-image {
-        display: grid;
-        grid-template-columns: 1fr;
+	&.single-image {
+		display: grid;
+		grid-template-columns: 1fr;
 
-        .image-item {
-            display: none;
+		.image-item {
+			display: none;
 
-            &:nth-child(1) {
-                display: block;
-            }
-        }
-    }
+			&:nth-child(1) {
+				display: block;
+			}
+		}
+	}
 
-    &.multiple-images {
-        display: grid;
-        gap: 15px;
-        grid-template-columns: repeat(4, 1fr);
+	&.multiple-images {
+		display: grid;
+		gap: 15px;
+		grid-template-columns: repeat(4, 1fr);
 
-        @include mobile {
-            grid-template-columns: 1fr;
-        }
+		@include mobile {
+			grid-template-columns: 1fr;
+		}
 
-        .image-item {
-            display: none;
-            grid-area: auto / auto;
-        }
+		.image-item {
+			display: none;
+			grid-area: auto / auto;
+		}
 
-        .image-item:nth-child(2),
-        .image-item:nth-child(3),
-        .image-item:nth-child(4),
-        .image-item:nth-child(5) {
-            display: block;
+		.image-item:nth-child(2),
+		.image-item:nth-child(3),
+		.image-item:nth-child(4),
+		.image-item:nth-child(5) {
+			display: block;
 
-            @include mobile {
-                display: none;
-            }
-        }
+			@include mobile {
+				display: none;
+			}
+		}
 
-        .image-item:nth-child(1) {
-            display: block;
-            grid-area: span 2 / span 2;
-        }
-    }
+		.image-item:nth-child(1) {
+			display: block;
+			grid-area: span 2 / span 2;
+		}
+	}
 }
