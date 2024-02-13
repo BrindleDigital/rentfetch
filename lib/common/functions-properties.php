@@ -487,6 +487,8 @@ function rentfetch_default_property_available_units_label( $availability ) {
 	} elseif ( 1 <= $availability ) {
 		return $availability . ' units available';
 	}
+	
+	return null;
 }
 add_filter( 'rentfetch_filter_property_availabile_units', 'rentfetch_default_property_available_units_label', 10, 1 );
 

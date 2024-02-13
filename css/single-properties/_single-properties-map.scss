@@ -1,18 +1,22 @@
 #single-property-map {
-    height: 60vh;
-    width: 100%;
+	height: 60vh;
+	width: 100%;
 
-    .gm-ui-hover-effect {
-        display: none !important;
-    }
+	.gm-ui-hover-effect {
+		display: none !important;
+	}
 
-    p.title {
-        font-weight: bold;
-        margin-bottom: 0;
-        font-size: var(--rentfetch-font-size-large);
-    }
+	p.title {
+		font-weight: bold;
+		margin-bottom: 0;
+		font-size: var(--rentfetch-font-size-large);
+	}
 
-    p.location {
-        font-size: var(--rentfetch-font-size-small);
-    }
+	p.location {
+		font-size: var(--rentfetch-font-size-small);
+	}
+
+	.map-marker {
+		padding: 12px 12px 0;
+	}
 }

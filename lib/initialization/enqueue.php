@@ -32,11 +32,6 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_script( 'rentfetch-glightbox-script', RENTFETCH_PATH . 'vendor/glightbox/dist/js/glightbox.min.js', '', RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-glightbox-init', RENTFETCH_PATH . 'js/rentfetch-glightbox-init.js', array( 'rentfetch-glightbox-script', 'jquery' ), RENTFETCH_VERSION, true );
 
-	// Flatpickr (MIT license): https://flatpickr.js.org/.
-	wp_register_style( 'rentfetch-flatpickr-style', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css', array(), RENTFETCH_VERSION, 'screen' );
-	wp_register_script( 'rentfetch-flatpickr-script', 'https://cdn.jsdelivr.net/npm/flatpickr', array( 'jquery' ), RENTFETCH_VERSION, true );
-	wp_register_script( 'rentfetch-flatpickr-script-init', RENTFETCH_PATH . 'js/rentfetch-search-map-flatpickr-init.js', array( 'rentfetch-flatpickr-script' ), RENTFETCH_VERSION, true );
-
 	// Properties search.
 	wp_register_script( 'rentfetch-search-properties-ajax', RENTFETCH_PATH . 'js/rentfetch-search-properties-ajax.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-property-search-featured-filters-toggle', RENTFETCH_PATH . 'js/rentfetch-property-search-featured-filters-toggle.js', array( 'jquery' ), RENTFETCH_VERSION, true );
@@ -53,7 +48,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 
 	// Properties map (the map itself).
 	wp_register_script( 'rentfetch-property-map', RENTFETCH_PATH . 'js/rentfetch-property-map.js', array( 'jquery', 'rentfetch-google-maps' ), RENTFETCH_VERSION, true );
-
+	
 	// Localize the google maps script, then enqueue that.
 	$maps_options = array(
 		'json_style'                    => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
