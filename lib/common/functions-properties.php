@@ -484,7 +484,7 @@ function rentfetch_default_property_available_units_label( $availability ) {
 
 	if ( 1 === $availability ) {
 		return $availability . ' unit available';
-	} elseif ( 1 >= $availability ) {
+	} elseif ( 1 <= $availability ) {
 		return $availability . ' units available';
 	}
 }
