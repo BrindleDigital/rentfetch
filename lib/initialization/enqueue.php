@@ -28,8 +28,8 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_script( 'rentfetch-nouislider-init-script', RENTFETCH_PATH . 'js/rentfetch-search-map-nouislider-init.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	// glightbox (MIT license): https://biati-digital.github.io/glightbox/.
-	wp_register_style( 'rentfetch-glightbox-style', 'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css', array(), RENTFETCH_VERSION, 'screen' );
-	wp_register_script( 'rentfetch-glightbox-script', 'https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js', '', RENTFETCH_VERSION, true );
+	wp_register_style( 'rentfetch-glightbox-style', RENTFETCH_PATH . 'vendor/glightbox/dist/css/glightbox.min.css', array(), RENTFETCH_VERSION, 'screen' );
+	wp_register_script( 'rentfetch-glightbox-script', RENTFETCH_PATH . 'vendor/glightbox/dist/js/glightbox.min.js', '', RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-glightbox-init', RENTFETCH_PATH . 'js/rentfetch-glightbox-init.js', array( 'rentfetch-glightbox-script', 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Flatpickr (MIT license): https://flatpickr.js.org/.

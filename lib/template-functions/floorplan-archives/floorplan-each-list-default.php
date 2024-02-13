@@ -68,7 +68,7 @@ function rentfetch_floorplans_each_list_default() {
 		echo '</div>'; // .floorplan-attributes.
 
 		if ( $units_count > 0 ) {
-			printf( '<p class="availability">%s</p>', (int) $available_units );
+			printf( '<p class="availability">%s</p>', wp_kses_post( $available_units ) );
 
 			echo '<details>';
 				echo '<summary class="rentfetch-button">View Availability <span class="dropdown"></span></summary>';
