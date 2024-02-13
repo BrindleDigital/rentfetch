@@ -1,13 +1,13 @@
 .floorplangrid-wrap {
-    display: grid;
-    grid-gap: 30px;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    padding: 0;
+	display: grid;
+	grid-gap: 30px;
+	grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+	padding: 0;
 
-    .entry {
-        padding: 0;
-        background-color: $light;
-        margin: 0;
-        box-shadow: 0 5px 10px 0 rgba($dark, 0.12);
-    }
+	.entry {
+		padding: 0;
+		background-color: $light;
+		margin: 0;
+		box-shadow: 0 5px 10px 0 rgba($dark, 0.12);
+	}
 }

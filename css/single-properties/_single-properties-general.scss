@@ -1,44 +1,44 @@
 body.properties-template-default {
-    .site-content {
-        display: block;
-    }
+	.site-content {
+		display: block;
+	}
 
-    .single-properties-wrap {
-        position: relative;
-    }
+	.single-properties-wrap {
+		position: relative;
+	}
 
-    .single-properties-section {
-        padding: 60px 25px;
-        margin: 0 calc(50% - 50vw);
-        max-width: 100vw;
-        width: 100vw;
-        background-color: var(--rentfetch-light);
+	.single-properties-section {
+		padding: 60px 25px;
+		margin: 0 calc(50% - 50vw);
+		max-width: 100vw;
+		width: 100vw;
+		background-color: var(--rentfetch-light);
 
-        @include mobile {
-            padding: 25px;
-        }
+		@include mobile {
+			padding: 25px;
+		}
 
-        &:nth-of-type(odd) {
-            background-color: var(--rentfetch-base);
-        }
+		&:nth-of-type(odd) {
+			background-color: var(--rentfetch-base);
+		}
 
-        > .wrap {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+		> .wrap {
+			width: 100%;
+			max-width: 1200px;
+			margin: 0 auto;
 
-            :last-child {
-                margin-bottom: 0;
-            }
-        }
-    }
+			:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
 
-    .no-padding {
-        padding: 0;
-    }
+	.no-padding {
+		padding: 0;
+	}
 
-    .full-width .wrap {
-        max-width: 100%;
-        width: 100%;
-    }
+	.full-width .wrap {
+		max-width: 100%;
+		width: 100%;
+	}
 }

@@ -1,72 +1,72 @@
 #subnav {
-    // position: sticky;
-    top: 0;
-    background-color: white;
+	// position: sticky;
+	top: 0;
+	background-color: white;
 
-    ul.subnav {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        text-align: center;
-        font-size: var(--rentfetch-font-size-medium);
+	ul.subnav {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		text-align: center;
+		font-size: var(--rentfetch-font-size-medium);
 
-        @include mobile {
-            display: none;
-        }
+		@include mobile {
+			display: none;
+		}
 
-        li {
-            margin: 0;
-            padding: 0;
-            display: inline-block;
+		li {
+			margin: 0;
+			padding: 0;
+			display: inline-block;
 
-            @include mobile {
-                display: block;
-            }
+			@include mobile {
+				display: block;
+			}
 
-            a {
-                display: block;
-                position: static;
-                padding: 12px 24px;
-                text-decoration: none;
-                color: var(--rentfetch-dark);
-            }
-        }
+			a {
+				display: block;
+				position: static;
+				padding: 12px 24px;
+				text-decoration: none;
+				color: var(--rentfetch-dark);
+			}
+		}
 
-        &.active {
-            display: block;
-        }
-    }
+		&.active {
+			display: block;
+		}
+	}
 
-    .toggle-subnav {
-        display: none;
-        background-color: white;
-        text-align: center;
-        padding: 12px 24px;
-        position: static;
-        line-height: 1;
-        color: var(--rentfetch-dark);
-        font-size: var(--rentfetch-font-size-medium);
-        text-decoration: none;
-        margin: 0;
-        position: relative;
+	.toggle-subnav {
+		display: none;
+		background-color: white;
+		text-align: center;
+		padding: 12px 24px;
+		position: static;
+		line-height: 1;
+		color: var(--rentfetch-dark);
+		font-size: var(--rentfetch-font-size-medium);
+		text-decoration: none;
+		margin: 0;
+		position: relative;
 
-        .dashicons {
-            font-size: var(--rentfetch-font-size-medium);
-            position: absolute;
-            transition: 0.3s all ease;
-            margin-left: 5px;
-        }
+		.dashicons {
+			font-size: var(--rentfetch-font-size-medium);
+			position: absolute;
+			transition: 0.3s all ease;
+			margin-left: 5px;
+		}
 
-        &.open {
-            background-color: var(--rentfetch-base);
+		&.open {
+			background-color: var(--rentfetch-base);
 
-            .dashicons {
-                transform: rotate(180deg);
-            }
-        }
+			.dashicons {
+				transform: rotate(180deg);
+			}
+		}
 
-        @include mobile {
-            display: block;
-        }
-    }
+		@include mobile {
+			display: block;
+		}
+	}
 }

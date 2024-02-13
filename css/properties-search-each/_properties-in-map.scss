@@ -1,57 +1,57 @@
 .map-property-popup {
-    min-width: 200px;
-    max-width: 400px;
+	min-width: 200px;
+	max-width: 400px;
 
-    h3 {
-        font-size: var(--rentfetch-font-size-large);
-        margin: 0 0 15px;
-        color: var(--rentfetch-dark);
-    }
+	h3 {
+		font-size: var(--rentfetch-font-size-large);
+		margin: 0 0 15px;
+		color: var(--rentfetch-dark);
+	}
 
-    p.city-state {
-        font-size: var(--rentfetch-font-size-small);
-        text-transform: uppercase;
-        margin: 0 0 5px;
-        color: var(--rentfetch-dark);
-        letter-spacing: 0.05em;
-        line-height: 1;
-    }
+	p.city-state {
+		font-size: var(--rentfetch-font-size-small);
+		text-transform: uppercase;
+		margin: 0 0 5px;
+		color: var(--rentfetch-dark);
+		letter-spacing: 0.05em;
+		line-height: 1;
+	}
 
-    a.permalink {
-        text-decoration: none;
-        font-size: var(--rentfetch-font-size-small);
-        color: var(--rentfetch-orange);
-        font-weight: bold;
-        display: block;
-        position: relative;
-        outline: none;
+	a.permalink {
+		text-decoration: none;
+		font-size: var(--rentfetch-font-size-small);
+		color: var(--rentfetch-orange);
+		font-weight: bold;
+		display: block;
+		position: relative;
+		outline: none;
 
-        &:after {
-            content: '\f344';
-            font-family: 'dashicons';
-            margin-left: 5px;
-            font-size: var(--rentfetch-font-size-small);
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            transition: 0.3s all ease;
-        }
+		&:after {
+			content: '\f344';
+			font-family: 'dashicons';
+			margin-left: 5px;
+			font-size: var(--rentfetch-font-size-small);
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			transition: 0.3s all ease;
+		}
 
-        &:hover {
-            &:after {
-                // transform: translateY(-50%) translateX(50%);
-            }
-        }
-    }
+		&:hover {
+			&:after {
+				// transform: translateY(-50%) translateX(50%);
+			}
+		}
+	}
 }
 
 .gm-style-iw.gm-style-iw-c {
-    border-radius: 3px;
+	border-radius: 3px;
 
-    button.gm-ui-hover-effect {
-        top: 0 !important;
-        right: 0 !important;
-        color: var(--rentfetch-dark) !important;
-        opacity: 1 !important;
-    }
+	button.gm-ui-hover-effect {
+		top: 0 !important;
+		right: 0 !important;
+		color: var(--rentfetch-dark) !important;
+		opacity: 1 !important;
+	}
 }
