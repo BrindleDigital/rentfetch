@@ -72,16 +72,9 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	// Single properties.
 	wp_register_script( 'properties-single-collapse-subnav', RENTFETCH_PATH . 'js/rentfetch-property-single-collapse-subnav.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
-	// Fancybox.
-	wp_register_style( 'rentfetch-fancybox-style', RENTFETCH_PATH . 'vendor/fancybox/jquery.fancybox.min.css', array(), RENTFETCH_VERSION, 'screen' );
-	wp_register_script( 'rentfetch-fancybox-script', RENTFETCH_PATH . 'vendor/fancybox/jquery.fancybox.min.js', array( 'jquery' ), RENTFETCH_VERSION, true );
-
-	// Google reCAPTCHA.
-	wp_register_script( 'rentfetch-google-recaptcha', 'https://www.google.com/recaptcha/api.js', array( 'jquery' ), RENTFETCH_VERSION, true );
-
 	// Blaze slider (MIT license).
-	wp_register_style( 'blaze-style', 'https://unpkg.com/blaze-slider@1.9.3/dist/blaze.css', array(), RENTFETCH_VERSION );
-	wp_register_script( 'blaze-script', 'https://unpkg.com/blaze-slider@1.9.3/dist/blaze-slider.min.js', array(), RENTFETCH_VERSION, true );
+	wp_register_style( 'blaze-style', RENTFETCH_PATH . 'vendor/blaze-slider/blaze.css', array(), RENTFETCH_VERSION );
+	wp_register_script( 'blaze-script', RENTFETCH_PATH . 'vendor/blaze-slider/blaze-slider.min.js', array(), RENTFETCH_VERSION, true );
 	wp_register_script( 'blaze-more-properties-init', RENTFETCH_PATH . 'js/rentfetch-blaze-more-properties-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-floorplan-images-slider-init', RENTFETCH_PATH . 'js/rentfetch-blaze-floorplan-images-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
 }
@@ -91,51 +84,18 @@ add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
  * Admin enqueues
  */
 function rentfetch_enqueue_in_admin_metabox_properties() {
+	
+	// The main admin stylesheet.
+	wp_enqueue_style( 'rentfetch-admin', RENTFETCH_PATH . 'css/admin.css', array(), RENTFETCH_VERSION );
 
-	wp_register_script(
-		'rentfetch-metabox-properties-images',
-		RENTFETCH_PATH . 'js/metabox-properties-images.js',
-		array( 'jquery' ),
-		RENTFETCH_VERSION,
-		true
-	);
+	// Metabox scripts.
+	wp_register_script( 'rentfetch-metabox-properties-images', RENTFETCH_PATH . 'js/metabox-properties-images.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-metabox-properties-tour', RENTFETCH_PATH . 'js/metabox-properties-tour.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-metabox-properties-video', RENTFETCH_PATH . 'js/metabox-properties-video.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-metabox-floorplans-images', RENTFETCH_PATH . 'js/metabox-floorplans-images.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	
+	// WordPress doesn't include any jQuery UI styles by default, so we need to include them.
+	wp_register_style( 'rentfetch-jquery-style', RENTFETCH_PATH . 'vendor/jquery-theme-smoothness/jquery-ui.css', array(), RENTFETCH_VERSION );
 
-	wp_register_script(
-		'rentfetch-metabox-properties-tour',
-		RENTFETCH_PATH . 'js/metabox-properties-tour.js',
-		array( 'jquery' ),
-		RENTFETCH_VERSION,
-		true
-	);
-
-	wp_register_script(
-		'rentfetch-metabox-properties-video',
-		RENTFETCH_PATH . 'js/metabox-properties-video.js',
-		array( 'jquery' ),
-		RENTFETCH_VERSION,
-		true
-	);
-
-	wp_register_script(
-		'rentfetch-metabox-floorplans-images',
-		RENTFETCH_PATH . 'js/metabox-floorplans-images.js',
-		array( 'jquery' ),
-		RENTFETCH_VERSION,
-		true
-	);
-
-	wp_enqueue_style(
-		'rentfetch-admin',
-		RENTFETCH_PATH . 'css/admin.css',
-		array(),
-		RENTFETCH_VERSION
-	);
-
-	wp_register_style(
-		'jquery-style',
-		'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css',
-		array(),
-		RENTFETCH_VERSION
-	);
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_in_admin_metabox_properties' );
