@@ -52,10 +52,12 @@ body.floorplans-template-default {
 
 	.floorplan-images-slider {
 		.blaze-buttons {
-			position: absolute;
-			left: 50%;
-			transform: translateX(-50%);
-			margin-top: 0;
+			@include desktop {
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+				margin-top: 0;
+			}
 		}
 	}
 
