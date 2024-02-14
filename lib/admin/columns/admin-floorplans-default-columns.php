@@ -17,9 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_enqueue_floorplans_admin_style() {
 
 	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
-	if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
-		return;
-	}
+	// if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
+	// 	return;
+	// }
 
 	$current_screen = get_current_screen();
 
