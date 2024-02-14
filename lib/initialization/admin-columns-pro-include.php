@@ -29,7 +29,7 @@ add_filter(
 		$rules->add_rule( new Rule\EqualType( 'neighborhoods' ) );
 
 		// Register your repository to the stack.
-		$repositories['rent-fetch'] = $factory->create(
+		$repositories['rentfetch'] = $factory->create(
 			RENTFETCH_DIR . '/acp-settings',
 			$writable,
 			$rules

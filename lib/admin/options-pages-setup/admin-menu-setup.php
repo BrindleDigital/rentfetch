@@ -43,7 +43,7 @@ function rentfetch_options_page() {
 		'Shortcodes', // Page title.
 		'Shortcodes', // Menu title.
 		'manage_options', // Capability required to access the menu.
-		'rent-fetch-shortcodes', // Menu slug.
+		'rentfetch-shortcodes', // Menu slug.
 		'rentfetch_shortcodes_page_html' // Callback function to render the page.
 	);
 

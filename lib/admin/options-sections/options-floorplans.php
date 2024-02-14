@@ -37,7 +37,7 @@ function rentfetch_settings_floorplans_floorplan_search() {
 			<label for="rentfetch_options_floorplan_default_order">Floorplan default order</label>
 		</div>
 		<div class="column">
-			<p class="description">The default order in which the floorplans search should display. (NOTE: the floorplans grid order can be set <a target="_blank" href="/wp-admin/admin.php?page=rent-fetch-shortcodes">through shortcode parameters)</a>.</p>
+			<p class="description">The default order in which the floorplans search should display. (NOTE: the floorplans grid order can be set <a target="_blank" href="/wp-admin/admin.php?page=rentfetch-shortcodes">through shortcode parameters)</a>.</p>
 			<select name="rentfetch_options_floorplan_default_order" id="rentfetch_options_floorplan_default_order" value="<?php echo esc_attr( get_option( 'rentfetch_options_floorplan_default_order' ) ); ?>">
 				<option value="beds" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'beds' ); ?>>Beds</option>
 				<option value="baths" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'baths' ); ?>>Baths</option>
