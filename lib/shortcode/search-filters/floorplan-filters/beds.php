@@ -21,6 +21,8 @@ function rentfetch_search_filters_beds() {
 	$beds = array_unique( $beds );
 	asort( $beds );
 
+	$beds = apply_filters( 'rentfetch_filter_beds_in_dropdown', $beds );
+
 	// build the beds search.
 	echo '<fieldset class="beds">';
 		echo '<legend>Bedrooms</legend>';
@@ -89,3 +91,32 @@ function rentfetch_search_floorplans_args_beds( $floorplans_args ) {
 	return $floorplans_args;
 }
 add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_beds', 10, 1 );
+
+/**
+ * Filter the number of beds in the dropdown
+ * Allows for customizing which bedroom numbers are shown in the dropdown
+ *
+ * @param   array $beds  a unique array of the numbers of beds that are floorplan meta from the database.
+ *
+ * @return  array  $beds  a unique array of the numbers of beds that are floorplan meta from the database.
+ */
+function rentfetch_beds_in_dropdown( $beds ) {
+
+	// get the setting for the max number of beds to show in the dropdown.
+	$max_beds = get_option( 'rentfetch_options_maximum_bedrooms_to_search' );
+
+	// if the setting is not set, or is not a number, return the original array.
+	if ( ! is_numeric( $max_beds ) ) {
+		return $beds;
+	}
+
+	// drop anything from the array that's above $max_beds.
+	foreach ( $beds as $bed ) {
+		if ( $bed <= $max_beds ) {
+			$filtered_beds[] = $bed;
+		}
+	}
+
+	return $filtered_beds;
+}
+add_filter( 'rentfetch_filter_beds_in_dropdown', 'rentfetch_beds_in_dropdown' );
