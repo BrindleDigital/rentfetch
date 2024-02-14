@@ -40,7 +40,7 @@ add_filter( 'rentfetch_get_bedroom_number_label', 'rentfetch_bedroom_number_labe
  * @return  string The label for the number of bathrooms.
  */
 function rentfetch_bathroom_number_label( $baths ) {
-	
+
 	if ( 0 === $baths ) {
 		$label = null;
 	} elseif ( 1 === $baths || 1.0 === $baths ) {
@@ -61,7 +61,7 @@ add_filter( 'rentfetch_get_bathroom_number_label', 'rentfetch_bathroom_number_la
  * @return string The label for the number of square feet.
  */
 function rentfetch_square_feet_number_label( $number ) {
-		
+
 	if ( ! $number || null === $number || 0 === $number ) {
 		return null;
 	}

@@ -19,6 +19,10 @@ function rentfetch_search_filters_beds() {
 	// get info about beds from the database.
 	$beds = rentfetch_get_meta_values( 'beds', 'floorplans' );
 	$beds = array_unique( $beds );
+
+	// force the array to be numeric.
+	$beds = array_map( 'intval', $beds );
+
 	asort( $beds );
 
 	$beds = apply_filters( 'rentfetch_filter_beds_in_dropdown', $beds );
