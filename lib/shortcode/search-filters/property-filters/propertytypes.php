@@ -38,6 +38,11 @@ function rentfetch_search_filters_property_types() {
 			'hide_empty' => true,
 		),
 	);
+	
+	// bail if there aren't any terms.
+	if ( empty( $terms ) ) {
+		return;
+	}
 
 	// build the search.
 	if ( ! empty( $terms && taxonomy_exists( $taxonomy_slug ) ) ) {
