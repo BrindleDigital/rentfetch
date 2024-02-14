@@ -26,7 +26,8 @@ function rentfetch_enqueue_properties_admin_style() {
 	// Check if the current screen is the admin archive page of the properties content type.
 	if ( 'edit' === $current_screen->base && 'properties' === $current_screen->post_type ) {
 
-		// if there's property-specific javascript, it would go here.
+		// Enqueue your custom admin style.
+		wp_enqueue_style( 'properties-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-properties.css', array(), RENTFETCH_VERSION, 'screen' );
 
 	}
 }

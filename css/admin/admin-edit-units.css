@@ -1,0 +1,68 @@
+.row-actions {
+	opacity: 1;
+	/* left: auto; */
+}
+
+.wp-list-table {
+	display: inline-block;
+	width: auto;
+	margin-bottom: -4px !important;
+	max-width: 100%;
+	overflow: -moz-scrollbars-none;
+	-ms-overflow-style: none;
+	overflow-x: auto;
+	position: relative;
+	box-sizing: border-box;
+}
+
+td {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+th {
+	width: 100px;
+	min-width: 100px !important;
+}
+
+td#cb,
+th.check-column {
+	width: 30px !important;
+	min-width: 30px !important;
+}
+
+th#title {
+	min-width: 300px !important;
+}
+
+th#floorplan_name {
+	min-width: 175px !important;
+}
+
+th#apply_online_url,
+td.apply_online_url {
+	max-width: 150px !important;
+}
+
+th#availability_date,
+td.availability_date {
+	max-width: 120px !important;
+	min-width: 120px !important;
+}
+
+th#specials,
+td.specials {
+	max-width: 120px !important;
+	min-width: 120px !important;
+}
+
+th#yardi_unit_image_urls,
+td.yardi_unit_image_urls {
+	max-width: 200px !important;
+	min-width: 200px !important;
+}
+
+td.api_error {
+	max-width: 150px !important;
+}
