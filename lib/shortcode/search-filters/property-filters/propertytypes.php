@@ -1,6 +1,6 @@
 <?php
 /**
- * Property types filter
+ * A taxonomy filter
  *
  * @package rentfetch
  */
@@ -10,52 +10,60 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Output the property types filter
+ * Output the taxonomy filter
  *
  * @return void
  */
 function rentfetch_search_filters_property_types() {
 
-	// bail if propertytypes taxonomy does not exist.
-	if ( ! taxonomy_exists( 'propertytypes' ) ) {
+	// the slug for the taxonomy. If you're adding a new taxonomy,
+	// you'll need to change this to the slug of the new taxonomy.
+	$taxonomy_slug = 'propertytypes';
+
+	// the name of the search parameter.
+	$search_parameter = 'search-' . $taxonomy_slug;
+
+	// get the label for the taxonomy.
+	$taxonomy_label = get_taxonomy( $taxonomy_slug )->labels->name;
+
+	// bail if taxonomy does not exist.
+	if ( ! taxonomy_exists( $taxonomy_slug ) ) {
 		return;
 	}
 
 	// get information about types from the database.
-	$propertytypes = get_terms(
+	$terms = get_terms(
 		array(
-			'taxonomy'   => 'propertytypes',
+			'taxonomy'   => $taxonomy_slug,
 			'hide_empty' => true,
 		),
 	);
 
 	// build the search.
-	if ( ! empty( $propertytypes && taxonomy_exists( 'propertytypes' ) ) ) {
-		echo '<fieldset class="property-type">';
-			echo '<legend>Property type</legend>';
-			echo '<button class="toggle">Property type</button>';
+	if ( ! empty( $terms && taxonomy_exists( $taxonomy_slug ) ) ) {
+		echo '<fieldset class="taxonomy">';
+			printf( '<legend>%s</legend>', esc_attr( $taxonomy_label ) );
+			printf( '<button class="toggle">%s</button>', esc_attr( $taxonomy_label ) );
 			echo '<div class="input-wrap checkboxes">';
 
-		foreach ( $propertytypes as $propertytype ) {
-			$name                 = $propertytype->name;
-			$propertytype_term_id = $propertytype->term_id;
+		foreach ( $terms as $term ) {
+			$name   = $term->name;
+			$tax_id = $term->term_id;
 
 			// Check if the term ID is in the GET parameter array.
-			$checked = in_array( $propertytype_term_id, $_GET['search-property-types'] ?? array(), true );
+			$checked = in_array( $tax_id, $_GET[ $search_parameter ] ?? array(), true );
 
 			printf(
 				'<label>
 					<input type="checkbox" 
-						name="search-property-types[]" 
+						name="search-%s[]" 
 						value="%s" 
-						data-propertytypes="%s" 
-						data-propertytypesname="%s" 
+						data-type="taxonomy"
 						%s /> <!-- Add checked attribute if necessary -->
 					<span>%s</span>
 				</label>',
-				(int) $propertytype_term_id,
-				(int) $propertytype_term_id,
-				esc_html( $name ),
+				esc_attr( $taxonomy_slug ),
+				(int) $tax_id,
 				$checked ? 'checked' : '', // Apply checked attribute.
 				esc_html( $name )
 			);
@@ -67,7 +75,7 @@ function rentfetch_search_filters_property_types() {
 }
 
 /**
- * Apply the selected property types filter to the search
+ * Apply the selected taxonomy filter to the search
  *
  * @param array $property_args The property arguments.
  *
@@ -75,25 +83,32 @@ function rentfetch_search_filters_property_types() {
  */
 function rentfetch_search_properties_args_types( $property_args ) {
 
-	if ( isset( $_POST['search-property-types'] ) && is_array( $_POST['search-property-types'] ) ) {
+	// the slug for the taxonomy. If you're adding a new taxonomy,
+	// you'll need to change this to the slug of the new taxonomy.
+	$taxonomy_slug = 'propertytypes';
+
+	// the name of the search parameter.
+	$search_parameter = 'search-' . $taxonomy_slug;
+
+	if ( isset( $_POST[ $search_parameter ] ) && is_array( $_POST[ $search_parameter ] ) ) {
 
 		// Get the values.
-		$property_types = array_map( 'sanitize_text_field', wp_unslash( $_POST['search-property-types'] ) );
+		$terms = array_map( 'sanitize_text_field', wp_unslash( $_POST[ $search_parameter ] ) );
 
-		// This is an "OR" query, where we want posts to match ANY of the specified property types.
-		$property_types_query = array(
+		// This is an "OR" query, where we want posts to match ANY of the specified taxonomy terms.
+		$terms_query = array(
 			'relation' => 'OR',
 		);
 
-		foreach ( $property_types as $property_type ) {
-			$property_types_query[] = array(
-				'taxonomy' => 'propertytypes',
-				'terms'    => $property_type,
+		foreach ( $terms as $term ) {
+			$terms_query[] = array(
+				'taxonomy' => $taxonomy_slug,
+				'terms'    => $term,
 			);
 		}
 
 		// Add the amenities query to the property args tax query.
-		$property_args['tax_query'][] = $property_types_query;
+		$property_args['tax_query'][] = $terms_query;
 	}
 
 	return $property_args;

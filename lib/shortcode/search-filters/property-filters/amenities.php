@@ -52,6 +52,7 @@ function rentfetch_search_filters_amenities() {
 								value="%s" 
 								data-amenities="%s" 
 								data-amenities-name="%s" 
+								data-type="taxonomy" 
 								%s /> <!-- Add checked attribute if necessary -->
 							<span>%s</span>
 						</label>',

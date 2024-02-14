@@ -80,6 +80,7 @@ jQuery(function ($) {
 			// Check if there are any active fields
 			if (activeFields.length > 0) {
 				var dataId = activeFields.first().attr('name');
+				var dataType = activeFields.first().attr('data-type');
 				var dataValues = activeFields
 					.map(function () {
 						return $(this).val();
@@ -99,13 +100,8 @@ jQuery(function ($) {
 							buttonContent += dataValues.replace(/,/g, '-');
 						}
 						break;
-					case dataId === 'search-amenities[]':
-						// if it's the amenities, change the content
-						buttonContent =
-							legend + ' (' + activeFields.length + ' selected)';
-						break;
-					case dataId === 'search-property-types[]':
-						// if it's the property types, change the content
+					case dataType === 'taxonomy':
+						// if it's a taxonomy, change the content
 						buttonContent =
 							legend + ' (' + activeFields.length + ' selected)';
 						break;
