@@ -20,7 +20,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_enqueue_style( 'dashicons' );
 
 	// Plugin styles.
-	wp_enqueue_style( 'rent-fetch-style', RENTFETCH_PATH . 'css/rent-fetch-style.css', array(), RENTFETCH_VERSION, 'screen' );
+	wp_enqueue_style( 'rentfetch-style', RENTFETCH_PATH . 'css/rentfetch-style.css', array(), RENTFETCH_VERSION, 'screen' );
 
 	// NoUISlider (MIT license, for dropdown double range slider).
 	wp_register_style( 'rentfetch-nouislider-style', RENTFETCH_PATH . 'vendor/nouislider/nouislider.min.css', array(), RENTFETCH_VERSION, 'screen' );
