@@ -18,16 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_bedroom_number_label( $beds ) {
 
-	// force the number of beds to be an integer in case it was passed as a string.
-	$beds = intval( $beds );
-
 	// set defaults.
 	if ( 0 === $beds ) {
 		$label = '<span class="label bedroom-label studio-label">Studio</span>';
 	} elseif ( 1 === $beds ) {
-		$label = '1 <span class="label bedroom-label">Bedroom</span>';
+		$label = '1 <span class="label bedroom-label">Bed</span>';
 	} else {
-		$label = $beds . ' <span class="label bedroom-label">Bedrooms</span>';
+		$label = $beds . ' <span class="label bedroom-label">Beds</span>';
 	}
 
 	// return the label.
@@ -43,12 +40,10 @@ add_filter( 'rentfetch_get_bedroom_number_label', 'rentfetch_bedroom_number_labe
  * @return  string The label for the number of bathrooms.
  */
 function rentfetch_bathroom_number_label( $baths ) {
-
-	$baths = floatval( $baths );
-
-	if ( 0 === (float) $baths ) {
+	
+	if ( 0 === $baths ) {
 		$label = null;
-	} elseif ( 1 === (float) $baths || 1.0 === (float) $baths ) {
+	} elseif ( 1 === $baths || 1.0 === $baths ) {
 		$label = '1 <span class="label bathroom-label">Bath</span>';
 	} else {
 		$label = $baths . ' <span class="label bathroom-label">Baths</span>';
@@ -66,9 +61,7 @@ add_filter( 'rentfetch_get_bathroom_number_label', 'rentfetch_bathroom_number_la
  * @return string The label for the number of square feet.
  */
 function rentfetch_square_feet_number_label( $number ) {
-
-	$number = intval( $number );
-
+		
 	if ( ! $number || null === $number || 0 === $number ) {
 		return null;
 	}

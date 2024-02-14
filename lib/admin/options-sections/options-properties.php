@@ -30,6 +30,7 @@ function rentfetch_settings_set_defaults_properties() {
 		'baths_search',
 		'squarefoot_search',
 		'type_search',
+		'category_search',
 		'date_search',
 		'price_search',
 		'squarefoot_search',
@@ -116,7 +117,13 @@ function rentfetch_settings_properties_property_search() {
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_featured_filters, true ) ); ?>>
-						Type search
+						Property type search
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="category_search" <?php checked( in_array( 'category_search', $options_featured_filters, true ) ); ?>>
+						Property category search
 					</label>
 				</li>
 				<li>
@@ -186,7 +193,13 @@ function rentfetch_settings_properties_property_search() {
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_dialog_filters, true ) ); ?>>
-						Type search
+						Property type search
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="category_search" <?php checked( in_array( 'category_search', $options_dialog_filters, true ) ); ?>>
+						Property category search
 					</label>
 				</li>
 				<li>

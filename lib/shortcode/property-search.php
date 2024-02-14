@@ -110,17 +110,6 @@ function rentfetch_propertysearchmap() {
 
 	ob_start();
 
-	// the map itself
-
-	// // Localize the google maps script, then enqueue that
-	// $maps_options = array(
-	// 'json_style' => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
-	// 'marker_url' => get_option( 'rentfetch_options_google_map_marker' ),
-	// 'google_maps_default_latitude' => get_option( 'rentfetch_options_google_maps_default_latitude' ),
-	// 'google_maps_default_longitude' => get_option( 'rentfetch_options_google_maps_default_longitude' ),
-	// );
-
-	// wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
 	wp_enqueue_script( 'rentfetch-property-map' );
 
 	echo '<div id="map"></div>';

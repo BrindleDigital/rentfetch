@@ -68,15 +68,20 @@
 
 	.property-attributes {
 		line-height: 1;
+		margin-bottom: 15px;
 
 		p {
 			display: inline-block;
 			margin-right: 10px;
+			margin-bottom: 10px;
+		}
+
+		p.square-feet {
+			display: block;
 		}
 	}
 
 	.property-availability {
-		margin-top: 5px;
 		padding-top: 15px;
 		border-top: 1px solid rgba(black, 0.07);
 		display: flex;
