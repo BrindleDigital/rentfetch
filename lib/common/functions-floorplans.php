@@ -41,7 +41,7 @@ function rentfetch_floorplan_title() {
  * @return string the label for the number of bedrooms.
  */
 function rentfetch_get_floorplan_bedrooms() {
-	$beds_number = get_post_meta( get_the_ID(), 'beds', true );
+	$beds_number = (int) get_post_meta( get_the_ID(), 'beds', true );
 
 	$beds_number = apply_filters( 'rentfetch_filter_floorplan_bedrooms', $beds_number );
 	return apply_filters( 'rentfetch_get_bedroom_number_label', $beds_number );
@@ -64,7 +64,7 @@ function rentfetch_floorplan_bedrooms() {
  * @return string the label for the number of bathrooms.
  */
 function rentfetch_get_floorplan_bathrooms() {
-	$baths_number = get_post_meta( get_the_ID(), 'baths', true );
+	$baths_number = (float) get_post_meta( get_the_ID(), 'baths', true );
 
 	$baths_number = apply_filters( 'rentfetch_filter_floorplan_bathrooms', $baths_number );
 	return apply_filters( 'rentfetch_get_bathroom_number_label', $baths_number );
