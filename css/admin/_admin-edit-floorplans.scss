@@ -1,0 +1,104 @@
+body.post-type-floorplans {
+	.row-actions {
+		opacity: 1;
+		/* left: auto; */
+	}
+
+	.wp-list-table {
+		display: inline-block;
+		width: auto;
+		margin-bottom: -4px !important;
+		max-width: 100%;
+		overflow: -moz-scrollbars-none;
+		-ms-overflow-style: none;
+		overflow-x: auto;
+		position: relative;
+		box-sizing: border-box;
+	}
+
+	td {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	th {
+		width: 100px;
+		min-width: 100px !important;
+	}
+
+	td#cb,
+	th.check-column {
+		width: 30px !important;
+		min-width: 30px !important;
+	}
+
+	th#title {
+		min-width: 300px !important;
+	}
+
+	th#property_id {
+		min-width: 80px !important;
+	}
+
+	th#floorplan_source {
+		min-width: 120px !important;
+	}
+
+	th#manual_images {
+		min-width: 150px !important;
+	}
+
+	th#floorplan_images {
+		min-width: 150px !important;
+	}
+
+	th#floorplan_description {
+		min-width: 150px !important;
+	}
+
+	th#minimum_deposit {
+		min-width: 150px !important;
+	}
+
+	th#maximum_deposit {
+		min-width: 150px !important;
+	}
+
+	th#availability_date {
+		min-width: 150px !important;
+	}
+
+	th#show_specials {
+		min-width: 150px !important;
+	}
+
+	th#has_specials {
+		min-width: 150px !important;
+	}
+
+	th#floorplan_id {
+		min-width: 100px !important;
+	}
+
+	th#availability_url,
+	td.availability_url {
+		max-width: 150px !important;
+	}
+
+	td.api_response,
+	th#api_response {
+		width: auto !important;
+		max-width: auto;
+	}
+
+	td.api_response .api-responses {
+		display: grid;
+		gap: 10px;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	td.api_response .api-responses .api-response {
+		line-height: 1.1;
+	}
+}

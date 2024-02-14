@@ -83,7 +83,7 @@ add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
 /**
  * Admin enqueues
  */
-function rentfetch_enqueue_in_admin_metabox_properties() {
+function rentfetch_enqueue_in_admin() {
 	
 	// The main admin stylesheet.
 	wp_enqueue_style( 'rentfetch-admin', RENTFETCH_PATH . 'css/admin.css', array(), RENTFETCH_VERSION );
@@ -98,4 +98,4 @@ function rentfetch_enqueue_in_admin_metabox_properties() {
 	wp_register_style( 'rentfetch-jquery-style', RENTFETCH_PATH . 'vendor/jquery-theme-smoothness/jquery-ui.css', array(), RENTFETCH_VERSION );
 
 }
-add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_in_admin_metabox_properties' );
+add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_in_admin' );

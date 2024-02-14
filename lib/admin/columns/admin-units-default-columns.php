@@ -26,8 +26,8 @@ function rentfetch_enqueue_units_admin_style() {
 	// Check if the current screen is the admin archive page of the units content type.
 	if ( 'edit' === $current_screen->base && 'units' === $current_screen->post_type ) {
 
-		// Enqueue your custom admin style.
-		wp_enqueue_style( 'units-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-units.css', array(), RENTFETCH_VERSION, 'screen' );
+		// if there's unit-specific javascript to enqueue, it would go here.
+
 	}
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_units_admin_style' );
