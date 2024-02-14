@@ -1,7 +1,7 @@
 <?php
 /**
 	Plugin Name:    Rent Fetch
-	Plugin URI:     http://wordpress.org/plugins/rent-fetch/
+	Plugin URI:     http://wordpress.org/plugins/rentfetch/
 	Description:    Displays searchable rental properties, floorplans, and unit availability.
 	Version:        0.12.6
 	Author:         Brindle Digital
