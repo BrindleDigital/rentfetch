@@ -26,9 +26,6 @@ function rentfetch_single_properties_parts_details() {
 
 			$title                = rentfetch_get_property_title();
 			$location             = rentfetch_get_property_location();
-			$location_link        = rentfetch_get_property_location_link();
-			$url                  = rentfetch_get_property_url();
-			$phone                = rentfetch_get_property_phone();
 			$property_description = rentfetch_get_property_description();
 			$property_rent        = rentfetch_get_property_rent();
 			$beds                 = rentfetch_get_property_bedrooms();
@@ -53,20 +50,10 @@ function rentfetch_single_properties_parts_details() {
 			echo '<div class="property-details-body">';
 				echo '<div class="property-links">';
 
-					if ( $location_link ) {
-						printf( '<a class="location-link property-link" href="%s" target="_blank">Get Directions</a>', esc_url( $location_link ) );
-					}
-
-					if ( $url ) {
-						printf( '<a class="url-link property-link" href="%s" target="_blank">Visit Website</a>', esc_url( $url ) );
-					}
-
-					if ( $phone ) {
-						printf( '<a class="phone-link property-link" href="tel:%s">%s</a>', esc_html( $phone ), esc_html( $phone ) );
-					}
-
-					// TODO - add contact leasing link
-					// echo '<a href="#" class="property-link">(( contact leasing??? ))</a>';
+					rentfetch_property_location_button();
+					rentfetch_property_website_button();
+					rentfetch_property_phone_button();
+					rentfetch_property_contact_button();
 
 				echo '</div>'; // .property-links
 

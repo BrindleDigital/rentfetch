@@ -196,6 +196,28 @@ function rentfetch_get_property_location_link() {
 	return $location_link;
 }
 
+//* PROPERTY LOCATION BUTTON 
+
+/**
+ * Get the property location button
+ *
+ * @return string The property location button.
+ */
+function rentfetch_get_property_location_button() {
+	$location_link = rentfetch_get_property_location_link();
+	$location_button = sprintf( '<a class="location-link property-link" href="%s" target="_blank">Get Directions</a>', esc_url( $location_link ) );
+	return apply_filters( 'rentfetch_filter_property_location_button', $location_button );
+}
+
+/**
+ * Echo the property location button
+ *
+ * @return void.
+ */
+function rentfetch_property_location_button() {
+	echo wp_kses_post( rentfetch_get_property_location_button() );
+}
+
 /**
  * Get the property city and state
  *
@@ -241,7 +263,11 @@ function rentfetch_property_city_state() {
  */
 function rentfetch_get_property_phone() {
 	$phone = sanitize_text_field( get_post_meta( get_the_ID(), 'phone', true ) );
-
+	
+	// format as a phone number
+	$phone = preg_replace( '/[^0-9]/', '', $phone );
+	$phone = preg_replace( '/^1?(\d{3})(\d{3})(\d{4})$/', '($1) $2-$3', $phone );
+	
 	return apply_filters( 'rentfetch_filter_property_phone', $phone );
 }
 
@@ -251,7 +277,32 @@ function rentfetch_get_property_phone() {
  * @return void
  */
 function rentfetch_property_phone() {
-	echo esc_html( rentfetch_get_property_phone() );
+	$phone = rentfetch_get_property_phone();
+
+	if ( $phone ) {
+		echo esc_html( $phone );
+	}
+}
+
+/**
+ * Get the property phone number
+ *
+ * @return string The property phone number.
+ */
+function rentfetch_get_property_phone_button() {
+	$phone = rentfetch_get_property_phone();
+	$phone_button = sprintf( '<a class="phone-link property-link" href="tel:%s">%s</a>', esc_html( $phone ), esc_html( $phone ) );
+
+	return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button );
+}
+
+/**
+ * Echo the property phone number
+ *
+ * @return void
+ */
+function rentfetch_property_phone_button() {
+	echo wp_kses_post( rentfetch_get_property_phone_button() );
 }
 
 // * PROPERTY URL.
@@ -275,6 +326,52 @@ function rentfetch_get_property_url() {
  */
 function rentfetch_property_url() {
 	echo esc_url( rentfetch_get_property_url() );
+}
+
+//* PROPERTY WEBSITE
+
+/**
+ * Get the property website.
+ *
+ * @return string The property website.
+ */
+function rentfetch_get_property_website_button() {
+	$url = rentfetch_get_property_url();
+	$website_button = sprintf( '<a class="url-link property-link" href="%s" target="_blank">Visit Website</a>', esc_html( $url ) );
+	return apply_filters( 'rentfetch_filter_property_website', $website_button );
+}
+
+/**
+ * Echo the property website.
+ *
+ * @return void.
+ */
+function rentfetch_property_website_button() {
+	echo wp_kses_post( rentfetch_get_property_website_button() );
+}
+
+//* PROPERTY EMAIL.
+
+/**
+ * Get the property email.
+ *
+ * @return string The property email.
+ */
+function rentfetch_get_property_contact_button() {
+	$email = sanitize_email( get_post_meta( get_the_ID(), 'email', true ) );
+	$email = 'mailto:' . $email;
+	$contact_button = sprintf( '<a class="email-link property-link" href="%s">Reach out</a>', esc_html( $email ) );
+
+	return apply_filters( 'rentfetch_filter_property_contact_button', $contact_button );
+}
+
+/**
+ * Echo the property email.
+ *
+ * @return void.
+ */
+function rentfetch_property_contact_button() {
+	echo wp_kses_post( rentfetch_get_property_contact_button() );
 }
 
 // * PROPERTY BEDROOMS.

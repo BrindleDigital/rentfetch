@@ -79,6 +79,12 @@
 						content: '\f525';
 					}
 				}
+
+				&.email-link {
+					&:before {
+						content: '\f466';
+					}
+				}
 			}
 		}
 	}
