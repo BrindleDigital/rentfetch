@@ -6,7 +6,7 @@
 	Version:        0.12.6
 	Author:         Brindle Digital
 	Author URI:     https://www.brindledigital.com
-	Text Domain:    rentfetch
+	Text Domain:    rent-fetch
 	License:        GPLv2 or later
 	License URI:    http://www.gnu.org/licenses/gpl-2.0.html
  *
