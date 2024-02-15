@@ -264,7 +264,34 @@ function rentfetch_get_floorplan_tour() {
 	return apply_filters( 'rentfetch_filter_floorplan_tour', $embedlink );
 }
 
-// * Buttons
+/**
+ * Get the tour embed code
+ *
+ * @return string the tour embed code.
+ */
+function rentfetch_get_floorplan_tour_embed() {
+
+	global $post;
+
+	$iframe = get_post_meta( get_the_ID(), 'tour', true );
+
+	return apply_filters( 'rentfetch_filter_floorplan_tour_embed', $iframe );
+}
+
+/**
+ * Output the tour embed code
+ *
+ * @return void.
+ */
+function rentfetch_floorplan_tour_embed() {
+	$tour = rentfetch_get_floorplan_tour_embed();
+
+	if ( $tour ) {
+		echo wp_kses_post( $tour );
+	}
+}
+
+// * Buttons.
 
 /**
  * Echo the floorplan links
@@ -577,6 +604,8 @@ function rentfetch_floorplan_unit_list() {
 		echo '</div>';
 
 	}
+
+	wp_reset_postdata();
 }
 add_action( 'rentfetch_floorplan_do_unit_table', 'rentfetch_floorplan_unit_list' );
 
@@ -596,4 +625,72 @@ function rentfetch_check_if_above_100( $number ) {
 	}
 
 	return null;
+}
+
+/**
+ * Get the similar floorplans
+ *
+ * @return string the similar floorplans markup.
+ */
+function rentfetch_get_similar_floorplans() {
+
+	ob_start();
+
+	$property_id = get_post_meta( get_the_ID(), 'property_id', true );
+	$beds        = get_post_meta( get_the_ID(), 'beds', true );
+
+	$args = array(
+		'post_type'      => 'floorplans',
+		'posts_per_page' => -1,
+		'meta_query'     => array(
+			'relation' => 'AND', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			array(
+				'key'   => 'property_id',
+				'value' => $property_id,
+			),
+			array(
+				'key'   => 'beds',
+				'value' => $beds,
+			),
+		),
+	);
+
+	// The Query.
+	$similar_floorplans_query = new WP_Query( $args );
+
+	// The Loop.
+	if ( $similar_floorplans_query->have_posts() ) {
+
+		echo '<div class="floorplans-loop similar-floorplans">';
+
+		while ( $similar_floorplans_query->have_posts() ) {
+
+			$similar_floorplans_query->the_post();
+
+			printf( '<div class="%s">', esc_attr( join( ' ', get_post_class() ) ) );
+
+				do_action( 'rentfetch_floorplans_do_similar_each' );
+
+			echo '</div>'; // .post_class
+		}
+
+		echo '</div>';
+	}
+
+	wp_reset_postdata();
+
+	return ob_get_clean();
+}
+
+/**
+ * Output the similar floorplans.
+ *
+ * @return void.
+ */
+function rentfetch_similar_floorplans() {
+	$floorplans = rentfetch_get_similar_floorplans();
+
+	if ( $floorplans ) {
+		echo wp_kses_post( $floorplans );
+	}
 }

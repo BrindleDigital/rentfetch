@@ -75,28 +75,36 @@ if ( have_posts() ) {
 
 						// typically there will be two things hooked to this, a desktop <table> and a mobile <details>.
 						do_action( 'rentfetch_floorplan_do_unit_table' );
-									
+
 				echo '</div>'; // .container-inner.
 			echo '</div>'; // .container-outer.
 		}
 
-		// echo '<div class="single-floorplans-container-outer">';
-		// echo '<div class="single-floorplans-container-inner">';
-		// echo '<h2>Take a look around</h2>';
-		// echo '</div>'; // .container-inner
-		// echo '</div>'; // .container-outer
-		// echo '<div class="single-floorplans-container-outer">';
-		// echo '<div class="single-floorplans-container-inner">';
-		// echo '<h2>Similar floorplans</h2>';
-		// echo '</div>'; // .container-inner
-		// echo '</div>'; // .container-outer
+		$iframe = rentfetch_get_floorplan_tour_embed();
+		if ( $iframe ) {
+			echo '<div class="single-floorplans-container-outer">';
+				echo '<div class="single-floorplans-container-inner">';
+					echo '<h2>Take a look around</h2>';
+					rentfetch_floorplan_tour_embed();
+				echo '</div>'; // .container-inner
+			echo '</div>'; // .container-outer
+		}
 
+		// do a query for similar floorplans (which share a property_id and the number of beds).
+		$similar_floorplans = rentfetch_get_similar_floorplans();
+		
+		if ( $similar_floorplans ) {
+			echo '<div class="single-floorplans-container-outer">';
+				echo '<div class="single-floorplans-container-inner">';
+					echo '<h2>Similar floorplans</h2>';
+					rentfetch_similar_floorplans();
+				echo '</div>'; // .container-inner
+			echo '</div>'; // .container-outer
+		}
 
 	} // end while
 } else {
 	echo 'So sorry! Nothing found.';
 }
-
-
 
 get_footer();
