@@ -52,6 +52,7 @@ function rentfetch_single_properties_parts_map() {
 				'latitude'   => $latitude,
 				'longitude'  => $longitude,
 				'content'    => $content,
+				// 'nonce'      => wp_create_nonce('rentfetch_frontend_nonce' ),
 			);
 			wp_localize_script( 'rentfetch-single-property-map', 'options', $maps_options );
 			wp_enqueue_script( 'rentfetch-single-property-map' );
