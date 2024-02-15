@@ -88,7 +88,12 @@ function rentfetch_propertysearch_filters_dialog() {
 		echo '</header>';
 		printf( '<form class="property-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', esc_url( site_url() ) );
 
+			// Add the action to the form.
 			echo '<input type="hidden" name="action" value="propertysearch">';
+			
+			// Add a nonce field so we can check for it later.
+			$nonce = wp_create_nonce( 'rentfetch_frontend_nonce_action' );
+			printf( '<input type="hidden" name="rentfetch_frontend_nonce_field" value="%s">', $nonce );
 
 			// This is the hook where we add all of our actions for the search filters.
 			do_action( 'rentfetch_do_search_properties_dialog_filters' );
