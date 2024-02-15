@@ -29,6 +29,14 @@ function rentfetch_search_filters_amenities() {
 			'order'      => 'DESC',
 		),
 	);
+	
+	// get the parameters.
+	if ( isset( $_GET[ 'search-amenities' ] ) ) {
+		$active_parameters = $_GET[ 'search-amenities' ];
+		$active_parameters = array_map( 'intval', $active_parameters );
+	} else {
+		$active_parameters = array();
+	}
 
 	// * Build amenities search
 	if ( ! empty( $amenities ) && taxonomy_exists( 'amenities' ) ) {
@@ -43,19 +51,19 @@ function rentfetch_search_filters_amenities() {
 			$amenity_term_id = $amenity->term_id;
 
 			// Check if the amenity's term ID is in the GET parameter array.
-			$checked = in_array( $amenity_term_id, $_GET['search-amenities'] ?? array(), true );
+			$checked = in_array( $amenity_term_id, $active_parameters ?? array(), true );
 
 			printf(
 				'<label>
-							<input type="checkbox" 
-								name="search-amenities[]" 
-								value="%s" 
-								data-amenities="%s" 
-								data-amenities-name="%s" 
-								data-type="taxonomy" 
-								%s /> <!-- Add checked attribute if necessary -->
-							<span>%s</span>
-						</label>',
+					<input type="checkbox" 
+						name="search-amenities[]" 
+						value="%s" 
+						data-amenities="%s" 
+						data-amenities-name="%s" 
+						data-type="taxonomy" 
+						%s /> <!-- Add checked attribute if necessary -->
+					<span>%s</span>
+				</label>',
 				esc_html( $amenity_term_id ),
 				esc_html( $amenity_term_id ),
 				esc_html( $name ),

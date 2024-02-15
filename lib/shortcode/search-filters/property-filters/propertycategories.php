@@ -43,6 +43,14 @@ function rentfetch_search_filters_property_categories() {
 	if ( empty( $terms ) ) {
 		return;
 	}
+	
+	// get the parameters	
+	if ( isset( $_GET[ $search_parameter ] ) ) {
+		$active_parameters = $_GET[ $search_parameter ];
+		$active_parameters = array_map( 'intval', $active_parameters );
+	} else {
+		$active_parameters = array();
+	}
 
 	// build the search.
 	if ( ! empty( $terms && taxonomy_exists( $taxonomy_slug ) ) ) {
@@ -56,7 +64,7 @@ function rentfetch_search_filters_property_categories() {
 			$tax_id = $term->term_id;
 
 			// Check if the term ID is in the GET parameter array.
-			$checked = in_array( $tax_id, $_GET[ $search_parameter ] ?? array(), true );
+			$checked = in_array( $tax_id, $active_parameters ?? array(), true );
 
 			printf(
 				'<label>
