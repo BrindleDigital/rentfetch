@@ -18,12 +18,19 @@ function rentfetch_search_filters_beds() {
 
 	// get info about beds from the database.
 	$beds = rentfetch_get_meta_values( 'beds', 'floorplans' );
-	$beds = array_unique( $beds );
-
-	// force the array to be numeric.
 	$beds = array_map( 'intval', $beds );
-
+	$beds = array_unique( $beds );
 	asort( $beds );
+
+	// get the parameters	
+	if ( isset( $_GET['search-beds'] ) ) {
+		$active_parameters = $_GET['search-beds'];
+		$active_parameters = array_map( 'intval', $active_parameters );
+	} else {
+		$active_parameters = array();
+	}
+
+	
 
 	$beds = apply_filters( 'rentfetch_filter_beds_in_dropdown', $beds );
 
@@ -36,7 +43,7 @@ function rentfetch_search_filters_beds() {
 	foreach ( $beds as $bed ) {
 
 		// Check if the amenity's term ID is in the GET parameter array.
-		$checked = in_array( $bed, $_GET['search-beds'] ?? array(), true );
+		$checked = in_array( $bed, $active_parameters ?? array(), true );
 
 		// skip if there's a null value for bed.
 		if ( null === $bed ) {
@@ -54,8 +61,8 @@ function rentfetch_search_filters_beds() {
 					%s />
 				<span>%s</span>
 			</label>',
-			intval( $bed ),
-			intval( $bed ),
+			(int) $bed,
+			(int) $bed,
 			$checked ? 'checked' : '', // Apply checked attribute.
 			wp_kses_post( $label )
 		);
