@@ -38,16 +38,15 @@ function rentfetch_search_filters_property_categories() {
 			'hide_empty' => true,
 		),
 	);
-	
+
 	// bail if there aren't any terms.
 	if ( empty( $terms ) ) {
 		return;
 	}
-	
-	// get the parameters	
+
+	// get the parameters.
 	if ( isset( $_GET[ $search_parameter ] ) ) {
-		$active_parameters = $_GET[ $search_parameter ];
-		$active_parameters = array_map( 'intval', $active_parameters );
+		$active_parameters = array_map( 'intval', wp_unslash( $_GET[ $search_parameter ] ) );
 	} else {
 		$active_parameters = array();
 	}

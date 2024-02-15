@@ -22,10 +22,9 @@ function rentfetch_search_filters_beds() {
 	$beds = array_unique( $beds );
 	asort( $beds );
 
-	// get the parameters	
+	// get the parameters.
 	if ( isset( $_GET['search-beds'] ) ) {
-		$active_parameters = $_GET['search-beds'];
-		$active_parameters = array_map( 'intval', $active_parameters );
+		$active_parameters = array_map( 'intval', wp_unslash( $_GET['search-beds'] ) );
 	} else {
 		$active_parameters = array();
 	}
