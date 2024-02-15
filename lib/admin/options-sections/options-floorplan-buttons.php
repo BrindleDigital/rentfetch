@@ -25,28 +25,11 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_f
  * Output floorplan button settings
  */
 function rentfetch_settings_floorplans_floorplan_buttons() {
+	
+	wp_enqueue_script( 'rentfetch-options-floorplan-buttons' );
+	
 	?>
 	
-	<script type="text/javascript">
-		jQuery(document).ready(function( $ ) {
-	
-			// $( '.contact .white-box:not(.always-visible)' ).hide();
-			
-			// on change of input[name="rentfetch_options_enabled_integrations[]"], show/hide the integration options
-			$( 'input[name="rentfetch_options_availability_button_enabled"]' ).on( 'change', function() {
-				
-				// console.log( this );
-								
-				if( this.checked ) {
-					$( '.availability .white-box:not(.always-visible)' ).show();
-				} else {
-					$( '.availability .white-box:not(.always-visible)' ).hide();
-				}
-												
-			}).trigger( 'change' );
-			
-		});
-	</script>
 	<div class="row floorplan-archive-buttons availability">
 		<div class="column">
 			<label>Availability button</label>
@@ -66,26 +49,6 @@ function rentfetch_settings_floorplans_floorplan_buttons() {
 		</div>
 	</div>
 	
-	<script type="text/javascript">
-		jQuery(document).ready(function( $ ) {
-	
-			// $( '.contact .white-box:not(.always-visible)' ).hide();
-			
-			// on change of input[name="rentfetch_options_enabled_integrations[]"], show/hide the integration options
-			$( 'input[name="rentfetch_options_contact_button_enabled"]' ).on( 'change', function() {
-				
-				// console.log( this );
-								
-				if( this.checked ) {
-					$( '.contact .white-box:not(.always-visible)' ).show();
-				} else {
-					$( '.contact .white-box:not(.always-visible)' ).hide();
-				}
-												
-			}).trigger( 'change' );
-			
-		});
-	</script>
 	<div class="row floorplan-archive-buttons contact">
 		<div class="column">
 			<label>Contact button</label>
@@ -110,26 +73,6 @@ function rentfetch_settings_floorplans_floorplan_buttons() {
 		</div>
 	</div>
 	
-	<script type="text/javascript">
-		jQuery(document).ready(function( $ ) {
-	
-			// $( '.contact .white-box:not(.always-visible)' ).hide();
-			
-			// on change of input[name="rentfetch_options_enabled_integrations[]"], show/hide the integration options
-			$( 'input[name="rentfetch_options_tour_button_enabled"]' ).on( 'change', function() {
-				
-				// console.log( this );
-								
-				if( this.checked ) {
-					$( '.tour .white-box:not(.always-visible)' ).show();
-				} else {
-					$( '.tour .white-box:not(.always-visible)' ).hide();
-				}
-												
-			}).trigger( 'change' );
-			
-		});
-	</script>
 	<div class="row floorplan-archive-buttons tour">
 		<div class="column">
 			<label>Tour button</label>
