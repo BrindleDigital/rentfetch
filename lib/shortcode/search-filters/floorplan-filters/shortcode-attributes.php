@@ -19,13 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_search_floorplans_args_shortcode( $floorplans_args ) {
 
 	// ! Property IDs
-	if ( isset( $_POST['property_id'] ) && ! is_admin() ) {
+	if ( isset( $_POST['property_id'] ) ) {
 
 		$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
 
 		// * Verify the nonce
 		if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_frontend_nonce_action' ) ) {
-			die( 'Nonce verification failed (shortcode attributes)' );
+			return $floorplans_args;
 		}
 
 		// Get the values.
