@@ -66,7 +66,6 @@ function rentfetch_floorplans( $atts ) {
 
 	return ob_get_clean();
 }
-add_shortcode( 'floorplans', 'rentfetch_floorplans' );
 add_shortcode( 'rentfetch_floorplans', 'rentfetch_floorplans' );
 
 /**

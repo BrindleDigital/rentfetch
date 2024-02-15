@@ -60,5 +60,4 @@ function rentfetch_properties( $atts ) {
 
 	return ob_get_clean();
 }
-add_shortcode( 'properties', 'rentfetch_properties' );
 add_shortcode( 'rentfetch_properties', 'rentfetch_properties' );

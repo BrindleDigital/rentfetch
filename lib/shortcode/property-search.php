@@ -38,7 +38,6 @@ function rentfetch_propertysearch_default_layout( $atts ) {
 
 	return ob_get_clean();
 }
-add_shortcode( 'propertysearch', 'rentfetch_propertysearch_default_layout' );
 add_shortcode( 'rentfetch_propertysearch', 'rentfetch_propertysearch_default_layout' );
 
 /**
@@ -72,7 +71,6 @@ function rentfetch_propertysearchfilters() {
 
 	return ob_get_clean();
 }
-add_shortcode( 'propertysearchfilters', 'rentfetch_propertysearchfilters' );
 add_shortcode( 'rentfetch_propertysearchfilters', 'rentfetch_propertysearchfilters' );
 
 /**
@@ -121,7 +119,6 @@ function rentfetch_propertysearchmap() {
 
 	return ob_get_clean();
 }
-add_shortcode( 'propertysearchmap', 'rentfetch_propertysearchmap' );
 add_shortcode( 'rentfetch_propertysearchmap', 'rentfetch_propertysearchmap' );
 
 /**
@@ -136,7 +133,6 @@ function rentfetch_propertysearchresults() {
 
 	return ob_get_clean();
 }
-add_shortcode( 'propertysearchresults', 'rentfetch_propertysearchresults' );
 add_shortcode( 'rentfetch_propertysearchresults', 'rentfetch_propertysearchresults' );
 
 /**

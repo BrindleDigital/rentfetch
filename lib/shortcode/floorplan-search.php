@@ -61,7 +61,6 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 
 	return ob_get_clean();
 }
-add_shortcode( 'floorplansearch', 'rentfetch_floorplan_search_default_layout' );
 add_shortcode( 'rentfetch_floorplansearch', 'rentfetch_floorplan_search_default_layout' );
 
 /**
@@ -93,7 +92,6 @@ function rentfetch_floorplansearchfilters( $atts ) {
 
 	return ob_get_clean();
 }
-add_shortcode( 'floorplansearchfilters', 'rentfetch_floorplansearchfilters' );
 add_shortcode( 'rentfetch_floorplansearchfilters', 'rentfetch_floorplansearchfilters' );
 
 /**
@@ -109,7 +107,6 @@ function rentfetch_floorplan_search_results() {
 
 	return ob_get_clean();
 }
-add_shortcode( 'floorplansearchresults', 'rentfetch_floorplan_search_results' );
 add_shortcode( 'rentfetch_floorplansearchresults', 'rentfetch_floorplan_search_results' );
 
 /**
