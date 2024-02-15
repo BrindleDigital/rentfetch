@@ -30,8 +30,6 @@ function rentfetch_search_filters_beds() {
 		$active_parameters = array();
 	}
 
-	
-
 	$beds = apply_filters( 'rentfetch_filter_beds_in_dropdown', $beds );
 
 	// build the beds search.
