@@ -48,7 +48,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		
 			// Add a nonce field so we can check for it later.
 			$nonce = wp_create_nonce( 'rentfetch_frontend_nonce_action' );
-			printf( '<input type="hidden" name="rentfetch_frontend_nonce_field" value="%s">', $nonce );
+			printf( '<input type="hidden" name="rentfetch_frontend_nonce_field" value="%s">', esc_attr( $nonce ) );
 
 			echo '<input type="hidden" name="action" value="floorplansearch">';
 
