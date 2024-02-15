@@ -86,6 +86,13 @@ function rentfetch_search_filters_amenities() {
  */
 function rentfetch_search_properties_args_amenities( $property_args ) {
 
+	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
+
+	// * Verify the nonce
+	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_frontend_nonce_action' ) ) {
+		die( 'Nonce verification failed' );
+	}
+
 	if ( isset( $_POST['search-amenities'] ) && is_array( $_POST['search-amenities'] ) ) {
 
 		// Get the values.

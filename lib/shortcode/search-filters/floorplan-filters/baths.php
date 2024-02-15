@@ -68,6 +68,13 @@ function rentfetch_search_filters_baths() {
 function rentfetch_search_floorplans_args_baths( $floorplans_args ) {
 
 	if ( isset( $_POST['search-baths'] ) && is_array( $_POST['search-baths'] ) ) {
+		
+		$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
+
+		// * Verify the nonce
+		if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_frontend_nonce_action' ) ) {
+			die( 'Nonce verification failed (baths)' );
+		}
 
 		// Get the values.
 		$baths = array_map( 'sanitize_text_field', wp_unslash( $_POST['search-baths'] ) );
