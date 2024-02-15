@@ -71,7 +71,7 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 	if ( ! isset( $_POST['pricesmall'] ) && ! isset( $_POST['pricebig'] ) ) {
 		return $floorplans_args;
 	}
-	
+
 	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
 
 	// * Verify the nonce

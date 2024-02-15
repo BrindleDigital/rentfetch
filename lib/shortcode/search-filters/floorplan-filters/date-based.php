@@ -48,7 +48,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	if ( empty( $_POST['dates'] ) ) {
 		return $floorplans_args;
 	}
-	
+
 	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
 
 	// * Verify the nonce

@@ -131,7 +131,7 @@ add_action( 'rentfetch_do_settings_properties', 'rentfetch_settings_properties' 
 
 /**
  * Adds the floorplans settings section to the Rent Fetch settings page
- * 
+ *
  * @return void.
  */
 function rentfetch_settings_floorplans() {

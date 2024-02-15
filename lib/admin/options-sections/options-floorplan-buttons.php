@@ -25,9 +25,9 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_f
  * Output floorplan button settings
  */
 function rentfetch_settings_floorplans_floorplan_buttons() {
-	
+
 	wp_enqueue_script( 'rentfetch-options-floorplan-buttons' );
-	
+
 	?>
 	
 	<div class="row floorplan-archive-buttons availability">

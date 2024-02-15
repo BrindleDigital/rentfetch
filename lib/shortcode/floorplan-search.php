@@ -45,7 +45,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		echo do_shortcode( $floorplansearchresults_shortcode );
 
 		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', esc_url( site_url() ) );
-		
+
 			// Add a nonce field so we can check for it later.
 			$nonce = wp_create_nonce( 'rentfetch_frontend_nonce_action' );
 			printf( '<input type="hidden" name="rentfetch_frontend_nonce_field" value="%s">', esc_attr( $nonce ) );

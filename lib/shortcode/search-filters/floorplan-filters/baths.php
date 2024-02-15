@@ -68,7 +68,7 @@ function rentfetch_search_filters_baths() {
 function rentfetch_search_floorplans_args_baths( $floorplans_args ) {
 
 	if ( isset( $_POST['search-baths'] ) && is_array( $_POST['search-baths'] ) ) {
-		
+
 		$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
 
 		// * Verify the nonce

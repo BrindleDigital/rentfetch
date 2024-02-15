@@ -20,7 +20,7 @@ function rentfetch_search_floorplans_args_shortcode( $floorplans_args ) {
 
 	// ! Property IDs
 	if ( isset( $_POST['property_id'] ) ) {
-		
+
 		$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
 
 		// * Verify the nonce

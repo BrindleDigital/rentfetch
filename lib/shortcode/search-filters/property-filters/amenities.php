@@ -29,11 +29,10 @@ function rentfetch_search_filters_amenities() {
 			'order'      => 'DESC',
 		),
 	);
-	
+
 	// get the parameters.
-	if ( isset( $_GET[ 'search-amenities' ] ) ) {
-		$active_parameters = $_GET[ 'search-amenities' ];
-		$active_parameters = array_map( 'intval', $active_parameters );
+	if ( isset( $_GET['search-amenities'] ) ) {
+		$active_parameters = array_map( 'intval', wp_unslash( $_GET['search-amenities'] ) );
 	} else {
 		$active_parameters = array();
 	}

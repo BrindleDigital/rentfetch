@@ -48,7 +48,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 
 	// Properties map (the map itself).
 	wp_register_script( 'rentfetch-property-map', RENTFETCH_PATH . 'js/rentfetch-property-map.js', array( 'jquery', 'rentfetch-google-maps' ), RENTFETCH_VERSION, true );
-	
+
 	// Localize the google maps script, then enqueue that.
 	$maps_options = array(
 		'json_style'                    => json_decode( get_option( 'rentfetch_options_google_maps_styles' ) ),
@@ -84,7 +84,7 @@ add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
  * Admin enqueues
  */
 function rentfetch_enqueue_in_admin_metabox_properties() {
-	
+
 	// The main admin stylesheet.
 	wp_enqueue_style( 'rentfetch-admin', RENTFETCH_PATH . 'css/admin.css', array(), RENTFETCH_VERSION );
 
@@ -94,13 +94,12 @@ function rentfetch_enqueue_in_admin_metabox_properties() {
 	wp_register_script( 'rentfetch-metabox-properties-video', RENTFETCH_PATH . 'js/metabox-properties-video.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-metabox-floorplans-images', RENTFETCH_PATH . 'js/metabox-floorplans-images.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-metabox-properties', RENTFETCH_PATH . 'js/metabox-properties.js', array( 'jquery' ), RENTFETCH_VERSION, true );
-	
+
 	// WordPress doesn't include any jQuery UI styles by default, so we need to include them.
 	wp_register_style( 'rentfetch-jquery-style', RENTFETCH_PATH . 'vendor/jquery-theme-smoothness/jquery-ui.css', array(), RENTFETCH_VERSION );
-	
+
 	// Admin options page scripts.
 	wp_register_script( 'rentfetch-options-floorplan-buttons', RENTFETCH_PATH . 'js/rentfetch-options-floorplan-buttons.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-options-documentation-submenu', RENTFETCH_PATH . 'js/rentfetch-options-documentation-submenu.js', array( 'jquery' ), RENTFETCH_VERSION, true );
-
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_in_admin_metabox_properties' );

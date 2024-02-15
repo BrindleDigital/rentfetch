@@ -59,7 +59,7 @@ function rentfetch_search_floorplans_args_sqft( $floorplans_args ) {
 	if ( ! isset( $_POST['sqftsmall'] ) && ! isset( $_POST['sqftbig'] ) ) {
 		return $floorplans_args;
 	}
-	
+
 	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
 
 	// * Verify the nonce

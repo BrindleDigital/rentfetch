@@ -38,7 +38,7 @@ function rentfetch_search_properties_dialog_filters() {
 	if ( ! empty( $options_dialog_filters ) && in_array( 'type_search', $options_dialog_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_property_types' );
 	}
-	
+
 	if ( ! empty( $options_dialog_filters ) && in_array( 'category_search', $options_dialog_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_property_categories' );
 	}
@@ -86,7 +86,7 @@ function rentfetch_search_properties_featured_filters() {
 	if ( ! empty( $options_featured_filters ) && in_array( 'type_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_property_types' );
 	}
-	
+
 	if ( ! empty( $options_featured_filters ) && in_array( 'category_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_property_categories' );
 	}

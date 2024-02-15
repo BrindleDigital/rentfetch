@@ -38,7 +38,8 @@ jQuery(function ($) {
 			if (
 				value === '' || // Exclude empty values
 				key === 'action' || // Exclude specific parameters
-				key === 'availability'
+				key === 'availability' ||
+				key === 'rentfetch_frontend_nonce_field'
 			) {
 				delete queryParams[key];
 			}
