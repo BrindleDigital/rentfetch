@@ -61,7 +61,7 @@ function rentfetch_floorplan_image_slider() {
 	wp_enqueue_script( 'rentfetch-glightbox-init' );
 	
 	// random number.
-	$rand = rand( 10, 10000 );
+	$rand = wp_rand( 10, 10000 );
 	
 	echo '<div class="floorplan-images-slider blaze-slider">';
 		echo '<div class="blaze-container">';

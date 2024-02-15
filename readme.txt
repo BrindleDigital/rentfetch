@@ -1,6 +1,6 @@
 === Rent Fetch ===
 Contributors: jonschr
-Tags: properties, property, rental, floorplans, map, google map, apartment, rent, yardi, entrata, appfolio, realpage
+Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.4.1
 Requires PHP: 7.3
