@@ -92,7 +92,7 @@ Start from your WordPress dashboard.
 
 = 0.13.0 =
 
-* After initial review for the WordPress plugin repo, adjusting code to match WordPress code standards
+* After initial review for the WordPress plugin repo, adjusting code to match WordPress code standards (this is s substantial code review)
 * Adding to the single-floorplans.php template
 * Adding nonces throughout where appropriate
 * Rechecking all of the filters and making some logic adjustments
