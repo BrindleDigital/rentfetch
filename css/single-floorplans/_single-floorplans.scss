@@ -1,4 +1,4 @@
-body.floorplans-template-default {
+body.single-floorplans {
 	.site-content {
 		display: block;
 	}
@@ -81,6 +81,7 @@ body.floorplans-template-default {
 		}
 	}
 
+	// Defaults for the section containers.
 	.single-floorplans-container-outer {
 		margin: 0 calc(50% - 50vw);
 		max-width: 100vw;
@@ -91,6 +92,10 @@ body.floorplans-template-default {
 			padding: 25px;
 		}
 
+		&:nth-child(even) {
+			background-color: var(--rentfetch-base);
+		}
+
 		.single-floorplans-container-inner {
 			width: 100%;
 			max-width: 1200px;
@@ -98,14 +103,36 @@ body.floorplans-template-default {
 		}
 	}
 
-	.current-floorplan-info {
+	.container-current-floorplan-info {
 	}
 
-	.similar-floorplans {
-		margin-top: 30px;
+	.container-similar-floorplans {
+		.floorplans-loop {
+			@include desktop {
+				margin-top: 30px;
+			}
+		}
 	}
 
-	.unit-details-table {
-		margin-top: 30px;
+	.container-units {
+		.unit-details-table {
+			margin-top: 30px;
+		}
+	}
+
+	.container-tour {
+		text-align: center;
+
+		iframe {
+			margin-top: 15px;
+		}
+	}
+
+	h2 {
+		text-align: center;
+
+		@include mobile {
+			text-align: left;
+		}
 	}
 }

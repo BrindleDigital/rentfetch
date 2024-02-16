@@ -273,9 +273,35 @@ function rentfetch_get_floorplan_tour_embed() {
 
 	global $post;
 
-	$iframe = get_post_meta( get_the_ID(), 'tour', true );
+	$iframe    = get_post_meta( get_the_ID(), 'tour', true );
+	$embedlink = null;
 
-	return apply_filters( 'rentfetch_filter_floorplan_tour_embed', $iframe );
+	// check against youtube.
+	$youtube_pattern = '/src="https:\/\/www\.youtube\.com\/embed\/([^?"]+)\?/';
+	preg_match( $youtube_pattern, $iframe, $youtube_matches );
+
+	// if it's youtube and it's a full iframe.
+	if ( isset( $youtube_matches[1] ) ) {
+		$video_id   = $youtube_matches[1];
+		$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
+		$embedlink  = wp_oembed_get( $oembedlink );
+	}
+
+	$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
+	preg_match( $matterport_pattern, $iframe, $matterport_matches );
+
+	// if it's matterport and it's a full iframe.
+	if ( isset( $matterport_matches[1] ) ) {
+		$oembedlink = $matterport_matches[1];
+		$embedlink  = wp_oembed_get( $oembedlink );
+	}
+
+	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
+	if ( ! $embedlink ) {
+		$oembedlink = $iframe;
+	}
+
+	return apply_filters( 'rentfetch_filter_floorplan_tour_embed', $embedlink );
 }
 
 /**
@@ -286,8 +312,20 @@ function rentfetch_get_floorplan_tour_embed() {
 function rentfetch_floorplan_tour_embed() {
 	$tour = rentfetch_get_floorplan_tour_embed();
 
+	$allowed_tags = array(
+		'iframe' => array(
+			'title'           => array(),
+			'src'             => array(),
+			'width'           => array(),
+			'height'          => array(),
+			'frameborder'     => array(),
+			'allow'           => array(),
+			'allowfullscreen' => array(),
+		),
+	);
+
 	if ( $tour ) {
-		echo wp_kses_post( $tour );
+		echo wp_kses( $tour, $allowed_tags );
 	}
 }
 
@@ -638,13 +676,13 @@ function rentfetch_get_similar_floorplans() {
 
 	$property_id = get_post_meta( get_the_ID(), 'property_id', true );
 	$beds        = get_post_meta( get_the_ID(), 'beds', true );
-	
-	//TODO need to remove the current floorplan from this query
+
+	// TODO need to remove the current floorplan from this query.
 
 	$args = array(
 		'post_type'      => 'floorplans',
 		'posts_per_page' => -1,
-		'post__not_in' => array( get_the_ID() ),
+		'post__not_in'   => array( get_the_ID() ),
 		'meta_query'     => array(
 			'relation' => 'AND',
 			array(
@@ -664,7 +702,7 @@ function rentfetch_get_similar_floorplans() {
 	// The Loop.
 	if ( $similar_floorplans_query->have_posts() ) {
 
-		echo '<div class="floorplans-loop similar-floorplans">';
+		echo '<div class="floorplans-loop">';
 
 		while ( $similar_floorplans_query->have_posts() ) {
 
