@@ -4,7 +4,7 @@ Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.4.1
 Requires PHP: 7.3
-Stable tag: 0.12.6
+Stable tag: 0.13.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -89,6 +89,14 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.13.0 =
+
+* After initial review for the WordPress plugin repo, adjusting code to match WordPress code standards
+* Adding to the single-floorplans.php template
+* Adding nonces throughout where appropriate
+* Rechecking all of the filters and making some logic adjustments
+* BUGFIX: we were converting some ranges (bedrooms) from range strings to integers, and this was showing up in the frontend display. That's fixed.
 
 = 0.12.6 =
 
