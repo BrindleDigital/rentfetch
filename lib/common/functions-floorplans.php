@@ -638,12 +638,15 @@ function rentfetch_get_similar_floorplans() {
 
 	$property_id = get_post_meta( get_the_ID(), 'property_id', true );
 	$beds        = get_post_meta( get_the_ID(), 'beds', true );
+	
+	//TODO need to remove the current floorplan from this query
 
 	$args = array(
 		'post_type'      => 'floorplans',
 		'posts_per_page' => -1,
+		'post__not_in' => array( get_the_ID() ),
 		'meta_query'     => array(
-			'relation' => 'AND', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			'relation' => 'AND',
 			array(
 				'key'   => 'property_id',
 				'value' => $property_id,

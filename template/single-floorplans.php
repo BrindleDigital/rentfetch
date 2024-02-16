@@ -94,12 +94,19 @@ if ( have_posts() ) {
 		$similar_floorplans = rentfetch_get_similar_floorplans();
 		
 		if ( $similar_floorplans ) {
+
+			// set a flag to tell the floorplan-images.php template to not use a slider.
+			global $floorplan_images_use_slider;
+			$floorplan_images_use_slider = false;
+
 			echo '<div class="single-floorplans-container-outer">';
 				echo '<div class="single-floorplans-container-inner">';
 					echo '<h2>Similar floorplans</h2>';
 					rentfetch_similar_floorplans();
 				echo '</div>'; // .container-inner
 			echo '</div>'; // .container-outer
+			
+			$floorplan_images_use_slider = null;
 		}
 
 	} // end while

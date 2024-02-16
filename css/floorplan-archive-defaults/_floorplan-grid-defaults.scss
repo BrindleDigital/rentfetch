@@ -1,7 +1,7 @@
 .floorplans-loop,
 .floorplans-simple-grid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: 1fr 1fr 1fr;
 	gap: 25px;
 
 	@include tablet {
@@ -19,6 +19,8 @@
 		transition: 0.5s box-shadow ease;
 		position: relative;
 		background-color: var(--rentfetch-white);
+		overflow: hidden; /* Hide overflow content */
+		word-break: break-word; /* To prevent long words from overflowing */
 	}
 
 	.post-edit-link {

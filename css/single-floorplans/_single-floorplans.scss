@@ -3,52 +3,72 @@ body.floorplans-template-default {
 		display: block;
 	}
 
-	p.pricing {
-		font-size: var(--rentfetch-font-size-large);
-	}
+	.current-floorplan-info {
+		display: grid;
+		grid-template-columns: 4fr 6fr;
+		gap: 60px;
+		align-items: center;
 
-	.floorplan-attributes {
-		line-height: 1;
-		// margin-bottom: 15px;
+		@include notdesktop {
+			grid-template-columns: 1fr;
+			gap: 20px;
+		}
 
-		p {
-			font-size: var(--rentfetch-font-size-large);
-			display: inline-block;
-			padding: 0 0.8em;
-			margin: 0 0 15px 0;
-			position: relative;
-
-			&:first-child {
-				padding-left: 0;
-			}
-
-			&:last-child {
-				padding-right: 0;
-
-				&:after {
-					display: none;
-				}
-			}
-
-			&:after {
-				height: 50%;
-				position: absolute;
-				content: '';
-				width: 1px;
-				background-color: var(--rentfetch-black-20-percent);
-				right: 0;
-				top: 50%;
-				transform: translateY(-50%);
+		.images-column {
+			img {
+				width: 100%;
+				max-width: 100%;
+				height: auto;
 			}
 		}
+
+		p.pricing {
+			font-size: var(--rentfetch-font-size-large);
+		}
+
+		.floorplan-attributes {
+			line-height: 1;
+			// margin-bottom: 15px;
+
+			p {
+				font-size: var(--rentfetch-font-size-large);
+				display: inline-block;
+				padding: 0 0.8em;
+				margin: 0 0 15px 0;
+				position: relative;
+
+				&:first-child {
+					padding-left: 0;
+				}
+
+				&:last-child {
+					padding-right: 0;
+
+					&:after {
+						display: none;
+					}
+				}
+
+				&:after {
+					height: 50%;
+					position: absolute;
+					content: '';
+					width: 1px;
+					background-color: var(--rentfetch-black-20-percent);
+					right: 0;
+					top: 50%;
+					transform: translateY(-50%);
+				}
+			}
+		}
+		// .site-inner {
+		//     padding-left: 0;
+		//     padding-right: 0;
+		//     width: 100%;
+		//     max-width: 100%;
+		//     margin-bottom: 0;
+		// }
 	}
-	// .site-inner {
-	//     padding-left: 0;
-	//     padding-right: 0;
-	//     width: 100%;
-	//     max-width: 100%;
-	//     margin-bottom: 0;
-	// }
 
 	.floorplan-images-slider {
 		.blaze-buttons {
@@ -79,23 +99,6 @@ body.floorplans-template-default {
 	}
 
 	.current-floorplan-info {
-		display: grid;
-		grid-template-columns: 4fr 6fr;
-		gap: 60px;
-		align-items: center;
-
-		@include notdesktop {
-			grid-template-columns: 1fr;
-			gap: 20px;
-		}
-
-		.images-column {
-			img {
-				width: 100%;
-				max-width: 100%;
-				height: auto;
-			}
-		}
 	}
 
 	.similar-floorplans {

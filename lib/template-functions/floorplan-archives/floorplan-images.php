@@ -15,16 +15,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return void.
  */
 function rentfetch_floorplan_images() {
-
-	if ( is_singular( 'floorplans' ) ) {
+	
+	// read the flag for whether we should use a slider.
+	global $floorplan_images_use_slider;
+	
+	if ( false === $floorplan_images_use_slider ) {
+		rentfetch_floorplan_single_image();
+	} elseif ( is_singular( 'floorplans' ) ) {
 		rentfetch_floorplan_image_slider();
 	} elseif ( is_singular( 'properties' ) ) {
 		rentfetch_floorplan_image_slider();
 	} else {
 		rentfetch_floorplan_single_image();
 	}
-
-	// TODO: perhaps add a slider capability and an option to toggle between these.
 }
 add_action( 'rentfetch_do_floorplan_images', 'rentfetch_floorplan_images' );
 
