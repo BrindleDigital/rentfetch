@@ -33,13 +33,13 @@ function rentfetch_settings_set_defaults_properties() {
 		'category_search',
 		'date_search',
 		'price_search',
-		'squarefoot_search',
 		'amenities_search',
 
 	);
 	add_option( 'rentfetch_options_dialog_filters', $defaultarray );
 
 	add_option( 'rentfetch_options_number_of_amenities_to_show', 20 );
+	add_option( 'rentfetch_options_maximum_bedrooms_to_search', 99 );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties' );
 
@@ -186,7 +186,7 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_featured_filters, true ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="squarefoot_search" <?php checked( in_array( 'squarefoot_search', $options_dialog_filters, true ) ); ?>>
 						Square footage search
 					</label>
 				</li>
