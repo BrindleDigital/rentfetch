@@ -90,6 +90,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.13.1 =
+
+* Minor stylefix in the properties map
+
 = 0.13.0 =
 
 * After initial review for the WordPress plugin repo, adjusting code to match WordPress code standards (this is s substantial code review)
