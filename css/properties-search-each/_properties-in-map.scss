@@ -6,6 +6,10 @@
 		font-size: var(--rentfetch-font-size-large);
 		margin: 0 0 15px;
 		color: var(--rentfetch-dark);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	p.city-state {
