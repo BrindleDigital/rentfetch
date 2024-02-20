@@ -93,6 +93,7 @@ Start from your WordPress dashboard.
 = 0.13.1 =
 
 * Minor stylefix in the properties map
+* Two bugs in the property archive settings (typo prevented setting from saving)
 
 = 0.13.0 =
 
