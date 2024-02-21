@@ -150,7 +150,7 @@ function rentfetch_save_settings_property_archives() {
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( 'properties' !== $tab || 'property_archives' !== $section ) {
+	if ( 'properties' !== $tab || 'property-archives' !== $section ) {
 		return;
 	}
 
