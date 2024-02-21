@@ -155,15 +155,10 @@ function rentfetch_filter_properties() {
 		$properties_maximum_per_page = -1;
 	}
 
-	$orderby = apply_filters( 'rentfetch_get_property_orderby', $orderby = 'menu_order' );
-	$order   = apply_filters( 'rentfetch_get_property_order', $order = 'ASC' );
-
 	// * The base property query.
 	$property_args = array(
 		'post_type'      => 'properties',
 		'posts_per_page' => $properties_maximum_per_page,
-		'orderby'        => $orderby,
-		'order'          => $order, // ASC or DESC.
 		'no_found_rows'  => true,
 	);
 
