@@ -23,6 +23,9 @@ function rentfetch_search_properties_dialog_filters() {
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_text_search' );
 	}
 
+	// add a spot that's default for custom filters to be added.
+	add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_do_search_properties_custom_filters' );
+
 	if ( ! empty( $options_dialog_filters ) && in_array( 'beds_search', $options_dialog_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_beds' );
 	}
@@ -71,6 +74,9 @@ function rentfetch_search_properties_featured_filters() {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_text_search' );
 	}
 
+	// add a spot that's default for custom filters to be added.
+	add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_do_search_properties_custom_filters' );
+
 	if ( ! empty( $options_featured_filters ) && in_array( 'beds_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_beds' );
 	}
@@ -104,3 +110,12 @@ function rentfetch_search_properties_featured_filters() {
 	}
 }
 add_action( 'wp', 'rentfetch_search_properties_featured_filters' );
+
+/**
+ * Add a location for custom filters to go by default.
+ *
+ * @return void.
+ */
+function rentfetch_do_search_properties_custom_filters() {
+	do_action( 'rentfetch_do_search_properties_custom_filter_location' );
+}

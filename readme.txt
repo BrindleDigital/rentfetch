@@ -100,6 +100,7 @@ Start from your WordPress dashboard.
 * Style bugfix: when text overflows the text search area in the featured filters of the property search, it now will end in a ... (this is important for bookmarks)
 * Style bugfix: removing unwanted WP default spacing below the unit table
 * Making the single properties buttons hookable so that we don't have to constantly re-add this section when customizing client sites
+* Adding a new default location for custom filters to be added on property searches (after the text search, before everything else)
 
 = 0.13.1 =
 
