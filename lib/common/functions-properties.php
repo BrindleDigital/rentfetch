@@ -184,6 +184,12 @@ function rentfetch_property_location() {
 	}
 }
 
+//* PROPERTY BUTTONS.
+add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_location_button' );
+add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_website_button' );
+add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_phone_button' );
+add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_contact_button' );
+
 /**
  * Get the property location link
  *
@@ -264,9 +270,13 @@ function rentfetch_property_city_state() {
 function rentfetch_get_property_phone() {
 	$phone = sanitize_text_field( get_post_meta( get_the_ID(), 'phone', true ) );
 
-	// format as a phone number.
-	$phone = preg_replace( '/[^0-9]/', '', $phone );
-	$phone = preg_replace( '/^1?(\d{3})(\d{3})(\d{4})$/', '($1) $2-$3', $phone );
+	if ( $phone ) {
+
+		// format as a phone number.
+		$phone = preg_replace( '/[^0-9]/', '', $phone );
+		$phone = preg_replace( '/^1?(\d{3})(\d{3})(\d{4})$/', '($1) $2-$3', $phone );
+
+	}
 
 	return apply_filters( 'rentfetch_filter_property_phone', $phone );
 }
@@ -293,7 +303,11 @@ function rentfetch_get_property_phone_button() {
 	$phone        = rentfetch_get_property_phone();
 	$phone_button = sprintf( '<a class="phone-link property-link" href="tel:%s">%s</a>', esc_html( $phone ), esc_html( $phone ) );
 
-	return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button );
+	if ( $phone ) {
+		return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button );
+	} else {
+		return;
+	}
 }
 
 /**
@@ -316,7 +330,7 @@ function rentfetch_get_property_url() {
 
 	$url = get_post_meta( get_the_ID(), 'url', true );
 
-	return apply_filters( 'rentfetch_filter_property_url', $url );
+	return $url;
 }
 
 /**
@@ -336,9 +350,14 @@ function rentfetch_property_url() {
  * @return string The property website.
  */
 function rentfetch_get_property_website_button() {
-	$url            = rentfetch_get_property_url();
+	$url            = apply_filters( 'rentfetch_filter_property_url', rentfetch_get_property_url() );
 	$website_button = sprintf( '<a class="url-link property-link" href="%s" target="_blank">Visit Website</a>', esc_html( $url ) );
-	return apply_filters( 'rentfetch_filter_property_website', $website_button );
+
+	if ( $url ) {
+		return apply_filters( 'rentfetch_filter_property_website', $website_button );
+	} else {
+		return;
+	}
 }
 
 /**
@@ -347,7 +366,9 @@ function rentfetch_get_property_website_button() {
  * @return void.
  */
 function rentfetch_property_website_button() {
-	echo wp_kses_post( rentfetch_get_property_website_button() );
+	if ( rentfetch_get_property_url() ) {
+		echo wp_kses_post( rentfetch_get_property_website_button() );
+	}
 }
 
 // * PROPERTY EMAIL.
@@ -376,7 +397,9 @@ function rentfetch_get_property_contact_button() {
  * @return void.
  */
 function rentfetch_property_contact_button() {
-	echo wp_kses_post( rentfetch_get_property_contact_button() );
+	if ( rentfetch_get_property_contact_button() ) {
+		echo wp_kses_post( rentfetch_get_property_contact_button() );
+	}
 }
 
 // * PROPERTY BEDROOMS.

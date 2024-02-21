@@ -49,11 +49,8 @@ function rentfetch_single_properties_parts_details() {
 			echo '</div>'; // .property-details-header
 			echo '<div class="property-details-body">';
 				echo '<div class="property-links">';
-
-					rentfetch_property_location_button();
-					rentfetch_property_website_button();
-					rentfetch_property_phone_button();
-					rentfetch_property_contact_button();
+				
+					do_action( 'rentfetch_do_single_property_links' );
 
 				echo '</div>'; // .property-links
 
