@@ -90,6 +90,14 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.13.2 =
+
+* Updating the filters for the contact button and email address on properties to not output a blank button.
+* Added a way to filter just the email address itself without messing with the button markup for simplicity.
+* Fixing an error that prevented the property archive settings from saving properly
+* Adding a filter to allow for the default property archive order to be set
+* Connecting the settings for property archive order to the filter.
+
 = 0.13.1 =
 
 * Minor stylefix in the properties map
