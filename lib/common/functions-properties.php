@@ -358,11 +358,16 @@ function rentfetch_property_website_button() {
  * @return string The property email.
  */
 function rentfetch_get_property_contact_button() {
-	$email          = sanitize_email( get_post_meta( get_the_ID(), 'email', true ) );
-	$email          = 'mailto:' . $email;
-	$contact_button = sprintf( '<a class="email-link property-link" href="%s">Reach out</a>', esc_html( $email ) );
+	$email          = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( get_the_ID(), 'email', true ) ) );
+	$email_link     = 'mailto:' . $email;
+	$contact_button = sprintf( '<a class="email-link property-link" href="%s">Reach out</a>', esc_html( $email_link ) );
+	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button );
 
-	return apply_filters( 'rentfetch_filter_property_contact_button', $contact_button );
+	if ( $email ) {
+		return $email_button;
+	} else {
+		return;
+	}
 }
 
 /**
