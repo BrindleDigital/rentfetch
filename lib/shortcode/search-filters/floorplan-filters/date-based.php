@@ -25,8 +25,8 @@ function rentfetch_search_filters_date() {
 
 	// build the date-based search.
 	echo '<fieldset class="move-in">';
-		printf( '<legend>%s</legend>', $label );
-		printf( '<button class="toggle">%s</button>', esc_html( $label ) );
+		printf( '<legend>%s</legend>', esc_html( $label ) );
+		printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 		echo '<div class="input-wrap inactive">';
 			printf( '<input type="date" value="%s" name="dates" placeholder="Available date" style="width:auto;" data-input />', esc_html( $date ) );
 		echo '</div>'; // .input-wrap.

@@ -20,11 +20,13 @@ function rentfetch_search_filters_baths() {
 	$baths = rentfetch_get_meta_values( 'baths', 'floorplans' );
 	$baths = array_unique( $baths );
 	asort( $baths );
+	
+	$label = apply_filters( 'rentfetch_search_filters_baths_label', 'Baths' );
 
 	// build the baths search.
 	echo '<fieldset class="baths">';
-		echo '<legend>Baths</legend>';
-		echo '<button class="toggle">Baths</button>';
+		printf( '<legend>%s</legend>', esc_html( $label ) );
+		printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 		echo '<div class="input-wrap checkboxes inactive">';
 
 	foreach ( $baths as $bath ) {

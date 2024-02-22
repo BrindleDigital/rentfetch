@@ -40,9 +40,11 @@ function rentfetch_search_filters_amenities() {
 	// * Build amenities search
 	if ( ! empty( $amenities ) && taxonomy_exists( 'amenities' ) ) {
 
+		$label = apply_filters( 'rentfetch_search_filters_amenities_label', 'Amenities' );
+
 		echo '<fieldset class="amenities">';
-			echo '<legend>Amenities</legend>';
-			echo '<button class="toggle">Amenities</button>';
+			printf( '<legend>%s</legend>', esc_html( $label ) );
+			printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 			echo '<div class="input-wrap checkboxes">';
 
 		foreach ( $amenities as $amenity ) {

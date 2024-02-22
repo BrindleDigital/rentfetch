@@ -22,11 +22,13 @@ function rentfetch_search_filters_sort_floorplans() {
 	} else {
 		$sort = null;
 	}
+	
+	$label = apply_filters( 'rentfetch_search_filters_sort_label', 'Sorting' );
 
 	// build the baths search.
 	echo '<fieldset class="sort">';
-		echo '<legend>Sort by</legend>';
-		echo '<button class="toggle">Sorting</button>';
+		printf( '<legend>%s</legend>', esc_html( $label ) );
+		printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 		echo '<div class="input-wrap radio checkboxes inactive">';
 			if ( 'availability' === $sort ) {
 				$checked = 'checked';

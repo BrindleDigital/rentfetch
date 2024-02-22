@@ -28,11 +28,13 @@ function rentfetch_search_filters_squarefoot() {
 	if ( isset( $_GET['sqftbig'] ) && $_GET['sqftbig'] > 0 ) {
 		$value_big = intval( sanitize_text_field( wp_unslash( $_GET['sqftbig'] ) ) );
 	}
+	
+	$label = apply_filters( 'rentfetch_search_filters_sqft_label', 'Square footage' );
 
 	// * build the price search.
 	echo '<fieldset class="square-footage number-range">';
-		echo '<legend>Square footage</legend>';
-		echo '<button class="toggle">Square footage</button>';
+		printf( '<legend>%s</legend>', esc_html( $label ) );
+		printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 		echo '<div class="input-wrap slider inactive">';
 			echo '<div>';
 				echo '<div class="price-slider-wrap slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';

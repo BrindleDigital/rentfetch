@@ -45,8 +45,8 @@ function rentfetch_search_filters_price() {
 
 	// * build the price search
 	echo '<fieldset class="price number-range">';
-		printf( '<legend>%s</legend>', $label );
-		printf( '<button class="toggle">%s</button>', $label );
+		printf( '<legend>%s</legend>', esc_html( $label ) );
+		printf( '<button class="toggle">%s</button>', esc_html( $label ) );
 		echo '<div class="input-wrap slider inactive">';
 			echo '<div>';
 				echo '<div class="price-slider-wrap slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';

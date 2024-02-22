@@ -30,11 +30,12 @@ function rentfetch_search_filters_beds() {
 	}
 
 	$beds = apply_filters( 'rentfetch_filter_beds_in_dropdown', $beds );
+	$label = apply_filters( 'rentfetch_search_filters_beds_label', 'Bedrooms' );
 
 	// build the beds search.
 	echo '<fieldset class="beds">';
-		echo '<legend>Bedrooms</legend>';
-		echo '<button class="toggle">Bedrooms</button>';
+		printf( '<legend>%s</legend>', esc_html( $label ) );
+		printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 		echo '<div class="input-wrap checkboxes inactive">';
 
 	foreach ( $beds as $bed ) {

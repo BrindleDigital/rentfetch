@@ -41,12 +41,14 @@ function rentfetch_search_filters_pets() {
 		3 => 'Pet-friendly',
 		4 => 'Pets not allowed',
 	);
+	
+	$label = apply_filters( 'rentfetch_search_filters_pets_label', 'Pets' );
 
 	// * build the pets search
 	if ( ! empty( $pets ) ) {
 		echo '<fieldset ckass="pets">';
-			echo '<legend>Pets</legend>';
-			echo '<button class="toggle">Pets</button>';
+			printf( '<legend>%s</legend>', esc_html( $label ) );
+			printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 			echo '<div class="input-wrap checkboxes">';
 		foreach ( $pets as $pet ) {
 			printf( '<label><input type="radio" data-pets="%s" data-pets-name="%s" name="pets" value="%s" /><span>%s</span></label>', esc_html( $pet ), esc_html( $pets_choices[ $pet ] ), esc_html( $pet ), esc_html( $pets_choices[ $pet ] ) );
