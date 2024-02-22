@@ -56,8 +56,8 @@ function rentfetch_default_units_admin_columns( $columns ) {
 		'minimum_rent'          => __( 'Min Rent', 'rentfetch' ),
 		'maximum_rent'          => __( 'Max Rent', 'rentfetch' ),
 		'sqrft'                 => __( 'Sqrft', 'rentfetch' ),
+		'yardi_unit_image_urls' => __( 'Synced Images', 'rentfetch' ),
 		'specials'              => __( 'Specials', 'rentfetch' ),
-		'yardi_unit_image_urls' => __( 'Yardi image', 'rentfetch' ),
 		'unit_source'           => __( 'Integration', 'rentfetch' ),
 		'api_response'          => __( 'API response', 'rentfetch' ),
 	);
