@@ -90,7 +90,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.13.2 =
+= 0.14.0 =
 
 * Updating the filters for the contact button and email address on properties to not output a blank button.
 * Added a way to filter just the email address itself without messing with the button markup for simplicity.
@@ -103,6 +103,7 @@ Start from your WordPress dashboard.
 * Adding a new default location for custom filters to be added on property searches (after the text search, before everything else)
 * Adding filterable labels to some of the dropdowns
 * Reordering/standardizing names for admin columns
+* Adding a floorplancategories taxonomy
 
 = 0.13.1 =
 
