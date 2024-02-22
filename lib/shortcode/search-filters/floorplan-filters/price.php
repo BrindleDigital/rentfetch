@@ -40,11 +40,13 @@ function rentfetch_search_filters_price() {
 	if ( 0 === intval( $value_big ) ) {
 		$value_big = null;
 	}
+	
+	$label = apply_filters( 'rentfetch_search_filters_price_label', 'Price' );
 
 	// * build the price search
 	echo '<fieldset class="price number-range">';
-		echo '<legend>Price Range</legend>';
-		echo '<button class="toggle">Price Range</button>';
+		printf( '<legend>%s</legend>', $label );
+		printf( '<button class="toggle">%s</button>', $label );
 		echo '<div class="input-wrap slider inactive">';
 			echo '<div>';
 				echo '<div class="price-slider-wrap slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';

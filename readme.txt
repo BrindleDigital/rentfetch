@@ -101,6 +101,8 @@ Start from your WordPress dashboard.
 * Style bugfix: removing unwanted WP default spacing below the unit table
 * Making the single properties buttons hookable so that we don't have to constantly re-add this section when customizing client sites
 * Adding a new default location for custom filters to be added on property searches (after the text search, before everything else)
+* Adding filterable labels to some of the dropdowns
+* Reordering/standardizing names for admin columns
 
 = 0.13.1 =
 

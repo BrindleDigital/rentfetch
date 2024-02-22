@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_search_filters_date() {
 
 	$date = null;
+	$label = apply_filters( 'rentfetch_search_filters_date_label', 'Date' );
 
 	if ( isset( $_GET['dates'] ) && $_GET['dates'] > 0 ) {
 		$date = sanitize_text_field( wp_unslash( $_GET['dates'] ) );
@@ -24,8 +25,8 @@ function rentfetch_search_filters_date() {
 
 	// build the date-based search.
 	echo '<fieldset class="move-in">';
-		echo '<legend>Move-In Date</legend>';
-		echo '<button class="toggle">Move-In Date</button>';
+		printf( '<legend>%s</legend>', $label );
+		printf( '<button class="toggle">%s</button>', esc_html( $label ) );
 		echo '<div class="input-wrap inactive">';
 			printf( '<input type="date" value="%s" name="dates" placeholder="Available date" style="width:auto;" data-input />', esc_html( $date ) );
 		echo '</div>'; // .input-wrap.
