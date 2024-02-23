@@ -4,7 +4,7 @@ Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.4.1
 Requires PHP: 7.3
-Stable tag: 0.13.0
+Stable tag: 0.14.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,7 @@ Our individual floorplan template goes all the way down to the unit level, inclu
 * Your floorplans can display [Matterport](https://my.matterport.com) and [YouTube](https://www.youtube.com) tours.
 * TONS of hooks, letting you (or your developer) customize to your heart's content. The single layouts for both floorplans and properties can be fully replaced by the theme, and we have lots of helpful functions to let you grab preprocessed information for display.
 * This plugin works with both single-property websites and websites that showcase hundreds of properties.
+* Adding minisearch capability
 
 == Pro ==
 

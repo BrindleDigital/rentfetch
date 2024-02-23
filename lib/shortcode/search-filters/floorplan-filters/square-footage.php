@@ -34,7 +34,7 @@ function rentfetch_search_filters_squarefoot() {
 	// * build the price search.
 	echo '<fieldset class="square-footage number-range">';
 		printf( '<legend>%s</legend>', esc_html( $label ) );
-		printf( '<button class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
+		printf( '<button type="button" class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
 		echo '<div class="input-wrap slider inactive">';
 			echo '<div>';
 				echo '<div class="price-slider-wrap slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';

@@ -55,7 +55,7 @@ function rentfetch_search_filters_property_types() {
 	if ( ! empty( $terms && taxonomy_exists( $taxonomy_slug ) ) ) {
 		echo '<fieldset class="taxonomy">';
 			printf( '<legend>%s</legend>', esc_attr( $taxonomy_label ) );
-			printf( '<button class="toggle">%s</button>', esc_attr( $taxonomy_label ) );
+			printf( '<button type="button" class="toggle">%s</button>', esc_attr( $taxonomy_label ) );
 			echo '<div class="input-wrap checkboxes">';
 
 		foreach ( $terms as $term ) {
