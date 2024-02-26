@@ -16,11 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string       the markup for the floorplans grid.
  */
 function rentfetch_floorplans( $atts ) {
-	$a = shortcode_atts(
+	$atts = shortcode_atts(
 		array(
 			'property_id' => null,
 			'beds'        => null,
 			'sort'        => null,
+			'posts_per_page' => '-1',
 		),
 		$atts
 	);
@@ -29,13 +30,9 @@ function rentfetch_floorplans( $atts ) {
 
 	$args = array(
 		'post_type'      => 'floorplans',
-		'posts_per_page' => '-1',
-		'orderby'        => 'meta_value_num',
-		'meta_key'       => 'beds',
-		'order'          => 'ASC',
 	);
 
-	$args = apply_filters( 'rentfetch_floorplans_simple_grid_query_args', $args, $a );
+	$args = apply_filters( 'rentfetch_floorplans_simple_grid_query_args', $args, $atts );
 
 	// The Query.
 	$custom_query = new WP_Query( $args );
@@ -152,8 +149,23 @@ function rentfetch_floorplans_simple_grid_query_args_order( $floorplans_args, $a
 			$floorplans_args['meta_key'] = 'available_units';
 			$floorplans_args['order']    = 'DESC';
 		}
+	} else {
+		$floorplans_args['orderby']  = 'meta_value_num';
+		$floorplans_args['meta_key'] = 'beds';
+		$floorplans_args['order']    = 'ASC';
 	}
 
 	return $floorplans_args;
 }
 add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_order', 10, 2 );
+
+
+function rentfetch_floorplans_simple_grid_query_args_postsperpage( $floorplans_args, $atts ) {
+
+	if ( isset( $atts['posts_per_page'] ) ) {
+		$floorplans_args['posts_per_page'] = (int) $atts['posts_per_page'];
+	}	
+
+	return $floorplans_args;
+}
+add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_postsperpage', 10, 2 );
