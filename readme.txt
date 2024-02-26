@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.1 =
+
+* Adding base styles for the units table so that it doesn't look broken when the theme doesn't use a CSS reset.
+
 = 0.14.0 =
 
 * Updating the filters for the contact button and email address on properties to not output a blank button.
