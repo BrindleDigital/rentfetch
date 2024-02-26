@@ -94,6 +94,7 @@ Start from your WordPress dashboard.
 = 0.14.1 =
 
 * Adding base styles for the units table so that it doesn't look broken when the theme doesn't use a CSS reset.
+* Adding posts_per_page capability to [rentfetch_floorplans] shortcode.
 
 = 0.14.0 =
 
