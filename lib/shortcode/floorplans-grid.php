@@ -16,23 +16,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string       the markup for the floorplans grid.
  */
 function rentfetch_floorplans( $atts ) {
-	$atts = shortcode_atts(
+	$args = shortcode_atts(
 		array(
-			'property_id' => null,
-			'beds'        => null,
-			'sort'        => null,
+			'property_id'    => null,
+			'beds'           => null,
+			'sort'           => null,
 			'posts_per_page' => '-1',
+			'post_type'      => 'floorplans',
 		),
 		$atts
 	);
 
 	ob_start();
 
-	$args = array(
-		'post_type'      => 'floorplans',
-	);
-
-	$args = apply_filters( 'rentfetch_floorplans_simple_grid_query_args', $args, $atts );
+	$args = apply_filters( 'rentfetch_floorplans_simple_grid_query_args', $args );
 
 	// The Query.
 	$custom_query = new WP_Query( $args );
@@ -69,20 +66,21 @@ add_shortcode( 'rentfetch_floorplans', 'rentfetch_floorplans' );
  * Apply the $atts for property_id to the query args
  *
  * @param   array $args the query args.
- * @param   array $atts the shortcode attributes.
  *
  * @return array  the modified query args.
  */
-function rentfetch_floorplans_simple_grid_query_args_property_id( $args, $atts ) {
+function rentfetch_floorplans_simple_grid_query_args_property_id( $args ) {
 
-	if ( isset( $atts['property_id'] ) ) {
+	if ( isset( $args['property_id'] ) ) {
 
-		$array_property_ids = explode( ',', $atts['property_id'] );
+		$array_property_ids = explode( ',', $args['property_id'] );
 
 		$args['meta_query'][] = array(
 			'key'   => 'property_id',
 			'value' => $array_property_ids,
 		);
+
+		$args['property_id'] = null;
 
 	}
 
@@ -94,15 +92,17 @@ add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans
  * Apply the $atts for beds to the query args
  *
  * @param   array $args the query args.
- * @param   array $atts the shortcode attributes.
  *
  * @return array  the modified query args.
  */
-function rentfetch_floorplans_simple_grid_query_args_beds( $args, $atts ) {
+function rentfetch_floorplans_simple_grid_query_args_beds( $args ) {
 
-	if ( isset( $atts['beds'] ) ) {
+	if ( isset( $args['beds'] ) ) {
 
-		$array_beds = explode( ',', $atts['beds'] );
+		$array_beds = explode( ',', $args['beds'] );
+
+		// make the values of $array_beds integers.
+		$array_beds = array_map( 'intval', $array_beds );
 
 		$args['meta_query'][] = array(
 			'key'   => 'beds',
@@ -111,6 +111,8 @@ function rentfetch_floorplans_simple_grid_query_args_beds( $args, $atts ) {
 
 	}
 
+	$args['beds'] = null;
+
 	return $args;
 }
 add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_beds', 10, 2 );
@@ -118,54 +120,41 @@ add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans
 /**
  * Apply the $atts for sort to the query args
  *
- * @param   array $floorplans_args the query args.
- * @param   array $atts the shortcode attributes.
+ * @param   array $args arguments.
  *
  * @return array  the modified query args.
  */
-function rentfetch_floorplans_simple_grid_query_args_order( $floorplans_args, $atts ) {
+function rentfetch_floorplans_simple_grid_query_args_order( $args ) {
 
-	if ( isset( $atts['sort'] ) ) {
+	if ( isset( $args['sort'] ) ) {
 
-		$sort = $atts['sort'];
+		$sort = $args['sort'];
 
 		// if it's beds.
-		if ( 'sort' === $sort ) {
-			$floorplans_args['orderby']  = 'meta_value_num';
-			$floorplans_args['meta_key'] = 'beds';
-			$floorplans_args['order']    = 'ASC';
+		if ( null === $sort || 'beds' === $sort ) {
+			$args['orderby']  = 'meta_value_num';
+			$args['meta_key'] = 'beds';
+			$args['order']    = 'ASC';
 		}
 
 		// if it's baths.
 		if ( 'baths' === $sort ) {
-			$floorplans_args['orderby']  = 'meta_value_num';
-			$floorplans_args['meta_key'] = 'baths';
-			$floorplans_args['order']    = 'ASC';
+			$args['orderby']  = 'meta_value_num';
+			$args['meta_key'] = 'baths';
+			$args['order']    = 'ASC';
 		}
 
 		// if it's available units.
 		if ( 'availability' === $sort ) {
-			$floorplans_args['orderby']  = 'meta_value_num';
-			$floorplans_args['meta_key'] = 'available_units';
-			$floorplans_args['order']    = 'DESC';
+			$args['orderby']  = 'meta_value_num';
+			$args['meta_key'] = 'available_units';
+			$args['order']    = 'DESC';
 		}
-	} else {
-		$floorplans_args['orderby']  = 'meta_value_num';
-		$floorplans_args['meta_key'] = 'beds';
-		$floorplans_args['order']    = 'ASC';
 	}
 
-	return $floorplans_args;
+	// reset the sort attribute.
+	$args['sort'] = null;
+
+	return $args;
 }
 add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_order', 10, 2 );
-
-
-function rentfetch_floorplans_simple_grid_query_args_postsperpage( $floorplans_args, $atts ) {
-
-	if ( isset( $atts['posts_per_page'] ) ) {
-		$floorplans_args['posts_per_page'] = (int) $atts['posts_per_page'];
-	}	
-
-	return $floorplans_args;
-}
-add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_postsperpage', 10, 2 );
