@@ -36,9 +36,9 @@ Our individual floorplan template goes all the way down to the unit level, inclu
 == Features ==
 
 * Native WordPress content types are used for everything, so a developer can create their own layouts.
-* Google maps integration (both for the property search and for use on each property page. To use this, you'll need to set up an API key for the Google Maps Javascript API at [maps.googleapis.com](https://maps.googleapis.com))
+* Google maps integration (both for the property search and for use on each property page. To use this, you'll need to set up an API key for the Google Maps Javascript API at [maps.googleapis.com](https://maps.googleapis.com)). [Google Maps terms of service](https://cloud.google.com/maps-platform/terms)
 * Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed [Blaze Slider](https://blaze-slider.dev) for these, and you don't need to set up anything for these to work)
-* Your floorplans can display [Matterport](https://my.matterport.com) and [YouTube](https://www.youtube.com) tours.
+* Your floorplans can display [Matterport](https://my.matterport.com) ([Matterport terms of use](https://matterport.com/terms-of-use)) and [YouTube](https://www.youtube.com) ([Youtube terms of service](https://www.youtube.com/static?template=terms))tours.
 * TONS of hooks, letting you (or your developer) customize to your heart's content. The single layouts for both floorplans and properties can be fully replaced by the theme, and we have lots of helpful functions to let you grab preprocessed information for display.
 * This plugin works with both single-property websites and websites that showcase hundreds of properties.
 
