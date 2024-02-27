@@ -16,20 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string       the shortcode output.
  */
 function rentfetch_properties( $atts ) {
-	$a = shortcode_atts(
+	$args = shortcode_atts(
 		array(
-			'foo' => 'something',
-			'bar' => 'something else',
+			'post_type'      => 'properties',
+			'posts_per_page' => '-1',
+			'city'           => null,
 		),
 		$atts
 	);
 
 	ob_start();
 
-	$args = array(
-		'post_type'      => 'properties',
-		'posts_per_page' => '-1',
-	);
+	$args = apply_filters( 'rentfetch_properties_simple_grid_query_args', $args );
 
 	// Run the query.
 	$custom_query = new WP_Query( $args );
@@ -61,3 +59,47 @@ function rentfetch_properties( $atts ) {
 	return ob_get_clean();
 }
 add_shortcode( 'rentfetch_properties', 'rentfetch_properties' );
+
+/**
+ * This function sets up the $args for the city parameter.
+ *
+ * @param  array $args  the query arguments.
+ * @return array        the modified query arguments.
+ */
+function rentfetch_properties_simple_grid_query_args_city( $args ) {
+
+	if ( isset( $args['city'] ) ) {
+
+		$cities_array = explode( ',', $args['city'] );
+
+		// Start with an empty array for the 'OR' part of the query.
+		$cities_meta_query = array( 'relation' => 'OR' );
+
+		// Loop through each city in the array and add it to the $cities_meta_query.
+		foreach ( $cities_array as $city ) {
+			$cities_meta_query[] = array(
+				'key'     => 'city',
+				'value'   => $city,
+				'compare' => '=',
+			);
+		}
+
+		// Initialize the $args array if not already done.
+		$args = array(
+			'post_type'      => 'properties',
+			'posts_per_page' => -1,
+		);
+
+		// Add the $cities_meta_query to the $args['meta_query'] with the correct 'AND' relation.
+		$args['meta_query'] = array(
+			'relation' => 'AND', // Overall relation.
+			$cities_meta_query,  // Nested OR for cities.
+		);
+	}
+
+	// reset the city to null.
+	$args['city'] = null;
+
+	return $args;
+}
+add_filter( 'rentfetch_properties_simple_grid_query_args', 'rentfetch_properties_simple_grid_query_args_city' );

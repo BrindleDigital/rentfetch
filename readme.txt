@@ -91,6 +91,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.2 =
+
+* Simplifying the args for the [rentfetch_floorplans] shortcode. Don't need to separately pass $args and $atts, and more extendable without.
+* Adding shortcode parameter for 'city' to the [rentfetch_properties] shortcode.
+
 = 0.14.1 =
 
 * Adding base styles for the units table so that it doesn't look broken when the theme doesn't use a CSS reset.
