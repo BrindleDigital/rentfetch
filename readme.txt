@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.3 =
+
+* Fixing a bug with the [rentfetch_properties] shortcode that was resetting the posts_per_page to -1 in all cases.
+
 = 0.14.2 =
 
 * Simplifying the args for the [rentfetch_floorplans] shortcode. Don't need to separately pass $args and $atts, and more extendable without.

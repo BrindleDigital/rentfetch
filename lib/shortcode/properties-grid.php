@@ -16,10 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string       the shortcode output.
  */
 function rentfetch_properties( $atts ) {
+		
 	$args = shortcode_atts(
 		array(
 			'post_type'      => 'properties',
-			'posts_per_page' => '-1',
+			'posts_per_page' => -1,
 			'city'           => null,
 		),
 		$atts
@@ -28,7 +29,7 @@ function rentfetch_properties( $atts ) {
 	ob_start();
 
 	$args = apply_filters( 'rentfetch_properties_simple_grid_query_args', $args );
-
+	
 	// Run the query.
 	$custom_query = new WP_Query( $args );
 
@@ -83,12 +84,6 @@ function rentfetch_properties_simple_grid_query_args_city( $args ) {
 				'compare' => '=',
 			);
 		}
-
-		// Initialize the $args array if not already done.
-		$args = array(
-			'post_type'      => 'properties',
-			'posts_per_page' => -1,
-		);
 
 		// Add the $cities_meta_query to the $args['meta_query'] with the correct 'AND' relation.
 		$args['meta_query'] = array(
