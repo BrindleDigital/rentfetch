@@ -118,6 +118,9 @@ add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorpla
  */
 function rentfetch_beds_in_dropdown( $beds ) {
 
+	// set this array so that if we don't have any beds we don't cause a php error.
+	$filtered_beds = array();
+
 	// get the setting for the max number of beds to show in the dropdown.
 	$max_beds = get_option( 'rentfetch_options_maximum_bedrooms_to_search' );
 

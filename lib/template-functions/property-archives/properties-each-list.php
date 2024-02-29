@@ -21,7 +21,7 @@ function rentfetch_properties_each_list() {
 	$bedrooms          = rentfetch_get_property_bedrooms();
 	$bathrooms         = rentfetch_get_property_bathrooms();
 	$square_feet       = rentfetch_get_property_square_feet();
-	$rent              = rentfetch_get_property_rent();
+	$rent              = rentfetch_get_property_pricing();
 	$availability      = rentfetch_get_property_availability();
 	$specials          = rentfetch_get_property_specials();
 	$allowed_tags      = array(

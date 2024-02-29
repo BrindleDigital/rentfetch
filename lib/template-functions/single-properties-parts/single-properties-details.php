@@ -27,7 +27,7 @@ function rentfetch_single_properties_parts_details() {
 			$title                = rentfetch_get_property_title();
 			$location             = rentfetch_get_property_location();
 			$property_description = rentfetch_get_property_description();
-			$property_rent        = rentfetch_get_property_rent();
+			$property_rent        = rentfetch_get_property_pricing();
 			$beds                 = rentfetch_get_property_bedrooms();
 			$sqrft                = rentfetch_get_property_square_feet();
 

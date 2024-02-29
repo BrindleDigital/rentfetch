@@ -91,6 +91,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.4 =
+
+* Fixing a php notice when there are no properties on the main search ($filtered_beds array is not an array).
+* Updating the display of rent values on all three levels. For properties and floorplans, giving them an option to show range or minimum. For units, we're just showing minimum, as some APIs (RealPage) don't give reliable max values.
+
 = 0.14.3 =
 
 * Fixing a bug with the [rentfetch_properties] shortcode that was resetting the posts_per_page to -1 in all cases.

@@ -24,6 +24,8 @@ function rentfetch_settings_set_defaults_floorplans() {
 
 	$default_values = 'beds';
 	add_option( 'rentfetch_options_floorplan_default_order', $default_values );
+
+	add_option( 'rentfetch_options_floorplan_pricing_display', 'range' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_floorplans' );
 
@@ -96,6 +98,29 @@ function rentfetch_settings_floorplans_floorplan_search() {
 			</ul>
 		</div>
 	</div>
+	
+	<div class="row">
+		<div class="column">
+			<label for="rentfetch_options_floorplan_pricing_display">Floorplan Pricing Display</label>
+			<p class="description">How should pricing be shown on floorplan archives?</p>
+		</div>
+		<div class="column">
+			<ul class="radio">
+				<li>
+					<label>
+						<input type="radio" name="rentfetch_options_floorplan_pricing_display" id="rentfetch_options_floorplan_pricing_display" value="range" <?php checked( get_option( 'rentfetch_options_floorplan_pricing_display' ), 'range' ); ?>>
+						Range (e.g. "$1999 to $2999")
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="radio" name="rentfetch_options_floorplan_pricing_display" id="rentfetch_options_floorplan_pricing_display" value="minimum" <?php checked( get_option( 'rentfetch_options_floorplan_pricing_display' ), 'minimum' ); ?>>
+						Minimum (e.g. "from $1999")
+					</label>
+				</li>
+			</ul>
+		</div>
+	</div>
 	<?php
 }
 add_action( 'rentfetch_do_settings_floorplans_floorplan_search', 'rentfetch_settings_floorplans_floorplan_search' );
@@ -132,6 +157,12 @@ function rentfetch_save_settings_floorplan_search() {
 		update_option( 'rentfetch_options_floorplan_filters', $options_floorplan_filters );
 	} else {
 		update_option( 'rentfetch_options_floorplan_filters', array() );
+	}
+	
+	// Select field.
+	if ( isset( $_POST['rentfetch_options_floorplan_pricing_display'] ) ) {
+		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_floorplan_pricing_display'] ) );
+		update_option( 'rentfetch_options_floorplan_pricing_display', $property_display );
 	}
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_floorplan_search' );

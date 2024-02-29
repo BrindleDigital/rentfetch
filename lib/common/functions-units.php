@@ -41,27 +41,28 @@ function rentfetch_unit_title() {
  * @return string the unit pricing.
  */
 function rentfetch_get_unit_pricing() {
+
 	$minimum_rent = get_post_meta( get_the_ID(), 'minimum_rent', true );
 	$maximum_rent = get_post_meta( get_the_ID(), 'maximum_rent', true );
 
 	// bail if there's no rent value over $50 (this is junk data).
 	if ( max( $minimum_rent, $maximum_rent ) < 50 ) {
-		return null;
+		return apply_filters( 'rentfetch_filter_unit_pricing', null, $minimum_rent, $maximum_rent );
 	}
 
 	if ( $minimum_rent === $maximum_rent ) {
 		$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
 	} elseif ( $minimum_rent < $maximum_rent ) {
-		$rent_range = sprintf( '$%s-$%s', number_format( $minimum_rent ), number_format( $maximum_rent ) );
+		$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
 	} elseif ( $minimum_rent > $maximum_rent ) {
-		$rent_range = sprintf( '$%s-$%s', number_format( $maximum_rent ), number_format( $minimum_rent ) );
+		$rent_range = sprintf( '$%s', number_format( $maximum_rent ) );
 	} elseif ( $minimum_rent && ! $maximum_rent ) {
 		$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
 	} elseif ( ! $minimum_rent && $maximum_rent ) {
 		$rent_range = sprintf( '$%s', number_format( $maximum_rent ) );
 	}
 
-	return apply_filters( 'rentfetch_filter_unit_pricing', $rent_range );
+	return apply_filters( 'rentfetch_filter_unit_pricing', $rent_range, $minimum_rent, $maximum_rent );
 }
 
 /**

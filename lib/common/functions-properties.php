@@ -184,7 +184,7 @@ function rentfetch_property_location() {
 	}
 }
 
-//* PROPERTY BUTTONS.
+// * PROPERTY BUTTONS.
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_location_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_website_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_phone_button' );
@@ -507,17 +507,35 @@ function rentfetch_property_square_feet() {
  *
  * @return string The property rent.
  */
-function rentfetch_get_property_rent() {
+function rentfetch_get_property_pricing() {
 	$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
 
-	$floorplan_data = rentfetch_get_floorplans( $property_id );
+	$floorplan_data  = rentfetch_get_floorplans( $property_id );
+	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
 
-	if ( ! isset( $floorplan_data['rentrange'] ) ) {
-		return;
+	if ( isset( $floorplan_data['rentrange'] ) ) {
+		if ( null !== $floorplan_data['rentrange'] ) {
+			$rent_range = '$' . $floorplan_data['rentrange'];
+		} else {
+			$rent_range = 'Call for Pricing';
+		}
 	}
 
-	$rent = apply_filters( 'rentfetch_filter_property_rent', $floorplan_data['rentrange'] );
-	return $rent;
+	if ( isset( $floorplan_data['minimum_rent'] ) ) {
+		if ( is_array( $floorplan_data['minimum_rent'] ) ) {
+			$rent_min = 'From $' . number_format( min( $floorplan_data['minimum_rent'] ) );
+		} else {
+			$rent_min = 'Call for Pricing';
+		}
+	}
+
+	if ( 'range' === $pricing_display ) {
+		$rent = $rent_range;
+	} elseif ( 'minimum' === $pricing_display ) {
+		$rent = $rent_min;
+	}
+
+	return apply_filters( 'rentfetch_filter_property_pricing', $rent, $floorplan_data['rentrange'], $floorplan_data['minimum_rent'], $floorplan_data['maximum_rent'] );
 }
 
 /**
@@ -525,31 +543,13 @@ function rentfetch_get_property_rent() {
  *
  * @return void.
  */
-function rentfetch_property_rent() {
-	$rent = rentfetch_get_property_rent();
+function rentfetch_property_pricing() {
+	$rent = rentfetch_get_property_pricing();
 
 	if ( $rent ) {
 		echo esc_html( $rent );
 	}
 }
-
-/**
- * Echo the property rent with a default label.
- *
- * @param   string $rent The property rent.
- *
- * @return  string The property rent with a default label.
- */
-function rentfetch_default_property_rent_label( $rent ) {
-
-	if ( $rent ) {
-		return '$' . $rent;
-	}
-
-	// This could return 'Call for Pricing' or 'Pricing unavailable' if pricing isn't available.
-	return 'Call for Pricing';
-}
-add_filter( 'rentfetch_filter_property_rent', 'rentfetch_default_property_rent_label', 10, 1 );
 
 // * PROPERTY AVAILABILITY
 
