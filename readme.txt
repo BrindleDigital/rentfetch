@@ -91,6 +91,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.5 =
+
+* Add migration script to allow the plugin to automatically migrate data for tours from the old field (floorplan_video_or_tour) to the new one (tour)
+* Bugfix in the single-floorplans display where matterport links that are not embed codes were not showing up.
+
 = 0.14.4 =
 
 * Fixing a php notice when there are no properties on the main search ($filtered_beds array is not an array).

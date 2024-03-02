@@ -322,7 +322,7 @@ function rentfetch_get_floorplan_tour_embed() {
 
 	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
 	if ( ! $embedlink ) {
-		$oembedlink = $iframe;
+		$embedlink = wp_oembed_get( $iframe );
 	}
 
 	return apply_filters( 'rentfetch_filter_floorplan_tour_embed', $embedlink );

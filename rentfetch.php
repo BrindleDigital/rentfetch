@@ -25,6 +25,7 @@ define( 'RENTFETCH_VERSION', '0.14.4' );
 define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RENTFETCH_PATH', plugin_dir_url( __FILE__ ) );
 define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
+define( 'RENTFETCH_FILE', __FILE__ );
 
 /**
  * Load the files

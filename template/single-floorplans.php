@@ -84,6 +84,7 @@ if ( have_posts() ) {
 		}
 
 		$iframe = rentfetch_get_floorplan_tour_embed();
+
 		if ( $iframe ) {
 			echo '<div class="single-floorplans-container-outer container-tour">';
 				echo '<div class="single-floorplans-container-inner">';
