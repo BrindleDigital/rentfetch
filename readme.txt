@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.6 =
+
+* CSS hardening as we're seeing common issues that can be automatically resolved
+
 = 0.14.5 =
 
 * Add migration script to allow the plugin to automatically migrate data for tours from the old field (floorplan_video_or_tour) to the new one (tour)
