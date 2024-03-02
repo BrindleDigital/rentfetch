@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @return string $join
  */
-function floorplans_search_join( $join ) {
+function rentfetch_floorplans_search_join( $join ) {
 
 	global $pagenow, $wpdb;
 
@@ -35,7 +35,7 @@ function floorplans_search_join( $join ) {
 
 	return $join;
 }
-add_filter( 'posts_join', 'floorplans_search_join' );
+add_filter( 'posts_join', 'rentfetch_floorplans_search_join' );
 
 /**
  * Set up the admin search.
@@ -44,7 +44,7 @@ add_filter( 'posts_join', 'floorplans_search_join' );
  *
  * @return string $where
  */
-function floorplans_search_where( $where ) {
+function rentfetch_floorplans_search_where( $where ) {
 
 	global $pagenow, $wpdb;
 
@@ -69,7 +69,7 @@ function floorplans_search_where( $where ) {
 
 	return $where;
 }
-add_filter( 'posts_where', 'floorplans_search_where' );
+add_filter( 'posts_where', 'rentfetch_floorplans_search_where' );
 
 /**
  * Limit units shown in the results.
@@ -78,7 +78,7 @@ add_filter( 'posts_where', 'floorplans_search_where' );
  *
  * @return string $groupby
  */
-function floorplans_limits( $groupby ) {
+function rentfetch_floorplans_limits( $groupby ) {
 
 	if ( ! isset( $_GET['s'] ) ) {
 		return $groupby;
@@ -95,4 +95,4 @@ function floorplans_limits( $groupby ) {
 
 	return $groupby;
 }
-add_filter( 'posts_groupby', 'floorplans_limits' );
+add_filter( 'posts_groupby', 'rentfetch_floorplans_limits' );
