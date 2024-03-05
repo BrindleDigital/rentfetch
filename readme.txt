@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.7 =
+
+* Adding the floorplan buttons to the single template
+
 = 0.14.6 =
 
 * CSS hardening as we're seeing common issues that can be automatically resolved

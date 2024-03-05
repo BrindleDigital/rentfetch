@@ -62,6 +62,10 @@ if ( have_posts() ) {
 
 						echo '</div>';
 
+						echo '<div class="floorplan-buttons">';
+							do_action( 'rentfetch_do_floorplan_buttons' );
+						echo '</div>';
+
 					echo '</div>'; // .content-column
 				echo '</div>'; // .current-floorplan-info
 			echo '</div>'; // .container-inner

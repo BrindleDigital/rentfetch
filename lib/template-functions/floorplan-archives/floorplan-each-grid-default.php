@@ -74,10 +74,6 @@ function rentfetch_floorplans_each_grid_default() {
 
 		}
 
-		if ( $links ) {
-			echo wp_kses_post( $links );
-		}
-
 		edit_post_link( 'Edit floorplan' );
 
 	echo '</div>'; // .floorplan-details

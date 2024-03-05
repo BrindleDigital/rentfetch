@@ -61,13 +61,14 @@ body.single-floorplans {
 				}
 			}
 		}
-		// .site-inner {
-		//     padding-left: 0;
-		//     padding-right: 0;
-		//     width: 100%;
-		//     max-width: 100%;
-		//     margin-bottom: 0;
-		// }
+
+		.floorplan-buttons {
+			margin-top: 15px;
+
+			a {
+				margin: 0 5px 5px 0;
+			}
+		}
 	}
 
 	.floorplan-images-slider {
