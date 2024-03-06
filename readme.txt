@@ -91,6 +91,12 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.8 =
+
+* Adding display of unit-level amenities to the single-floorplans template
+* BUGFIX: the link for the floorplans grid which connects it to the single floorplans template was mistakenly removed; re-adding that.
+* Adding hooks in two locations for the units query, to allow for filtering the units further by meta
+
 = 0.14.7 =
 
 * Adding the floorplan buttons to the single template

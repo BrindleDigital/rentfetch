@@ -545,6 +545,8 @@ function rentfetch_floorplan_unit_table() {
 		),
 	);
 
+	$args = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+
 	// The Query.
 	$units_table_query = new WP_Query( $args );
 
@@ -557,6 +559,7 @@ function rentfetch_floorplan_unit_table() {
 				echo '<th class="unit-starting-at">Starting At</th>';
 				echo '<th class="unit-deposit">Deposit</th>';
 				echo '<th class="unit-availability">Date Available</th>';
+				echo '<th class="unit-amenities">Amenities</th>';
 				echo '<th class="unit-tour-video"></th>';
 				echo '<th class="unit-buttons"></th>';
 			echo '</tr>';
@@ -569,6 +572,7 @@ function rentfetch_floorplan_unit_table() {
 			$pricing           = rentfetch_get_unit_pricing();
 			$deposit           = rentfetch_get_unit_deposit();
 			$availability_date = rentfetch_get_unit_availability_date();
+			$amenities         = rentfetch_get_unit_amenities();
 			$floor             = null;
 			$tour_video        = null;
 
@@ -577,6 +581,7 @@ function rentfetch_floorplan_unit_table() {
 				printf( '<td class="unit-starting-at">%s</td>', esc_html( $pricing ) );
 				printf( '<td class="unit-deposit">%s</td>', esc_html( $deposit ) );
 				printf( '<td class="unit-availability">%s</td>', esc_html( $availability_date ) );
+				printf( '<td class="unit-amenities">%s</td>', esc_html( $amenities ) );
 				printf( '<td class="unit-tour-video">%s</td>', wp_kses_post( $tour_video ) );
 				echo '<td class="unit-buttons">';
 					do_action( 'rentfetch_do_unit_button' );
@@ -618,6 +623,8 @@ function rentfetch_floorplan_unit_list() {
 		),
 	);
 
+	$args = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+
 	// The Query.
 	$units_list_query = new WP_Query( $args );
 
@@ -634,6 +641,7 @@ function rentfetch_floorplan_unit_list() {
 			$pricing           = rentfetch_get_unit_pricing();
 			$deposit           = rentfetch_get_unit_deposit();
 			$availability_date = rentfetch_get_unit_availability_date();
+			$amenities         = rentfetch_get_unit_amenities();
 			$floor             = null;
 			$tour_video        = null;
 
@@ -649,6 +657,10 @@ function rentfetch_floorplan_unit_list() {
 
 			if ( $availability_date ) {
 				printf( '<li class="unit-availability"><span class="label">Date Available:</span> %s</li>', esc_html( $availability_date ) );
+			}
+			
+			if ( $amenities ) {
+				printf( '<li class="unit-amenities"><span class="label">Amenities:</span> %s</li>', esc_html( $amenities ) );
 			}
 
 			if ( $tour_video ) {
