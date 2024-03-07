@@ -104,17 +104,20 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 			'meta_query'     => array(
 				'relation' => 'AND',
 				array(
-					'key'     => 'property_id',
-					'value'   => $property_id,
-					'compare' => '=',
-				),
-				array(
 					'key'     => 'floorplan_id',
 					'value'   => $floorplan_id,
 					'compare' => '=',
 				),
 			),
 		);
+		
+		if ( 0 !== $property_id ) {
+			$args['meta_query'][] = array(
+				'key'     => 'property_id',
+				'value'   => $property_id,
+				'compare' => '=',
+			);
+		}
 
 		$floorplan_name_query = new WP_Query( $args );
 

@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.9 =
+
+* Bugfix: when there's no associated property, modify the query for the units columns to allow floorplan names to still show.
+
 = 0.14.8 =
 
 * Adding display of unit-level amenities to the single-floorplans template
