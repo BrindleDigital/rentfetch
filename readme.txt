@@ -94,6 +94,7 @@ Start from your WordPress dashboard.
 = 0.14.9 =
 
 * Bugfix: when there's no associated property, modify the query for the units columns to allow floorplan names to still show.
+* Bugfix: the floorplan tour link label wasn't outputting properly
 
 = 0.14.8 =
 
