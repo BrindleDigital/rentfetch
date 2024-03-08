@@ -502,7 +502,7 @@ function rentfetch_floorplan_default_tour_button() {
 
 	$button_enabled = (int) get_option( 'rentfetch_options_tour_button_enabled' );
 	$fallback_link  = get_option( 'rentfetch_options_tour_button_fallback_link' );
-	$label = get_option( 'rentfetch_options_tour_button_button_label', 'Tour' );
+	$label          = get_option( 'rentfetch_options_tour_button_button_label', 'Tour' );
 
 	// bail if the button is not enabled.
 	if ( 1 !== $button_enabled ) {
@@ -515,6 +515,119 @@ function rentfetch_floorplan_default_tour_button() {
 }
 add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_tour_button' );
 
+/**
+ * Get an array of the columns that we should output for the unit table.
+ *
+ * @param   array $args  the args for the current unit query.
+ *
+ * @return  array an array of the columns to output.
+ */
+function rentfetch_floorplan_unit_display_get_columns( $args ) {
+	$columns = array();
+
+	// * Apartment number.
+	// (This is just the title, so we're not going to bother with this one being optional).
+	$columns[] = 'title';
+
+	// * Pricing.
+	// (This is the whole point of the display, so we're not going to bother with this one being optional).
+	$columns[] = 'pricing';
+
+	// * Deposit.
+	// We need to add an array to args that looks for 'deposit' in the meta key and makes sure the value is non-zero and not empty/null.
+	$args_deposit      = $args;
+	$args_deposit_meta = array(
+		'key'     => 'deposit',
+		'value'   => 0,
+		'compare' => '>',
+	);
+
+	$args_deposit['meta_query'][] = $args_deposit_meta;
+
+	$posts_deposit = get_posts( $args_deposit );
+
+	// if $posts_deposit is an array with at least one item, then we'll add the deposit column.
+	if ( is_array( $posts_deposit ) && count( $posts_deposit ) > 0 ) {
+		$columns[] = 'deposit';
+	}
+
+	// * Availability date.
+	// We need to add an array to args that looks for 'availability_date' in the meta key and makes sure the value is non-empty.
+	$args_availability      = $args;
+	$args_availability_meta = array(
+		'key'     => 'availability_date',
+		'value'   => '',
+		'compare' => '!=',
+	);
+
+	$args_availability['meta_query'][] = $args_availability_meta;
+
+	$posts_availability = get_posts( $args_availability );
+
+	// if $posts_availability is an array with at least one item, then we'll add the availability date column.
+	if ( is_array( $posts_availability ) && count( $posts_availability ) > 0 ) {
+		$columns[] = 'availability_date';
+	}
+
+	// * Amenities.
+	// We need to add an array to args that looks for 'amenities' in the meta key and makes sure the value is non-empty and not an empty array
+
+	// This is a bit more complicated because we need to check if the value is an empty array.
+	// We'll use a custom meta query for this.
+	$args_amenities = $args;
+
+	// Meta query for 'amenities' to ensure the value is not 0, empty, or null.
+	$args_amenities_meta = array(
+		'key'     => 'amenities',
+		'compare' => 'EXISTS',
+	);
+
+	// Merge the 'amenities' meta query into the original query.
+	$args_amenities['meta_query'][] = $args_amenities_meta;
+
+	// Query posts with the updated arguments using WP_Query.
+	$posts_amenities = new WP_Query( $args_amenities );
+
+	// for each of the posts, get the amenities and add them to an array.
+	$filtered_posts_amenities = array();
+
+	if ( $posts_amenities->have_posts() ) {
+		while ( $posts_amenities->have_posts() ) {
+			$posts_amenities->the_post();
+			$amenities = get_post_meta( get_the_ID(), 'amenities', true );
+
+			// if $amenities[0] is not empty, add it to the $filtered_posts_amenities array.
+			if ( ! empty( $amenities[0] ) ) {
+				$filtered_posts_amenities[] = get_the_ID();
+			}
+		}
+	}
+
+	// If $filtered_posts_amenities is an array with at least one item, add the amenities column.
+	if ( is_array( $filtered_posts_amenities ) && count( $filtered_posts_amenities ) > 0 ) {
+		$columns[] = 'amenities';
+	}
+
+	//* Specials.
+	// We need to add an array to args that looks for 'specials' in the meta key and makes sure the value is non-empty.
+	$args_specials      = $args;
+	$args_specials_meta = array(
+		'key'     => 'specials',
+		'value'   => '',
+		'compare' => '!=',
+	);
+	
+	$args_specials['meta_query'][] = $args_specials_meta;
+	
+	$posts_specials = get_posts( $args_specials );
+	
+	// if $posts_specials is an array with at least one item, then we'll add the specials column.
+	if ( is_array( $posts_specials ) && count( $posts_specials ) > 0 ) {
+		$columns[] = 'specials';
+	}
+
+	return apply_filters( 'rentfetch_floorplan_unit_display_columns', $columns, $args );
+}
 
 /**
  * Echo the unit table (this always must be in the context of a floorplan, which is why it's in this file).
@@ -546,7 +659,8 @@ function rentfetch_floorplan_unit_table() {
 		),
 	);
 
-	$args = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+	$args    = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+	$columns = rentfetch_floorplan_unit_display_get_columns( $args );
 
 	// The Query.
 	$units_table_query = new WP_Query( $args );
@@ -555,41 +669,80 @@ function rentfetch_floorplan_unit_table() {
 	if ( $units_table_query->have_posts() ) {
 
 		echo '<table class="unit-details-table">';
-				echo '<tr>';
-				echo '<th class="unit-title">Apt #</th>';
-				echo '<th class="unit-starting-at">Starting At</th>';
-				echo '<th class="unit-deposit">Deposit</th>';
-				echo '<th class="unit-availability">Date Available</th>';
-				echo '<th class="unit-amenities">Amenities</th>';
-				echo '<th class="unit-tour-video"></th>';
+			echo '<tr>';
+
+				if ( in_array( 'title', $columns, true ) ) {
+					echo '<th class="unit-title">Apt #</th>';
+				}
+
+				if ( in_array( 'pricing', $columns, true ) ) {
+					echo '<th class="unit-starting-at">Starting At</th>';
+				}
+
+				if ( in_array( 'deposit', $columns, true ) ) {
+					echo '<th class="unit-deposit">Deposit</th>';
+				}
+
+				if ( in_array( 'availability_date', $columns, true ) ) {
+					echo '<th class="unit-availability">Date Available</th>';
+				}
+
+				if ( in_array( 'amenities', $columns, true ) ) {
+					echo '<th class="unit-amenities">Amenities</th>';
+				}
+				
+				if ( in_array( 'specials', $columns, true ) ) {
+					echo '<th class="unit-specials">Specials</th>';
+				}
+
 				echo '<th class="unit-buttons"></th>';
 			echo '</tr>';
 
-		while ( $units_table_query->have_posts() ) {
+			while ( $units_table_query->have_posts() ) {
 
-			$units_table_query->the_post();
+				$units_table_query->the_post();
 
-			$title             = rentfetch_get_unit_title();
-			$pricing           = rentfetch_get_unit_pricing();
-			$deposit           = rentfetch_get_unit_deposit();
-			$availability_date = rentfetch_get_unit_availability_date();
-			$amenities         = rentfetch_get_unit_amenities();
-			$floor             = null;
-			$tour_video        = null;
+				$title             = rentfetch_get_unit_title();
+				$pricing           = rentfetch_get_unit_pricing();
+				$deposit           = rentfetch_get_unit_deposit();
+				$availability_date = rentfetch_get_unit_availability_date();
+				$amenities         = rentfetch_get_unit_amenities();
+				$floor             = null;
+				$specials          = rentfetch_get_unit_specials();
 
-			echo '<tr>';
-				printf( '<td class="unit-title">%s</td>', esc_html( $title ) );
-				printf( '<td class="unit-starting-at">%s</td>', esc_html( $pricing ) );
-				printf( '<td class="unit-deposit">%s</td>', esc_html( $deposit ) );
-				printf( '<td class="unit-availability">%s</td>', esc_html( $availability_date ) );
-				printf( '<td class="unit-amenities">%s</td>', esc_html( $amenities ) );
-				printf( '<td class="unit-tour-video">%s</td>', wp_kses_post( $tour_video ) );
-				echo '<td class="unit-buttons">';
-					do_action( 'rentfetch_do_unit_button' );
-				echo '</td>';
-			echo '</tr>';
+				echo '<tr>';
 
-		}
+					if ( in_array( 'title', $columns, true ) ) {
+						printf( '<td class="unit-title">%s</td>', esc_html( $title ) );
+					}
+
+					if ( in_array( 'pricing', $columns, true ) ) {
+						printf( '<td class="unit-starting-at">%s</td>', esc_html( $pricing ) );
+					}
+
+					if ( in_array( 'deposit', $columns, true ) ) {
+						printf( '<td class="unit-deposit">%s</td>', esc_html( $deposit ) );
+					}
+
+					if ( in_array( 'availability_date', $columns, true ) ) {
+						printf( '<td class="unit-availability">%s</td>', esc_html( $availability_date ) );
+					}
+
+					if ( in_array( 'amenities', $columns, true ) ) {
+						printf( '<td class="unit-amenities">%s</td>', esc_html( $amenities ) );
+					}
+
+					if ( in_array( 'specials', $columns, true ) ) {
+						printf( '<td class="unit-specials">%s</td>', wp_kses_post( $specials ) );
+					}
+
+					echo '<td class="unit-buttons">';
+						do_action( 'rentfetch_do_unit_button' );
+					echo '</td>';
+
+				echo '</tr>';
+
+			}
 
 		echo '</table>';
 
@@ -644,7 +797,7 @@ function rentfetch_floorplan_unit_list() {
 			$availability_date = rentfetch_get_unit_availability_date();
 			$amenities         = rentfetch_get_unit_amenities();
 			$floor             = null;
-			$tour_video        = null;
+			$specials          = rentfetch_get_unit_specials();
 
 			echo '<details class="unit-details">';
 				echo '<summary class="unit-summary">';
@@ -652,21 +805,21 @@ function rentfetch_floorplan_unit_list() {
 				echo '</summary>';
 				echo '<ul class="unit-details-list-wrap">';
 
-			if ( $deposit ) {
-				printf( '<li class="unit-deposit"><span class="label">Deposit:</span> %s</li>', esc_html( $deposit ) );
-			}
+					if ( $deposit ) {
+						printf( '<li class="unit-deposit"><span class="label">Deposit:</span> %s</li>', esc_html( $deposit ) );
+					}
 
-			if ( $availability_date ) {
-				printf( '<li class="unit-availability"><span class="label">Date Available:</span> %s</li>', esc_html( $availability_date ) );
-			}
-			
-			if ( $amenities ) {
-				printf( '<li class="unit-amenities"><span class="label">Amenities:</span> %s</li>', esc_html( $amenities ) );
-			}
+					if ( $availability_date ) {
+						printf( '<li class="unit-availability"><span class="label">Date Available:</span> %s</li>', esc_html( $availability_date ) );
+					}
 
-			if ( $tour_video ) {
-				printf( '<li class="unit-tour-video">%s</li>', wp_kses_post( $tour_video ) );
-			}
+					if ( $amenities ) {
+						printf( '<li class="unit-amenities"><span class="label">Amenities:</span> %s</li>', esc_html( $amenities ) );
+					}
+
+					if ( $specials ) {
+						printf( '<li class="unit-specials">Specials: %s</li>', esc_html( $specials ) );
+					}
 
 					echo '<li class="unit-buttons">';
 						do_action( 'rentfetch_do_unit_button' );

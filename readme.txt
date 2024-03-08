@@ -94,6 +94,8 @@ Start from your WordPress dashboard.
 = 0.14.10 =
 
 * Bugfix: fixing a php error caused by either dated information or a blank string in the unit amenities in some views.
+* Adding the ability to hide unused columns automatically in the units table.
+* Adding a column for specials in the unit table, since we're already saving unit-level specials in Yardi.
 
 = 0.14.9 =
 

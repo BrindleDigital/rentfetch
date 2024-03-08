@@ -129,12 +129,13 @@ function rentfetch_get_unit_availability_date() {
 }
 
 /**
- * Output the unit availability date
+ * Output the unit amenities
  *
  * @return void
  */
 function rentfetch_get_unit_amenities() {
 	$amenities_array = get_post_meta( get_the_ID(), 'amenities', true );
+	
 	$amenities_array = apply_filters( 'rentfetch_filter_unit_amenities', $amenities_array );
 
 	// bail if the amenities are not an array.
@@ -146,6 +147,16 @@ function rentfetch_get_unit_amenities() {
 	$amenities_string = implode( ', ', $amenities_array );
 
 	return $amenities_string;
+}
+
+/**
+ * Get the specials for the unit
+ *
+ * @return  string the specials.
+ */
+function rentfetch_get_unit_specials() {
+	$specials = get_post_meta( get_the_ID(), 'specials', true );
+	return apply_filters( 'rentfetch_filter_unit_specials', $specials );
 }
 
 // * Units count
