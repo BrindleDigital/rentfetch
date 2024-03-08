@@ -502,13 +502,14 @@ function rentfetch_floorplan_default_tour_button() {
 
 	$button_enabled = (int) get_option( 'rentfetch_options_tour_button_enabled' );
 	$fallback_link  = get_option( 'rentfetch_options_tour_button_fallback_link' );
+	$label = get_option( 'rentfetch_options_tour_button_button_label', 'Tour' );
 
 	// bail if the button is not enabled.
 	if ( 1 !== $button_enabled ) {
 		return;
 	}
 
-	$button = sprintf( '<a href="%s" class="rentfetch-button">Tour</a>', $fallback_link );
+	$button = sprintf( '<a href="%s" class="rentfetch-button">%s</a>', $fallback_link, $label );
 
 	echo wp_kses_post( apply_filters( 'rentfetch_floorplan_default_tour_button', $button ) );
 }
