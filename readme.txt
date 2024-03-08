@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.10 =
+
+* Bugfix: fixing a php error caused by either dated information or a blank string in the unit amenities in some views.
+
 = 0.14.9 =
 
 * Bugfix: when there's no associated property, modify the query for the units columns to allow floorplan names to still show.

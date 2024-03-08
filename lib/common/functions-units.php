@@ -136,9 +136,15 @@ function rentfetch_get_unit_availability_date() {
 function rentfetch_get_unit_amenities() {
 	$amenities_array = get_post_meta( get_the_ID(), 'amenities', true );
 	$amenities_array = apply_filters( 'rentfetch_filter_unit_amenities', $amenities_array );
+
+	// bail if the amenities are not an array.
+	if ( !is_array( $amenities_array ) ) { 
+		return;
+	}
+
 	$amenities_array = array_map( 'esc_html', $amenities_array );
 	$amenities_string = implode( ', ', $amenities_array );
-	
+
 	return $amenities_string;
 }
 

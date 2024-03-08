@@ -173,6 +173,11 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 	
 	if ( 'amenities' === $column ) {
 		$amenities_array = get_post_meta( $post_id, 'amenities', true );
+
+		if ( ! is_array( $amenities_array ) ) {
+			$amenities_array = array();
+		}
+
 		$amenities_string = implode( ', ', $amenities_array );
 		echo esc_html( $amenities_string );
 	}
