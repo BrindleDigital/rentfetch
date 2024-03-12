@@ -2,7 +2,7 @@
 Contributors: jonschr
 Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
-Tested up to: 6.4.1
+Tested up to: 6.4.3
 Requires PHP: 7.3
 Stable tag: 0.15.0
 License: GPLv2 or later
