@@ -4,7 +4,7 @@ Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.4.1
 Requires PHP: 7.3
-Stable tag: 0.14.0
+Stable tag: 0.15.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,8 +14,6 @@ Displays searchable rental properties, floorplans, and unit availability.
 == Description ==
 
 Rent Fetch lets you create properties and connect floorplans and units, showing off your property portfolio – including availability information.
-
-[Check out the wiki for more documentation](https://github.com/BrindleDigital/rentfetch)
 
 **Property availability map**
 
