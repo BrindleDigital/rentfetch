@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_bedroom_number_label( $beds ) {
 
 	// set defaults.
-	if ( 0 === $beds ) {
+	if ( 0 === $beds || null === $beds || '0' === $beds ) {
 		$label = '<span class="label bedroom-label studio-label">Studio</span>';
 	} elseif ( 1 === $beds ) {
 		$label = '1 <span class="label bedroom-label">Bed</span>';
