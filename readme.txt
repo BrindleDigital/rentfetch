@@ -91,6 +91,12 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.14.11 =
+
+* Bugfix: the bedrooms label filter now accounts for values where 0 is a string or empty. Previously, it would fail a check for studio floorplans when the number was a string instead of an int.
+* Adding additional migration actions on activate to attempt to ease some pain points for future migrations.
+
+
 = 0.14.10 =
 
 * Bugfix: fixing a php error caused by either dated information or a blank string in the unit amenities in some views.
