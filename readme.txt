@@ -19,7 +19,7 @@ Rent Fetch for apartments is a powerful plugin solution for displaying current f
 
 Automatically display updated pricing, availability, and property info for your single apartment or multi-property / corporate site with our premium Rent Fetch Sync add-on that integrates with popular property management leasing softwares. 
 
-[Rent Fetch Sync](https://rentfetch.io){:target="_blank"} works with Yardi/RentCafe (Entrata, Appfolio and RealPage support coming soon!). Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/){:target="_blank"} to discuss!
+[Rent Fetch Sync](https://rentfetch.io) works with Yardi/RentCafe (Entrata, Appfolio and RealPage support coming soon!). Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/) to discuss!
 
 **For Apartment Sites: Display Floor Plan & Unit Availability**
 
@@ -37,8 +37,8 @@ View multiple properties with available floor plans on a Google map, and let use
 
 * Native WordPress content types are used for everything, so a developer can create their own layouts.
 * Google maps integration (both for the property search and for use on each property page. To use this, you'll need to set up an API key for the Google Maps Javascript API at [maps.googleapis.com](https://maps.googleapis.com))
-* Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed [Blaze Slider](https://blaze-slider.dev){:target="_blank"} for these, and you don't need to set up anything for these to work)
-* Your floorplans can display [Matterport](https://my.matterport.com){:target="_blank"} and [YouTube](https://www.youtube.com){:target="_blank"} tours.
+* Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed [Blaze Slider](https://blaze-slider.dev) for these, and you don't need to set up anything for these to work)
+* Your floorplans can display [Matterport](https://my.matterport.com) and [YouTube](https://www.youtube.com) tours.
 * TONS of hooks, letting you (or your developer) customize to your heart's content. The single layouts for both floorplans and properties can be fully replaced by the theme, and we have lots of helpful functions to let you grab preprocessed information for display.
 * This plugin works with both single-property websites and websites that showcase hundreds of properties.
 * Mini search capability
@@ -47,7 +47,7 @@ View multiple properties with available floor plans on a Google map, and let use
 
 = What APIs do you work with? =
 
-This free version of the plugin allows for unlimited usage with *manual data entry*. Our Premium [Rent Fetch Sync](https://rentfetch.io){:target="_blank"} add-on works with Yardi RentCafe, Appfolio and RealPage OneSite (Entrata coming soon). Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/){:target="_blank"} to discuss!
+This free version of the plugin allows for unlimited usage with *manual data entry*. Our Premium [Rent Fetch Sync](https://rentfetch.io) add-on works with Yardi RentCafe, Appfolio and RealPage OneSite (Entrata coming soon). Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/) to discuss!
 
 = Will this work on a site showing just one property and a handful of floorplans? =
 
