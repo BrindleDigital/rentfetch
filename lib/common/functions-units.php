@@ -181,17 +181,31 @@ function rentfetch_get_floorplan_units_count_from_cpt() {
 
 	$floorplan_wordpress_id = get_the_ID();
 	$floorplan_id           = get_post_meta( $floorplan_wordpress_id, 'floorplan_id', true );
+	$property_id            = get_post_meta( $floorplan_wordpress_id, 'property_id', true );
 
 	if ( ! $floorplan_id ) {
 		return null;
 	}
-
+	
+	// set up the args for the query. We need units that match both the property and floorplan.
 	$args = array(
-		'post_type'  => 'units',
-		'meta_key'   => 'floorplan_id',
-		'meta_value' => $floorplan_id,
+		'post_type'      => 'units',
+		'posts_per_page' => -1,
+		'meta_query'     => array(
+			'relation' => 'AND',
+			array(
+				'key'     => 'floorplan_id',
+				'value'   => $floorplan_id,
+				'compare' => '=',
+			),
+			array(
+				'key'     => 'property_id',
+				'value'   => $property_id,
+				'compare' => '=',
+			),
+		),
 	);
-
+	
 	$posts = get_posts( $args );
 
 	$count = count( $posts );
