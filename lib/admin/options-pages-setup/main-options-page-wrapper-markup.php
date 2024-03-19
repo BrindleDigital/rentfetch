@@ -33,16 +33,16 @@ function rentfetch_options_page_html() {
 			echo '<nav class="nav-tab-wrapper">';
 
 				$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'Sync Settings' ) );
 
 				$active = ( 'maps' === $tab ) ? 'nav-tab-active' : '';
 				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=maps' ) ), esc_html( $active ), esc_html( 'Maps' ) );
 
 				$active = ( 'properties' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Properties' ) );
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Property Settings' ) );
 
 				$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floorplans' ) );
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
 
 				// TODO Removing this settings tab temporarily; we need to implement in a more flexible way.
 				// $active = ( 'labels' === $tab ) ? 'nav-tab-active' : '';
