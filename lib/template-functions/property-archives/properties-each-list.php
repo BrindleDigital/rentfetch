@@ -32,9 +32,10 @@ function rentfetch_properties_each_list() {
 	);
 
 	$permalink = get_the_permalink();
+	$permalink_target = rentfetch_get_link_target( $permalink );
 
 	if ( $permalink ) {
-		printf( '<a class="overlay" href="%s"></a>', esc_url( $permalink ) );
+		printf( '<a class="overlay" href="%s" target="%s"></a>', esc_url( $permalink ), esc_attr( $permalink_target ) );
 	}
 
 	do_action( 'rentfetch_do_property_images' );

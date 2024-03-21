@@ -351,7 +351,8 @@ function rentfetch_property_url() {
  */
 function rentfetch_get_property_website_button() {
 	$url            = apply_filters( 'rentfetch_filter_property_url', rentfetch_get_property_url() );
-	$website_button = sprintf( '<a class="url-link property-link" href="%s" target="_blank">Visit Website</a>', esc_html( $url ) );
+	$target         = rentfetch_get_link_target( $url );
+	$website_button = sprintf( '<a class="url-link property-link" href="%s" target="%s">Visit Website</a>', esc_html( $url ), esc_attr( $target ) );
 
 	if ( $url ) {
 		return apply_filters( 'rentfetch_filter_property_website', $website_button );
@@ -713,21 +714,6 @@ function rentfetch_default_property_permalink_label( $url ) {
 	return 'View Property';
 }
 add_filter( 'rentfetch_filter_property_permalink_label', 'rentfetch_default_property_permalink_label', 10, 1 );
-
-/**
- * Get the property permalink target.
- *
- * @param   string $url The property permalink target.
- *
- * @return  string The property permalink target.
- */
-function rentfetch_default_property_permalink_target( $url ) {
-
-	$url; // we don't need this variable for this use case, but it's required to be passed in the function.
-
-	return '_self';
-}
-add_filter( 'rentfetch_filter_property_permalink_target', 'rentfetch_default_property_permalink_target', 10, 1 );
 
 // * PROPERTY DESCRIPTION
 

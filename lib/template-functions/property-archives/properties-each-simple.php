@@ -20,7 +20,7 @@ function rentfetch_each_property_in_archive_simple() {
 	$property_location = rentfetch_get_property_location();
 
 	$permalink        = apply_filters( 'rentfetch_filter_property_permalink', get_the_permalink() );
-	$permalink_target = apply_filters( 'rentfetch_filter_property_permalink_target', '_self' );
+	$permalink_target = rentfetch_get_link_target( $permalink );
 
 	if ( $permalink ) {
 		printf( '<a class="overlay" href="%s" target="%s"></a>', esc_url( $permalink ), esc_attr( $permalink_target ) );

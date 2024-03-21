@@ -94,6 +94,7 @@ Start from your WordPress dashboard.
 = 0.15.2 =
 
 * Bugfix: fixing a situation where the word "available" could get cut off when italic in the floorplans grid
+* Feature: adding automated detection for whether property and floorplan links should open in the same or a new tab.
 
 = 0.15.1 =
 

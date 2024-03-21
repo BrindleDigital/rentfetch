@@ -443,14 +443,15 @@ function rentfetch_floorplan_default_availability_button_markup() {
 
 	$button_label = get_option( 'rentfetch_options_availability_button_button_label', 'availability' );
 
-	$link = get_post_meta( get_the_ID(), 'availability_url', true );
+	$link   = get_post_meta( get_the_ID(), 'availability_url', true );
+	$target = rentfetch_get_link_target( $link );
 
 	// bail if no link is set.
 	if ( false === $link ) {
 		return false;
 	}
 
-	return sprintf( '<a href="%s" target="_blank" class="rentfetch-button">%s</a>', $link, $button_label );
+	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-availability-button">%s</a>', $link, $target, $button_label );
 }
 add_filter( 'rentfetch_floorplan_default_availability_button_markup', 'rentfetch_floorplan_default_availability_button_markup' );
 
@@ -480,16 +481,10 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_conta
 function rentfetch_floorplan_default_contact_button_markup() {
 
 	$button_label = get_option( 'rentfetch_options_contact_button_button_label', 'Contact' );
-	$external     = get_option( 'rentfetch_options_contact_button_link_target', false );
 	$link         = get_option( 'rentfetch_options_contact_button_link', false );
+	$target       = rentfetch_get_link_target( $link );
 
-	if ( true === $external ) {
-		$target = 'target="_blank"';
-	} else {
-		$target = 'target="_self"';
-	}
-
-	return sprintf( '<a href="%s" %s class="rentfetch-button">%s</a>', $link, $target, $button_label );
+	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-contact-button">%s</a>', $link, $target, $button_label );
 }
 add_filter( 'rentfetch_filter_floorplan_default_contact_button_markup', 'rentfetch_floorplan_default_contact_button_markup' );
 
@@ -503,17 +498,37 @@ function rentfetch_floorplan_default_tour_button() {
 	$button_enabled = (int) get_option( 'rentfetch_options_tour_button_enabled' );
 	$fallback_link  = get_option( 'rentfetch_options_tour_button_fallback_link' );
 	$label          = get_option( 'rentfetch_options_tour_button_button_label', 'Tour' );
+	$target         = rentfetch_get_link_target( $fallback_link );
 
 	// bail if the button is not enabled.
 	if ( 1 !== $button_enabled ) {
 		return;
 	}
 
-	$button = sprintf( '<a href="%s" class="rentfetch-button">%s</a>', $fallback_link, $label );
+	$button = sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-tour-button">%s</a>', $fallback_link, $target, $label );
 
 	echo wp_kses_post( apply_filters( 'rentfetch_floorplan_default_tour_button', $button ) );
 }
 add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_tour_button' );
+
+/**
+ * From a link, figure out whether the target should be _blank or _self.
+ *
+ * @param string $link the link to check.
+ *
+ * @return string the target.
+ */
+function rentfetch_get_link_target( $link ) {
+	$target = '_blank'; // Default target
+	$host   = wp_parse_url( $link, PHP_URL_HOST );
+
+	// If the host is the same as the current site, then we'll use _self.
+	if ( $host === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+		$target = '_self';
+	}
+
+	return $target;
+}
 
 /**
  * Get an array of the columns that we should output for the unit table.
@@ -647,7 +662,7 @@ function rentfetch_floorplan_unit_table() {
 		'posts_per_page' => -1,
 		'orderby'        => 'meta_value_num',
 		'order'          => 'ASC',
-		'meta_query'     => array(
+		'meta_query'     => array( // phpcs:ignore
 			array(
 				'key'   => 'property_id',
 				'value' => $property_id,
@@ -690,7 +705,7 @@ function rentfetch_floorplan_unit_table() {
 				if ( in_array( 'amenities', $columns, true ) ) {
 					echo '<th class="unit-amenities">Amenities</th>';
 				}
-				
+
 				if ( in_array( 'specials', $columns, true ) ) {
 					echo '<th class="unit-specials">Specials</th>';
 				}
@@ -765,7 +780,7 @@ function rentfetch_floorplan_unit_list() {
 		'posts_per_page' => -1,
 		'orderby'        => 'meta_value_num',
 		'order'          => 'ASC',
-		'meta_query'     => array(
+		'meta_query'     => array( // phpcs:ignore
 			array(
 				'key'   => 'property_id',
 				'value' => $property_id,
@@ -873,7 +888,7 @@ function rentfetch_get_similar_floorplans() {
 		'post_type'      => 'floorplans',
 		'posts_per_page' => -1,
 		'post__not_in'   => array( get_the_ID() ),
-		'meta_query'     => array(
+		'meta_query'     => array( // phpcs:ignore
 			'relation' => 'AND',
 			array(
 				'key'   => 'property_id',
