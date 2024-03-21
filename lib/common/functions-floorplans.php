@@ -519,11 +519,11 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_tour_
  * @return string the target.
  */
 function rentfetch_get_link_target( $link ) {
-	$target = '_blank'; // Default target
+	$target = '_blank'; // Default target.
 	$host   = wp_parse_url( $link, PHP_URL_HOST );
 
 	// If the host is the same as the current site, then we'll use _self.
-	if ( $host === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+	if ( wp_parse_url( home_url(), PHP_URL_HOST ) === $host ) {
 		$target = '_self';
 	}
 
@@ -623,7 +623,7 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 		$columns[] = 'amenities';
 	}
 
-	//* Specials.
+	// * Specials.
 	// We need to add an array to args that looks for 'specials' in the meta key and makes sure the value is non-empty.
 	$args_specials      = $args;
 	$args_specials_meta = array(
@@ -631,11 +631,11 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 		'value'   => '',
 		'compare' => '!=',
 	);
-	
+
 	$args_specials['meta_query'][] = $args_specials_meta;
-	
+
 	$posts_specials = get_posts( $args_specials );
-	
+
 	// if $posts_specials is an array with at least one item, then we'll add the specials column.
 	if ( is_array( $posts_specials ) && count( $posts_specials ) > 0 ) {
 		$columns[] = 'specials';
