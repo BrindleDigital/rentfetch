@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.15.2 =
+
+* Bugfix: fixing a situation where the word "available" could get cut off when italic in the floorplans grid
+
 = 0.15.1 =
 
 * Bugfix: fixing a rare case where multi-property sites could show wrong numbers of units for a given floorplan if that floorplan has an ID that is not unique.
