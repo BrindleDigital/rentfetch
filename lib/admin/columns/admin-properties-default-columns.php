@@ -18,7 +18,7 @@ function rentfetch_enqueue_properties_admin_style() {
 
 	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
 	// if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
-	// 	return;
+	// return;
 	// }
 
 	$current_screen = get_current_screen();
@@ -130,10 +130,23 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	if ( 'images' === $column ) {
 		$images = get_post_meta( $post_id, 'images', true );
 
-		if ( is_array( $images ) ) {
+		if ( is_array( $images ) && array( '' ) !== $images ) {
+
+			$count = count( $images );
+
+			// limit the array to 3 images
+			if ( $count > 3 ) {
+				$images           = array_slice( $images, 0, 3 );
+				$remaining_images = $count - 3;
+			}
+
 			foreach ( $images as $image ) {
 				$image = wp_get_attachment_image_url( $image, 'thumbnail' );
-				echo '<img src="' . esc_attr( $image ) . '" style="width: 40px; height: 40px;" />';
+				echo '<img src="' . esc_attr( $image ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
+			}
+
+			if ( 1 < $remaining_images ) {
+				echo '<span style="">+' . esc_attr( $remaining_images ) . '</span>';
 			}
 		}
 	}
@@ -161,7 +174,27 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'yardi_property_images' === $column ) {
-		echo esc_attr( get_post_meta( $post_id, 'yardi_property_images', true ) );
+
+		$yardi_images = rentfetch_get_property_images_yardi( null );
+		if ( is_array( $yardi_images ) ) {
+			$count = count( $yardi_images );
+
+			// limit the array to 3 images
+			if ( $count > 3 ) {
+				$yardi_images     = array_slice( $yardi_images, 0, 3 );
+				$remaining_images = $count - 3;
+			}
+
+			foreach ( $yardi_images as $image ) {
+				// var_dump( $image['url'] );
+				echo '<img src="' . esc_url( $image['url'] ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
+
+			}
+
+			if ( 1 < $remaining_images ) {
+				echo '<span style="">+' . esc_attr( $remaining_images ) . '</span>';
+			}
+		}
 	}
 
 	if ( 'updated' === $column ) {

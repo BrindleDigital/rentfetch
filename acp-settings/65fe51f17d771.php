@@ -1,0 +1,267 @@
+<?php
+
+return array (
+  'version' => '6.4.6',
+  'list_screen' => 
+  array (
+    'title' => '',
+    'type' => 'properties',
+    'id' => '65fe51f17d771',
+    'updated' => 1711166517,
+    'columns' => 
+    array (
+      'title' => 
+      array (
+        'type' => 'title',
+        'label' => 'Title',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'sort' => 'on',
+        'edit' => 'on',
+        'bulk_edit' => 'on',
+        'search' => 'on',
+        'filter' => 'off',
+        'filter_label' => '',
+        'name' => 'title',
+      ),
+      'b3e21c5f3b6458' => 
+      array (
+        'type' => 'column-meta',
+        'label' => 'Prop ID',
+        'width' => '',
+        'width_unit' => '%',
+        'field' => 'property_id',
+        'field_type' => '',
+        'before' => '',
+        'after' => '',
+        'edit' => 'on',
+        'editable_type' => 'text',
+        'export' => 'on',
+        'sort' => 'on',
+        'bulk_edit' => 'on',
+        'search' => 'on',
+        'filter' => 'off',
+        'filter_label' => '',
+        'name' => 'b3e21c5f3b6458',
+      ),
+      '632b7f4f041894' => 
+      array (
+        'type' => 'column-meta',
+        'label' => 'Address',
+        'width' => '',
+        'width_unit' => '%',
+        'field' => 'address',
+        'field_type' => '',
+        'before' => '',
+        'after' => '',
+        'edit' => 'on',
+        'editable_type' => 'text',
+        'export' => 'on',
+        'sort' => 'on',
+        'bulk_edit' => 'on',
+        'search' => 'on',
+        'filter' => 'off',
+        'filter_label' => '',
+        'name' => '632b7f4f041894',
+      ),
+      '3078006b11eb86' => 
+      array (
+        'type' => 'column-meta',
+        'label' => 'City',
+        'width' => '',
+        'width_unit' => '%',
+        'field' => 'city',
+        'field_type' => '',
+        'before' => '',
+        'after' => '',
+        'edit' => 'on',
+        'editable_type' => 'text',
+        'export' => 'on',
+        'sort' => 'on',
+        'bulk_edit' => 'on',
+        'search' => 'on',
+        'filter' => 'off',
+        'filter_label' => '',
+        'name' => '3078006b11eb86',
+      ),
+      '1a1e149e6e978d' => 
+      array (
+        'type' => 'column-meta',
+        'label' => 'State',
+        'width' => '',
+        'width_unit' => '%',
+        'field' => 'state',
+        'field_type' => '',
+        'before' => '',
+        'after' => '',
+        'edit' => 'on',
+        'editable_type' => 'text',
+        'export' => 'on',
+        'sort' => 'on',
+        'bulk_edit' => 'on',
+        'search' => 'on',
+        'filter' => 'off',
+        'filter_label' => '',
+        'name' => '1a1e149e6e978d',
+      ),
+      'zipcode' => 
+      array (
+        'type' => 'zipcode',
+        'label' => 'Zipcode',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'zipcode',
+      ),
+      'latitude' => 
+      array (
+        'type' => 'latitude',
+        'label' => 'Latitude',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'latitude',
+      ),
+      'longitude' => 
+      array (
+        'type' => 'longitude',
+        'label' => 'Longitude',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'longitude',
+      ),
+      'email' => 
+      array (
+        'type' => 'email',
+        'label' => 'Email',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'email',
+      ),
+      'phone' => 
+      array (
+        'type' => 'phone',
+        'label' => 'Phone',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'phone',
+      ),
+      'url' => 
+      array (
+        'type' => 'url',
+        'label' => 'URL',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'url',
+      ),
+      'images' => 
+      array (
+        'type' => 'images',
+        'label' => 'Manual Images',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'images',
+      ),
+      'yardi_property_images' => 
+      array (
+        'type' => 'yardi_property_images',
+        'label' => 'Synced Images',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'yardi_property_images',
+      ),
+      'description' => 
+      array (
+        'type' => 'description',
+        'label' => 'Description',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'description',
+      ),
+      'tour' => 
+      array (
+        'type' => 'tour',
+        'label' => 'Tour',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'tour',
+      ),
+      'pets' => 
+      array (
+        'type' => 'pets',
+        'label' => 'Pets',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'pets',
+      ),
+      'content_area' => 
+      array (
+        'type' => 'content_area',
+        'label' => 'Content Area',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'content_area',
+      ),
+      'property_source' => 
+      array (
+        'type' => 'property_source',
+        'label' => 'Property Source',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'property_source',
+      ),
+      'api_response' => 
+      array (
+        'type' => 'api_response',
+        'label' => 'API response',
+        'width' => '',
+        'width_unit' => '%',
+        'export' => 'on',
+        'name' => 'api_response',
+      ),
+    ),
+    'settings' => 
+    array (
+      'roles' => 
+      array (
+      ),
+      'users' => 
+      array (
+      ),
+      'sorting' => '0',
+      'sorting_order' => 'asc',
+      'hide_inline_edit' => 'off',
+      'hide_bulk_edit' => 'off',
+      'hide_bulk_delete' => 'off',
+      'hide_smart_filters' => 'off',
+      'hide_segments' => 'off',
+      'hide_export' => 'off',
+      'hide_conditional_formatting' => 'off',
+      'hide_new_inline' => 'on',
+      'resize_columns' => 'off',
+      'column_order' => 'off',
+      'hide_filters' => 'off',
+      'hide_filter_post_date' => 'off',
+      'hide_submenu' => 'off',
+      'hide_search' => 'off',
+      'hide_bulk_actions' => 'off',
+      'hide_row_actions' => 'off',
+      'horizontal_scrolling' => 'off',
+      'primary_column' => '',
+      'filter_segment' => '',
+      'wrapping' => 'wrap',
+    ),
+  ),
+);

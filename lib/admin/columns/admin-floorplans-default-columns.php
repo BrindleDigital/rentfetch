@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Set up the admin style for the floorplans custom post type.
  *
- * @return none
+ * @return void.
  */
 function rentfetch_enqueue_floorplans_admin_style() {
 
 	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
 	// if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
-	// 	return;
+	// return;
 	// }
 
 	$current_screen = get_current_screen();
@@ -104,7 +104,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 			'posts_per_page' => 1,
 			'orderby'        => 'title',
 			'order'          => 'ASC',
-			'meta_query'     => array(
+			'meta_query'     => array( // phpcs:ignore
 				array(
 					'key'   => 'property_id',
 					'value' => $property_id,
@@ -137,16 +137,54 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 	if ( 'manual_images' === $column ) {
 		$images = get_post_meta( $post_id, 'manual_images', true );
 
-		if ( is_array( $images ) ) {
+		if ( is_array( $images ) && array( '' ) !== $images ) {
+
+			$count = count( $images );
+
+			// limit the array to 3 images
+			if ( $count > 3 ) {
+				$images           = array_slice( $images, 0, 3 );
+				$remaining_images = $count - 3;
+			}
+
 			foreach ( $images as $image ) {
 				$image = wp_get_attachment_image_url( $image, 'thumbnail' );
-				echo '<img src="' . esc_attr( $image ) . '" style="width: 40px; height: 40px;" />';
+				echo '<img src="' . esc_attr( $image ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
+			}
+
+			if ( 1 < $remaining_images ) {
+				echo '<span style="">+' . esc_attr( $remaining_images ) . '</span>';
 			}
 		}
 	}
 
 	if ( 'floorplan_images' === $column ) {
-		echo esc_attr( get_post_meta( $post_id, 'floorplan_images', true ) );
+
+		// * Floorplan Images from Yardi
+		$floorplan_images = get_post_meta( $post_id, 'floorplan_image_url', true );
+
+		// convert to array.
+		$floorplan_images = explode( ',', $floorplan_images );
+
+		if ( is_array( $floorplan_images ) && array( '' ) !== $floorplan_images ) {
+			$count = count( $floorplan_images );
+
+			// limit the array to 3 images.
+			if ( $count > 3 ) {
+				$floorplan_images = array_slice( $floorplan_images, 0, 3 );
+				$remaining_images = $count - 3;
+			}
+
+			foreach ( $floorplan_images as $image ) {
+				// var_dump( $image['url'] );
+				echo '<img src="' . esc_url( $image ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
+
+			}
+
+			if ( 1 < $remaining_images ) {
+				echo '<span style="">+' . esc_attr( $remaining_images ) . '</span>';
+			}
+		}
 	}
 
 	if ( 'floorplan_description' === $column ) {

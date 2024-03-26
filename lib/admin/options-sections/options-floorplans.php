@@ -121,6 +121,19 @@ function rentfetch_settings_floorplans_floorplan_search() {
 			</ul>
 		</div>
 	</div>
+	
+	<div class="row">
+		<div class="column">
+			<label for="rentfetch_options_floorplan_hide_number_of_units">Hide the number of units</label>
+			<p class="description">There are a number of reaspons you might want to hide the number of units. </p>
+		</div>
+		<div class="column">
+			<label for="rentfetch_options_floorplan_hide_number_of_units">
+				<input type="checkbox" name="rentfetch_options_floorplan_hide_number_of_units" id="rentfetch_options_floorplan_hide_number_of_units" <?php checked( get_option( 'rentfetch_options_floorplan_hide_number_of_units' ), '1' ); ?>>
+				Hide it in floor plan archives
+			</label>
+		</div>
+	</div>
 	<?php
 }
 add_action( 'rentfetch_do_settings_floorplans_floorplan_search', 'rentfetch_settings_floorplans_floorplan_search' );
@@ -164,5 +177,10 @@ function rentfetch_save_settings_floorplan_search() {
 		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_floorplan_pricing_display'] ) );
 		update_option( 'rentfetch_options_floorplan_pricing_display', $property_display );
 	}
+	
+	// Checkbox field - Enable the availability button.
+	$hide_number_of_units = isset( $_POST['rentfetch_options_floorplan_hide_number_of_units'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_floorplan_hide_number_of_units', $hide_number_of_units );
+
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_floorplan_search' );

@@ -78,7 +78,10 @@ function rentfetch_properties_each_list() {
 
 				printf( '<p class="rent">%s</p>', esc_html( $rent ) );
 
-				printf( '<p class="availability">%s</p>', esc_html( $availability ) );
+				$rentfetch_options_properties_hide_number_of_units = get_option( 'rentfetch_options_properties_hide_number_of_units' );
+				if ( '1' !== $rentfetch_options_properties_hide_number_of_units ) {
+					printf( '<p class="availability">%s</p>', esc_html( $availability ) );
+				}
 
 			echo '</div>'; // .property-availability.
 

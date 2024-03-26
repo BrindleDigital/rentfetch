@@ -260,7 +260,20 @@ function rentfetch_settings_properties_property_search() {
 		<div class="column">
 			<input type="text" name="rentfetch_options_number_of_amenities_to_show" id="rentfetch_options_number_of_amenities_to_show" value="<?php echo esc_attr( get_option( 'rentfetch_options_number_of_amenities_to_show' ) ); ?>">
 		</div>
-	</div>        
+	</div>
+
+	<div class="row">
+		<div class="column">
+			<label for="rentfetch_options_properties_hide_number_of_units">Hide the number of units</label>
+			<p class="description"><em>NOTE: The [rentfetch_properties] shortcode already does not show available units by default, but [rentfetch_propertysearch] does.</em></p>
+		</div>
+		<div class="column">
+			<label for="rentfetch_options_properties_hide_number_of_units">
+				<input type="checkbox" name="rentfetch_options_properties_hide_number_of_units" id="rentfetch_options_properties_hide_number_of_units" <?php checked( get_option( 'rentfetch_options_properties_hide_number_of_units' ), '1' ); ?>>
+				Hide it in property archives
+			</label>
+		</div>
+	</div>
 	<?php
 }
 add_action( 'rentfetch_do_settings_properties_property_search', 'rentfetch_settings_properties_property_search' );
@@ -345,5 +358,9 @@ function rentfetch_save_settings_property_search() {
 		$number_of_amenities_to_show = intval( $_POST['rentfetch_options_number_of_amenities_to_show'] );
 		update_option( 'rentfetch_options_number_of_amenities_to_show', $number_of_amenities_to_show );
 	}
+	
+	// Checkbox field - Enable the availability button.
+	$hide_number_of_units = isset( $_POST['rentfetch_options_properties_hide_number_of_units'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_properties_hide_number_of_units', $hide_number_of_units );
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_property_search' );

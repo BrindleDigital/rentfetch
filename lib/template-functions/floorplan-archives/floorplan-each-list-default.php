@@ -68,7 +68,11 @@ function rentfetch_floorplans_each_list_default() {
 		echo '</div>'; // .floorplan-attributes.
 
 		if ( $units_count > 0 ) {
-			printf( '<p class="availability">%s</p>', wp_kses_post( $available_units ) );
+			
+			$rentfetch_options_floorplan_hide_number_of_units = get_option( 'rentfetch_options_floorplan_hide_number_of_units' );
+			if ( '1' !== $rentfetch_options_floorplan_hide_number_of_units ) {
+				printf( '<p class="availability">%s</p>', wp_kses_post( $available_units ) );
+			}
 
 			echo '<details>';
 				echo '<summary class="rentfetch-button">View Availability <span class="dropdown"></span></summary>';

@@ -30,7 +30,7 @@ th#title {
 }
 
 th#property_id {
-	min-width: 90px !important;
+	min-width: 110px !important;
 }
 
 th#address {
@@ -73,6 +73,7 @@ td.url {
 
 th#images {
 	width: 200px !important;
+	min-width: 100px !important;
 }
 
 th#property_source {

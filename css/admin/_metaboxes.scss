@@ -1,124 +1,124 @@
 .rf-metabox {
-    padding: 15px 10px;
+	padding: 15px 10px;
 
-    @include mobile {
-        .field {
-            grid-template-columns: 1fr !important;
-        }
-    }
+	@include mobile {
+		.field {
+			grid-template-columns: 1fr !important;
+		}
+	}
 
-    .field {
-        display: grid;
-        grid-template-columns: 250px 1fr;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-        padding: 0 0 30px;
-        margin: 0 0 30px;
-        gap: 30px;
+	.field {
+		display: grid;
+		grid-template-columns: 250px 1fr;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+		padding: 0 0 30px;
+		margin: 0 0 30px;
+		gap: 30px;
 
-        &:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
+		&:last-child {
+			margin-bottom: 0;
+			padding-bottom: 0;
+			border-bottom: none;
+		}
 
-        input[type='text'],
-        input[type='number'],
-        textarea {
-            display: block;
-            width: 100%;
-        }
+		input[type='text'],
+		input[type='number'],
+		textarea {
+			display: block;
+			width: 100%;
+		}
 
-        .column {
-            display: block;
-        }
+		.column {
+			display: block;
+		}
 
-        label {
-            font-weight: 600;
-            color: black;
-            width: 100%;
-            padding: 6px 0;
-            line-height: 1.4;
-            display: block;
-        }
+		label {
+			font-weight: 600;
+			color: black;
+			width: 100%;
+			padding: 6px 0;
+			line-height: 1.4;
+			display: block;
+		}
 
-        p.description {
-            padding: 5px 0 0;
-        }
+		p.description {
+			padding: 5px 0 0;
+		}
 
-        ul.checkboxes {
-            margin: 0;
-            padding: 0;
+		ul.checkboxes {
+			margin: 0;
+			padding: 0;
 
-            li.checkbox {
-                display: grid;
-                grid-template-columns: auto 1fr;
-                margin: 0;
-                padding: 0;
-                gap: 10px;
+			li.checkbox {
+				display: grid;
+				grid-template-columns: auto 1fr;
+				margin: 0;
+				padding: 0;
+				gap: 10px;
 
-                label {
-                    font-weight: normal;
-                    padding: 0;
-                    margin: 0;
-                    color: inherit;
-                }
+				label {
+					font-weight: normal;
+					padding: 0;
+					margin: 0;
+					color: inherit;
+				}
 
-                input {
-                    display: block;
-                    margin: 3px 0 0;
-                }
-            }
-        }
-    }
+				input {
+					display: block;
+					margin: 3px 0 0;
+				}
+			}
+		}
+	}
 
-    .columns {
-        display: grid;
-        gap: 30px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-        padding: 0 0 30px;
-        margin: 0 0 30px;
+	.columns {
+		display: grid;
+		gap: 30px;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+		padding: 0 0 30px;
+		margin: 0 0 30px;
 
-        .field {
-            display: block;
-        }
+		.field {
+			display: block;
+		}
 
-        &:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border: none;
-        }
+		&:last-child {
+			margin-bottom: 0;
+			padding-bottom: 0;
+			border: none;
+		}
 
-        &.columns-2 {
-            @include notmobile {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
+		&.columns-2 {
+			@include notmobile {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
 
-        &.columns-3 {
-            @include notmobile {
-                grid-template-columns: 1fr 1fr 1fr;
-            }
-        }
+		&.columns-3 {
+			@include notmobile {
+				grid-template-columns: 1fr 1fr 1fr;
+			}
+		}
 
-        &.columns-4 {
-            @include notmobile {
-                grid-template-columns: 1fr 1fr 1fr 1fr;
-            }
-        }
+		&.columns-4 {
+			@include notmobile {
+				grid-template-columns: 1fr 1fr 1fr 1fr;
+			}
+		}
 
-        &.columns-5 {
-            @include notmobile {
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-            }
-        }
+		&.columns-5 {
+			@include notmobile {
+				grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+			}
+		}
 
-        .field {
-            margin: 0;
-            padding: 0;
-            border: none;
-            display: block;
-        }
-    }
+		.field {
+			margin: 0;
+			padding: 0;
+			border: none;
+			display: block;
+		}
+	}
 }
 
 /* ==========================================================================
@@ -126,66 +126,66 @@
    ========================================================================== */
 
 .rf-metabox {
-    #gallery-container {
-        .gallery-image {
-            position: relative;
-            display: inline-block;
-            margin: 0 5px 5px 0;
+	#gallery-container {
+		.gallery-image {
+			position: relative;
+			display: inline-block;
+			margin: 0 5px 5px 0;
 
-            button.remove-image {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-            }
-        }
-    }
+			button.remove-image {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+			}
+		}
+	}
 }
 
 .rf-metabox {
-    .property_images,
-    .floorplan_images {
-        display: grid;
-        grid-gap: 5px;
+	.property_images,
+	.floorplan_images {
+		display: grid;
+		grid-gap: 5px;
 
-        @include notmobile {
-            grid-template-columns: repeat(auto-fit, 150px);
-        }
+		@include notmobile {
+			grid-template-columns: repeat(auto-fit, 150px);
+		}
 
-        @include mobile {
-            grid-template-columns: repeat(auto-fit, 100px);
-        }
+		@include mobile {
+			grid-template-columns: repeat(auto-fit, 100px);
+		}
 
-        .property-image,
-        .floorplan-image {
-            position: relative;
-            display: inline-block;
-            height: 82px;
+		.property-image,
+		.floorplan-image {
+			position: relative;
+			display: inline-block;
+			height: 82px;
 
-            a.download {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                background-color: #efefef;
-                border: 1px solid #767676;
-                color: black;
-                z-index: 5;
-                text-decoration: none;
-                border-radius: 2px;
-                padding: 4px 6px;
-                line-height: 1;
+			a.download {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				background-color: #efefef;
+				border: 1px solid #767676;
+				color: black;
+				z-index: 5;
+				text-decoration: none;
+				border-radius: 2px;
+				padding: 4px 6px;
+				line-height: 1;
 
-                &:hover {
-                    background-color: #dcdcdc;
-                    border-color: black;
-                }
-            }
+				&:hover {
+					background-color: #dcdcdc;
+					border-color: black;
+				}
+			}
 
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                position: absolute;
-            }
-        }
-    }
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				position: absolute;
+			}
+		}
+	}
 }

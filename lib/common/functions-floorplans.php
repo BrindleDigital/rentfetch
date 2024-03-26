@@ -447,7 +447,7 @@ function rentfetch_floorplan_default_availability_button_markup() {
 	$target = rentfetch_get_link_target( $link );
 
 	// bail if no link is set.
-	if ( false === $link ) {
+	if ( false === $link || empty( $link ) ) {
 		return false;
 	}
 
@@ -660,8 +660,9 @@ function rentfetch_floorplan_unit_table() {
 	$args = array(
 		'post_type'      => 'units',
 		'posts_per_page' => -1,
-		'orderby'        => 'meta_value_num',
+		'orderby'        => 'meta_value',
 		'order'          => 'ASC',
+		'meta_key'       => 'availability_date', // phpcs:ignore
 		'meta_query'     => array( // phpcs:ignore
 			array(
 				'key'   => 'property_id',
@@ -778,8 +779,9 @@ function rentfetch_floorplan_unit_list() {
 	$args = array(
 		'post_type'      => 'units',
 		'posts_per_page' => -1,
-		'orderby'        => 'meta_value_num',
+		'orderby'        => 'meta_value',
 		'order'          => 'ASC',
+		'meta_key'       => 'availability_date', // phpcs:ignore
 		'meta_query'     => array( // phpcs:ignore
 			array(
 				'key'   => 'property_id',

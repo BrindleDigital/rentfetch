@@ -78,7 +78,6 @@ function rentfetch_get_floorplan_images_manual() {
  * @return array an array of images.
  */
 function rentfetch_get_floorplan_images_yardi() {
-	global $post;
 
 	$yardi_images_string = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
 

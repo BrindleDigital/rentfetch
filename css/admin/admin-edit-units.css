@@ -66,3 +66,9 @@ td.yardi_unit_image_urls {
 td.api_error {
 	max-width: 150px !important;
 }
+
+td.api_response .api-responses {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: 1fr 1fr;
+}
