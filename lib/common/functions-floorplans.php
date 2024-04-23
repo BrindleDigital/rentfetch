@@ -942,3 +942,23 @@ function rentfetch_similar_floorplans() {
 		echo wp_kses_post( $floorplans );
 	}
 }
+
+/**
+ * Get the description
+ *
+ * @return string the floorplan description
+ */
+function rentfetch_get_floorplan_description() {
+	$description = get_post_meta( get_the_ID(), 'floorplan_description', true );
+
+	return wp_kses_post( $description );
+}
+
+/**
+ * Output the description
+ */
+function rentfetch_floorplan_description() {
+	$description = rentfetch_get_floorplan_description();
+
+	echo wp_kses_post( $description );
+}

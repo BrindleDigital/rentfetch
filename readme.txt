@@ -91,6 +91,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.15.4 = 
+
+* Feature: adding the floorplan description on the single-floorplans template and the list view (not in the grid view)
+* Bugfix: adding a maximum height to the images on the single-floorplans template to make it look less bad when a user uses a very vall image in that space.
+
 = 0.15.3 =
 
 * Bugfix: fixing a situation where the "lease now" button for a floorplan could show if the value were set to "" instead of null.

@@ -16,9 +16,10 @@ body.single-floorplans {
 
 		.images-column {
 			img {
-				width: 100%;
+				width: auto;
 				max-width: 100%;
 				height: auto;
+				max-height: 500px;
 			}
 		}
 
@@ -69,9 +70,17 @@ body.single-floorplans {
 				margin: 0 5px 5px 0;
 			}
 		}
+
+		.floorplan-description {
+			margin-top: 25px;
+		}
 	}
 
 	.floorplan-images-slider {
+		.floorplan-image-slide {
+			text-align: center;
+		}
+
 		.blaze-buttons {
 			@include desktop {
 				position: absolute;

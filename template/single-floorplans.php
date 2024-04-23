@@ -37,6 +37,7 @@ if ( have_posts() ) {
 						$links           = rentfetch_get_floorplan_links();
 						$pricing         = rentfetch_get_floorplan_pricing();
 						$units_count     = rentfetch_get_floorplan_units_count_from_meta();
+						$description     = rentfetch_get_floorplan_description();
 
 						if ( $floorplan_title ) {
 							printf( '<h1>%s</h1>', esc_html( $floorplan_title ) );
@@ -65,6 +66,10 @@ if ( have_posts() ) {
 						echo '<div class="floorplan-buttons">';
 							do_action( 'rentfetch_do_floorplan_buttons' );
 						echo '</div>';
+
+						if ( $description ) {
+							printf( '<div class="floorplan-description">%s</div>', wp_kses_post( $description ) );
+						}
 
 					echo '</div>'; // .content-column
 				echo '</div>'; // .current-floorplan-info

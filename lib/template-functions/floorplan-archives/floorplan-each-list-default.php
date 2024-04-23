@@ -26,6 +26,7 @@ function rentfetch_floorplans_each_list_default() {
 	$units_count     = rentfetch_get_floorplan_units_count_from_meta();
 	$specials        = rentfetch_get_floorplan_specials();
 	$tour            = rentfetch_get_floorplan_tour();
+	$description     = rentfetch_get_floorplan_description();
 
 	echo '<div class="images-column">';
 		do_action( 'rentfetch_do_floorplan_images' );
@@ -81,6 +82,10 @@ function rentfetch_floorplans_each_list_default() {
 				do_action( 'rentfetch_floorplan_do_unit_table' );
 
 			echo '</details>';
+		}
+		
+		if ( $description ) {
+			printf( '<div class="floorplan-description">%s</div>', wp_kses_post( $description ) );
 		}
 
 	echo '</div>'; // .content-column
