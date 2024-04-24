@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.15.5 =
+
+* Feature: add floorplan buttons when there are no units available on the list view for floorplans. This brings the functionality closer in line with the grid view.
+
 = 0.15.4 = 
 
 * Feature: adding the floorplan description on the single-floorplans template and the list view (not in the grid view)

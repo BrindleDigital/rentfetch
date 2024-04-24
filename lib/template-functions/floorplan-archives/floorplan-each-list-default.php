@@ -82,6 +82,10 @@ function rentfetch_floorplans_each_list_default() {
 				do_action( 'rentfetch_floorplan_do_unit_table' );
 
 			echo '</details>';
+		} else {
+			echo '<div class="floorplan-buttons">';
+				do_action( 'rentfetch_do_floorplan_buttons' );
+			echo '</div>';
 		}
 		
 		if ( $description ) {

@@ -157,6 +157,14 @@
 		}
 	}
 
+	.floorplan-buttons {
+		margin-top: 15px;
+
+		a {
+			margin: 0 5px 5px 0;
+		}
+	}
+
 	details[open] {
 		summary.rentfetch-button {
 			span.dropdown {
