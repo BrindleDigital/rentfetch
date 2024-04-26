@@ -130,6 +130,22 @@ jQuery(function ($) {
 						buttonContent =
 							legend + ' (' + activeFields.length + ' selected)';
 						break;
+					case dataId === 'sort':
+						// if it's the property types, change the content
+						if (dataValues === 'availability') {
+							buttonContent += 'Available units';
+						} else if (dataValues === 'beds') {
+							buttonContent += 'Beds';
+						} else if (dataValues === 'baths') {
+							buttonContent += 'Baths';
+						} else if (dataValues === 'pricelow') {
+							buttonContent += 'Price (low to high)';
+						} else if (dataValues === 'pricehigh') {
+							buttonContent += 'Price (high to low)';
+						} else {
+							buttonContent += dataValues.replace(/,/g, ', ');
+						}
+						break;
 					default:
 						// otherwise, just add the values (this handles checkboxes)
 						buttonContent += dataValues.replace(/,/g, ', ');

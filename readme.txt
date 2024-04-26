@@ -4,7 +4,7 @@ Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.4.4
 Requires PHP: 7.4
-Stable tag: 0.15.3
+Stable tag: 0.15.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,11 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.15.6 = 
+
+* Feature: adding a price sort to the floorplans shortcode
+* Feature: adding options for a price sort (low and high) to the defaults for the floorplans shortcode on initial load
 
 = 0.15.5 =
 

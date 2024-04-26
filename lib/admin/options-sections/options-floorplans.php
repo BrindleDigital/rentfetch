@@ -44,6 +44,8 @@ function rentfetch_settings_floorplans_floorplan_search() {
 				<option value="beds" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'beds' ); ?>>Beds</option>
 				<option value="baths" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'baths' ); ?>>Baths</option>
 				<option value="availability" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'availability' ); ?>>Availability</option>
+				<option value="pricelow" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'pricelow' ); ?>>Price (low to high)</option>
+				<option value="pricehigh" <?php selected( get_option( 'rentfetch_options_floorplan_default_order' ), 'pricehigh' ); ?>>Price (high to low)</option>
 			</select>
 		</div>
 	</div>

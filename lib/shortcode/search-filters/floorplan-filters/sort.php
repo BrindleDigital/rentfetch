@@ -22,7 +22,7 @@ function rentfetch_search_filters_sort_floorplans() {
 	} else {
 		$sort = null;
 	}
-	
+
 	$label = apply_filters( 'rentfetch_search_filters_sort_label', 'Sorting' );
 
 	// build the baths search.
@@ -44,7 +44,7 @@ function rentfetch_search_filters_sort_floorplans() {
 						value="availability"
 						data-sort="availability" 
 						%s />
-					<span>Sort by Available Units</span>
+					<span>Available Units</span>
 				</label>',
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
@@ -63,7 +63,7 @@ function rentfetch_search_filters_sort_floorplans() {
 						value="beds" 
 						data-sort="beds" 
 						%s />
-					<span>Sort by Beds</span>
+					<span>Beds</span>
 				</label>',
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
@@ -82,7 +82,45 @@ function rentfetch_search_filters_sort_floorplans() {
 						value="baths" 
 						data-sort="baths" 
 						%s />
-					<span>Sort by Baths</span>
+					<span>Baths</span>
+				</label>',
+				$checked ? 'checked' : '', // Apply checked attribute.
+			);
+
+			if ( 'pricelow' === $sort ) {
+				$checked = 'checked';
+			} else {
+				$checked = null;
+			}
+
+			printf(
+				'<label>
+					<input type="radio" 
+						name="sort"
+						id="sort-pricelow"
+						value="pricelow" 
+						data-sort="pricelow" 
+						%s />
+					<span>Price (low to high)</span>
+				</label>',
+				$checked ? 'checked' : '', // Apply checked attribute.
+			);
+
+			if ( 'pricehigh' === $sort ) {
+				$checked = 'checked';
+			} else {
+				$checked = null;
+			}
+
+			printf(
+				'<label>
+					<input type="radio" 
+						name="sort"
+						id="sort-pricehigh"
+						value="pricehigh" 
+						data-sort="Price (high to low)" 
+						%s />
+					<span>Price (high to low)</span>
 				</label>',
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
@@ -114,6 +152,7 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 		}
 
 		$sort = sanitize_text_field( wp_unslash( $_POST['sort'] ) );
+
 	} else {
 		$default_order = get_option( 'rentfetch_options_floorplan_default_order' );
 		if ( $default_order ) {
@@ -129,26 +168,51 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 	// if it's beds...
 	if ( 'beds' === $sort ) {
 		$floorplans_args['orderby']  = 'meta_value_num';
-		$floorplans_args['meta_key'] = 'beds';
+		$floorplans_args['meta_key'] = 'beds'; // phpcs:ignore
 		$floorplans_args['order']    = 'ASC';
 	}
 
 	// if it's baths.
 	if ( 'baths' === $sort ) {
 		$floorplans_args['orderby']  = 'meta_value_num';
-		$floorplans_args['meta_key'] = 'baths';
+		$floorplans_args['meta_key'] = 'baths'; // phpcs:ignore
 		$floorplans_args['order']    = 'ASC';
 	}
 
 	// if it's available units.
 	if ( 'availability' === $sort ) {
 		$floorplans_args['orderby']  = 'meta_value_num';
-		$floorplans_args['meta_key'] = 'available_units';
+		$floorplans_args['meta_key'] = 'available_units'; // phpcs:ignore
 		$floorplans_args['order']    = 'DESC';
+	}
+
+	// if it's price low to high.
+	if ( 'pricelow' === $sort ) {
+		$floorplans_args['orderby']    = 'meta_value_num';
+		$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
+		$floorplans_args['order']      = 'ASC';
+		$floorplans_args['meta_query'][] = array( // phpcs:ignore
+			'key'     => 'minimum_rent',
+			'value'   => 100,
+			'type'    => 'numeric',
+			'compare' => '>',
+		);
+	}
+
+	// if it's price high to low.
+	if ( 'pricehigh' === $sort ) {
+		$floorplans_args['orderby']    = 'meta_value_num';
+		$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
+		$floorplans_args['order']      = 'DESC';
+		$floorplans_args['meta_query'][] = array( // phpcs:ignore
+			'key'     => 'minimum_rent',
+			'value'   => 100,
+			'type'    => 'numeric',
+			'compare' => '>',
+		);
 	}
 
 	// return the args.
 	return $floorplans_args;
-
 }
 add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_sort_floorplans', 10, 1 );
