@@ -109,6 +109,7 @@ jQuery(function ($) {
 
 				// Create the button element
 				var buttonContent = legend + ': ';
+
 				switch (true) {
 					case activeFields.length === 2 &&
 						!activeFields.is(':checkbox'):
@@ -125,7 +126,12 @@ jQuery(function ($) {
 						buttonContent =
 							legend + ' (' + activeFields.length + ' selected)';
 						break;
-					case dataId === 'search-property-types[]':
+					case dataId === 'search-floorplancategory[]':
+						// if it's the property types, change the content
+						buttonContent =
+							legend + ' (' + activeFields.length + ' selected)';
+						break;
+					case dataId === 'search-floorplantype[]':
 						// if it's the property types, change the content
 						buttonContent =
 							legend + ' (' + activeFields.length + ' selected)';

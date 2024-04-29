@@ -18,6 +18,8 @@ function rentfetch_settings_set_defaults_floorplans() {
 	$default_values = array(
 		'beds_search',
 		'baths_search',
+		'floorplan_category',
+		'floorplan_type',
 		'squarefoot_search',
 	);
 	add_option( 'rentfetch_options_floorplan_filters', $default_values );
@@ -77,6 +79,18 @@ function rentfetch_settings_floorplans_floorplan_search() {
 					<label>
 						<input type="checkbox" name="rentfetch_options_floorplan_filters[]" value="baths_search" <?php checked( in_array( 'baths_search', $options_floorplan_filters, true ) ); ?>>
 						Baths search
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_floorplan_filters[]" value="floorplan_category" <?php checked( in_array( 'floorplan_category', $options_floorplan_filters, true ) ); ?>>
+						Floorplan category
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_floorplan_filters[]" value="floorplan_type" <?php checked( in_array( 'floorplan_type', $options_floorplan_filters, true ) ); ?>>
+						Floorplan type
 					</label>
 				</li>
 				<li>

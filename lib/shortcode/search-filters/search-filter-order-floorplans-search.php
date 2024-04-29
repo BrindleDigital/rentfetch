@@ -26,6 +26,14 @@ function rentfetch_search_floorplans_filters() {
 	if ( ! empty( $options_floorplan_filters ) && in_array( 'baths_search', $options_floorplan_filters, true ) ) {
 		add_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_baths' );
 	}
+	
+	if ( ! empty( $options_floorplan_filters ) && in_array( 'floorplan_category', $options_floorplan_filters, true ) ) {
+		add_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_floorplan_categories' );
+	}
+	
+	if ( ! empty( $options_floorplan_filters ) && in_array( 'floorplan_type', $options_floorplan_filters, true ) ) {
+		add_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_floorplan_types' );
+	}
 
 	if ( ! empty( $options_floorplan_filters ) && in_array( 'squarefoot_search', $options_floorplan_filters, true ) ) {
 		add_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_squarefoot' );

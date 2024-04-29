@@ -31,6 +31,8 @@ function rentfetch_settings_set_defaults_properties() {
 		'squarefoot_search',
 		'type_search',
 		'category_search',
+		'floorplan_type_search',
+		'floorplan_category_search',
 		'date_search',
 		'price_search',
 		'amenities_search',
@@ -116,14 +118,26 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 				<li>
 					<label>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="category_search" <?php checked( in_array( 'category_search', $options_featured_filters, true ) ); ?>>
+						Property category search
+					</label>
+				</li>
+				<li>
+					<label>
 						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_featured_filters, true ) ); ?>>
 						Property type search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="category_search" <?php checked( in_array( 'category_search', $options_featured_filters, true ) ); ?>>
-						Property category search
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="floorplan_category_search" <?php checked( in_array( 'floorplan_category_search', $options_featured_filters, true ) ); ?>>
+						Floorplan category search
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="floorplan_type_search" <?php checked( in_array( 'floorplan_type_search', $options_featured_filters, true ) ); ?>>
+						Floorplan type search
 					</label>
 				</li>
 				<li>
@@ -192,14 +206,26 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 				<li>
 					<label>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="category_search" <?php checked( in_array( 'category_search', $options_dialog_filters, true ) ); ?>>
+						Property category search
+					</label>
+				</li>
+				<li>
+					<label>
 						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_dialog_filters, true ) ); ?>>
 						Property type search
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="category_search" <?php checked( in_array( 'category_search', $options_dialog_filters, true ) ); ?>>
-						Property category search
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="floorplan_category_search" <?php checked( in_array( 'floorplan_category_search', $options_dialog_filters, true ) ); ?>>
+						Floorplan category search
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="floorplan_type_search" <?php checked( in_array( 'floorplan_type_search', $options_dialog_filters, true ) ); ?>>
+						Floorplan type search
 					</label>
 				</li>
 				<li>
