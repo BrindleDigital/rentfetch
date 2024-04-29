@@ -222,7 +222,7 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 
 				$images_ids_array = explode( ',', $images );
 
-				echo '<input style="display: none;" type="text" id="images" name="images" value="' . esc_attr( $images ) . '">';
+				echo '<input type="hidden" id="images" name="images" value="' . esc_attr( $images ) . '">';
 
 				if ( $images ) {
 					echo '<div id="gallery-container">';

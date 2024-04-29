@@ -91,6 +91,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.15.8 =
+
+* Feature: making the images drag-droppable when manually added for both properties and floorplans
+* Bugfix: the "remove" buttons on those images, when used after new images were added to a pre-existing gallery, were failing to remove some images. Fixing that.
+
 = 0.15.7 =
 
 * Feature: adding setting for how often syncs happen (ranging from 1 hour to 1 day)
