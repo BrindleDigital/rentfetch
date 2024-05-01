@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.15.10 = 
+
+* Bugfix: Google appears to have changed their scheme for linking to locations. Updating this to get better results while still linking to the location page where possible (if it has a "named" Google places location)
+
 = 0.15.9 =
 
 * Feature: adding floorplan tag and floorplan category search parameters to the floorplan searches

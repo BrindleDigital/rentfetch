@@ -198,7 +198,9 @@ add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_contact_bu
 function rentfetch_get_property_location_link() {
 	$location      = rentfetch_get_property_location();
 	$title         = rentfetch_get_property_title();
-	$location_link = sprintf( 'https://www.google.com/maps/place/%s', $title . ' ' . $location );
+
+	$location_link = sprintf( 'https://www.google.com/maps/search/?api=1&query=%s', $title . ' ' . $location );
+
 	return $location_link;
 }
 
