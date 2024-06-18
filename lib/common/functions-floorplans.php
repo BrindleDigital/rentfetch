@@ -476,6 +476,48 @@ function rentfetch_floorplan_default_availability_button_markup() {
 }
 add_filter( 'rentfetch_floorplan_default_availability_button_markup', 'rentfetch_floorplan_default_availability_button_markup' );
 
+
+/**
+ * Get the unavailability button
+ *
+ * @return string|bool the unavailability button.
+ */
+function rentfetch_floorplan_default_unavailability_button() {
+
+	$button_enabled = get_option( 'rentfetch_options_unavailability_button_enabled', false );
+
+	$button_enabled = (int) $button_enabled;
+
+	// bail if the button is not enabled.
+	if ( 1 !== $button_enabled ) {
+		return false;
+	}
+
+	echo wp_kses_post( apply_filters( 'rentfetch_floorplan_default_unavailability_button_markup', null ) );
+}
+add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_unavailability_button' );
+
+/**
+ * Set up the default markup for the availability button.
+ *
+ * @return string the availability button markup.
+ */
+function rentfetch_floorplan_default_unavailability_button_markup() {
+
+	$button_label = get_option( 'rentfetch_options_unavailability_button_button_label', 'availability' );
+
+	$link   = get_option( 'rentfetch_options_unavailability_button_link' );
+	$target = rentfetch_get_link_target( $link );
+
+	// bail if no link is set.
+	if ( false === $link || empty( $link ) ) {
+		return false;
+	}
+
+	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-unavailability-button">%s</a>', $link, $target, $button_label );
+}
+add_filter( 'rentfetch_floorplan_default_unavailability_button_markup', 'rentfetch_floorplan_default_unavailability_button_markup' );
+
 /**
  * Get the contact button
  *

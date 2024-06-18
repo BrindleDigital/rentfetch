@@ -9,6 +9,16 @@ jQuery(document).ready(function ($) {
 		})
 		.trigger('change');
 
+	$('input[name="rentfetch_options_unavailability_button_enabled"]')
+		.on('change', function () {
+			if (this.checked) {
+				$('.unavailability .white-box:not(.always-visible)').show();
+			} else {
+				$('.unavailability .white-box:not(.always-visible)').hide();
+			}
+		})
+		.trigger('change');
+
 	$('input[name="rentfetch_options_contact_button_enabled"]')
 		.on('change', function () {
 			// console.log( this );

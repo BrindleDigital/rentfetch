@@ -48,6 +48,29 @@ function rentfetch_settings_floorplans_floorplan_buttons() {
 			</div>
 		</div>
 	</div>
+
+	<div class="row floorplan-archive-buttons unavailability">
+		<div class="column">
+			<label>Unavailable button</label>
+			<p class="description">A button which only displays on floorplans without any availability. This will be the same link for every floorplan (it is not dynamic).</p>
+		</div>
+		<div class="column">
+			<div class="white-box always-visible">
+				<label for="rentfetch_options_unavailability_button_enabled">
+					<input type="checkbox" name="rentfetch_options_unavailability_button_enabled" id="rentfetch_options_unavailability_button_enabled" <?php checked( get_option( 'rentfetch_options_unavailability_button_enabled' ), '1' ); ?>>
+					Enable the unavailable button
+				</label>
+			</div>
+			<div class="white-box">
+				<label for="rentfetch_options_unavailability_button_button_label">Button label</label>
+				<input type="text" name="rentfetch_options_unavailability_button_button_label" id="rentfetch_options_unavailability_button_button_label" value="<?php echo esc_attr( get_option( 'rentfetch_options_unavailability_button_button_label', 'Reach out' ) ); ?>">
+			</div>
+			<div class="white-box">
+				<label for="rentfetch_options_unavailability_button_link">Link</label>
+				<input type="url" name="rentfetch_options_unavailability_button_link" id="rentfetch_options_unavailability_button_link" value="<?php echo esc_url( get_option( 'rentfetch_options_unavailability_button_link' ) ); ?>">
+			</div>
+		</div>
+	</div>
 	
 	<div class="row floorplan-archive-buttons contact">
 		<div class="column">
@@ -144,6 +167,22 @@ function rentfetch_save_settings_floorplan_buttons() {
 	if ( isset( $_POST['rentfetch_options_availability_button_button_label'] ) ) {
 		$options_availability_button_button_label = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_availability_button_button_label'] ) );
 		update_option( 'rentfetch_options_availability_button_button_label', $options_availability_button_button_label );
+	}
+
+	// Checkbox field - Enable the unavailability button.
+	$options_unavailability_button_enabled = isset( $_POST['rentfetch_options_unavailability_button_enabled'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_unavailability_button_enabled', $options_unavailability_button_enabled );
+
+	// Text field - Button label.
+	if ( isset( $_POST['rentfetch_options_unavailability_button_button_label'] ) ) {
+		$options_unavailability_button_button_label = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_unavailability_button_button_label'] ) );
+		update_option( 'rentfetch_options_unavailability_button_button_label', $options_unavailability_button_button_label );
+	}
+	
+	// Text field - Link.
+	if ( isset( $_POST['rentfetch_options_unavailability_button_link'] ) ) {
+		$options_contact_button_link = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_unavailability_button_link'] ) );
+		update_option( 'rentfetch_options_unavailability_button_link', $options_contact_button_link );
 	}
 
 	// Checkbox field - Enable the tour button.
