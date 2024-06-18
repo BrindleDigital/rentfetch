@@ -33,7 +33,7 @@ function rentfetch_settings_floorplans_floorplan_buttons() {
 	<div class="row floorplan-archive-buttons availability">
 		<div class="column">
 			<label>Availability button</label>
-			<p class="description">A button which can pull in the availability link for each individual floorplan. If an availability URL is unavailable, this button will not display.</p>
+			<p class="description">A button which can pull in the availability link for each individual floorplan. This button will display whenever there's an availability URL, whether units are available or not.</p>
 		</div>
 		<div class="column">
 			<div class="white-box always-visible">

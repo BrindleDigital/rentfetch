@@ -503,6 +503,11 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_unava
  * @return string the availability button markup.
  */
 function rentfetch_floorplan_default_unavailability_button_markup() {
+	
+	$units_count = rentfetch_get_floorplan_units_count_from_meta();
+	if ( $units_count > 0 ) {
+		return false;
+	}
 
 	$button_label = get_option( 'rentfetch_options_unavailability_button_button_label', 'availability' );
 
