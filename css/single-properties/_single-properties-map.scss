@@ -17,6 +17,17 @@
 	}
 
 	.map-marker {
-		padding: 12px 12px 0;
+		padding: 15px 0 0 15px;
+	}
+
+	// google's close button
+	.gm-style-iw-chr {
+		display: none;
+	}
+
+	.gm-style-iw,
+	.gm-style-iw-d {
+		padding: 0 !important;
+		margin: 0 !important;
 	}
 }
