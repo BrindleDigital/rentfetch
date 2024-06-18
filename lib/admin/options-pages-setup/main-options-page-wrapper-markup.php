@@ -145,7 +145,7 @@ function rentfetch_settings_floorplans() {
 	echo '<ul class="rent-fetch-options-submenu">';
 
 		$active = ( 'floorplan-search' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floorplan Search</a></li>', esc_html( $active ) );
+		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floorplan Archives</a></li>', esc_html( $active ) );
 
 		$active = ( 'floorplan-buttons' === $section ) ? 'tab-active' : '';
 		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-buttons" class="tab %s">Floorplan Buttons</a></li>', esc_html( $active ) );

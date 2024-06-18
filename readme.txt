@@ -94,6 +94,7 @@ Start from your WordPress dashboard.
 = 0.15.11 =
 
 * Feature: adding a 'no-units-available' or 'has-units-available' class on all floorplan archive views, based on whether units are available.
+* Feature: adding a setting to allow default faded styles on unavailable floorplan views with 'no-units-unavailable-faded' and adding those default styles.
 
 = 0.15.10 = 
 

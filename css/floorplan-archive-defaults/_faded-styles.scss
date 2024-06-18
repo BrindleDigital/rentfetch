@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Styles for floorplans on single-properties templates
+   ========================================================================== */
+
+.floorplans-in-archive {
+	.type-floorplans.no-units-unavailable-faded {
+		.images-column,
+		.content-column {
+			filter: grayscale(1);
+			opacity: 0.5;
+		}
+	}
+}
+
+/* ==========================================================================
+   Floorplan grid and search results
+   ========================================================================== */
+
+.floorplans-simple-grid,
+.floorplans-loop {
+	.type-floorplans.no-units-unavailable-faded {
+		.floorplan-single-image-wrap,
+		.specials,
+		.floorplan-content,
+		.floorplan-availability {
+			filter: grayscale(1);
+			opacity: 0.5;
+		}
+	}
+}

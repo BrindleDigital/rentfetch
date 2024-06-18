@@ -18,6 +18,11 @@ function rentfetch_floorplans_post_classes( $classes ) {
 		$classes[] = 'has-units-available';
 	} else {
 		$classes[] = 'no-units-available';
+		
+		$fade_out_unavailable = get_option( 'rentfetch_options_floorplan_apply_styles_no_floorplans' );
+		if ( $fade_out_unavailable === '1' ) {
+			$classes[] = 'no-units-unavailable-faded';
+		}
 	}
 
 	return $classes;

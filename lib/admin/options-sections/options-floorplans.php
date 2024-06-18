@@ -150,6 +150,19 @@ function rentfetch_settings_floorplans_floorplan_search() {
 			</label>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="column">
+			<label for="rentfetch_options_floorplan_apply_styles_no_floorplans">Fade out unavailable floorplans</label>
+			<!-- <p class="description">When a floorplan has no units available, should we apply default styles to fade out that floorplan?</p> -->
+		</div>
+		<div class="column">
+			<label for="rentfetch_options_floorplan_apply_styles_no_floorplans">
+				<input type="checkbox" name="rentfetch_options_floorplan_apply_styles_no_floorplans" id="rentfetch_options_floorplan_apply_styles_no_floorplans" <?php checked( get_option( 'rentfetch_options_floorplan_apply_styles_no_floorplans' ), '1' ); ?>>
+				Apply faded styles to floorplans with no units available
+			</label>
+		</div>
+	</div>
 	<?php
 }
 add_action( 'rentfetch_do_settings_floorplans_floorplan_search', 'rentfetch_settings_floorplans_floorplan_search' );
@@ -197,6 +210,10 @@ function rentfetch_save_settings_floorplan_search() {
 	// Checkbox field - Enable the availability button.
 	$hide_number_of_units = isset( $_POST['rentfetch_options_floorplan_hide_number_of_units'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_floorplan_hide_number_of_units', $hide_number_of_units );
+
+	// Checkbox field - Fade out unavailable floorplans
+	$fade_out_unavailable_floorplans = isset( $_POST['rentfetch_options_floorplan_apply_styles_no_floorplans'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_floorplan_apply_styles_no_floorplans', $fade_out_unavailable_floorplans );
 
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_floorplan_search' );
