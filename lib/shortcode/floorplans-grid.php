@@ -43,7 +43,11 @@ function rentfetch_floorplans( $atts ) {
 
 			$custom_query->the_post();
 
-			printf( '<div class="%s">', esc_attr( implode( ' ', get_post_class() ) ) );
+			$classes_array = get_post_class();
+			$classes_array = apply_filters( 'rentfetch_filter_floorplans_post_classes', $classes_array );
+			$classes = implode( ' ', $classes_array );
+
+			printf( '<div class="%s">', esc_attr( $classes ) );
 
 				do_action( 'rentfetch_do_each_floorplan_in_archive' );
 

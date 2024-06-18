@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.15.11 =
+
+* Feature: adding a 'no-units-available' or 'has-units-available' class on all floorplan archive views, based on whether units are available.
+
 = 0.15.10 = 
 
 * Bugfix: Google appears to have changed their scheme for linking to locations. Updating this to get better results while still linking to the location page where possible (if it has a "named" Google places location)

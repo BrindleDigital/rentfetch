@@ -72,9 +72,11 @@ function rentfetch_single_properties_parts_floorplans() {
 
 								$floorplans_query->the_post();
 
-								$class = implode( ' ', get_post_class() );
+								$classes_array = get_post_class();
+								$classes_array = apply_filters( 'rentfetch_filter_floorplans_post_classes', $classes_array );
+								$classes = implode( ' ', $classes_array );
 
-								printf( '<div class="%s">', esc_attr( $class ) );
+								printf( '<div class="%s">', esc_attr( $classes ) );
 
 									do_action( 'rentfetch_single_properties_do_floorplans_each' );
 

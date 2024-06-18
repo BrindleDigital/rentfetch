@@ -9,6 +9,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+//* Post classes (in all archive contexts)
+
+function rentfetch_floorplans_post_classes( $classes ) {
+
+	$units_count = rentfetch_get_floorplan_units_count_from_meta();
+	if ( $units_count > 0 ) {
+		$classes[] = 'has-units-available';
+	} else {
+		$classes[] = 'no-units-available';
+	}
+
+	return $classes;
+
+}
+add_filter( 'rentfetch_filter_floorplans_post_classes', 'rentfetch_floorplans_post_classes', 10, 1 );
+
 // * Title
 
 /**

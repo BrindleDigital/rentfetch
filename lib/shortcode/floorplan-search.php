@@ -139,10 +139,12 @@ function rentfetch_filter_floorplans() {
 		while ( $floorplanquery->have_posts() ) {
 
 			$floorplanquery->the_post();
+			
+			$classes_array = get_post_class();
+			$classes_array = apply_filters( 'rentfetch_filter_floorplans_post_classes', $classes_array );
+			$classes = implode( ' ', $classes_array );
 
-			$class = implode( ' ', get_post_class() );
-
-			printf( '<div class="%s">', esc_attr( $class ) );
+			printf( '<div class="%s">', esc_attr( $classes ) );
 
 				do_action( 'rentfetch_floorplans_search_do_floorplans_each' );
 
