@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.15.12 =
+
+* Bugfix: videos weren't fading out when default fade was applied to floorplans
+
 = 0.15.11 =
 
 * Feature: adding a 'no-units-available' or 'has-units-available' class on all floorplan archive views, based on whether units are available.
