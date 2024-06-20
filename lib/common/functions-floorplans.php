@@ -240,8 +240,17 @@ function rentfetch_floorplan_pricing() {
 function rentfetch_get_floorplan_specials() {
 
 	$specials = get_post_meta( get_the_ID(), 'has_specials', true );
+	$specials_override_text = get_post_meta( get_the_ID(), 'specials_override_text', true );
+	
+	if ( $specials && !$specials_override_text ) {
+		$specials_text = 'Specials available';
+	} elseif ( $specials_override_text ) {
+		$specials_text = $specials_override_text;
+	} else {
+		$specials_text = null;
+	}
 
-	return apply_filters( 'rentfetch_filter_floorplan_specials', $specials );
+	return apply_filters( 'rentfetch_filter_floorplan_specials', $specials_text );
 }
 
 /**
@@ -251,10 +260,10 @@ function rentfetch_get_floorplan_specials() {
  *
  * @return string|null.
  */
-function rentfetch_floorplan_property_specials_label( $specials ) {
+function rentfetch_floorplan_property_specials_label( $specials_text ) {
 
-	if ( $specials ) {
-		return 'Specials available';
+	if ( $specials_text ) {
+		return $specials_text;
 	}
 
 	return null;

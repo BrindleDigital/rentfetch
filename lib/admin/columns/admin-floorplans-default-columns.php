@@ -43,29 +43,30 @@ add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_floorplans_admin_style' 
 function rentfetch_default_floorplans_admin_columns( $columns ) {
 
 	$columns = array(
-		'cb'                    => '<input type="checkbox" />',
-		'title'                 => __( 'Title', 'rentfetch' ),
-		'floorplan_source'      => __( 'Floorplan Source', 'rentfetch' ),
-		'property_id'           => __( 'Property ID', 'rentfetch' ),
-		'property_name'         => __( 'Property Name', 'rentfetch' ),
-		'floorplan_id'          => __( 'Floorplan ID', 'rentfetch' ),
-		'tour'                  => __( 'Tour', 'rentfetch' ),
-		'manual_images'         => __( 'Manual Images', 'rentfetch' ),
-		'floorplan_images'      => __( 'Synced Images', 'rentfetch' ),
-		'floorplan_description' => __( 'Floorplan Description', 'rentfetch' ),
-		'beds'                  => __( 'Beds', 'rentfetch' ),
-		'baths'                 => __( 'Baths', 'rentfetch' ),
-		'minimum_deposit'       => __( 'Min Deposit', 'rentfetch' ),
-		'maximum_deposit'       => __( 'Max Deposit', 'rentfetch' ),
-		'minimum_rent'          => __( 'Min Rent', 'rentfetch' ),
-		'maximum_rent'          => __( 'Max Rent', 'rentfetch' ),
-		'minimum_sqft'          => __( 'Min Sqrft', 'rentfetch' ),
-		'maximum_sqft'          => __( 'Max Sqrft', 'rentfetch' ),
-		'availability_date'     => __( 'Availability Date', 'rentfetch' ),
-		'has_specials'          => __( 'Has Specials', 'rentfetch' ),
-		'availability_url'      => __( 'Availability URL', 'rentfetch' ),
-		'available_units'       => __( 'Available Units', 'rentfetch' ),
-		'api_response'          => __( 'API response', 'rentfetch' ),
+		'cb'                     => '<input type="checkbox" />',
+		'title'                  => __( 'Title', 'rentfetch' ),
+		'floorplan_source'       => __( 'Floorplan Source', 'rentfetch' ),
+		'property_id'            => __( 'Property ID', 'rentfetch' ),
+		'property_name'          => __( 'Property Name', 'rentfetch' ),
+		'floorplan_id'           => __( 'Floorplan ID', 'rentfetch' ),
+		'tour'                   => __( 'Tour', 'rentfetch' ),
+		'manual_images'          => __( 'Manual Images', 'rentfetch' ),
+		'floorplan_images'       => __( 'Synced Images', 'rentfetch' ),
+		'floorplan_description'  => __( 'Floorplan Description', 'rentfetch' ),
+		'beds'                   => __( 'Beds', 'rentfetch' ),
+		'baths'                  => __( 'Baths', 'rentfetch' ),
+		'minimum_deposit'        => __( 'Min Deposit', 'rentfetch' ),
+		'maximum_deposit'        => __( 'Max Deposit', 'rentfetch' ),
+		'minimum_rent'           => __( 'Min Rent', 'rentfetch' ),
+		'maximum_rent'           => __( 'Max Rent', 'rentfetch' ),
+		'minimum_sqft'           => __( 'Min Sqrft', 'rentfetch' ),
+		'maximum_sqft'           => __( 'Max Sqrft', 'rentfetch' ),
+		'availability_date'      => __( 'Availability Date', 'rentfetch' ),
+		'has_specials'           => __( 'Has Specials', 'rentfetch' ),
+		'specials_override_text' => __( 'Specials Override Text', 'rentfetch' ),
+		'availability_url'       => __( 'Availability URL', 'rentfetch' ),
+		'available_units'        => __( 'Available Units', 'rentfetch' ),
+		'api_response'           => __( 'API response', 'rentfetch' ),
 	);
 
 	return $columns;
@@ -152,7 +153,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 				echo '<img src="' . esc_attr( $image ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
 			}
 
-			if ( 1 < $remaining_images ) {
+			if ( ! empty( $remaining_images ) && 1 < $remaining_images ) {
 				echo '<span style="">+' . esc_attr( $remaining_images ) . '</span>';
 			}
 		}
@@ -181,7 +182,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 
 			}
 
-			if ( 1 < $remaining_images ) {
+			if ( ! empty( $remaining_images ) && 1 < $remaining_images ) {
 				echo '<span style="">+' . esc_attr( $remaining_images ) . '</span>';
 			}
 		}
@@ -239,6 +240,10 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 		} else {
 			echo 'No';
 		}
+	}
+	
+	if ( 'specials_override_text' === $column ) {
+		echo esc_attr( get_post_meta( $post_id, 'specials_override_text', true ) );
 	}
 
 	if ( 'availability_url' === $column ) {

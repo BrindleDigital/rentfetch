@@ -502,6 +502,20 @@ function rentfetch_floorplans_availability_metabox_callback( $post ) {
 				<input type="checkbox" id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
 			</div>
 		</div>
+		
+		<?php
+		// * Specials override text
+		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="specials_override_text">Specials Override Text</label>
+				<p class="description">Placing text here will force a special to appear regardless of whether specials are enabled and allows for customization of that text.</p>
+			</div>
+			<div class="column">
+				<input type="text" id="specials_override_text" name="specials_override_text" value="<?php echo esc_attr( $specials_override_text ); ?>">
+			</div>
+		</div>
 
 		<?php
 		// * Availability URL
@@ -641,6 +655,10 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'has_specials', '1' );
 	} else {
 		delete_post_meta( $post_id, 'has_specials' );
+	}
+	
+	if ( isset( $_POST['specials_override_text'] ) ) {
+		update_post_meta( $post_id, 'specials_override_text', sanitize_text_field( wp_unslash( $_POST['specials_override_text'] ) ) );
 	}
 
 	if ( isset( $_POST['availability_url'] ) ) {

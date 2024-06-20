@@ -88,6 +88,10 @@ th#has_specials {
 	min-width: 150px !important;
 }
 
+th#specials_override_text {
+	min-width: 180px !important;
+}
+
 th#floorplan_id {
 	min-width: 100px !important;
 }
