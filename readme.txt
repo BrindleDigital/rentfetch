@@ -95,6 +95,7 @@ Start from your WordPress dashboard.
 
 * Bugfix: videos weren't fading out when default fade was applied to floorplans
 * Bugfix: fixing a php notice on the Floorplans overview admin view in situations where there are manual images but they aren't on this server (either image deleted or on a local server where the images aren't present)
+* Feature: add meta fields and output for overriding the specials text on floorplans with override text
 
 = 0.15.11 =
 
