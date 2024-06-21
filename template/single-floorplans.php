@@ -29,6 +29,7 @@ if ( have_posts() ) {
 					echo '<div class="content-column">';
 
 						// vars.
+						$specials        = rentfetch_get_floorplan_specials();
 						$floorplan_title = rentfetch_get_floorplan_title();
 						$beds            = rentfetch_get_floorplan_bedrooms();
 						$baths           = rentfetch_get_floorplan_bathrooms();
@@ -38,6 +39,10 @@ if ( have_posts() ) {
 						$pricing         = rentfetch_get_floorplan_pricing();
 						$units_count     = rentfetch_get_floorplan_units_count_from_meta();
 						$description     = rentfetch_get_floorplan_description();
+						
+						if ( $specials ) {
+							printf( '<p class="specials">%s</p>', esc_html( $specials ) );
+						}
 
 						if ( $floorplan_title ) {
 							printf( '<h1>%s</h1>', esc_html( $floorplan_title ) );

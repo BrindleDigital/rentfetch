@@ -11,6 +11,18 @@
 		}
 	}
 
+	.description {
+		p,
+		ul,
+		ol {
+			margin-bottom: 5px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
 	.property-details-body {
 		display: grid;
 		grid-template-columns: 1fr 3fr;

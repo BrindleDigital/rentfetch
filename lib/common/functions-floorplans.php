@@ -1026,7 +1026,7 @@ function rentfetch_similar_floorplans() {
  * @return string the floorplan description
  */
 function rentfetch_get_floorplan_description() {
-	$description = get_post_meta( get_the_ID(), 'floorplan_description', true );
+	$description = apply_filters( 'the_content', get_post_meta( get_the_ID(), 'floorplan_description', true ) );
 
 	return wp_kses_post( $description );
 }

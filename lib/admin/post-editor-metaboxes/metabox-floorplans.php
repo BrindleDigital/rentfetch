@@ -104,7 +104,7 @@ function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
 						'post_status'    => 'publish',
 						'orderby'        => 'title',
 						'order'          => 'ASC',
-						'meta_query'     => array(
+						'meta_query'     => array( // phpcs:ignore
 							array(
 								'key'     => 'property_id',
 								'value'   => $property_id,
@@ -153,7 +153,7 @@ function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
 				'post_status'    => 'publish',
 				'orderby'        => 'title',
 				'order'          => 'ASC',
-				'meta_query'     => array(
+				'meta_query'     => array( // phpcs:ignore
 					array(
 						'key'     => 'floorplan_id',
 						'value'   => $floorplan_id,
@@ -286,10 +286,20 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 				<label for="floorplan_description">Floorplan Description</label>
 			</div>
 			<div class="column">
-				<textarea rows="3" id="floorplan_description" name="floorplan_description"><?php echo esc_attr( $floorplan_description ); ?></textarea>
+				<?php
+					wp_editor(
+						$floorplan_description,
+						'floorplan_description',
+						array(
+							'textarea_name' => 'floorplan_description',
+							'textarea_rows' => 3,
+							'media_buttons' => false,
+						)
+					);
+				?>
 			</div>
 		</div>
-			
+
 		<?php
 		// * Tour
 		wp_enqueue_script( 'rentfetch-metabox-properties-tour' );
@@ -510,10 +520,11 @@ function rentfetch_floorplans_availability_metabox_callback( $post ) {
 		<div class="field">
 			<div class="column">
 				<label for="specials_override_text">Specials Override Text</label>
-				<p class="description">Placing text here will force a special to appear regardless of whether specials are enabled and allows for customization of that text.</p>
+				<p class="description">Manually customize the specials text displayed. This will not sync with any specials in your PMS and will override what's in the PMS.</p>
 			</div>
 			<div class="column">
-				<input type="text" id="specials_override_text" name="specials_override_text" value="<?php echo esc_attr( $specials_override_text ); ?>">
+				<input type="text" id="specials_override_text" name="specials_override_text" maxlength="25" value="<?php echo esc_attr( $specials_override_text ); ?>">
+				<p class="description"><em>Maximum 25 characters</em></p>
 			</div>
 		</div>
 
@@ -589,7 +600,7 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 	}
 
 	if ( isset( $_POST['floorplan_description'] ) ) {
-		update_post_meta( $post_id, 'floorplan_description', sanitize_text_field( wp_unslash( $_POST['floorplan_description'] ) ) );
+		update_post_meta( $post_id, 'floorplan_description', wp_kses_post( wp_unslash( $_POST['floorplan_description'] ) ) );
 	}
 
 	if ( isset( $_POST['tour'] ) ) {
@@ -656,7 +667,7 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 	} else {
 		delete_post_meta( $post_id, 'has_specials' );
 	}
-	
+
 	if ( isset( $_POST['specials_override_text'] ) ) {
 		update_post_meta( $post_id, 'specials_override_text', sanitize_text_field( wp_unslash( $_POST['specials_override_text'] ) ) );
 	}

@@ -392,7 +392,17 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 				<label for="description">Description</label>
 			</div>
 			<div class="column">                
-				<textarea rows="3" id="description" name="description"><?php echo esc_attr( $description ); ?></textarea>
+				<?php
+					wp_editor(
+						$description,
+						'description',
+						array(
+							'textarea_name' => 'description',
+							'textarea_rows' => 3,
+							'media_buttons' => false,
+						)
+					);
+				?>
 				<p class="description">The description is synced from most APIs, but if yours is not, this is the main place to put general information about this property.</p>
 			</div>
 		</div>
@@ -536,7 +546,7 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 	}
 
 	if ( isset( $_POST['description'] ) ) {
-		update_post_meta( $post_id, 'description', sanitize_text_field( wp_unslash( $_POST['description'] ) ) );
+		update_post_meta( $post_id, 'description', wp_kses_post( wp_unslash( $_POST['description'] ) ) );
 	}
 
 	if ( isset( $_POST['tour'] ) ) {

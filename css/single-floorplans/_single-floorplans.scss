@@ -23,6 +23,29 @@ body.single-floorplans {
 			}
 		}
 
+		p.specials {
+			position: relative;
+			padding: 5px 10px 5px 30px;
+			background-color: var(--rentfetch-gold-pale);
+			z-index: 5;
+			font-size: var(--rentfetch-font-size-small);
+			border-radius: 3px;
+			color: var(--rentfetch-dark);
+			width: auto;
+			display: inline-block;
+
+			&:before {
+				content: '\f155';
+				font-family: 'dashicons';
+				color: var(--rentfetch-gold);
+				font-size: var(--rentfetch-font-size-medium);
+				position: absolute;
+				left: 10px;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+		}
+
 		p.pricing {
 			font-size: var(--rentfetch-font-size-large);
 		}
@@ -73,6 +96,16 @@ body.single-floorplans {
 
 		.floorplan-description {
 			margin-top: 25px;
+
+			p,
+			ul,
+			ol {
+				margin-bottom: 5px;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
 		}
 	}
 
