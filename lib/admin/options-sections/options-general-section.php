@@ -71,6 +71,12 @@ function rentfetch_save_settings_general() {
 	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
 		die( 'Security check failed' );
 	}
+	
+	//* When we save this particular batch of settings, we might be changing the sync settings, so we need to unschedule all the sync actions
+	if ( function_exists( 'as_unschedule_all_actions') ) {
+		as_unschedule_all_actions( 'rfs_do_sync' );
+		as_unschedule_all_actions( 'rfs_yardi_do_delete_orphans' );
+	}
 
 	// Radio field.
 	if ( isset( $_POST['rentfetch_options_data_sync'] ) ) {

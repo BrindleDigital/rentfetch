@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.16.1 = 
+
+* Bugfix: added an event on save of the sync settings to cancel all pending actions. This should avoid a rare situation where user-added data might be deleted from a property if the property was added while that same property was scheduled for deletion (orphan control)
+
 = 0.16 = 
 
 * Feature: adding a maximum length for floorplan-level custom specials
