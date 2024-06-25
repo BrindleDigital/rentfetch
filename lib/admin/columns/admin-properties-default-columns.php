@@ -176,6 +176,7 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	if ( 'yardi_property_images' === $column ) {
 
 		$yardi_images = rentfetch_get_property_images_yardi( null );
+
 		if ( is_array( $yardi_images ) ) {
 			$count = count( $yardi_images );
 
@@ -191,7 +192,7 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 			}
 
-			if ( 1 < $remaining_images ) {
+			if ( ! empty( $remainining_images ) && 1 < $remaining_images ) {
 				echo '<span style="">+' . esc_attr( $remaining_images ) . '</span>';
 			}
 		}
