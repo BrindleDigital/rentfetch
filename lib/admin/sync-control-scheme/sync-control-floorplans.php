@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Filter the syncing fields for the floorplans
+ *
+ * @return  array  an array of the fields that sync with the API
+ */
+function rentfetch_floorplan_syncing_fields( $array_fields, $post_id ) {
+
+	$floorplan_source = get_post_meta( $post_id, 'floorplan_source', true );
+
+	// Set a blank array, just in case the source is not set.
+	if ( !is_array( $array_fields ) ) {
+		$array_fields = array();
+	}
+
+	// Add the correct fields for each of the APIs, allowing them to be filtered separately.
+	if ( 'yardi' === $floorplan_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_yardi', $array_fields, $post_id );
+	} elseif ( 'realpage' === $floorplan_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_realpage', $array_fields, $post_id );
+	}
+
+	if ( !empty( $floorplan_source ) ) {
+
+		// Add the default fields to the array that would never be editable
+		$never_editable_fields = array(
+			'floorplan_source',
+			'property_name', // property name is never editable because it's determined, it's not entered. Property, not floorplan.
+			'api_response',
+		);
+		
+		$array_fields = array_merge( $array_fields, $never_editable_fields );
+	}
+
+	return $array_fields;
+}
+add_filter( 'rentfetch_filter_floorplan_syncing_fields', 'rentfetch_floorplan_syncing_fields', 10, 2 );
+
+function rentfetch_floorplan_syncing_fields_yardi( $array_fields, $post_id ) {
+	return array(
+		'title',
+		'property_id',
+		'floorplan_id',
+		'availability_url',
+		'available_units',
+		'baths',
+		'beds',
+		'has_specials',
+		'floorplan_image_alt_text',
+		'floorplan_image_name',
+		'floorplan_image_url',
+		'floorplan_images',
+		'maximum_deposit',
+		'maximum_rent',
+		'maximum_sqft',
+		'minimum_deposit',
+		'minimum_rent',
+		'minimum_sqft',
+		'availability_date',
+		'available_units',
+	);
+}
+add_filter( 'rentfetch_filter_floorplan_syncing_fields_yardi', 'rentfetch_floorplan_syncing_fields_yardi', 10, 2 );

@@ -27,7 +27,7 @@ function rentfetch_enqueue_floorplans_admin_style() {
 	if ( 'edit' === $current_screen->base && 'floorplans' === $current_screen->post_type ) {
 
 		wp_enqueue_style( 'floorplans-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-floorplans.css', array(), RENTFETCH_VERSION, 'screen' );
-		wp_enqueue_script( 'floorplans-edit-admin-script', RENTFETCH_PATH . 'js/floorplans-edit-admin-script.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+		// wp_enqueue_script( 'floorplans-edit-admin-script', RENTFETCH_PATH . 'js/floorplans-edit-admin-script.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	}
 }
@@ -82,13 +82,31 @@ add_filter( 'manage_floorplans_posts_columns', 'rentfetch_default_floorplans_adm
  * @return void
  */
 function rentfetch_floorplans_default_column_content( $column, $post_id ) {
-
+	
 	if ( 'title' === $column ) {
 		echo esc_attr( get_the_title( $post_id ) );
 	}
 
 	if ( 'floorplan_source' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_source', true ) );
+		
+		// let's also run the script for this post here, showing disabled fields.
+		$array_disabled_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields', array(), $post_id );
+		
+		// Output the inline script to add 'disabled' class
+		echo '<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				var disabledFields = ' . json_encode( $array_disabled_fields ) . ';
+				var postId = ' . json_encode( $post_id ) . ';
+				
+				disabledFields.forEach(function(field) {
+					document.querySelectorAll("tr#post-" + postId + " td." + field).forEach(function(td) {
+						td.classList.add("disabled");
+					});
+				});
+			});
+		</script>';
+		
 	}
 
 	if ( 'property_id' === $column ) {

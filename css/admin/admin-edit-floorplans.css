@@ -21,6 +21,13 @@ td {
 	white-space: nowrap;
 }
 
+td.disabled {
+	background-color: red;
+
+	color: #066cd3;
+	background-color: #066cd314;
+}
+
 th {
 	width: 100px;
 	min-width: 100px !important;
