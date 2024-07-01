@@ -22,8 +22,6 @@ td {
 }
 
 td.disabled {
-	background-color: red;
-
 	color: #066cd3;
 	background-color: #066cd314;
 }

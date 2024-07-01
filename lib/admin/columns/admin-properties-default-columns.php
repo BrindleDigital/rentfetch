@@ -153,6 +153,23 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 	if ( 'property_source' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'property_source', true ) );
+		
+		// let's also run the script for this post here, showing disabled fields.
+		$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post_id );
+		
+		// Output the inline script to add 'disabled' class
+		echo '<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				var disabledFields = ' . json_encode( $array_disabled_fields ) . ';
+				var postId = ' . json_encode( $post_id ) . ';
+				
+				disabledFields.forEach(function(field) {
+					document.querySelectorAll("tr#post-" + postId + " td." + field).forEach(function(td) {
+						td.classList.add("disabled");
+					});
+				});
+			});
+		</script>';
 	}
 
 	if ( 'description' === $column ) {
