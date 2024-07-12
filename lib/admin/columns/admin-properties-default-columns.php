@@ -59,7 +59,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 		'yardi_property_images' => __( 'Synced Images', 'rentfetch' ),
 		'description'           => __( 'Description', 'rentfetch' ),
 		'tour'                  => __( 'Tour', 'rentfetch' ),
-		'pets'                  => __( 'Pets', 'rentfetch' ),
+		// 'pets'                  => __( 'Pets', 'rentfetch' ),
 		'content_area'          => __( 'Content Area', 'rentfetch' ),
 		'property_source'       => __( 'Property Source', 'rentfetch' ),
 		'api_response'          => __( 'API response', 'rentfetch' ),

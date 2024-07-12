@@ -23,75 +23,78 @@ function rentfetch_single_properties_parts_more_properties() {
 
 	global $post;
 
-	echo '<div id="moreproperties" class="single-properties-section">';
-		echo '<div class="wrap">';
+	
 
-		echo '<h2>More Properties Nearby</h2>';
+	$city = get_post_meta( get_the_ID(), 'city', true );
 
-		$city = get_post_meta( get_the_ID(), 'city', true );
-
-		$args = array(
-			'post_type'      => 'properties',
-			'posts_per_page' => 9,
-			'meta_key'       => 'city',
-			'order'          => 'ASC',
-			'meta_query'     => array(
-				array(
-					'key'   => 'city',
-					'value' => $city,
-				),
+	$args = array(
+		'post_type'      => 'properties',
+		'posts_per_page' => 9,
+		'meta_key'       => 'city',
+		'order'          => 'ASC',
+		'meta_query'     => array(
+			array(
+				'key'   => 'city',
+				'value' => $city,
 			),
-		);
+		),
+	);
 
-		$args = apply_filters( 'rentfetch_filter_more_properties_query_args', $args );
+	$args = apply_filters( 'rentfetch_filter_more_properties_query_args', $args );
 
-		// The Query.
-		$custom_query = new WP_Query( $args );
+	// The Query.
+	$custom_query = new WP_Query( $args );
 
-		// The Loop.
-		if ( $custom_query->have_posts() ) {
+	// The Loop.
+	if ( $custom_query->found_posts >= 2 ) {
+		
+		echo '<div id="moreproperties" class="single-properties-section">';
+			echo '<div class="wrap">';
 
-			wp_enqueue_script( 'blaze-script' );
-			wp_enqueue_script( 'blaze-more-properties-init' );
-			wp_enqueue_style( 'blaze-style' );
+			echo '<h2>More Properties Nearby</h2>';
 
-			echo '<div class="more-properties-slider blaze-slider">';
-				echo '<div class="blaze-container">';
-					echo '<div class="blaze-track-container">';
-						echo '<div class="blaze-track">';
+				wp_enqueue_script( 'blaze-script' );
+				wp_enqueue_script( 'blaze-more-properties-init' );
+				wp_enqueue_style( 'blaze-style' );
 
-							while ( $custom_query->have_posts() ) {
+				echo '<div class="more-properties-slider blaze-slider">';
+					echo '<div class="blaze-container">';
+						echo '<div class="blaze-track-container">';
+							echo '<div class="blaze-track">';
 
-								$custom_query->the_post();
+								while ( $custom_query->have_posts() ) {
 
-								$class = implode( ' ', get_post_class() );
+									$custom_query->the_post();
 
-								printf( '<div class="%s">', esc_attr( $class ) );
-									do_action( 'rentfetch_do_each_property_in_archive' );
-								echo '</div>';
+									$class = implode( ' ', get_post_class() );
 
-							}
+									printf( '<div class="%s">', esc_attr( $class ) );
+										do_action( 'rentfetch_do_each_property_in_archive' );
+									echo '</div>';
 
-						echo '</div>'; // .blaze-track.
-					echo '</div>'; // .blaze-track-container.
+								}
 
-					echo '<div class="blaze-buttons">';
-						echo '<button class="blaze-prev"></button>';
-						echo '<button class="blaze-next"></button>';
-					echo '</div>';
+							echo '</div>'; // .blaze-track.
+						echo '</div>'; // .blaze-track-container.
 
-				echo '</div>'; // .blaze-container.
-			echo '</div>'; // .blaze-slider.
+						echo '<div class="blaze-buttons">';
+							echo '<button class="blaze-prev"></button>';
+							echo '<button class="blaze-next"></button>';
+						echo '</div>';
 
-			// Restore postdata.
-			wp_reset_postdata();
-
-		} else {
-			echo 'No properties found.';
-		}
-
-		echo '</div>'; // .wrap.
+					echo '</div>'; // .blaze-container.
+				echo '</div>'; // .blaze-slider.
+			echo '</div>'; // .wrap.
 		echo '</div>'; // #moreproperties.
+
+		// Restore postdata.
+		wp_reset_postdata();
+
+	} else {
+		// silence is golden.
+	}
+
+	
 }
 
 /**

@@ -37,6 +37,11 @@ function rentfetch_floorplan_syncing_fields( $array_fields, $post_id ) {
 }
 add_filter( 'rentfetch_filter_floorplan_syncing_fields', 'rentfetch_floorplan_syncing_fields', 10, 2 );
 
+/**
+ * Filter the syncing fields for the floorplans for the Yardi API
+ *
+ * @return  array  an array of the fields that sync with the API
+ */
 function rentfetch_floorplan_syncing_fields_yardi( $array_fields, $post_id ) {
 	return array(
 		'title',
@@ -62,3 +67,27 @@ function rentfetch_floorplan_syncing_fields_yardi( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_floorplan_syncing_fields_yardi', 'rentfetch_floorplan_syncing_fields_yardi', 10, 2 );
+
+/**
+ * Filter the syncing fields for the floorplans for the RealPage API
+ *
+ * @return  array  an array of the fields that sync with the API
+ */
+function rentfetch_floorplan_syncing_fields_realpage( $array_fields, $post_id ) {
+	return array(
+		'title',
+		'property_id',
+		'floorplan_id',
+		'baths',
+		'beds',
+		'minimum_rent',
+		'maximum_rent',
+		'maximum_sqft',
+		'minimum_sqft',
+		'available_units',
+		'availability_date',
+		'updated',
+		'api_response',
+	);
+}
+add_filter( 'rentfetch_filter_floorplan_syncing_fields_realpage', 'rentfetch_floorplan_syncing_fields_realpage', 10, 2 );

@@ -37,6 +37,11 @@ function rentfetch_property_syncing_fields( $array_fields, $post_id ) {
 }
 add_filter( 'rentfetch_filter_property_syncing_fields', 'rentfetch_property_syncing_fields', 10, 2 );
 
+/**
+ * Filter the syncing fields for the propertys for the Yardi API
+ *
+ * @return  array  an array of the fields that sync with the API
+ */
 function rentfetch_property_syncing_fields_yardi( $array_fields, $post_id ) {
 	return array(
 		'title',
@@ -55,3 +60,10 @@ function rentfetch_property_syncing_fields_yardi( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_property_syncing_fields_yardi', 'rentfetch_property_syncing_fields_yardi', 10, 2 );
+
+function rentfetch_property_syncing_fields_realpage( $array_fields, $post_id ) {
+	return array(
+		'property_id',
+	);
+}
+add_filter( 'rentfetch_filter_property_syncing_fields_realpage', 'rentfetch_property_syncing_fields_realpage', 10, 2 );

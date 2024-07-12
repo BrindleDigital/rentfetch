@@ -73,21 +73,21 @@ function rentfetch_settings_maps() {
 		</div>
 	</div>
 	
-	<div class="row">
+	<!-- <div class="row">
 		<div class="column">
 			<label>Google reCAPTCHA v2</label>
 		</div>
 		<div class="column">
 			<div class="white-box">
 				<label for="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key">reCAPTCHA key</label>
-				<input type="text" name="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key" id="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key" value="<?php echo esc_attr( get_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key' ) ); ?>">
+				<input type="text" name="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key" id="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key" value="<?php // echo esc_attr( get_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key' ) ); ?>">
 			</div>
 			<div class="white-box">
 				<label for="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret">reCAPTCHA key</label>
-				<input type="text" name="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret" id="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret" value="<?php echo esc_attr( get_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_secret' ) ); ?>">
+				<input type="text" name="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret" id="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret" value="<?php // echo esc_attr( get_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_secret' ) ); ?>">
 			</div>
 		</div>
-	</div>
+	</div> -->
 		   
 	<?php
 }

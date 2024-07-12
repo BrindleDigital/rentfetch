@@ -91,6 +91,19 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.17 =
+
+* Adding capability to disable fields on the backend of the site that are synced for Yardi (both floorplans and properties)
+* Adding capability to disable fields on the backend of the site that are synced for Realpage (both floorplans and properties)
+* Adding capabilities to highlight synced fields in the columns views for both properties and floorplans
+* Adding filters to control which fields those are for both (this only has the capability of disabling fields; it doesn't (yet) disable the actual sync for those).
+* Removing a few options that are unused on the backend
+* Bugfixes: fixing some potential manual-entry errors when adding images on both floorplans and properties
+* Bugfix: changing how we calculate the number of units when looking at a floorplan on the single-properties page (helps with manual entry)
+* Bugfix: only show the nearby properties slider if there are at least two properties to show (layout is awkward with just one)
+* Removing the pets meta field on properties, as only the Yardi API contains that and it does it on a one-off basis, so we can't predict how the structure of that works.
+* Code standard fixes
+
 = 0.16.1 = 
 
 * Bugfix: added an event on save of the sync settings to cancel all pending actions. This should avoid a rare situation where user-added data might be deleted from a property if the property was added while that same property was scheduled for deletion (orphan control)

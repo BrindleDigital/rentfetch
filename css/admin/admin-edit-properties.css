@@ -2,6 +2,11 @@
 	opacity: 1;
 }
 
+#wpbody-content .quick-edit-row-post .inline-edit-col-left,
+#wpbody-content .inline-edit-row-post .inline-edit-col-center {
+	max-width: 300px;
+}
+
 .wp-list-table {
 	display: inline-block;
 	width: auto;
@@ -105,6 +110,17 @@ th#pets {
 
 th#content_area {
 	min-width: 200px !important;
+	max-width: 200px !important;
+}
+
+td.content_area {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 1; /* number of lines to show */
+	line-clamp: 1;
+	-webkit-box-orient: vertical;
+	max-width: 200px !important;
 }
 
 th#yardi_property_images,

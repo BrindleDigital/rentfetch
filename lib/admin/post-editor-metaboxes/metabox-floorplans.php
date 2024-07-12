@@ -90,14 +90,14 @@ function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
 			<?php
 			// * Property ID
 			$property_id = get_post_meta( $post->ID, 'property_id', true );
-			$disabled = in_array('property_id', $array_disabled_fields) ? 'disabled' : '';
+			$disabled    = in_array( 'property_id', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="property_id">Property ID</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="property_id" name="property_id" value="<?php echo esc_attr( $property_id ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="property_id" name="property_id" value="<?php echo esc_attr( $property_id ); ?>">
 					
 					<?php
 					$args = array(
@@ -136,14 +136,14 @@ function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
 			<?php
 			// * Floorplan ID
 			$floorplan_id = get_post_meta( $post->ID, 'floorplan_id', true );
-			$disabled = in_array('floorplan_id', $array_disabled_fields) ? 'disabled' : '';
+			$disabled     = in_array( 'floorplan_id', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="floorplan_id">Floorplan ID</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="floorplan_id" name="floorplan_id" value="<?php echo esc_attr( $floorplan_id ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="floorplan_id" name="floorplan_id" value="<?php echo esc_attr( $floorplan_id ); ?>">
 					<p class="description">The ID given by the API this floorplan comes from (if manual entry, please give it a unique identifier)</p>
 				</div>
 			</div>
@@ -220,7 +220,16 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 
 				// convert to string.
 				if ( is_array( $images ) ) {
+
+					$images = array_filter(
+						$images,
+						function ( $image_id ) {
+							return is_numeric( $image_id );
+						}
+					);
+
 					$images = implode( ',', $images );
+
 				}
 
 				$images_ids_array = explode( ',', $images );
@@ -343,29 +352,29 @@ function rentfetch_floorplans_info_metabox_callback( $post ) {
 			
 			<?php
 			// * Beds
-			$beds = get_post_meta( $post->ID, 'beds', true );
-			$disabled = in_array( 'beds', $array_disabled_fields) ? 'disabled' : '';
+			$beds     = get_post_meta( $post->ID, 'beds', true );
+			$disabled = in_array( 'beds', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="beds">Beds</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="beds" name="beds" value="<?php echo esc_attr( $beds ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="beds" name="beds" value="<?php echo esc_attr( $beds ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Baths
-			$baths = get_post_meta( $post->ID, 'baths', true );
-			$disabled = in_array('beds', $array_disabled_fields) ? 'disabled' : '';
+			$baths    = get_post_meta( $post->ID, 'baths', true );
+			$disabled = in_array( 'beds', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="baths">Baths</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="baths" name="baths" value="<?php echo esc_attr( $baths ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="baths" name="baths" value="<?php echo esc_attr( $baths ); ?>">
 				</div>
 			</div>
 		
@@ -376,28 +385,28 @@ function rentfetch_floorplans_info_metabox_callback( $post ) {
 			<?php
 			// * Minimum Deposit
 			$minimum_deposit = get_post_meta( $post->ID, 'minimum_deposit', true );
-			$disabled = in_array( 'minimum_deposit', $array_disabled_fields) ? 'disabled' : '';
+			$disabled        = in_array( 'minimum_deposit', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="minimum_deposit">Minimum Deposit</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="minimum_deposit" name="minimum_deposit" value="<?php echo esc_attr( $minimum_deposit ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="minimum_deposit" name="minimum_deposit" value="<?php echo esc_attr( $minimum_deposit ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Maximum Deposit
 			$maximum_deposit = get_post_meta( $post->ID, 'maximum_deposit', true );
-			$disabled = in_array( 'maximum_deposit', $array_disabled_fields) ? 'disabled' : '';
+			$disabled        = in_array( 'maximum_deposit', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="maximum_deposit">Maximum Deposit</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="maximum_deposit" name="maximum_deposit" value="<?php echo esc_attr( $maximum_deposit ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="maximum_deposit" name="maximum_deposit" value="<?php echo esc_attr( $maximum_deposit ); ?>">
 				</div>
 			</div>
 		
@@ -408,14 +417,14 @@ function rentfetch_floorplans_info_metabox_callback( $post ) {
 			<?php
 			// * Minimum Rent
 			$minimum_rent = get_post_meta( $post->ID, 'minimum_rent', true );
-			$disabled = in_array( 'minimum_rent', $array_disabled_fields) ? 'disabled' : '';
+			$disabled     = in_array( 'minimum_rent', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="minimum_rent">Minimum Rent</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="minimum_rent" name="minimum_rent" value="<?php echo esc_attr( $minimum_rent ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="minimum_rent" name="minimum_rent" value="<?php echo esc_attr( $minimum_rent ); ?>">
 					<p class="description">Typically an API will set both the minimum and maximum numbers. The minimim is required for the pricing search to operate normally, so if you're entering information manually, use the minimum values.</p>
 				</div>
 			</div>
@@ -423,14 +432,14 @@ function rentfetch_floorplans_info_metabox_callback( $post ) {
 			<?php
 			// * Maximum Rent
 			$maximum_rent = get_post_meta( $post->ID, 'maximum_rent', true );
-			$disabled = in_array( 'maximum_rent', $array_disabled_fields) ? 'disabled' : '';
+			$disabled     = in_array( 'maximum_rent', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="maximum_rent">Maximum Rent</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="maximum_rent" name="maximum_rent" value="<?php echo esc_attr( $maximum_rent ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="maximum_rent" name="maximum_rent" value="<?php echo esc_attr( $maximum_rent ); ?>">
 				</div>
 			</div>
 			
@@ -441,14 +450,14 @@ function rentfetch_floorplans_info_metabox_callback( $post ) {
 			<?php
 			// * Minimum Sqrft
 			$minimum_sqft = get_post_meta( $post->ID, 'minimum_sqft', true );
-			$disabled = in_array( 'minimum_sqft', $array_disabled_fields) ? 'disabled' : '';
+			$disabled     = in_array( 'minimum_sqft', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="minimum_sqft">Minimum Sqrft</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="minimum_sqft" name="minimum_sqft" value="<?php echo esc_attr( $minimum_sqft ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="minimum_sqft" name="minimum_sqft" value="<?php echo esc_attr( $minimum_sqft ); ?>">
 					<p class="description">Typically an API will set both the minimum and maximum numbers. The minimim is required for the square footage search to operate normally, so if you're entering information manually, use the minimum values.</p>
 				</div>
 			</div>
@@ -456,14 +465,14 @@ function rentfetch_floorplans_info_metabox_callback( $post ) {
 			<?php
 			// * Maximum Sqrft
 			$maximum_sqft = get_post_meta( $post->ID, 'maximum_sqft', true );
-			$disabled = in_array( 'maximum_sqft', $array_disabled_fields) ? 'disabled' : '';
+			$disabled     = in_array( 'maximum_sqft', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="maximum_sqft">Maximum Sqrft</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="maximum_sqft" name="maximum_sqft" value="<?php echo esc_attr( $maximum_sqft ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="maximum_sqft" name="maximum_sqft" value="<?php echo esc_attr( $maximum_sqft ); ?>">
 				</div>
 			</div>
 			
@@ -495,7 +504,7 @@ function rentfetch_floorplans_availability_metabox_callback( $post ) {
 		wp_enqueue_style( 'rentfetch-jquery-style' );
 
 		$availability_date = get_post_meta( $post->ID, 'availability_date', true );
-		$disabled = in_array( 'availability_date', $array_disabled_fields) ? 'disabled' : '';
+		$disabled          = in_array( 'availability_date', $array_disabled_fields, true ) ? 'disabled' : '';
 		?>
 		
 		<script>
@@ -510,21 +519,21 @@ function rentfetch_floorplans_availability_metabox_callback( $post ) {
 				<label for="availability_date">Availability Date</label>
 			</div>
 			<div class="column">
-				<input type="text" <?php echo $disabled; ?> id="availability_date" name="availability_date" value="<?php echo esc_attr( $availability_date ); ?>">
+				<input type="text" <?php echo esc_attr( $disabled ); ?> id="availability_date" name="availability_date" value="<?php echo esc_attr( $availability_date ); ?>">
 			</div>
 		</div>
 
 		<?php
 		// * Has Specials
 		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
-		$disabled = in_array( 'has_specials', $array_disabled_fields) ? 'disabled' : '';
+		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
 		?>
 		<div class="field">
 			<div class="column">
 				<label for="has_specials">Has Specials</label>
 			</div>
 			<div class="column">
-				<input type="checkbox" <?php echo $disabled; ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
+				<input type="checkbox" <?php echo esc_attr( $disabled ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
 			</div>
 		</div>
 		
@@ -546,28 +555,28 @@ function rentfetch_floorplans_availability_metabox_callback( $post ) {
 		<?php
 		// * Availability URL
 		$availability_url = get_post_meta( $post->ID, 'availability_url', true );
-		$disabled = in_array( 'availability_url', $array_disabled_fields) ? 'disabled' : '';
+		$disabled         = in_array( 'availability_url', $array_disabled_fields, true ) ? 'disabled' : '';
 		?>
 		<div class="field">
 			<div class="column">
 				<label for="availability_url">Availability URL</label>
 			</div>
 			<div class="column">
-				<input type="text" <?php echo $disabled; ?> id="availability_url" name="availability_url" value="<?php echo esc_attr( $availability_url ); ?>">
+				<input type="text" <?php echo esc_attr( $disabled ); ?> id="availability_url" name="availability_url" value="<?php echo esc_attr( $availability_url ); ?>">
 			</div>
 		</div>
 		
 		<?php
 		// * Available Units
 		$available_units = get_post_meta( $post->ID, 'available_units', true );
-		$disabled = in_array( 'available_units', $array_disabled_fields) ? 'disabled' : '';
+		$disabled        = in_array( 'available_units', $array_disabled_fields, true ) ? 'disabled' : '';
 		?>
 		<div class="field">
 			<div class="column">
 				<label for="available_units">Available Units</label>
 			</div>
 			<div class="column">
-				<input type="text" <?php echo $disabled; ?> id="available_units" name="available_units" value="<?php echo esc_attr( $available_units ); ?>">
+				<input type="text" <?php echo esc_attr( $disabled ); ?> id="available_units" name="available_units" value="<?php echo esc_attr( $available_units ); ?>">
 			</div>
 		</div>
 	

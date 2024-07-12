@@ -23,7 +23,7 @@ function rentfetch_floorplans_each_list_default() {
 	$available_units = rentfetch_get_floorplan_available_units();
 	$links           = rentfetch_get_floorplan_links();
 	$pricing         = rentfetch_get_floorplan_pricing();
-	$units_count     = rentfetch_get_floorplan_units_count_from_meta();
+	$units_count     = rentfetch_get_floorplan_units_count_from_cpt();
 	$specials        = rentfetch_get_floorplan_specials();
 	$tour            = rentfetch_get_floorplan_tour();
 	$description     = rentfetch_get_floorplan_description();

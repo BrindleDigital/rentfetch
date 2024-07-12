@@ -105,7 +105,7 @@ function rentfetch_properties_identifiers_metabox_callback( $post ) {
 			<?php
 			// * Property ID.
 			$property_id = get_post_meta( $post->ID, 'property_id', true );
-			$disabled = in_array('property_id', $array_disabled_fields) ? 'disabled' : '';
+			$disabled    = in_array( 'property_id', $array_disabled_fields, true ) ? 'disabled' : '';
 
 			// script to update the links in this area when the property ID changes.
 			wp_enqueue_script( 'rentfetch-metabox-properties' );
@@ -115,7 +115,7 @@ function rentfetch_properties_identifiers_metabox_callback( $post ) {
 					<label for="property_id">Property ID</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="property_id" name="property_id" value="<?php echo esc_attr( $property_id ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="property_id" name="property_id" value="<?php echo esc_attr( $property_id ); ?>">
 					<p class="description">The Property ID should match the Property ID on each associated floorplan, and every property should always have a property ID.</p>
 					<p class="description"><span id="view-related-floorplans"></span> <span id="view-related-units"></span></p>
 				</div>
@@ -146,57 +146,57 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 		
 			<?php
 			// * Property Address
-			$address = get_post_meta( $post->ID, 'address', true );
-			$disabled = in_array('address', $array_disabled_fields) ? 'disabled' : '';
+			$address  = get_post_meta( $post->ID, 'address', true );
+			$disabled = in_array( 'address', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="address">Address</label>
 				</div>
 				<div class="column">
-					<input <?php echo $disabled; ?> type="text" id="address" name="address" value="<?php echo esc_attr( $address ); ?>">
+					<input <?php echo esc_attr( $disabled ); ?> type="text" id="address" name="address" value="<?php echo esc_attr( $address ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Property City
-			$city = get_post_meta( $post->ID, 'city', true );
-			$disabled = in_array('city', $array_disabled_fields) ? 'disabled' : '';
+			$city     = get_post_meta( $post->ID, 'city', true );
+			$disabled = in_array( 'city', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="city">City</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="city" name="city" value="<?php echo esc_attr( $city ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="city" name="city" value="<?php echo esc_attr( $city ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Property State
-			$state = get_post_meta( $post->ID, 'state', true );
-			$disabled = in_array('state', $array_disabled_fields) ? 'disabled' : '';
+			$state    = get_post_meta( $post->ID, 'state', true );
+			$disabled = in_array( 'state', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="state">State</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="state" name="state" value="<?php echo esc_attr( $state ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="state" name="state" value="<?php echo esc_attr( $state ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Property Zipcode
-			$zipcode = get_post_meta( $post->ID, 'zipcode', true );
-			$disabled = in_array('zipcode', $array_disabled_fields) ? 'disabled' : '';
+			$zipcode  = get_post_meta( $post->ID, 'zipcode', true );
+			$disabled = in_array( 'zipcode', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="zipcode">Zipcode</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="zipcode" name="zipcode" value="<?php echo esc_attr( $zipcode ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="zipcode" name="zipcode" value="<?php echo esc_attr( $zipcode ); ?>">
 				</div>
 			</div>
 		
@@ -207,28 +207,28 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 			<?php
 			// * Property Latitude
 			$latitude = get_post_meta( $post->ID, 'latitude', true );
-			$disabled = in_array('latitude', $array_disabled_fields) ? 'disabled' : '';
+			$disabled = in_array( 'latitude', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="latitude">Latitude</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="latitude" name="latitude" value="<?php echo esc_attr( $latitude ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="latitude" name="latitude" value="<?php echo esc_attr( $latitude ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Property Longitude
 			$longitude = get_post_meta( $post->ID, 'longitude', true );
-			$disabled = in_array('longitude', $array_disabled_fields) ? 'disabled' : '';
+			$disabled  = in_array( 'longitude', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="longitude">Longitude</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="longitude" name="longitude" value="<?php echo esc_attr( $longitude ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="longitude" name="longitude" value="<?php echo esc_attr( $longitude ); ?>">
 				</div>
 			</div>
 			
@@ -254,43 +254,43 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 			
 			<?php
 			// * Property Email
-			$email = get_post_meta( $post->ID, 'email', true );
-			$disabled = in_array('email', $array_disabled_fields) ? 'disabled' : '';
+			$email    = get_post_meta( $post->ID, 'email', true );
+			$disabled = in_array( 'email', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="email">Email</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="email" name="email" value="<?php echo esc_attr( $email ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="email" name="email" value="<?php echo esc_attr( $email ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Property Phone
-			$phone = get_post_meta( $post->ID, 'phone', true );
-			$disabled = in_array('phone', $array_disabled_fields) ? 'disabled' : '';
+			$phone    = get_post_meta( $post->ID, 'phone', true );
+			$disabled = in_array( 'phone', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="phone">Phone</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="phone" name="phone" value="<?php echo esc_attr( $phone ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="phone" name="phone" value="<?php echo esc_attr( $phone ); ?>">
 				</div>
 			</div>
 			
 			<?php
 			// * Property URL
-			$url = get_post_meta( $post->ID, 'url', true );
-			$disabled = in_array('url', $array_disabled_fields) ? 'disabled' : '';
+			$url      = get_post_meta( $post->ID, 'url', true );
+			$disabled = in_array( 'url', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
 					<label for="url">URL</label>
 				</div>
 				<div class="column">
-					<input type="text" <?php echo $disabled; ?> id="url" name="url" value="<?php echo esc_attr( $url ); ?>">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="url" name="url" value="<?php echo esc_attr( $url ); ?>">
 				</div>
 			</div>
 			
@@ -330,12 +330,20 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 
 				// convert to string.
 				if ( is_array( $images ) ) {
+
+					$images = array_filter(
+						$images,
+						function ( $image_id ) {
+							return is_numeric( $image_id );
+						}
+					);
+
 					$images = implode( ',', $images );
 				}
 
 				$images_ids_array = explode( ',', $images );
 
-				echo '<input type="hidden" id="images" name="images" value="' . esc_attr( $images ) . '">';
+				echo '<input id="images" type="hidden" name="images" value="' . esc_attr( $images ) . '">';
 
 				if ( $images ) {
 					echo '<div id="gallery-container">';
@@ -381,7 +389,7 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 								continue;
 							}
 
-							$property_image_url = $property_image->ImageURL;
+							$property_image_url = $property_image->ImageURL; // phpcs:ignore
 
 							printf( '<div class="property-image"><img src="%s"/><a href="%s" target="_blank" class="download" download>Download</a></div>', esc_url( $property_image_url ), esc_url( $property_image_url ) );
 						}
@@ -400,7 +408,7 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		<?php
 		// * Property Description
 		$description = get_post_meta( $post->ID, 'description', true );
-		$disabled = in_array('description', $array_disabled_fields) ? 'disabled' : '';
+		$disabled    = in_array( 'description', $array_disabled_fields, true ) ? 'disabled' : '';
 		?>
 		<div class="field">
 			<div class="column">
@@ -443,16 +451,16 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 				
 		<?php
 		// * Property Pets
-		$pets = get_post_meta( $post->ID, 'pets', true );
+		// $pets = get_post_meta( $post->ID, 'pets', true );
 		?>
-		<div class="field">
+		<!-- <div class="field">
 			<div class="column">
 				<label for="pets">Pets</label>
 			</div>
 			<div class="column">
-				<input type="text" id="pets" name="pets" value="<?php echo esc_attr( $pets ); ?>">
+				<input type="text" id="pets" name="pets" value="<?php // echo esc_attr( $pets ); ?>">
 			</div>
-		</div>
+		</div> -->
 		
 		<?php
 		// * Property Content Area
