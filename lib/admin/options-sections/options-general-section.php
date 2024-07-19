@@ -72,6 +72,9 @@ function rentfetch_save_settings_general() {
 		die( 'Security check failed' );
 	}
 	
+	//* When we save this particular batch of settings, we want to re-check the license
+	delete_transient( 'rentfetchsync_properties_limit' );
+	
 	//* When we save this particular batch of settings, we might be changing the sync settings, so we need to unschedule all the sync actions
 	if ( function_exists( 'as_unschedule_all_actions') ) {
 		as_unschedule_all_actions( 'rfs_do_sync' );

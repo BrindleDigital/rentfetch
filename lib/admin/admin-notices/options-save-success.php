@@ -22,3 +22,4 @@ function rentfetch_options_page_notice() {
 	}
 }
 add_action( 'admin_notices', 'rentfetch_options_page_notice' );
+
