@@ -1,6 +1,6 @@
 <?php
 /**
- * The Amenities seaction of the single property page
+ * The Amenities section of the single property page
  *
  * @package rentfetch
  */
