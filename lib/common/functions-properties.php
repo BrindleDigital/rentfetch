@@ -196,8 +196,8 @@ add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_contact_bu
  * @return string The property location link.
  */
 function rentfetch_get_property_location_link() {
-	$location      = rentfetch_get_property_location();
-	$title         = rentfetch_get_property_title();
+	$location = rentfetch_get_property_location();
+	$title    = rentfetch_get_property_title();
 
 	$location_link = sprintf( 'https://www.google.com/maps/search/?api=1&query=%s', $title . ' ' . $location );
 
@@ -265,6 +265,57 @@ function rentfetch_property_city_state() {
 // * PROPERTY PHONE.
 
 /**
+ * Format the phone number for display
+ *
+ * @param   string $phone  the unformatted phone number.
+ *
+ * @return  string the formatted phone number
+ */
+function rentfetch_format_phone_number( $phone ) {
+
+	// Remove all non-numeric characters except the plus sign.
+	$cleaned = preg_replace( '/[^\d+]/', '', $phone );
+
+	// If the phone number starts with a plus sign, it is likely an international number.
+	if ( substr( $cleaned, 0, 1 ) === '+' ) {
+		// Format the number: +CC (XXX) XXX-XXXX for example.
+		return preg_replace( '/^\+(\d{1,3})(\d{3})(\d{3})(\d{4})$/', '+$1 ($2) $3-$4', $cleaned );
+	} elseif ( strlen( $cleaned ) === 10 ) {
+		// Format as a standard US number if no country code is provided.
+		return '(' . substr( $cleaned, 0, 3 ) . ') ' . substr( $cleaned, 3, 3 ) . '-' . substr( $cleaned, 6 );
+	} elseif ( 11 === strlen( $cleaned ) && '1' === $cleaned[0] ) {
+		// Format as a US number with country code.
+		return '+1 (' . substr( $cleaned, 1, 3 ) . ') ' . substr( $cleaned, 4, 3 ) . '-' . substr( $cleaned, 7 );
+	} else {
+		// Return the cleaned phone number if it doesn't match expected patterns.
+		return $cleaned;
+	}
+}
+
+/**
+ * Format the phone number for use in a tel: link
+ *
+ * @param   string $phone  the unformatted phone number.
+ *
+ * @return  string  the formatted phone number for use in a tel: link
+ */
+function rentfetch_format_phone_number_link( $phone ) {
+	// Remove all characters except digits and the plus sign.
+	$cleaned = preg_replace( '/[^\d+]/', '', $phone );
+
+	// Check if the number starts with a plus sign and is at least 11 digits long.
+	if ( substr( $cleaned, 0, 1 ) === '+' && strlen( $cleaned ) > 10 ) {
+		return $cleaned; // Return the cleaned international number.
+	} elseif ( strlen( $cleaned ) === 10 ) {
+		return '+1' . $cleaned; // Assume US number and add country code.
+	} elseif ( 11 === strlen( $cleaned ) && '1' === $cleaned[0] ) {
+		return '+' . $cleaned; // Format as a US number with country code.
+	} else {
+		return ''; // Return an empty string if the phone number is not valid.
+	}
+}
+
+/**
  * Get the property phone number
  *
  * @return string The property phone number.
@@ -274,9 +325,7 @@ function rentfetch_get_property_phone() {
 
 	if ( $phone ) {
 
-		// format as a phone number.
-		$phone = preg_replace( '/[^0-9]/', '', $phone );
-		$phone = preg_replace( '/^1?(\d{3})(\d{3})(\d{4})$/', '($1) $2-$3', $phone );
+		$phone = rentfetch_format_phone_number( $phone );
 
 	}
 
@@ -303,7 +352,8 @@ function rentfetch_property_phone() {
  */
 function rentfetch_get_property_phone_button() {
 	$phone        = rentfetch_get_property_phone();
-	$phone_button = sprintf( '<a class="phone-link property-link" href="tel:%s">%s</a>', esc_html( $phone ), esc_html( $phone ) );
+	$phone_link   = rentfetch_format_phone_number_link( $phone );
+	$phone_button = sprintf( '<a class="phone-link property-link" href="tel:%s">%s</a>', esc_html( $phone_link ), esc_html( $phone ) );
 
 	if ( $phone ) {
 		return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button );

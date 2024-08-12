@@ -2,9 +2,9 @@
 Contributors: jonschr
 Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
-Tested up to: 6.5.4
-Requires PHP: 7.4
-Stable tag: 0.17.1
+Tested up to: 6.6
+Requires PHP: 8.1
+Stable tag: 0.17.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,10 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.17.2 =
+
+* Bugfix: adding new functionality to allow for better phone number parsing for the property phone numbers, allowing for separate parsing for the phone number link.
 
 = 0.17.1 =
 
