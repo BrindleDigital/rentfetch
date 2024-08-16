@@ -272,24 +272,38 @@ function rentfetch_property_city_state() {
  * @return  string the formatted phone number
  */
 function rentfetch_format_phone_number( $phone ) {
-    // Remove all characters except digits and the plus sign.
-    $cleaned = preg_replace( '/[^\d+]/', '', $phone );
+	// Remove all characters except digits and the plus sign.
+	$cleaned = preg_replace( '/[^\d+]/', '', $phone );
 
-    // Handle cases with a leading +1 or just 1 followed by 10 digits (standard US format).
-    if ( preg_match( '/^\+?1?(\d{10})$/', $cleaned, $matches ) ) {
-        // Format the number as +1 (XXX) XXX-XXXX
-        return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
-    } elseif ( preg_match( '/^\+(\d{3})(\d{3})(\d{4})$/', $cleaned, $matches ) ) {
-        // Handle cases where the number starts with a country code and is not US
-        return '+' . $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
-    } elseif ( strlen( $cleaned ) === 10 ) {
-        // Assume US number and add country code, then format it.
-        return '+1 (' . substr($cleaned, 0, 3) . ') ' . substr($cleaned, 3, 3) . '-' . substr($cleaned, 6);
-    } else {
-        // Return the cleaned number as it is if it doesn't match known formats.
-        return $cleaned;
-    }
+	// If the number is exactly 10 digits, format it as a US number without the country code.
+	if ( strlen($cleaned) === 10 ) {
+		return '(' . substr($cleaned, 0, 3) . ') ' . substr($cleaned, 3, 3) . '-' . substr($cleaned, 6);
+	} 
+	// Handle cases with a leading + and exactly 10 digits after the +.
+	elseif ( preg_match( '/^\+(\d{10})$/', $cleaned, $matches ) ) {
+		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
+	}
+	// Handle cases with a leading +1 followed by 10 digits.
+	elseif ( preg_match( '/^\+1(\d{10})$/', $cleaned, $matches ) ) {
+		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
+	}
+	// Handle cases with a leading 1 followed by 10 digits (without the +).
+	elseif ( preg_match( '/^1(\d{10})$/', $cleaned, $matches ) ) {
+		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
+	}
+	// If the number has an international format (starts with a + and is not US)
+	elseif ( preg_match( '/^\+(\d{1,3})(\d{3})(\d{4})$/', $cleaned, $matches ) ) {
+		return '+' . $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
+	}
+	// Return the cleaned number as it is if it doesn't match known formats.
+	else {
+		return $cleaned;
+	}
 }
+
+
+
+
 
 
 
