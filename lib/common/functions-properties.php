@@ -272,25 +272,27 @@ function rentfetch_property_city_state() {
  * @return  string the formatted phone number
  */
 function rentfetch_format_phone_number( $phone ) {
+    // Remove all characters except digits and the plus sign.
+    $cleaned = preg_replace( '/[^\d+]/', '', $phone );
 
-	// Remove all non-numeric characters except the plus sign.
-	$cleaned = preg_replace( '/[^\d+]/', '', $phone );
-
-	// If the phone number starts with a plus sign, it is likely an international number.
-	if ( substr( $cleaned, 0, 1 ) === '+' ) {
-		// Format the number: +CC (XXX) XXX-XXXX for example.
-		return preg_replace( '/^\+(\d{1,3})(\d{3})(\d{3})(\d{4})$/', '+$1 ($2) $3-$4', $cleaned );
-	} elseif ( strlen( $cleaned ) === 10 ) {
-		// Format as a standard US number if no country code is provided.
-		return '(' . substr( $cleaned, 0, 3 ) . ') ' . substr( $cleaned, 3, 3 ) . '-' . substr( $cleaned, 6 );
-	} elseif ( 11 === strlen( $cleaned ) && '1' === $cleaned[0] ) {
-		// Format as a US number with country code.
-		return '+1 (' . substr( $cleaned, 1, 3 ) . ') ' . substr( $cleaned, 4, 3 ) . '-' . substr( $cleaned, 7 );
-	} else {
-		// Return the cleaned phone number if it doesn't match expected patterns.
-		return $cleaned;
-	}
+    // Handle cases with a leading +1 or just 1 followed by 10 digits (standard US format).
+    if ( preg_match( '/^\+?1?(\d{10})$/', $cleaned, $matches ) ) {
+        // Format the number as +1 (XXX) XXX-XXXX
+        return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
+    } elseif ( preg_match( '/^\+(\d{3})(\d{3})(\d{4})$/', $cleaned, $matches ) ) {
+        // Handle cases where the number starts with a country code and is not US
+        return '+' . $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
+    } elseif ( strlen( $cleaned ) === 10 ) {
+        // Assume US number and add country code, then format it.
+        return '+1 (' . substr($cleaned, 0, 3) . ') ' . substr($cleaned, 3, 3) . '-' . substr($cleaned, 6);
+    } else {
+        // Return the cleaned number as it is if it doesn't match known formats.
+        return $cleaned;
+    }
 }
+
+
+
 
 /**
  * Format the phone number for use in a tel: link
