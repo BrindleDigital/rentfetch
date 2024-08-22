@@ -24,6 +24,11 @@ function rentfetch_propertysearch_default_layout( $atts ) {
 
 	// this script is for scrolling specifically in the context of a full-height map.
 	wp_enqueue_script( 'rentfetch-property-search-scroll-to-active-property' );
+	
+	// because these are loaded over ajax, we need to enqueue the lightbox scripts here (they're enqueue automatically when loaded normally).
+	wp_enqueue_style( 'rentfetch-glightbox-style' );
+	wp_enqueue_script( 'rentfetch-glightbox-script' );
+	wp_enqueue_script( 'rentfetch-glightbox-init' );
 
 	// * Our container markup for the results
 	echo '<div class="rent-fetch-property-search-default-layout">';

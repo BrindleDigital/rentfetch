@@ -4,7 +4,7 @@ jQuery(document).ready(function ($) {
 });
 
 // Code to run after completion of any AJAX request
-jQuery(document).ajaxComplete(function ($) {
+jQuery(document).ajaxComplete(function () {
 	rentfetch_glightbox_init();
 });
 
