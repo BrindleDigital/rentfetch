@@ -90,3 +90,58 @@ pre {
 	font-size: 13px;
 	line-height: 1.2em;
 }
+
+#rent-fetch-wrap-page {
+	p.submit {
+		padding-top: 0;
+		input {
+			background: #1F313B;
+			border-radius: 8px;
+			border: none;
+			color: white;
+			font-size: 13px;
+			line-height: 100%;
+			padding: 0px 16px;
+			font-weight: 400;
+
+			&:hover {
+				background: #375565;
+			}
+		}
+	}
+
+	input {
+		border: 1px solid #C3C3C3;
+		border-radius: 2px;
+
+		&:focus {
+			box-shadow: none;
+		}
+	}
+
+	input[type="radio"] {
+		appearance: none;
+		border-radius: 50%;
+		border: 1px solid #555555;
+		box-sizing: content-box;
+		display: inline;
+		height: 11px;
+		min-height: 11px;
+		min-width: 11px;
+		position: relative;
+		width: 11px;
+		margin: 0;
+		top: -1px;
+
+		&::before {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			border: 1px solid white;
+			box-sizing: border-box;
+		}
+	}
+}

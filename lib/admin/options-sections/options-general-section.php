@@ -35,19 +35,21 @@ add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_general' );
  * @return void
  */
 function rentfetch_settings_sync_functionality_notice() {
+	echo '<section id="rent-fetch-general-page" class="options-container">';
 	?>
 	<div class="row">
-		<div class="column">
+		<div class="section">
 			<label for="">Data Automation</label>
 		</div>
-		<div class="column">
-			<div class="white-box" style="max-width: 400px;">
+		<div class="section">
+			<div class="white-box">
 				<h2 style="margin-top: 0;">Our premium availability syncing addon</h3>
 				<p class="description">You can already manually enter data for as many properties, floorplans, and units as you'd like, and all layouts are enabled for this information.</p><p>However, if you'd like to automate the addition of properties and sync availability information hourly, we offer the <strong>Rent Fetch Sync</strong> addon to sync data with the Yardi/RentCafe, Realpage, Appfolio, and Entrata platforms. More information at <a href="https://rentfetch.io" target="_blank">rentfetch.io</a></p>
 			</div>
 		</div>
 	</div>
 	<?php
+	echo '</section><!-- #rent-fetch-general-page -->';
 }
 add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_sync_functionality_notice', 25 );
 
