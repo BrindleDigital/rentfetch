@@ -27,6 +27,8 @@ function rentfetch_each_property_in_archive_simple() {
 	}
 
 	do_action( 'rentfetch_do_property_images' );
+	
+	edit_post_link();
 
 	echo '<div class="property-content">';
 

@@ -24,6 +24,7 @@ function rentfetch_properties_each_list() {
 	$rent              = rentfetch_get_property_pricing();
 	$availability      = rentfetch_get_property_availability();
 	$specials          = rentfetch_get_property_specials();
+	$tour              = rentfetch_get_property_tour();
 	$allowed_tags      = array(
 		'p'    => array(),
 		'span' => array(
@@ -42,6 +43,10 @@ function rentfetch_properties_each_list() {
 
 	if ( $specials ) {
 		printf( '<p class="specials">%s</p>', esc_html( $specials ) );
+	}
+	
+	if ( $tour ) {
+		echo wp_kses_post( $tour );
 	}
 
 	edit_post_link();

@@ -189,6 +189,7 @@ add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_location_b
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_website_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_phone_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_contact_button' );
+add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_tour_button' );
 
 /**
  * Get the property location link
@@ -272,22 +273,31 @@ function rentfetch_property_city_state() {
  * @return  string the formatted phone number
  */
 function rentfetch_format_phone_number( $phone ) {
-
-	// Remove all non-numeric characters except the plus sign.
+	// Remove all characters except digits and the plus sign.
 	$cleaned = preg_replace( '/[^\d+]/', '', $phone );
 
-	// If the phone number starts with a plus sign, it is likely an international number.
-	if ( substr( $cleaned, 0, 1 ) === '+' ) {
-		// Format the number: +CC (XXX) XXX-XXXX for example.
-		return preg_replace( '/^\+(\d{1,3})(\d{3})(\d{3})(\d{4})$/', '+$1 ($2) $3-$4', $cleaned );
-	} elseif ( strlen( $cleaned ) === 10 ) {
-		// Format as a standard US number if no country code is provided.
-		return '(' . substr( $cleaned, 0, 3 ) . ') ' . substr( $cleaned, 3, 3 ) . '-' . substr( $cleaned, 6 );
-	} elseif ( 11 === strlen( $cleaned ) && '1' === $cleaned[0] ) {
-		// Format as a US number with country code.
-		return '+1 (' . substr( $cleaned, 1, 3 ) . ') ' . substr( $cleaned, 4, 3 ) . '-' . substr( $cleaned, 7 );
-	} else {
-		// Return the cleaned phone number if it doesn't match expected patterns.
+	// If the number is exactly 10 digits, format it as a US number without the country code.
+	if ( strlen($cleaned) === 10 ) {
+		return '(' . substr($cleaned, 0, 3) . ') ' . substr($cleaned, 3, 3) . '-' . substr($cleaned, 6);
+	} 
+	// Handle cases with a leading + and exactly 10 digits after the +.
+	elseif ( preg_match( '/^\+(\d{10})$/', $cleaned, $matches ) ) {
+		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
+	}
+	// Handle cases with a leading +1 followed by 10 digits.
+	elseif ( preg_match( '/^\+1(\d{10})$/', $cleaned, $matches ) ) {
+		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
+	}
+	// Handle cases with a leading 1 followed by 10 digits (without the +).
+	elseif ( preg_match( '/^1(\d{10})$/', $cleaned, $matches ) ) {
+		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
+	}
+	// If the number has an international format (starts with a + and is not US)
+	elseif ( preg_match( '/^\+(\d{1,3})(\d{3})(\d{4})$/', $cleaned, $matches ) ) {
+		return '+' . $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
+	}
+	// Return the cleaned number as it is if it doesn't match known formats.
+	else {
 		return $cleaned;
 	}
 }
@@ -434,7 +444,7 @@ function rentfetch_property_website_button() {
 function rentfetch_get_property_contact_button() {
 	$email          = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( get_the_ID(), 'email', true ) ) );
 	$email_link     = 'mailto:' . $email;
-	$contact_button = sprintf( '<a class="email-link property-link" href="%s">Reach out</a>', esc_html( $email_link ) );
+	$contact_button = sprintf( '<a class="email-link property-link" href="%s">Reach Out</a>', esc_html( $email_link ) );
 	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button );
 
 	if ( $email ) {
@@ -452,6 +462,68 @@ function rentfetch_get_property_contact_button() {
 function rentfetch_property_contact_button() {
 	if ( rentfetch_get_property_contact_button() ) {
 		echo wp_kses_post( rentfetch_get_property_contact_button() );
+	}
+}
+
+// * PROPERTY TOUR BUTTON.
+
+/**
+ * Get the property email.
+ *
+ * @return string The property email.
+ */
+function rentfetch_get_property_tour_button() {
+		
+	$iframe    = get_post_meta( get_the_ID(), 'tour', true );
+	$embedlink = null;
+	$tour_link_text = 'Video Tour';
+	
+	// bail if we don't have anything to show.
+	if ( ! $iframe ) {
+		return;
+	}
+	
+	wp_enqueue_style( 'rentfetch-glightbox-style' );
+	wp_enqueue_script( 'rentfetch-glightbox-script' );
+	wp_enqueue_script( 'rentfetch-glightbox-init' );
+
+	// check against youtube.
+	$youtube_pattern = '/src="https:\/\/www\.youtube\.com\/embed\/([^?"]+)\?/';
+	preg_match( $youtube_pattern, $iframe, $youtube_matches );
+
+	// if it's youtube and it's a full iframe.
+	if ( isset( $youtube_matches[1] ) ) {
+		$video_id   = $youtube_matches[1];
+		$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
+		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s">%s</a>', get_the_ID(), $oembedlink, $tour_link_text );
+	}
+
+	$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
+	preg_match( $matterport_pattern, $iframe, $matterport_matches );
+
+	// if it's matterport and it's a full iframe.
+	if ( isset( $matterport_matches[1] ) ) {
+		$oembedlink = $matterport_matches[1];
+		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-matterport" data-gallery="post-%s" href="%s">%s</a>', get_the_ID(), $oembedlink, $tour_link_text );
+	}
+
+	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
+	if ( ! $embedlink ) {
+		$oembedlink = $iframe;
+		$embedlink  = sprintf( '<a class="tour-link property-link" target="_blank" data-gallery="post-%s" href="%s">%s</a>', get_the_ID(), $oembedlink, $tour_link_text );
+	}
+	
+	return $embedlink;
+}
+
+/**
+ * Echo the property email.
+ *
+ * @return void.
+ */
+function rentfetch_property_tour_button() {
+	if ( rentfetch_get_property_tour_button() ) {
+		echo wp_kses_post( rentfetch_get_property_tour_button() );
 	}
 }
 
@@ -791,4 +863,52 @@ function rentfetch_property_description() {
 	if ( $property_description ) {
 		echo wp_kses_post( $property_description );
 	}
+}
+
+//* PROPERTY TOUR
+
+/**
+ * Get the tour markup
+ *
+ * @return string the tour markup.
+ */
+function rentfetch_get_property_tour() {
+
+	$iframe    = get_post_meta( get_the_ID(), 'tour', true );
+	$embedlink = null;
+
+	if ( $iframe ) {
+
+		wp_enqueue_style( 'rentfetch-glightbox-style' );
+		wp_enqueue_script( 'rentfetch-glightbox-script' );
+		wp_enqueue_script( 'rentfetch-glightbox-init' );
+
+		// check against youtube.
+		$youtube_pattern = '/src="https:\/\/www\.youtube\.com\/embed\/([^?"]+)\?/';
+		preg_match( $youtube_pattern, $iframe, $youtube_matches );
+
+		// if it's youtube and it's a full iframe.
+		if ( isset( $youtube_matches[1] ) ) {
+			$video_id   = $youtube_matches[1];
+			$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s"></a></div>', get_the_ID(), $oembedlink );
+		}
+
+		$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
+		preg_match( $matterport_pattern, $iframe, $matterport_matches );
+
+		// if it's matterport and it's a full iframe.
+		if ( isset( $matterport_matches[1] ) ) {
+			$oembedlink = $matterport_matches[1];
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-matterport" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), $oembedlink );
+		}
+
+		// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
+		if ( ! $embedlink ) {
+			$oembedlink = $iframe;
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link" target="_blank" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), $oembedlink );
+		}
+	}
+
+	return apply_filters( 'rentfetch_filter_property_tour', $embedlink );
 }

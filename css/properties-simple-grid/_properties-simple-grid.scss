@@ -26,8 +26,14 @@
 		transition: 0.5s box-shadow ease;
 	}
 
-	&:hover .overlay {
-		box-shadow: var(--rentfetch-box-shadow-hover);
+	&:hover {
+		.overlay {
+			box-shadow: var(--rentfetch-box-shadow-hover);
+		}
+
+		.post-edit-link {
+			opacity: 1;
+		}
 	}
 
 	.property-single-image-wrap {
@@ -61,6 +67,28 @@
 
 		:last-child {
 			margin-bottom: 0;
+		}
+	}
+
+	a.post-edit-link {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		padding: 5px 10px;
+		background-color: var(--rentfetch-dark);
+		text-decoration: none;
+		line-height: 1;
+		z-index: 10;
+		opacity: 0;
+		margin: 0;
+		font-size: var(--rentfetch-font-size-small);
+		color: var(--rentfetch-white);
+		transition: 0.3s all ease;
+
+		&:hover {
+			background-color: var(--rentfetch-accent);
+			color: var(--rentfetch-white);
 		}
 	}
 }

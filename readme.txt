@@ -94,6 +94,10 @@ Start from your WordPress dashboard.
 = 0.17.2 =
 
 * Bugfix: adding new functionality to allow for better phone number parsing for the property phone numbers, allowing for separate parsing for the phone number link.
+* Adding a button on the single-properties template for the tour (this previously didn't actually show up anywhere, it turns out).
+* Adding a button on the properties search template to do the same
+* Standardizing the "Edit this" buttons when logged in between the floorplans grid, properties grid, and properties simple grid, to show all of these on hover, all centered at the top.
+* Reworking the script to load properties buttons to allow it to work with more AJAX requests (like on the properties search), and adding an enqueue on the properties search level outside the AJAX request, since it wasn't loading otherwise.
 
 = 0.17.1 =
 
