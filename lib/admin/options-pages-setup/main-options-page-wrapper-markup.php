@@ -18,6 +18,9 @@ function rentfetch_options_page_html() {
 		return;
 	}
 
+	add_filter('admin_footer_text', 'rentfetch_override_admin_footer');
+	add_filter('update_footer', function () { echo ''; });
+
 	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
 
 	echo '<div class="wrap" id="rent-fetch-wrap-page">';
@@ -25,11 +28,9 @@ function rentfetch_options_page_html() {
 		$action = esc_url( admin_url( 'admin-post.php' ) );
 
 		printf( '<form method="post" class="rent-fetch-options" action="%s">', esc_url( $action ) );
-			echo ' <div class="top-right-submit">';
-				submit_button();
-			echo '</div>';
-
-			echo '<h1>Rent Fetch Options</h1>';
+			
+			echo '<section class="nav-container">';
+			echo '<img src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" />';
 			echo '<nav class="nav-tab-wrapper">';
 
 				$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
@@ -49,6 +50,7 @@ function rentfetch_options_page_html() {
 				// printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=labels' ) ), esc_html( $active ), esc_html( 'Labels' ) );
 
 			echo '</nav>';
+			echo '</section>';
 
 			echo '<input type="hidden" name="action" value="rentfetch_process_form">';
 

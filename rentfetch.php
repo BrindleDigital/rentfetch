@@ -14,18 +14,18 @@
  */
 
 // Prevent direct access to the plugin.
-if ( ! defined( 'ABSPATH' ) ) {
-	die( 'Sorry, you are not allowed to access this page directly.' );
+if (!defined('ABSPATH')) {
+	die('Sorry, you are not allowed to access this page directly.');
 }
 
 // Define the version of the plugin.
-define( 'RENTFETCH_VERSION', '0.17.2' );
+define('RENTFETCH_VERSION', '0.17.2');
 
 // Set up plugin directories.
-define( 'RENTFETCH_DIR', plugin_dir_path( __FILE__ ) );
-define( 'RENTFETCH_PATH', plugin_dir_url( __FILE__ ) );
-define( 'RENTFETCH_BASENAME', plugin_basename( __FILE__ ) );
-define( 'RENTFETCH_FILE', __FILE__ );
+define('RENTFETCH_DIR', plugin_dir_path(__FILE__));
+define('RENTFETCH_PATH', plugin_dir_url(__FILE__));
+define('RENTFETCH_BASENAME', plugin_basename(__FILE__));
+define('RENTFETCH_FILE', __FILE__);
 
 /**
  * Load the files
@@ -33,28 +33,41 @@ define( 'RENTFETCH_FILE', __FILE__ );
  * @param   string $directory  the path to the directory to load.
  * @return  void
  */
-function rentfetch_require_files_recursive( $directory ) {
+function rentfetch_require_files_recursive($directory)
+{
 	$iterator = new RecursiveIteratorIterator(
-		new RecursiveDirectoryIterator( $directory, RecursiveDirectoryIterator::SKIP_DOTS ),
+		new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
 		RecursiveIteratorIterator::LEAVES_ONLY
 	);
 
-	foreach ( $iterator as $file ) {
-		if ( $file->isFile() && $file->getExtension() === 'php' ) {
+	foreach ($iterator as $file) {
+		if ($file->isFile() && $file->getExtension() === 'php') {
 			require_once $file->getPathname();
 		}
 	}
 }
 
 // Require_once all files in /lib and its subdirectories.
-rentfetch_require_files_recursive( RENTFETCH_DIR . 'lib' );
+rentfetch_require_files_recursive(RENTFETCH_DIR . 'lib');
 
 /**
  * Flush the permalinks after plugin is activated.
  *
  * @return  void
  */
-function rentfetch_flush_permalinks_on_activation() {
-	add_action( 'init', 'flush_rewrite_rules', 999 );
+function rentfetch_flush_permalinks_on_activation()
+{
+	add_action('init', 'flush_rewrite_rules', 999);
 }
-register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_flush_permalinks_on_activation' );
+register_activation_hook(RENTFETCH_BASENAME, 'rentfetch_flush_permalinks_on_activation');
+
+
+function rentfetch_override_admin_footer($data)
+{
+	$data = '<div id="rentfetch-footer" role="contentinfo">';
+	$data .= '<span>Made with 🤍 by Brindle</span>';
+	$data .= '<span>Website / Support / Docs</span>';
+	$data .= '</div>';
+
+	return $data;
+}
