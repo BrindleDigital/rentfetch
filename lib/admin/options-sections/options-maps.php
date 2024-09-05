@@ -75,6 +75,9 @@ function rentfetch_settings_maps() {
 		</div>
 	</div>
 	<?php
+	
+	submit_button();
+	
 	echo '</div><!-- .container -->';
 	echo '</section><!-- #rent-fetch-maps-page -->';
 }

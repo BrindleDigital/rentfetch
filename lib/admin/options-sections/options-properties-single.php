@@ -96,6 +96,8 @@ function rentfetch_settings_properties_property_single() {
 		</div>
 	</div>
 	<?php
+	
+	submit_button();
 }
 add_action( 'rentfetch_do_settings_properties_property_single', 'rentfetch_settings_properties_property_single' );
 

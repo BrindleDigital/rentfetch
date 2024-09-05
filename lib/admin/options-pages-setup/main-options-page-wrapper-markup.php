@@ -34,7 +34,7 @@ function rentfetch_options_page_html() {
 			echo '<nav class="nav-tab-wrapper">';
 
 				$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'Sync Settings' ) );
+				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
 
 				$active = ( 'maps' === $tab ) ? 'nav-tab-active' : '';
 				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=maps' ) ), esc_html( $active ), esc_html( 'Maps' ) );

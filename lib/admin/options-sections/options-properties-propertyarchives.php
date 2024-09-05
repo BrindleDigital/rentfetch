@@ -153,6 +153,8 @@ function rentfetch_settings_properties_property_archives()
 		</div>
 	</div>
 	<?php
+
+	submit_button();
 }
 add_action('rentfetch_do_settings_properties_property_archives', 'rentfetch_settings_properties_property_archives');
 
