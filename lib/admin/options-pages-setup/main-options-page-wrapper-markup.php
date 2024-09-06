@@ -117,9 +117,18 @@ function rentfetch_settings_properties() {
 		$active = ( 'property-single' === $section ) ? 'tab-active' : '';
 		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property Single Template</a></li>', esc_html( $active ) );
 
+		$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
+		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
+
 	echo '</ul>';
 	
-	echo '<div class="container">';
+	$containerDiv = '<div class="container">';
+
+	if ('property-settings-embed' === $section) {
+		$containerDiv = '<div class="container shortcodes wide">';
+	}
+
+	echo $containerDiv;
 
 	if ( 'property-search' === $section ) {
 		do_action( 'rentfetch_do_settings_properties_property_search' );
@@ -127,6 +136,8 @@ function rentfetch_settings_properties() {
 		do_action( 'rentfetch_do_settings_properties_property_archives' );
 	} elseif ( 'property-single' === $section ) {
 		do_action( 'rentfetch_do_settings_properties_property_single' );
+	} elseif ( 'property-settings-embed' === $section ) {
+		do_action( 'rentfetch_do_settings_properties_property_embed' );
 	} else {
 		do_action( 'rentfetch_do_settings_properties_property_search' );
 	}
@@ -156,17 +167,24 @@ function rentfetch_settings_floorplans() {
 		$active = ( 'floorplan-search' === $section ) ? 'tab-active' : '';
 		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floor Plan Settings</a></li>', esc_html( $active ) );
 
-		// $active = ( 'floorplan-buttons' === $section ) ? 'tab-active' : '';
-		// printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-buttons" class="tab %s">Floorplan Buttons</a></li>', esc_html( $active ) );
+		$active = ( 'floorplan-embed' === $section ) ? 'tab-active' : '';
+		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
 
 	echo '</ul>';
-	echo '<div class="container">';
+	$containerDiv = '<div class="container">';
+
+	if ('floorplan-embed' === $section) {
+		$containerDiv = '<div class="container shortcodes">';
+	}
+
+	echo $containerDiv;
 
 	if ( 'floorplan-search' === $section ) {
 		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
 	} elseif ( 'floorplan-buttons' === $section ) {
-		// do_action( 'rentfetch_do_settings_floorplans_floorplan_buttons' );
 		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
+	} elseif ( 'floorplan-embed' === $section ) {
+		do_action( 'rentfetch_do_settings_floorplans_floorplan_embed' );
 	} else {
 		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
 	}
