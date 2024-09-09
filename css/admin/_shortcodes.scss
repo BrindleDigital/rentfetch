@@ -1,14 +1,16 @@
-.rent-fetch_page_rentfetch-shortcodes {
+.rent-fetch_page_rentfetch-shortcodes,
+.container.shortcodes {
+
 	span.shortcode {
-		display: inline-block;
-		padding: 8px 15px;
 		background-color: white;
-		margin: 0 5px 0 0;
-		box-shadow: 2px 2px 5px 0 rgba(black, 0.07);
 		border: 1px solid rgba(black, 0.12);
-		transition: 0.3s all ease;
+		box-shadow: 2px 2px 5px 0 rgba(black, 0.07);
 		cursor: pointer;
+		display: inline-block;
+		margin: 0 5px 10px 0;
+		padding: 8px 15px;
 		position: relative;
+		transition: 0.3s all ease;
 		transition: 0.3s all ease;
 
 		&:hover {
@@ -23,7 +25,7 @@
 
 	span.shortcode.copied {
 		&:before {
-			content: 'Copied!';
+			content: url(../images/copied.svg);
 			position: absolute;
 			inset: 0;
 			background-color: white;
@@ -31,13 +33,19 @@
 			align-items: center;
 			justify-content: center;
 			opacity: 1;
+			padding-top: 3px;
 		}
 	}
 
 	h2 {
-		margin-top: 25px;
-		padding-top: 25px;
-		border-top: 1px solid #ccc;
 		font-size: 20px;
+		margin-top: 0;
 	}
+}
+
+#rent-fetch-shortcodes-page {
+	.separator {
+    border-bottom: 1px solid #E6E6E6;
+    width: 100%;
+  }
 }

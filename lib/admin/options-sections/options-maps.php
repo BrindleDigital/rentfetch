@@ -24,44 +24,46 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_m
  * Adds the Maps settings section to the Rent Fetch settings page
  */
 function rentfetch_settings_maps() {
+	echo '<section id="rent-fetch-maps-page" class="options-container">';
+	echo '<div class="container">';
 	?>
 	
 	<div class="row">
-		<div class="column">
+		<div class="section">
 			<label for="rentfetch_options_google_maps_api_key">Google Maps API Key</label>
 		</div>
-		<div class="column">
+		<div class="section">
 			<input type="text" name="rentfetch_options_google_maps_api_key" id="rentfetch_options_google_maps_api_key" value="<?php echo esc_attr( get_option( 'rentfetch_options_google_maps_api_key' ) ); ?>">
 			<p class="description">Required for Google Maps.</p>
 		</div>
 	</div>
 	
 	<div class="row">
-		<div class="column">
+		<div class="section">
 			<label for="rentfetch_options_google_map_marker">Google Maps Marker</label>
 		</div>
-		<div class="column">
+		<div class="section">
 			<input type="url" name="rentfetch_options_google_map_marker" id="rentfetch_options_google_map_marker" value="<?php echo esc_attr( get_option( 'rentfetch_options_google_map_marker' ) ); ?>">
 			<p class="description">URL to a custom marker image. Leave blank to use the default marker.</p>
 		</div>
 	</div>
 	
 	<div class="row">
-		<div class="column">
+		<div class="section">
 			<label for="rentfetch_options_google_maps_styles">Google Maps Styles</label>
 		</div>
-		<div class="column">
+		<div class="section">
 			<textarea name="rentfetch_options_google_maps_styles" id="rentfetch_options_google_maps_styles" rows="10" style="width: 100%;"><?php echo esc_attr( get_option( 'rentfetch_options_google_maps_styles' ) ); ?></textarea>
 			<p class="description">JSON array of Google Maps styles. See <a href="https://snazzymaps.com/" target="_blank">Snazzy Maps</a> for examples.</p>
 		</div>
 	</div>
 	
 	<div class="row">
-		<div class="column">
+		<div class="section">
 			<label>Google Maps default location</label>
 			<p class="description">This serves as the map center in the event of a search with no results.</p>
 		</div>
-		<div class="column">
+		<div class="section">
 			<div class="white-box">
 				<label for="rentfetch_options_google_maps_default_latitude">Latitude</label>
 				<input type="text" name="rentfetch_options_google_maps_default_latitude" id="rentfetch_options_google_maps_default_latitude" value="<?php echo esc_attr( get_option( 'rentfetch_options_google_maps_default_latitude' ) ); ?>">
@@ -72,24 +74,12 @@ function rentfetch_settings_maps() {
 			</div>
 		</div>
 	</div>
-	
-	<!-- <div class="row">
-		<div class="column">
-			<label>Google reCAPTCHA v2</label>
-		</div>
-		<div class="column">
-			<div class="white-box">
-				<label for="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key">reCAPTCHA key</label>
-				<input type="text" name="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key" id="rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key" value="<?php // echo esc_attr( get_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key' ) ); ?>">
-			</div>
-			<div class="white-box">
-				<label for="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret">reCAPTCHA key</label>
-				<input type="text" name="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret" id="rentfetch_options_google_recaptcha_google_recaptcha_v2_secret" value="<?php // echo esc_attr( get_option( 'rentfetch_options_google_recaptcha_google_recaptcha_v2_secret' ) ); ?>">
-			</div>
-		</div>
-	</div> -->
-		   
 	<?php
+	
+	submit_button();
+	
+	echo '</div><!-- .container -->';
+	echo '</section><!-- #rent-fetch-maps-page -->';
 }
 add_action( 'rentfetch_do_settings_maps', 'rentfetch_settings_maps' );
 

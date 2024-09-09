@@ -32,12 +32,12 @@ function rentfetch_settings_properties_property_single() {
 	?>
 	
 	<div class="row">
-		<div class="column">
-			<label for="rentfetch_options_single_property_components">Single property components</label>
+		<div class="section">
+			<label for="rentfetch_options_single_property_components">Single Property Components</label>
 			<p class="description">These settings control which default components of the page display. Please note that theme developers can also customize this display in several other ways. Each individual section can be replaced by removing the corresponding action, or you can simply add a single-properties.php file to the root of your theme.</p>
 			<p class="description">Please note that each individual section will only display if there's enough information to meaningfully display it. A property with no images set will not output a blank "images" section, for example.</p>
 		</div>
-		<div class="column">
+		<div class="section">
 			<?php
 
 			// Get saved options.
@@ -96,6 +96,8 @@ function rentfetch_settings_properties_property_single() {
 		</div>
 	</div>
 	<?php
+	
+	submit_button();
 }
 add_action( 'rentfetch_do_settings_properties_property_single', 'rentfetch_settings_properties_property_single' );
 
