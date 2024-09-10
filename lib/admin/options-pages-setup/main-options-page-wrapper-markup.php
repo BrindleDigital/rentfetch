@@ -31,6 +31,7 @@ function rentfetch_options_page_html() {
 			
 			echo '<section class="nav-container">';
 			echo '<img src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" />';
+			echo '<h1 style="display: none;">RentFetch</h1>';
 			echo '<nav class="nav-tab-wrapper">';
 
 				$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';

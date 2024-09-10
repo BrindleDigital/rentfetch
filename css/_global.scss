@@ -94,6 +94,10 @@ pre {
 #rent-fetch-wrap-page {
 	margin: 0;
 	position: relative;
+
+	.notice {
+		margin: 20px 10px;
+	}
 	
 	.nav-container {
 		padding-top: 20px;
@@ -181,7 +185,7 @@ pre {
 		position: relative;
 		width: 11px;
 		margin: 0;
-		top: -1px;
+		top: 2px;
 
 		&::before {
 			position: absolute;
