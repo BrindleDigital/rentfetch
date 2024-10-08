@@ -210,6 +210,16 @@ function rentfetch_save_settings_general() {
 
 		update_option( 'rentfetch_options_realpage_integration_creds_realpage_site_ids', $options_realpage_integration_creds_realpage_site_ids );
 	}
+	
+	// Text field.
+	if ( isset( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_companycode'] ) ) {
+		// Remove ".api.rentmanager.com" and anything that follows it.
+		$input_value = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_companycode'] ) );
+		$cleaned_value = preg_replace( '/\.api\.rentmanager\.com.*/', '', $input_value );
+
+		update_option( 'rentfetch_options_rentmanager_integration_creds_rentmanager_companycode', $cleaned_value );
+	}
+
 
 	// Text field.
 	if ( isset( $_POST['rentfetch_options_appfolio_integration_creds_appfolio_database_name'] ) ) {
