@@ -637,6 +637,7 @@ function rentfetch_get_property_pricing() {
 
 	$floorplan_data  = rentfetch_get_floorplans( $property_id );
 	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
+	$rent_range = null;
 
 	if ( isset( $floorplan_data['rentrange'] ) ) {
 		if ( null !== $floorplan_data['rentrange'] ) {
@@ -658,6 +659,18 @@ function rentfetch_get_property_pricing() {
 		$rent = $rent_range;
 	} elseif ( 'minimum' === $pricing_display ) {
 		$rent = $rent_min;
+	}
+	
+	if ( !isset( $floorplan_data['rentrange'] ) ) {
+		$floorplan_data['rentrange'] = null;
+	}
+	
+	if ( !isset( $floorplan_data['minimum_rent'] ) ) {
+		$floorplan_data['minimum_rent'] = null;
+	}
+	
+	if ( !isset( $floorplan_data['maximum_rent'] ) ) {
+		$floorplan_data['maximum_rent'] = null;
 	}
 
 	return apply_filters( 'rentfetch_filter_property_pricing', $rent, $floorplan_data['rentrange'], $floorplan_data['minimum_rent'], $floorplan_data['maximum_rent'] );
