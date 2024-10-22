@@ -220,17 +220,10 @@ function rentfetch_save_settings_general() {
 		update_option( 'rentfetch_options_rentmanager_integration_creds_rentmanager_companycode', $cleaned_value );
 	}
 	
-	// Textarea field.
-	if ( isset( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_property_shortnames'] ) ) {
-		$input_value = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_property_shortnames'] ) );
-
-		// Remove all whitespace.
-		$whitespace_removed = preg_replace( '/\s+/', '', $input_value );
-
-		// Add a space after each comma.
-		$cleaned_value = preg_replace( '/,/', ', ', $whitespace_removed );
-
-		update_option( 'rentfetch_options_rentmanager_integration_creds_rentmanager_property_shortnames', $cleaned_value );
+	if ( function_exists( 'rfs_get_rentmanager_properties_from_setting' ) ) {
+		// this function is defined in the rentfetch-sync plugin, and allows for prefilling the properties for Rent Manager, where there are multiple locations possible 
+		// and it's not feasible to have the user enter them all manually
+		rfs_get_rentmanager_properties_from_setting();
 	}
 	
 	// Text field.

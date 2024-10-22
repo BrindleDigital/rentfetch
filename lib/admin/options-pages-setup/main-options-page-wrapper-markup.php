@@ -116,7 +116,7 @@ function rentfetch_settings_properties() {
 		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab %s">Property Archives</a></li>', esc_html( $active ) );
 
 		$active = ( 'property-single' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property Single Template</a></li>', esc_html( $active ) );
+		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property Single</a></li>', esc_html( $active ) );
 
 		$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
 		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
