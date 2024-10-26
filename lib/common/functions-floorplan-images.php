@@ -24,12 +24,15 @@ function rentfetch_get_floorplan_images() {
 
 	$manual_images   = rentfetch_get_floorplan_images_manual();
 	$yardi_images    = rentfetch_get_floorplan_images_yardi();
+	$rentmanager_images    = rentfetch_get_floorplan_images_rentmanager();
 	$fallback_images = rentfetch_get_floorplan_images_fallback();
 
 	if ( $manual_images ) {
 		return $manual_images;
 	} elseif ( $yardi_images ) {
 		return $yardi_images;
+	} elseif( $rentmanager_images) {
+		return $rentmanager_images;
 	} elseif ( $fallback_images ) {
 		return $fallback_images;
 	} else {
@@ -78,23 +81,64 @@ function rentfetch_get_floorplan_images_manual() {
  * @return array an array of images.
  */
 function rentfetch_get_floorplan_images_yardi() {
-
-	$yardi_images_string = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
+	global $post;
+	
+	$images_string = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
+	$floorplan_source = get_post_meta( get_the_ID(), 'floorplan_source', true );
+	
 
 	// bail if there's no yardi images.
-	if ( ! $yardi_images_string ) {
+	if ( ! $images_string ) {
+		return;
+	}
+	
+	// bail if this isn't a yardi floorplan.
+	if ( 'yardi' !== $floorplan_source ) {
 		return;
 	}
 
-	$yardi_images_array = explode( ',', $yardi_images_string );
+	$images_array_source = explode( ',', $images_string );
+	$images_array_return = array();
 
-	foreach ( $yardi_images_array as $yardi_image ) {
-		$yardi_images[] = array(
-			'url' => esc_url( $yardi_image ),
+	foreach ( $images_array_source as $image ) {
+		$images_array_return[] = array(
+			'url' => esc_url( $image ),
 		);
 	}
 
-	return $yardi_images;
+	return $images_array_return;
+}
+
+/**
+ * Get images that came from RentManager.
+ *
+ * @return  array an array of images.
+ */
+function rentfetch_get_floorplan_images_rentmanager() {
+	global $post;
+		
+	$images_source = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
+	$floorplan_source = get_post_meta( get_the_ID(), 'floorplan_source', true );
+	
+	// bail if there's no images.
+	if ( ! $images_source || ! is_array( $images_source ) ) {
+		return;
+	}
+
+	// bail if this isn't a rentmanager floorplan.
+	if ( 'rentmanager' !== $floorplan_source ) {
+		return;
+	}
+
+	$images_return = array();
+		
+	foreach ( $images_source as $image ) {
+		$images_return[] = array(
+			'url' => esc_url( $image['File']['DownloadURL'] ),
+		);
+	}
+
+	return $images_return;
 }
 
 /**

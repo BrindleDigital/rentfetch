@@ -24,16 +24,16 @@ function rentfetch_get_property_images( $args = null ) {
 		return;
 	}
 
-	$manual_images   		= rentfetch_get_property_images_manual( $args );
-	$yardi_images    		= rentfetch_get_property_images_yardi( $args );
-	$rentmanager_images		= rentfetch_get_property_images_rentmanager( $args );
-	$fallback_images		= rentfetch_get_property_images_fallback( $args );
+	$manual_images      = rentfetch_get_property_images_manual( $args );
+	$yardi_images       = rentfetch_get_property_images_yardi( $args );
+	$rentmanager_images = rentfetch_get_property_images_rentmanager( $args );
+	$fallback_images    = rentfetch_get_property_images_fallback( $args );
 
 	if ( $manual_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $manual_images );
 	} elseif ( $yardi_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $yardi_images );
-	} elseif( $rentmanager_images) {
+	} elseif ( $rentmanager_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $rentmanager_images );
 	} elseif ( $fallback_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $fallback_images );
@@ -98,12 +98,12 @@ function rentfetch_get_property_images_yardi( $args ) {
 	$args; // phpcs:ignore
 
 	$property_source = get_post_meta( get_the_ID(), 'property_source', true );
-	
+
 	// bail if this isn't a yardi property. (their images are stored in a different format than other APIs).
-	if ( $property_source !== 'yardi' ) {
+	if ( 'yardi' !== $property_source ) {
 		return;
 	}
-	 
+
 	$yardi_images_string = get_post_meta( get_the_ID(), 'synced_property_images', true );
 
 	// bail if there's no yardi images.
@@ -122,10 +122,10 @@ function rentfetch_get_property_images_yardi( $args ) {
 	foreach ( $yardi_images_json as $yardi_image_json ) {
 
 		$yardi_images[] = array(
-			'url'     => esc_url( $yardi_image_json->ImageURL ),
-			'title'   => $yardi_image_json->Title,
-			'alt'     => $yardi_image_json->AltText,
-			'caption' => $yardi_image_json->Caption,
+			'url'     => esc_url( $yardi_image_json->ImageURL ), // phpcs:ignore
+			'title'   => $yardi_image_json->Title, // phpcs:ignore
+			'alt'     => $yardi_image_json->AltText, // phpcs:ignore
+			'caption' => $yardi_image_json->Caption, // phpcs:ignore
 		);
 	}
 
@@ -144,37 +144,35 @@ function rentfetch_get_property_images_rentmanager( $args ) {
 
 	$args; // phpcs:ignore
 
-	$property_source = get_post_meta( get_the_ID(), 'property_source', true );
+	$property_source     = get_post_meta( get_the_ID(), 'property_source', true );
 	$source_images_array = get_post_meta( get_the_ID(), 'synced_property_images', true );
-	
+
 	// bail if this isn't a rentmanager property. (their images are stored in a different format than other APIs).
-	if ( $property_source !== 'rentmanager' ) {
+	if ( 'rentmanager' !== $property_source ) {
 		return;
 	}
 
-	// bail if there's no yardi images.
-	if ( ! $source_images_array ) {
+	// bail if there's no images.
+	if ( ! $source_images_array || !is_array( $source_images_array ) ) {
 		return;
 	}
 
 	$return_images = array();
-	
+
 	foreach ( $source_images_array as $source_image ) {
-		
+
 		$url = $source_image['File']['DownloadURL'];
-		$url = str_replace('&#038;', '&', $url);
+		$url = str_replace( '&#038;', '&', $url );
 
 		$return_images[] = array(
-			'url'     => esc_url($url ),
+			'url'     => esc_url( $url ),
 			'title'   => esc_html( $source_image['ImageType']['Name'] ),
 			'alt'     => esc_html( $source_image['ImageType']['Description'] ),
 			'caption' => esc_html( $source_image['ImageType']['Description'] ),
 		);
 	}
-	
+
 	return $return_images;
-	
-	
 }
 
 /**
@@ -214,7 +212,7 @@ function rentfetch_property_images_grid( $args = null ) {
 	if ( ! $images ) {
 		return;
 	}
-	
+
 	wp_enqueue_style( 'rentfetch-glightbox-style' );
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
 	wp_enqueue_script( 'rentfetch-glightbox-init' );

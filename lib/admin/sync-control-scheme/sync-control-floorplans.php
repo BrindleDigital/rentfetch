@@ -19,6 +19,8 @@ function rentfetch_floorplan_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_yardi', $array_fields, $post_id );
 	} elseif ( 'realpage' === $floorplan_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_realpage', $array_fields, $post_id );
+	} elseif ( 'rentmanager' === $floorplan_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_rentmanager', $array_fields, $post_id );
 	}
 
 	if ( !empty( $floorplan_source ) ) {
@@ -67,6 +69,24 @@ function rentfetch_floorplan_syncing_fields_yardi( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_floorplan_syncing_fields_yardi', 'rentfetch_floorplan_syncing_fields_yardi', 10, 2 );
+
+/**
+ * Filter the syncing fields for the floorplans for the Yardi API
+ *
+ * @return  array  an array of the fields that sync with the API
+ */
+function rentfetch_floorplan_syncing_fields_rentmanager( $array_fields, $post_id ) {
+	return array(
+		'title',
+		'property_id',
+		'floorplan_id',
+		'baths',
+		'beds',
+		'floorplan_image_url',
+		'floorplan_images',
+	);
+}
+add_filter( 'rentfetch_filter_floorplan_syncing_fields_rentmanager', 'rentfetch_floorplan_syncing_fields_rentmanager', 10, 2 );
 
 /**
  * Filter the syncing fields for the floorplans for the RealPage API

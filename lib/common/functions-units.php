@@ -119,7 +119,9 @@ function rentfetch_get_unit_availability_date() {
 
 	$availability_date = sanitize_text_field( get_post_meta( get_the_ID(), 'availability_date', true ) );
 
-	if ( strtotime( $availability_date ) <= strtotime( 'today' ) ) {
+	if ( empty( $availability_date ) ) {
+		return 'Please inquire';
+	} elseif ( strtotime( $availability_date ) <= strtotime( 'today' ) ) {
 		return 'Available now';
 	} else {
 		return gmdate( 'F j, Y', strtotime( $availability_date ) );

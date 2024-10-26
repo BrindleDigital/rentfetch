@@ -19,6 +19,8 @@ function rentfetch_property_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_yardi', $array_fields, $post_id );
 	} elseif ( 'realpage' === $property_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_realpage', $array_fields, $post_id );
+	} elseif ( 'rentmanager' === $property_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_rentmanager', $array_fields, $post_id );
 	}
 
 	if ( !empty( $property_source ) ) {
@@ -60,6 +62,26 @@ function rentfetch_property_syncing_fields_yardi( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_property_syncing_fields_yardi', 'rentfetch_property_syncing_fields_yardi', 10, 2 );
+
+/**
+ * Filter the syncing fields for the propertys for the RentManager API
+ *
+ * @return  array  an array of the fields that sync with the API
+ */
+function rentfetch_property_syncing_fields_rentmanager( $array_fields, $post_id ) {
+	return array(
+		'title',
+		'property_id',
+		'address',
+		'city',
+		'state',
+		'zipcode',
+		'email',
+		'phone',
+		'synced_property_images',
+	);
+}
+add_filter( 'rentfetch_filter_property_syncing_fields_rentmanager', 'rentfetch_property_syncing_fields_rentmanager', 10, 2 );
 
 function rentfetch_property_syncing_fields_realpage( $array_fields, $post_id ) {
 	return array(

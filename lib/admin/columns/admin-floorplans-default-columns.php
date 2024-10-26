@@ -117,13 +117,13 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 
 		$property_id = get_post_meta( $post_id, 'property_id', true );
 
-		// do a query for properties with this property_id.
+		// Do a query for properties with this property_id.
 		$args = array(
 			'post_type'      => 'properties',
 			'posts_per_page' => 1,
 			'orderby'        => 'title',
 			'order'          => 'ASC',
-			'meta_query'     => array( // phpcs:ignore
+			'meta_query'     => array(
 				array(
 					'key'   => 'property_id',
 					'value' => $property_id,
@@ -131,14 +131,18 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 			),
 		);
 
-		$property_name_query = new WP_Query( $args );
+		$properties = get_posts( $args );
 
-		if ( $property_name_query->have_posts() ) {
-			while ( $property_name_query->have_posts() ) {
-				$property_name_query->the_post();
-				$property_title = get_the_title( get_the_ID() );
-				$property_link  = get_the_permalink( get_the_ID() );
-				printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', esc_url( $property_link ), esc_attr( $property_title ), (int) get_the_ID() );
+		if ( ! empty( $properties ) ) {
+			foreach ( $properties as $property ) {
+				$property_title = get_the_title( $property->ID );
+				$property_link  = get_the_permalink( $property->ID );
+				printf(
+					'<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>',
+					esc_url( $property_link ),
+					esc_attr( $property_title ),
+					(int) $property->ID
+				);
 			}
 		}
 	}
@@ -178,12 +182,16 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'floorplan_images' === $column ) {
-
-		// * Floorplan Images from Yardi
-		$floorplan_images = get_post_meta( $post_id, 'floorplan_image_url', true );
-
-		// convert to array.
-		$floorplan_images = explode( ',', $floorplan_images );
+		
+		$floorplan_source = get_post_meta( $post_id, 'floorplan_source', true );
+		$floorplan_images = null;
+		
+				
+		if ( 'yardi' === $floorplan_source ) {
+			$floorplan_images = rentfetch_get_floorplan_images_yardi();	
+		} elseif ( 'rentmanager' === $floorplan_source ) {
+			$floorplan_images = rentfetch_get_floorplan_images_rentmanager();
+		}
 
 		if ( is_array( $floorplan_images ) && array( '' ) !== $floorplan_images ) {
 			$count = count( $floorplan_images );
@@ -194,9 +202,12 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 				$remaining_images = $count - 3;
 			}
 
-			foreach ( $floorplan_images as $image ) {
-				// var_dump( $image['url'] );
-				echo '<img src="' . esc_url( $image ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
+			foreach ( $floorplan_images as $image ) {				
+				if ( isset( $image['url'] ) ) {
+					$url = esc_url( $image['url'] );
+					echo '<img src="' . esc_url( $url ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
+				}
+				
 
 			}
 
