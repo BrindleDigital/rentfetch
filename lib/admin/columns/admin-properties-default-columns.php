@@ -56,7 +56,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 		'phone'                 => __( 'Phone', 'rentfetch' ),
 		'url'                   => __( 'URL', 'rentfetch' ),
 		'images'                => __( 'Manual Images', 'rentfetch' ),
-		'yardi_property_images' => __( 'Synced Images', 'rentfetch' ),
+		'synced_property_images' => __( 'Synced Images', 'rentfetch' ),
 		'description'           => __( 'Description', 'rentfetch' ),
 		'tour'                  => __( 'Tour', 'rentfetch' ),
 		// 'pets'                  => __( 'Pets', 'rentfetch' ),
@@ -190,20 +190,27 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 		echo esc_attr( get_post_meta( $post_id, 'content_area', true ) );
 	}
 
-	if ( 'yardi_property_images' === $column ) {
+	if ( 'synced_property_images' === $column ) {
+		
+		$property_source = get_post_meta( $post_id, 'property_source', true );
+		$synced_images = null;
+		
+		if ( $property_source === 'yardi' ) {
+			$synced_images = rentfetch_get_property_images_yardi( null );
+		} elseif ( $property_source === 'rentmanager' ) {
+			$synced_images = rentfetch_get_property_images_rentmanager( null );
+		}
 
-		$yardi_images = rentfetch_get_property_images_yardi( null );
-
-		if ( is_array( $yardi_images ) ) {
-			$count = count( $yardi_images );
+		if ( is_array( $synced_images ) ) {
+			$count = count( $synced_images );
 
 			// limit the array to 3 images
 			if ( $count > 3 ) {
-				$yardi_images     = array_slice( $yardi_images, 0, 3 );
+				$synced_images     = array_slice( $synced_images, 0, 3 );
 				$remaining_images = $count - 3;
 			}
 
-			foreach ( $yardi_images as $image ) {
+			foreach ( $synced_images as $image ) {
 				// var_dump( $image['url'] );
 				echo '<img src="' . esc_url( $image['url'] ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
 

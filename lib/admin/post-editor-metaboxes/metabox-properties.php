@@ -368,7 +368,7 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		if ( 'yardi' === $property_source ) {
 
 			// * Property Images from Yardi
-			$property_images_json = get_post_meta( $post->ID, 'yardi_property_images', true );
+			$property_images_json = get_post_meta( $post->ID, 'synced_property_images', true );
 			$property_images      = json_decode( $property_images_json );
 			?>
 			 

@@ -24,14 +24,17 @@ function rentfetch_get_property_images( $args = null ) {
 		return;
 	}
 
-	$manual_images   = rentfetch_get_property_images_manual( $args );
-	$yardi_images    = rentfetch_get_property_images_yardi( $args );
-	$fallback_images = rentfetch_get_property_images_fallback( $args );
+	$manual_images   		= rentfetch_get_property_images_manual( $args );
+	$yardi_images    		= rentfetch_get_property_images_yardi( $args );
+	$rentmanager_images		= rentfetch_get_property_images_rentmanager( $args );
+	$fallback_images		= rentfetch_get_property_images_fallback( $args );
 
 	if ( $manual_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $manual_images );
 	} elseif ( $yardi_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $yardi_images );
+	} elseif( $rentmanager_images) {
+		return apply_filters( 'rentfetch_filter_property_images', $rentmanager_images );
 	} elseif ( $fallback_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $fallback_images );
 	} else {
@@ -94,7 +97,14 @@ function rentfetch_get_property_images_yardi( $args ) {
 
 	$args; // phpcs:ignore
 
-	$yardi_images_string = get_post_meta( get_the_ID(), 'yardi_property_images', true );
+	$property_source = get_post_meta( get_the_ID(), 'property_source', true );
+	
+	// bail if this isn't a yardi property. (their images are stored in a different format than other APIs).
+	if ( $property_source !== 'yardi' ) {
+		return;
+	}
+	 
+	$yardi_images_string = get_post_meta( get_the_ID(), 'synced_property_images', true );
 
 	// bail if there's no yardi images.
 	if ( ! $yardi_images_string ) {
@@ -120,6 +130,51 @@ function rentfetch_get_property_images_yardi( $args ) {
 	}
 
 	return $yardi_images;
+}
+
+/**
+ * Get the rentmanager property images
+ *
+ * @param   array $args  the image size (optional).
+ *
+ * @return  array the property images.
+ */
+function rentfetch_get_property_images_rentmanager( $args ) {
+	global $post;
+
+	$args; // phpcs:ignore
+
+	$property_source = get_post_meta( get_the_ID(), 'property_source', true );
+	$source_images_array = get_post_meta( get_the_ID(), 'synced_property_images', true );
+	
+	// bail if this isn't a rentmanager property. (their images are stored in a different format than other APIs).
+	if ( $property_source !== 'rentmanager' ) {
+		return;
+	}
+
+	// bail if there's no yardi images.
+	if ( ! $source_images_array ) {
+		return;
+	}
+
+	$return_images = array();
+	
+	foreach ( $source_images_array as $source_image ) {
+		
+		$url = $source_image['File']['DownloadURL'];
+		$url = str_replace('&#038;', '&', $url);
+
+		$return_images[] = array(
+			'url'     => esc_url($url ),
+			'title'   => esc_html( $source_image['ImageType']['Name'] ),
+			'alt'     => esc_html( $source_image['ImageType']['Description'] ),
+			'caption' => esc_html( $source_image['ImageType']['Description'] ),
+		);
+	}
+	
+	return $return_images;
+	
+	
 }
 
 /**

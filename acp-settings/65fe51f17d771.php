@@ -168,14 +168,14 @@ return array (
         'export' => 'on',
         'name' => 'images',
       ),
-      'yardi_property_images' => 
+      'synced_property_images' => 
       array (
-        'type' => 'yardi_property_images',
+        'type' => 'synced_property_images',
         'label' => 'Synced Images',
         'width' => '',
         'width_unit' => '%',
         'export' => 'on',
-        'name' => 'yardi_property_images',
+        'name' => 'synced_property_images',
       ),
       'description' => 
       array (
