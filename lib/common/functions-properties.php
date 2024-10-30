@@ -649,7 +649,7 @@ function rentfetch_get_property_pricing() {
 
 	if ( isset( $floorplan_data['minimum_rent'] ) ) {
 		if ( is_array( $floorplan_data['minimum_rent'] ) ) {
-			$rent_min = 'From $' . number_format( min( $floorplan_data['minimum_rent'] ) );
+			$rent_min = 'From $' . number_format( (int) min( $floorplan_data['minimum_rent'] ) );
 		} else {
 			$rent_min = 'Call for Pricing';
 		}
