@@ -15,14 +15,10 @@ function rentfetch_settings_floorplans_floorplan_embed()
   <div class="header">
     <h2 class="title">Floor Plan Shortcodes</h2>
     <p class="description" style="margin-bottom: 24px;">
-      WordPress shortcodes allow users to perform certain actions as well as display predefined items within WordPress
-      pages and posts. The Rent Fetch form shortcode is the method used to display properties and floor plans on your
-      site.
+      WordPress shortcodes allow users to perform certain actions as well as display predefined items on a site. The Rent Fetch shortcode is the method used to display properties and floor plans on your website.
     </p>
     <p class="description">
-      The form shortcode can be used anywhere within WordPress where shortcodes are supported. For most users, this will
-      primarily be within the content of a WordPress post or page. Shortcodes are added when you use a standard WordPress
-      editor to add the form to the page
+      The shortcode can be used anywhere within WordPress where shortcodes are supported. For most users, this will primarily be within the content of a WordPress post or page. Shortcodes are added when you use a standard WordPress editor to add the form to the page.
     </p>
   </div>
 

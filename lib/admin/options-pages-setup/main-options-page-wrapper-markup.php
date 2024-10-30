@@ -30,27 +30,27 @@ function rentfetch_options_page_html() {
 		printf( '<form method="post" class="rent-fetch-options" action="%s">', esc_url( $action ) );
 			
 			echo '<section class="nav-container">';
-			echo '<img src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" />';
-			echo '<h1 style="display: none;">RentFetch</h1>';
-			echo '<nav class="nav-tab-wrapper">';
+				echo '<img src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" />';
+				echo '<h1 style="display: none;">RentFetch</h1>';
+				echo '<nav class="nav-tab-wrapper">';
 
-				$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
+					$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
 
-				$active = ( 'maps' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=maps' ) ), esc_html( $active ), esc_html( 'Maps' ) );
+					$active = ( 'maps' === $tab ) ? 'nav-tab-active' : '';
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=maps' ) ), esc_html( $active ), esc_html( 'Maps' ) );
 
-				$active = ( 'properties' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Property Settings' ) );
+					$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
+					
+					$active = ( 'properties' === $tab ) ? 'nav-tab-active' : '';
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Property Settings' ) );
 
-				$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
-				printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
+					// TODO Removing this settings tab temporarily; we need to implement in a more flexible way.
+					// $active = ( 'labels' === $tab ) ? 'nav-tab-active' : '';
+					// printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=labels' ) ), esc_html( $active ), esc_html( 'Labels' ) );
 
-				// TODO Removing this settings tab temporarily; we need to implement in a more flexible way.
-				// $active = ( 'labels' === $tab ) ? 'nav-tab-active' : '';
-				// printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=labels' ) ), esc_html( $active ), esc_html( 'Labels' ) );
-
-			echo '</nav>';
+				echo '</nav>';
 			echo '</section>';
 
 			echo '<input type="hidden" name="action" value="rentfetch_process_form">';
