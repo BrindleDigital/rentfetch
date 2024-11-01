@@ -38,7 +38,7 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_availability_button_enabled" class="checkbox-right" style="width: 140px">
+						<label for="rentfetch_options_availability_button_enabled" class="checkbox-right" style="width: 150px">
 							<b>Availability Button</b>
 							<input type="checkbox" name="rentfetch_options_availability_button_enabled"
 								id="rentfetch_options_availability_button_enabled" <?php checked(get_option('rentfetch_options_availability_button_enabled'), '1'); ?>>
@@ -64,7 +64,7 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_unavailability_button_enabled" class="checkbox-right" style="width: 150px">
+						<label for="rentfetch_options_unavailability_button_enabled" class="checkbox-right" style="width: 170px">
 							<b>Unavailability Button</b>
 							<input type="checkbox" name="rentfetch_options_unavailability_button_enabled"
 								id="rentfetch_options_unavailability_button_enabled" <?php checked(get_option('rentfetch_options_unavailability_button_enabled'), '1'); ?>>
@@ -96,7 +96,7 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_contact_button_enabled" class="checkbox-right" style="width: 120px">
+						<label for="rentfetch_options_contact_button_enabled" class="checkbox-right" style="width: 125px">
 							<b>Contact Button</b>
 							<input type="checkbox" name="rentfetch_options_contact_button_enabled"
 								id="rentfetch_options_contact_button_enabled" <?php checked(get_option('rentfetch_options_contact_button_enabled', 'Contact'), true); ?>>
@@ -128,7 +128,7 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_tour_button_enabled" class="checkbox-right" style="width: 100px">
+						<label for="rentfetch_options_tour_button_enabled" class="checkbox-right" style="width: 105px">
 							<b>Tour Button</b>
 							<input type="checkbox" name="rentfetch_options_tour_button_enabled" id="rentfetch_options_tour_button_enabled"
 								<?php checked(get_option('rentfetch_options_tour_button_enabled'), true); ?>

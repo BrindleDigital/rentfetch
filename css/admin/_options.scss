@@ -20,7 +20,7 @@ ul.rent-fetch-options-submenu {
       text-decoration: none;
       text-align: left;
       padding: 12px;
-      line-height: 110%;
+      line-height: 22px;
       border-radius: 10px;
 
       &:focus {
@@ -50,7 +50,9 @@ ul.rent-fetch-options-submenu {
       font-size: 18px;
     }
     .description {
-      line-height: 110%;
+      font-size: 13px;
+      line-height: 20px;
+      color: black;
     }
   }
 
@@ -118,6 +120,13 @@ form.rent-fetch-options,
       width: 100%;
     }
 
+    .section {
+      p.description {
+        line-height: 20px;
+        color: black;
+      }
+    }
+
     .header {
       border-bottom: 1px solid #e6e6e6;
       font-weight: 700;
@@ -143,6 +152,25 @@ form.rent-fetch-options,
     }
   }
 
+  .rows {
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+
+    .row {
+      margin-bottom: 0;
+
+      .section {
+        padding: 0 24px;
+
+        &:first-child {
+          padding-top: 24px;
+        }
+      }
+    }
+  }
+
   label {
     font-size: 14px;
   }
@@ -165,7 +193,7 @@ form.rent-fetch-options,
       display: flex;
       font-size: 13px;
       font-weight: normal;
-      line-height: 130%;
+      line-height: 20px;
       padding-left: 14px;
       position: relative;
 
@@ -176,7 +204,7 @@ form.rent-fetch-options,
 
         &:has(input:checked) {
           &::before {
-            background: #3284ff;
+            background: #369AF6;
           }
 
           &::after {
@@ -240,6 +268,21 @@ form.rent-fetch-options,
       align-items: flex-start;
       padding-left: 0;
       gap: 8px;
+      font-size: 13px;
+      color: black;
+      font-weight: 400;
+    }
+  }
+
+  ul.radios {
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      input {
+        top: 0 !important;
+      }
     }
   }
 

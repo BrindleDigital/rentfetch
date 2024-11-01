@@ -37,9 +37,6 @@ function rentfetch_options_page_html() {
 					$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
 
-					$active = ( 'maps' === $tab ) ? 'nav-tab-active' : '';
-					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=maps' ) ), esc_html( $active ), esc_html( 'Maps' ) );
-
 					$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
 					
@@ -75,8 +72,6 @@ function rentfetch_settings_output_each_page_fields() {
 
 	if ( 'general' === $tab ) {
 		do_action( 'rentfetch_do_settings_general' );
-	} elseif ( 'maps' === $tab ) {
-		do_action( 'rentfetch_do_settings_maps' );
 	} elseif ( 'properties' === $tab ) {
 		do_action( 'rentfetch_do_settings_properties' );
 	} elseif ( 'property-search' === $tab ) {

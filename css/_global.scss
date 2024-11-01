@@ -95,6 +95,11 @@ pre {
 	margin: 0;
 	position: relative;
 
+	* {
+		font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		letter-spacing: 0.3px;
+	}
+
 	.notice {
 		margin: 20px 10px;
 	}
@@ -185,7 +190,7 @@ pre {
 		position: relative;
 		width: 11px;
 		margin: 0;
-		top: 2px;
+		top: 4px;
 
 		&::before {
 			position: absolute;
@@ -196,6 +201,7 @@ pre {
 			margin: 0;
 			border: 1px solid white;
 			box-sizing: border-box;
+			background-color: #369AF6;
 		}
 	}
 }

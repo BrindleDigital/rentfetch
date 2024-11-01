@@ -13,7 +13,6 @@ if (!defined('ABSPATH')) {
  */
 function rentfetch_settings_set_defaults_properties()
 {
-
 	// Add option if it doesn't exist.
 	add_option('rentfetch_options_maximum_number_of_properties_to_show', -1);
 	add_option('rentfetch_options_property_availability_display', 'all');
@@ -43,9 +42,12 @@ function rentfetch_settings_set_defaults_properties()
 
 	add_option('rentfetch_options_number_of_amenities_to_show', 20);
 	add_option('rentfetch_options_maximum_bedrooms_to_search', 99);
+	
+	// Maps API default options
+	add_option('rentfetch_options_google_maps_default_latitude', 39.7392);
+	add_option('rentfetch_options_google_maps_default_longitude', 104.9903);
 }
 register_activation_hook(RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties');
-
 
 /**
  * Adds the property search settings subsection to the Rent Fetch settings page
@@ -53,6 +55,75 @@ register_activation_hook(RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_pr
 function rentfetch_settings_properties_property_search()
 {
 	?>
+	<div class="header">
+		<h2 class="title">Maps API</h2>
+		<p class="description">The settings configured for a multi-property website showcasing properties alongside Google
+			Maps.</p>
+	</div>
+	<div class="rows">
+		<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_google_maps_api_key">Google Maps API Key</label>
+		</div>
+		<div class="section">
+			<input type="text" name="rentfetch_options_google_maps_api_key" id="rentfetch_options_google_maps_api_key"
+				value="<?php echo esc_attr(get_option('rentfetch_options_google_maps_api_key')); ?>">
+				<p class="description">Required for Google Maps.</p>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="section">
+				<label for="rentfetch_options_google_map_marker">Google Maps Marker</label>
+			</div>
+			<div class="section">
+				<input type="url" name="rentfetch_options_google_map_marker" id="rentfetch_options_google_map_marker"
+					value="<?php echo esc_attr(get_option('rentfetch_options_google_map_marker')); ?>">
+				<p class="description">URL to a custom marker image. Leave blank to use the default marker.</p>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="section">
+				<label for="rentfetch_options_google_maps_styles">Google Maps Styles</label>
+			</div>
+			<div class="section">
+				<textarea name="rentfetch_options_google_maps_styles" id="rentfetch_options_google_maps_styles" rows="10"
+					style="width: 100%;"><?php echo esc_attr(get_option('rentfetch_options_google_maps_styles')); ?></textarea>
+				<p class="description">JSON array of Google Maps styles. See <a href="https://snazzymaps.com/"
+						target="_blank">Snazzy Maps</a> for examples.</p>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="section">
+				<label>Google Maps default location</label>
+				<p class="description">This serves as the map center in the event of a search with no results.</p>
+			</div>
+			
+			<br />
+
+			<div class="section">
+				<label for="rentfetch_options_google_maps_default_latitude">Latitude</label>
+				<input type="text" name="rentfetch_options_google_maps_default_latitude"
+					id="rentfetch_options_google_maps_default_latitude"
+					value="<?php echo esc_attr(get_option('rentfetch_options_google_maps_default_latitude')); ?>"
+				/>
+
+				<br />
+				<br />
+
+				<label for="rentfetch_options_google_maps_default_longitude">Longitude</label>
+				<input type="text" name="rentfetch_options_google_maps_default_longitude"
+					id="rentfetch_options_google_maps_default_longitude"
+					value="<?php echo esc_attr(get_option('rentfetch_options_google_maps_default_longitude')); ?>"
+				/>
+			</div>
+		</div>
+	</div>
+
+	<?php submit_button(); ?>
+
 	<div class="header">
 		<h2 class="title">Property Search</h2>
 		<p class="description">The settings configured for the property search capabilities on a multi-property website.</p>
@@ -256,16 +327,10 @@ function rentfetch_settings_properties_property_search()
 					</label>
 				</li>
 			</ul>
-			<!-- <select name="rentfetch_options_property_availability_display" id="rentfetch_options_property_availability_display"
-				value="<?php echo esc_attr(get_option('rentfetch_options_property_availability_display')); ?>">
-				<option value="available" <?php selected(get_option('rentfetch_options_property_availability_display'), 'available'); ?>>Availability</option>
-				<option value="all" <?php selected(get_option('rentfetch_options_property_availability_display'), 'all'); ?>>
-					All properties ignoring availability</option>
-			</select> -->
 		</div>
 		<div class="column">
 			<ul class="checkboxes">
-				<label for="rentfetch_options_properties_hide_number_of_units" class="checkbox-right" style="width: 180px">
+				<label for="rentfetch_options_properties_hide_number_of_units" class="checkbox-right" style="width: 190px">
 					<input type="checkbox" name="rentfetch_options_properties_hide_number_of_units"
 						id="rentfetch_options_properties_hide_number_of_units" <?php checked(get_option('rentfetch_options_properties_hide_number_of_units'), '1'); ?>>
 					<b>Hide the number of units</b>
@@ -299,9 +364,9 @@ function rentfetch_settings_properties_property_search()
 				value="<?php echo esc_attr(get_option('rentfetch_options_maximum_number_of_properties_to_show')); ?>">
 		</div>
 	</div>
-	
+
 	<?php submit_button(); ?>
-	
+
 	<div class="row">
 		<div class="header">
 			<label for="rentfetch_options_price_filter_minimum">Price filter</label>
@@ -345,7 +410,6 @@ add_action('rentfetch_do_settings_properties_property_search', 'rentfetch_settin
  */
 function rentfetch_save_settings_property_search()
 {
-
 	// Get the tab and section.
 	$tab = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
@@ -427,3 +491,73 @@ function rentfetch_save_settings_property_search()
 	update_option('rentfetch_options_properties_hide_number_of_units', $hide_number_of_units);
 }
 add_action('rentfetch_save_settings', 'rentfetch_save_settings_property_search');
+
+/**
+ * Save the Google settings
+ */
+function rentfetch_save_settings_maps()
+{
+	// Get the tab and section.
+	$tab = rentfetch_settings_get_tab();
+	$section = rentfetch_settings_get_section();
+
+	if ('properties' !== $tab || !empty($section)) {
+		return;
+	}
+
+	$nonce = isset($_POST['rentfetch_main_options_nonce_field']) ? sanitize_text_field(wp_unslash($_POST['rentfetch_main_options_nonce_field'])) : '';
+
+	// * Verify the nonce
+	if (!wp_verify_nonce(wp_unslash($nonce), 'rentfetch_main_options_nonce_action')) {
+		die('Security check failed');
+	}
+
+	// Text field.
+	if (isset($_POST['rentfetch_options_google_maps_api_key'])) {
+		$options_google_maps_api_key = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_maps_api_key']));
+		update_option('rentfetch_options_google_maps_api_key', $options_google_maps_api_key);
+	}
+
+	// Text field.
+	if (isset($_POST['rentfetch_options_google_geocoding_api_key'])) {
+		$options_google_geocoding_api_key = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_geocoding_api_key']));
+		update_option('rentfetch_options_google_geocoding_api_key', $options_google_geocoding_api_key);
+	}
+
+	// Text field.
+	if (isset($_POST['rentfetch_options_google_map_marker'])) {
+		$options_google_map_marker = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_map_marker']));
+		update_option('rentfetch_options_google_map_marker', $options_google_map_marker);
+	}
+
+	// Textarea field.
+	if (isset($_POST['rentfetch_options_google_maps_styles'])) {
+		$options_google_maps_styles = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_maps_styles']));
+		update_option('rentfetch_options_google_maps_styles', $options_google_maps_styles);
+	}
+
+	// Text field.
+	if (isset($_POST['rentfetch_options_google_maps_default_latitude'])) {
+		$options_google_maps_default_latitude = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_maps_default_latitude']));
+		update_option('rentfetch_options_google_maps_default_latitude', $options_google_maps_default_latitude);
+	}
+
+	// Text field.
+	if (isset($_POST['rentfetch_options_google_maps_default_longitude'])) {
+		$options_google_maps_default_longitude = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_maps_default_longitude']));
+		update_option('rentfetch_options_google_maps_default_longitude', $options_google_maps_default_longitude);
+	}
+
+	// Text field.
+	if (isset($_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key'])) {
+		$options_google_recaptcha_google_recaptcha_v2_site_key = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key']));
+		update_option('rentfetch_options_google_recaptcha_google_recaptcha_v2_site_key', $options_google_recaptcha_google_recaptcha_v2_site_key);
+	}
+
+	// Text field.
+	if (isset($_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_secret'])) {
+		$options_google_recaptcha_google_recaptcha_v2_secret = sanitize_text_field(wp_unslash($_POST['rentfetch_options_google_recaptcha_google_recaptcha_v2_secret']));
+		update_option('rentfetch_options_google_recaptcha_google_recaptcha_v2_secret', $options_google_recaptcha_google_recaptcha_v2_secret);
+	}
+}
+add_action('rentfetch_save_settings', 'rentfetch_save_settings_maps');
