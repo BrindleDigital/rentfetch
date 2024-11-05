@@ -58,6 +58,26 @@ function rentfetch_search_floorplans_args_shortcode( $floorplans_args ) {
 
 	}
 
+	// ! Categories
+	
+	if ( isset( $_POST['taxonomy'] ) && isset( $_POST['terms']) ) {
+		
+		$tax = sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) );
+		$terms = sanitize_text_field( wp_unslash( $_POST['terms'] ) );
+		
+		$terms_array = explode( ',', $terms );
+		
+		$tax_query = array(
+			'taxonomy' => $tax,
+			'field'    => 'slug',
+			'terms'    => $terms_array,
+		);
+		
+		$floorplans_args['tax_query'][] = $tax_query;
+
+	}
+	
 	return $floorplans_args;
+	
 }
 add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_shortcode', 10, 1 );
