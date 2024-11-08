@@ -2,9 +2,9 @@
 Contributors: jonschr
 Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
-Tested up to: 6.6
+Tested up to: 6.6.2
 Requires PHP: 7.3
-Stable tag: 0.17.4
+Stable tag: 0.17.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,7 +91,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.17.4 = 
+= 0.17.5 = 
 
 * Updating the php version requirement (down to 7.1; we really don't want people updating RFS without RF at the same time)
 
