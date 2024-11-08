@@ -23,6 +23,8 @@ function rentfetch_floorplans( $atts ) {
 			'sort'           => null,
 			'posts_per_page' => '-1',
 			'post_type'      => 'floorplans',
+			'taxonomy'       => null,
+			'terms'          => null,
 		),
 		$atts
 	);
@@ -45,7 +47,7 @@ function rentfetch_floorplans( $atts ) {
 
 			$classes_array = get_post_class();
 			$classes_array = apply_filters( 'rentfetch_filter_floorplans_post_classes', $classes_array );
-			$classes = implode( ' ', $classes_array );
+			$classes       = implode( ' ', $classes_array );
 
 			printf( '<div class="%s">', esc_attr( $classes ) );
 
@@ -93,6 +95,36 @@ function rentfetch_floorplans_simple_grid_query_args_property_id( $args ) {
 add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_property_id', 10, 2 );
 
 /**
+ * Apply the $atts for taxonoy to the query args
+ *
+ * @param   array $args the query args.
+ *
+ * @return  array  the modified query args.
+ */
+function rentfetch_floorplans_simple_grid_query_args_taxonomy( $args ) {
+
+	if ( isset( $args['taxonomy'] ) && isset( $args['terms'] ) ) {
+
+		$tax   = $args['taxonomy'];
+		$terms = $args['terms'];
+
+		$terms_array = explode( ',', $terms );
+
+		$tax_query = array(
+			'taxonomy' => $tax,
+			'field'    => 'slug',
+			'terms'    => $terms_array,
+		);
+
+		$args['tax_query'][] = $tax_query;
+
+	}
+
+	return $args;
+}
+add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_taxonomy', 10, 2 );
+
+/**
  * Apply the $atts for beds to the query args
  *
  * @param   array $args the query args.
@@ -137,21 +169,21 @@ function rentfetch_floorplans_simple_grid_query_args_order( $args ) {
 		// if it's beds.
 		if ( null === $sort || 'beds' === $sort ) {
 			$args['orderby']  = 'meta_value_num';
-			$args['meta_key'] = 'beds';
+			$args['meta_key'] = 'beds'; // phpcs:ignore
 			$args['order']    = 'ASC';
 		}
 
 		// if it's baths.
 		if ( 'baths' === $sort ) {
 			$args['orderby']  = 'meta_value_num';
-			$args['meta_key'] = 'baths';
+			$args['meta_key'] = 'baths'; // phpcs:ignore
 			$args['order']    = 'ASC';
 		}
 
 		// if it's available units.
 		if ( 'availability' === $sort ) {
 			$args['orderby']  = 'meta_value_num';
-			$args['meta_key'] = 'available_units';
+			$args['meta_key'] = 'available_units'; // phpcs:ignore
 			$args['order']    = 'DESC';
 		}
 	}

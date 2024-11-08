@@ -79,6 +79,16 @@ function rentfetch_floorplansearchfilters( $atts ) {
 	if ( $atts ) {
 		wp_localize_script( 'rentfetch-search-floorplans-ajax', 'shortcodeAttributes', $atts );
 	}
+	
+	// remove the taxonomy filter if there's a shortcode attribute for it (which hard-sets it and should disable selection).
+	if ( isset( $atts['taxonomy'] ) ) {
+		if ( 'floorplancategory' === $atts['taxonomy'] ) {
+			remove_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_floorplan_categories' );
+		}
+		if ( 'floorplantype' === $atts['taxonomy'] ) {
+			remove_action( 'rentfetch_do_search_floorplans_filters', 'rentfetch_search_filters_floorplan_types' );
+		}
+	}
 
 	// needed for toggling the featured filters on and off.
 	wp_enqueue_script( 'rentfetch-floorplan-search-featured-filters-toggle' );
