@@ -96,14 +96,14 @@ pre {
 	position: relative;
 
 	* {
-		font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-		letter-spacing: 0.3px;
+		// font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		// letter-spacing: 0.3px;
 	}
 
 	.notice {
 		margin: 20px 10px;
 	}
-	
+
 	.nav-container {
 		padding-top: 20px;
 		background: white;
@@ -125,12 +125,12 @@ pre {
 		display: flex;
 		gap: 16px;
 		padding-top: 16px;
-		
+
 		a {
-			background: #F0F0F0;
+			background: #f0f0f0;
 			border-radius: 4px 4px 0 0;
 			border: none;
-			color: #1F313B;
+			color: #1f313b;
 			font-size: 20px;
 			margin: 0;
 			padding: 14px 18px;
@@ -145,7 +145,7 @@ pre {
 			}
 
 			&:not(.nav-tab-active) {
-				background: #1F313B;
+				background: #1f313b;
 				color: white;
 			}
 		}
@@ -154,7 +154,7 @@ pre {
 	p.submit {
 		padding-top: 0;
 		input {
-			background: #1F313B;
+			background: #1f313b;
 			border-radius: 8px;
 			border: none;
 			color: white;
@@ -175,7 +175,7 @@ pre {
 	}
 
 	input {
-		border: 1px solid #C3C3C3;
+		border: 1px solid #c3c3c3;
 		border-radius: 2px;
 
 		&:focus {
@@ -183,7 +183,7 @@ pre {
 		}
 	}
 
-	input[type="radio"] {
+	input[type='radio'] {
 		appearance: none;
 		border-radius: 50%;
 		border: 1px solid #555555;
@@ -206,7 +206,7 @@ pre {
 			margin: 0;
 			border: 1px solid white;
 			box-sizing: border-box;
-			background-color: #369AF6;
+			background-color: #369af6;
 		}
 	}
 }
