@@ -91,6 +91,19 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.17.3 = 
+
+* New look and feel (still in progress)
+* New pages for embeds to help with shortcodes
+* Add new options for Rent Manager data
+* Save the Rent Manager company code option
+* Minor bugfix for notices when some values are empty
+* Adding capabilities to render images from RentManager in the admin
+* Adding capabilities for column highlighting for the synced stuff from Rent Manager
+* Fixing a number of issues introduced by the styling project
+* Fixing a fatal error when the floorplan rent is unexpectedly not being set (casting it to an int)
+* New capability for taxonomy shortcodes for floorplans (setting a category terms to only show, as either a search or as a grid)
+
 = 0.17.2 =
 
 * Bugfix: adding new functionality to allow for better phone number parsing for the property phone numbers, allowing for separate parsing for the phone number link.
