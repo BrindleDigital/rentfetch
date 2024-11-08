@@ -1,30 +1,30 @@
 {
-  "name": "apartment-sync",
+  "name": "rentfetch",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "description": "A plugin which displays property, floorplan and unit availability and information. [Visit the official site](https://rentfetch.io)",
+  "main": "gulpfile.js",
   "directories": {
     "lib": "lib"
   },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jonschr/apartment-sync.git"
+    "url": "git+https://jonschr@github.com/BrindleDigital/rentfetch.git"
   },
+  "author": "",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jonschr/apartment-sync/issues"
+    "url": "https://github.com/BrindleDigital/rentfetch/issues"
   },
-  "homepage": "https://github.com/jonschr/apartment-sync#readme",
-  "description": "",
+  "homepage": "https://github.com/BrindleDigital/rentfetch#readme",
   "devDependencies": {
-    "gulp": "^5.0.0",
+    "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
     "gulp-sass": "^5.1.0",
     "gulp-sass-glob": "^1.1.0",
     "gulp-sourcemaps": "^3.0.0",
-    "sass": "^1.77.8"
+    "sass": "^1.80.6"
   }
 }
