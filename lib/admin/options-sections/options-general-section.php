@@ -73,12 +73,12 @@ function rentfetch_save_settings_general() {
 	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
 		die( 'Security check failed' );
 	}
-	
-	//* When we save this particular batch of settings, we want to re-check the license
+
+	// * When we save this particular batch of settings, we want to re-check the license
 	delete_transient( 'rentfetchsync_properties_limit' );
-	
-	//* When we save this particular batch of settings, we might be changing the sync settings, so we need to unschedule all the sync actions
-	if ( function_exists( 'as_unschedule_all_actions') ) {
+
+	// * When we save this particular batch of settings, we might be changing the sync settings, so we need to unschedule all the sync actions
+	if ( function_exists( 'as_unschedule_all_actions' ) ) {
 		as_unschedule_all_actions( 'rfs_do_sync' );
 		as_unschedule_all_actions( 'rfs_yardi_do_delete_orphans' );
 	}
@@ -88,7 +88,7 @@ function rentfetch_save_settings_general() {
 		$options_data_sync = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_data_sync'] ) );
 		update_option( 'rentfetch_options_data_sync', $options_data_sync );
 	}
-	
+
 	// Select field.
 	if ( isset( $_POST['rentfetch_options_sync_timeline'] ) ) {
 		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_sync_timeline'] ) );
@@ -107,6 +107,24 @@ function rentfetch_save_settings_general() {
 	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_api_key'] ) ) {
 		$options_yardi_integration_creds_yardi_api_key = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_api_key'] ) );
 		update_option( 'rentfetch_options_yardi_integration_creds_yardi_api_key', $options_yardi_integration_creds_yardi_api_key );
+	}
+
+	// Text field.
+	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_username'] ) ) {
+		$options_yardi_integration_creds_yardi_username = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_username'] ) );
+		update_option( 'rentfetch_options_yardi_integration_creds_yardi_username', $options_yardi_integration_creds_yardi_username );
+	}
+
+	// Text field.
+	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) ) {
+		$options_yardi_integration_creds_yardi_password = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) );
+		update_option( 'rentfetch_options_yardi_integration_creds_yardi_password', $options_yardi_integration_creds_yardi_password );
+	}
+
+	// Text field.
+	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_client_id'] ) ) {
+		$options_yardi_integration_creds_yardi_client_id = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_client_id'] ) );
+		update_option( 'rentfetch_options_yardi_integration_creds_yardi_client_id', $options_yardi_integration_creds_yardi_client_id );
 	}
 
 	// Textarea field.
@@ -210,31 +228,30 @@ function rentfetch_save_settings_general() {
 
 		update_option( 'rentfetch_options_realpage_integration_creds_realpage_site_ids', $options_realpage_integration_creds_realpage_site_ids );
 	}
-	
+
 	// Text field.
 	if ( isset( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_companycode'] ) ) {
 		// Remove ".api.rentmanager.com" and anything that follows it.
-		$input_value = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_companycode'] ) );
+		$input_value   = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_companycode'] ) );
 		$cleaned_value = preg_replace( '/\.api\.rentmanager\.com.*/', '', $input_value );
 
 		update_option( 'rentfetch_options_rentmanager_integration_creds_rentmanager_companycode', $cleaned_value );
 	}
-	
+
 	if ( function_exists( 'rfs_get_rentmanager_properties_from_setting' ) ) {
-		// this function is defined in the rentfetch-sync plugin, and allows for prefilling the properties for Rent Manager, where there are multiple locations possible 
-		// and it's not feasible to have the user enter them all manually
+		// this function is defined in the rentfetch-sync plugin, and allows for prefilling the properties for Rent Manager, where there are multiple locations possible.
+		// and it's not feasible to have the user enter them all manually.
 		rfs_get_rentmanager_properties_from_setting();
 	}
-	
+
 	// Text field.
 	if ( isset( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_partner_token'] ) ) {
-		
+
 		// Remove ".api.rentmanager.com" and anything that follows it.
 		$partner_token = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_partner_token'] ) );
 
 		update_option( 'rentfetch_options_rentmanager_integration_creds_rentmanager_partner_token', $partner_token );
 	}
-
 
 	// Text field.
 	if ( isset( $_POST['rentfetch_options_appfolio_integration_creds_appfolio_database_name'] ) ) {
