@@ -110,21 +110,9 @@ function rentfetch_save_settings_general() {
 	}
 
 	// Text field.
-	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_username'] ) ) {
-		$options_yardi_integration_creds_yardi_username = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_username'] ) );
-		update_option( 'rentfetch_options_yardi_integration_creds_yardi_username', $options_yardi_integration_creds_yardi_username );
-	}
-
-	// Text field.
-	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) ) {
-		$options_yardi_integration_creds_yardi_password = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) );
-		update_option( 'rentfetch_options_yardi_integration_creds_yardi_password', $options_yardi_integration_creds_yardi_password );
-	}
-
-	// Text field.
-	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_client_id'] ) ) {
-		$options_yardi_integration_creds_yardi_client_id = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_client_id'] ) );
-		update_option( 'rentfetch_options_yardi_integration_creds_yardi_client_id', $options_yardi_integration_creds_yardi_client_id );
+	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_company_code'] ) ) {
+		$options_yardi_integration_creds_yardi_company_code = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_company_code'] ) );
+		update_option( 'rentfetch_options_yardi_integration_creds_yardi_company_code', $options_yardi_integration_creds_yardi_company_code );
 	}
 
 	// Textarea field.
