@@ -91,6 +91,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.17.7 =
+
+* Updating to match changes made to the Yardi v2 fields in RFS.
+
 = 0.17.6 =
 
 * Adding saving for fields for Yardi API v2
