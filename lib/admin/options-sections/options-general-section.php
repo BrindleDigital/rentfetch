@@ -275,5 +275,8 @@ function rentfetch_save_settings_general() {
 
 		update_option( 'rentfetch_options_appfolio_integration_creds_appfolio_property_ids', $options_appfolio_integration_creds_appfolio_property_ids );
 	}
+
+	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
+	delete_transient( 'rentfetch_api_info' );
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_general' );
