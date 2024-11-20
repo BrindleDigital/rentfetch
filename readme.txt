@@ -4,7 +4,7 @@ Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.6.2
 Requires PHP: 7.3
-Stable tag: 0.17.8
+Stable tag: 0.17.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,10 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.17.9 =
+
+* Remove meta for Brindle's API key (we'll pass this in the RF API moving forward, so that we don't need to give it out)
 
 = 0.17.8 =
 
