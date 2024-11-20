@@ -233,15 +233,6 @@ function rentfetch_save_settings_general() {
 	}
 
 	// Text field.
-	if ( isset( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_partner_token'] ) ) {
-
-		// Remove ".api.rentmanager.com" and anything that follows it.
-		$partner_token = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_partner_token'] ) );
-
-		update_option( 'rentfetch_options_rentmanager_integration_creds_rentmanager_partner_token', $partner_token );
-	}
-
-	// Text field.
 	if ( isset( $_POST['rentfetch_options_appfolio_integration_creds_appfolio_database_name'] ) ) {
 		$options_appfolio_integration_creds_appfolio_database_name = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_appfolio_integration_creds_appfolio_database_name'] ) );
 
