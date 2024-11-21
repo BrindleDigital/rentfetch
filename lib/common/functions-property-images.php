@@ -104,32 +104,56 @@ function rentfetch_get_property_images_yardi( $args ) {
 		return;
 	}
 
-	$yardi_images_string = get_post_meta( get_the_ID(), 'synced_property_images', true );
-
+	$yardi_images = get_post_meta( get_the_ID(), 'synced_property_images', true );
+	
 	// bail if there's no yardi images.
-	if ( ! $yardi_images_string ) {
+	if ( !$yardi_images ) {
 		return;
 	}
+	
+	// if it's a string...(this would come from v1 of the API) 
+	if ( is_string( $yardi_images ) ) {
+		
+		$yardi_images_string = $yardi_images;
+		
+		// rarely, an error might get saved here (typically 1050 or 1020). if so, bail.
+		if ( strpos( $yardi_images_string, 'Error' ) !== false ) {
+			return;
+		}
 
-	// rarely, an error might get saved here (typically 1050 or 1020). if so, bail.
-	if ( strpos( $yardi_images_string, 'Error' ) !== false ) {
-		return;
+		$yardi_images_json = json_decode( $yardi_images_string );
+		$yardi_images      = array();
+
+		foreach ( $yardi_images_json as $yardi_image_json ) {
+
+			$yardi_images[] = array(
+				'url'     => esc_url( $yardi_image_json->ImageURL ), // phpcs:ignore
+				'title'   => $yardi_image_json->Title, // phpcs:ignore
+				'alt'     => $yardi_image_json->AltText, // phpcs:ignore
+				'caption' => $yardi_image_json->Caption, // phpcs:ignore
+			);
+		}
+		
+		return $yardi_images;
+		
+		
+	} elseif ( is_array( $yardi_images) ) {
+		// this means it's coming from Yardi v2, and we use this all over the place, so let's convert the format to the one we already use.
+		
+		$yardi_images_converted = array();
+		
+		foreach ( $yardi_images as $yardi_image ) {
+			
+			$yardi_images_converted[] = array(
+				'url'     => esc_url( $yardi_image['imageURL'] ),
+				'title'   => $yardi_image['title'],
+				'alt'     => $yardi_image['altText'],
+				'caption' => $yardi_image['caption'],
+			);
+		}
+		
+		return $yardi_images_converted;
 	}
-
-	$yardi_images_json = json_decode( $yardi_images_string );
-	$yardi_images      = array();
-
-	foreach ( $yardi_images_json as $yardi_image_json ) {
-
-		$yardi_images[] = array(
-			'url'     => esc_url( $yardi_image_json->ImageURL ), // phpcs:ignore
-			'title'   => $yardi_image_json->Title, // phpcs:ignore
-			'alt'     => $yardi_image_json->AltText, // phpcs:ignore
-			'caption' => $yardi_image_json->Caption, // phpcs:ignore
-		);
-	}
-
-	return $yardi_images;
 }
 
 /**

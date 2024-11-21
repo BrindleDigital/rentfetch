@@ -368,8 +368,8 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		if ( 'yardi' === $property_source ) {
 
 			// * Property Images from Yardi
-			$property_images_json = get_post_meta( $post->ID, 'synced_property_images', true );
-			$property_images      = json_decode( $property_images_json );
+			// $property_images_json = get_post_meta( $post->ID, 'synced_property_images', true );
+			$property_images = rentfetch_get_property_images_yardi( null );
 			?>
 			 
 			<div class="field">
@@ -383,13 +383,10 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 						echo '<div class="property_images">';
 
 						foreach ( $property_images as $property_image ) {
-
-							if ( ! property_exists( $property_image, 'ImageURL' ) ) {
-								printf( '<p>%s <em>An error typically indicates either a failed sync or a problem with API authentication. Be sure to look up your specific error code with the owner of this API.</em></p>', wp_json_encode( $property_images_json ) );
-								continue;
+							
+							if ( isset( $property_image['url'] ) ) {
+								$property_image_url = $property_image['url'];
 							}
-
-							$property_image_url = $property_image->ImageURL; // phpcs:ignore
 
 							printf( '<div class="property-image"><img src="%s"/><a href="%s" target="_blank" class="download" download>Download</a></div>', esc_url( $property_image_url ), esc_url( $property_image_url ) );
 						}

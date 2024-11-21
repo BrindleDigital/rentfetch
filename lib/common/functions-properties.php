@@ -653,6 +653,8 @@ function rentfetch_get_property_pricing() {
 		} else {
 			$rent_min = 'Call for Pricing';
 		}
+	} else {
+		$rent_min = 'Call for Pricing';
 	}
 
 	if ( 'range' === $pricing_display ) {
