@@ -91,7 +91,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.18.0 =
+= 0.18.1 =
 
 * Bugfix: When a floorplan image is removed from the floorplan, let's make sure that a null value isn't saved to the array.
 
