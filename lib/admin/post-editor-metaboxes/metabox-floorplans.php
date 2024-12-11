@@ -217,7 +217,7 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 				<?php
 
 				$images = get_post_meta( $post->ID, 'manual_images', true );
-
+				
 				// convert to string.
 				if ( is_array( $images ) ) {
 
@@ -711,6 +711,14 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 		$property_images = trim( $property_images, ',' );
 		$property_images = explode( ',', $property_images );
 		$property_images = array_unique( $property_images );
+		
+		// remove any empty values.
+		$property_images = array_filter(
+			$property_images,
+			function ( $image_id ) {
+				return is_numeric( $image_id );
+			}
+		);
 
 		update_post_meta( $post_id, 'manual_images', $property_images );
 	}

@@ -93,6 +93,10 @@ Start from your WordPress dashboard.
 
 = 0.18.0 =
 
+* Bugfix: When a floorplan image is removed from the floorplan, let's make sure that a null value isn't saved to the array.
+
+= 0.18.0 =
+
 * Fix compatibility issues with data formats in the Yardi v2 API (we display this data in various places, so we're fixing errors caused by the changing structure). These new formats start to matter in 0.5 of RFS.
 
 = 0.17.9 =
