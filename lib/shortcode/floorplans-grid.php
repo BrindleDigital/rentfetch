@@ -160,37 +160,75 @@ add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans
  *
  * @return array  the modified query args.
  */
-function rentfetch_floorplans_simple_grid_query_args_order( $args ) {
+function rentfetch_floorplans_simple_grid_query_args_order( $floorplans_args ) {
 
-	if ( isset( $args['sort'] ) ) {
+	if ( isset( $floorplans_args['sort'] ) ) {
 
-		$sort = $args['sort'];
+		$sort = $floorplans_args['sort'];
 
-		// if it's beds.
-		if ( null === $sort || 'beds' === $sort ) {
-			$args['orderby']  = 'meta_value_num';
-			$args['meta_key'] = 'beds'; // phpcs:ignore
-			$args['order']    = 'ASC';
+		// if it's beds...
+		if ( 'beds' === $sort ) {
+			$floorplans_args['orderby']  = 'meta_value_num';
+			$floorplans_args['meta_key'] = 'beds'; // phpcs:ignore
+			$floorplans_args['order']    = 'ASC';
 		}
 
 		// if it's baths.
 		if ( 'baths' === $sort ) {
-			$args['orderby']  = 'meta_value_num';
-			$args['meta_key'] = 'baths'; // phpcs:ignore
-			$args['order']    = 'ASC';
+			$floorplans_args['orderby']  = 'meta_value_num';
+			$floorplans_args['meta_key'] = 'baths'; // phpcs:ignore
+			$floorplans_args['order']    = 'ASC';
 		}
 
 		// if it's available units.
 		if ( 'availability' === $sort ) {
-			$args['orderby']  = 'meta_value_num';
-			$args['meta_key'] = 'available_units'; // phpcs:ignore
-			$args['order']    = 'DESC';
+			$floorplans_args['orderby']  = 'meta_value_num';
+			$floorplans_args['meta_key'] = 'available_units'; // phpcs:ignore
+			$floorplans_args['order']    = 'DESC';
+		}
+
+		// if it's price low to high.
+		if ( 'pricelow' === $sort ) {
+			$floorplans_args['orderby']    = 'meta_value_num';
+			$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
+			$floorplans_args['order']      = 'ASC';
+			$floorplans_args['meta_query'][] = array( // phpcs:ignore
+				'key'     => 'minimum_rent',
+				'value'   => 100,
+				'type'    => 'numeric',
+				'compare' => '>',
+			);
+		}
+
+		// if it's price high to low.
+		if ( 'pricehigh' === $sort ) {
+			$floorplans_args['orderby']    = 'meta_value_num';
+			$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
+			$floorplans_args['order']      = 'DESC';
+			$floorplans_args['meta_query'][] = array( // phpcs:ignore
+				'key'     => 'minimum_rent',
+				'value'   => 100,
+				'type'    => 'numeric',
+				'compare' => '>',
+			);
+		}
+		
+		// if it's alphabetical...
+		if ( 'alphabetical' === $sort ) {
+			$floorplans_args['orderby']  = 'title';
+			$floorplans_args['order']    = 'ASC';
+		}
+		
+		// if it's menu_order...
+		if ( 'menu_order' === $sort ) {
+			$floorplans_args['orderby']  = 'menu_order';
+			$floorplans_args['order']    = 'ASC';
 		}
 	}
 
 	// reset the sort attribute.
-	$args['sort'] = null;
+	$floorplans_args['sort'] = null;
 
-	return $args;
+	return $floorplans_args;
 }
 add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans_simple_grid_query_args_order', 10, 2 );

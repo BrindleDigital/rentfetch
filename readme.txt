@@ -97,6 +97,7 @@ Start from your WordPress dashboard.
 * Bugfix: When navigating through admin submenu items to the property search page, those settings were not savable (if you navigated there by clicking "Property Settings," you were still able to save normally).
 * Improved the shortcodes section on the backend to show a few new parameters and structure them in a more logical way.
 * Added new option to hide the availability button in situations where there's a link available, but no floorplans are available (and have no upcoming availability date)
+* Added updated sorting options for the floorplan search to the grid as well, as the capabilities weren't fully in sync.
 
 = 0.18.2 =
 
