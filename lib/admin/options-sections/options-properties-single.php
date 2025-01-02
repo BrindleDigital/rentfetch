@@ -10,7 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Set defaults on activation
+ * Set defaults on activation.
+ *
+ * @return  void.
  */
 function rentfetch_settings_set_defaults_properties_propertiessingle() {
 
@@ -26,7 +28,9 @@ function rentfetch_settings_set_defaults_properties_propertiessingle() {
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties_propertiessingle' );
 
 /**
- * Adds the properties single settings subsection to the Rent Fetch settings page
+ * Adds the properties single settings subsection to the Rent Fetch settings page.
+ *
+ * @return  void.
  */
 function rentfetch_settings_properties_property_single() {
 	?>
@@ -96,13 +100,15 @@ function rentfetch_settings_properties_property_single() {
 		</div>
 	</div>
 	<?php
-	
+
 	submit_button();
 }
 add_action( 'rentfetch_do_settings_properties_property_single', 'rentfetch_settings_properties_property_single' );
 
 /**
- * Save the property single settings
+ * Save the single property settings
+ *
+ * @return  void.
  */
 function rentfetch_save_settings_property_single() {
 
