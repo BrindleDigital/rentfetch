@@ -561,6 +561,14 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		$property_images = trim( $property_images, ',' );
 		$property_images = explode( ',', $property_images );
 		$property_images = array_unique( $property_images );
+		
+		// remove any empty values.
+		$property_images = array_filter(
+			$property_images,
+			function ( $image_id ) {
+				return is_numeric( $image_id );
+			}
+		);
 
 		update_post_meta( $post_id, 'images', $property_images );
 	}
