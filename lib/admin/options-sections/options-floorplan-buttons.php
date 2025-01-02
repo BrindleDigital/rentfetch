@@ -44,16 +44,25 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 								id="rentfetch_options_availability_button_enabled" <?php checked(get_option('rentfetch_options_availability_button_enabled'), '1'); ?>>
 						</label>
 						<p class="description pt-2">A button which can pull in the availability link for each individual floorplan. This button
-							will display whenever there's an availability URL, whether units are available or not.
+							will display by default whenever there's an availability URL, whether units are available or not.
 						</p>
+						
 					</li>
 				</ul>
 			</div>
 			<div class="white-box">
 				<label for="rentfetch_options_availability_button_button_label">Button label</label>
-				<input type="text" name="rentfetch_options_availability_button_button_label"
-					id="rentfetch_options_availability_button_button_label"
-					value="<?php echo esc_attr(get_option('rentfetch_options_availability_button_button_label', 'Lease now')); ?>">
+				<input type="text" name="rentfetch_options_availability_button_button_label" id="rentfetch_options_availability_button_button_label" value="<?php echo esc_attr(get_option('rentfetch_options_availability_button_button_label', 'Lease now')); ?>">
+				<ul class="checkboxes" style="margin-top: 20px;">
+					<li>
+						<label for="rentfetch_options_availability_button_enabled_hide_when_unavailable" class="checkbox-right" style="width: 150px">
+							<b>Hide unavailable</b>
+							<input type="checkbox" name="rentfetch_options_availability_button_enabled_hide_when_unavailable" id="rentfetch_options_availability_button_enabled_hide_when_unavailable" <?php checked(get_option('rentfetch_options_availability_button_enabled_hide_when_unavailable'), '1' ); ?>>
+						</label>
+						<p>Only show this button when the floorplan *also* has units available or a date when they'll become avialable.</p>
+					</li>
+				</ul>
+				
 			</div>
 		</div>
 	</div>
@@ -198,6 +207,10 @@ function rentfetch_save_settings_floorplan_buttons()
 	// Checkbox field - Enable the availability button.
 	$options_availability_button_enabled = isset($_POST['rentfetch_options_availability_button_enabled']) ? '1' : '0';
 	update_option('rentfetch_options_availability_button_enabled', $options_availability_button_enabled);
+	
+	// Checkbox field - Hide the availability button if there's nothing available.
+	$options_availability_button_enabled_hide_when_unavailable = isset($_POST['rentfetch_options_availability_button_enabled_hide_when_unavailable']) ? '1' : '0';
+	update_option('rentfetch_options_availability_button_enabled_hide_when_unavailable', $options_availability_button_enabled_hide_when_unavailable);
 
 	// Text field - Button label.
 	if (isset($_POST['rentfetch_options_availability_button_button_label'])) {

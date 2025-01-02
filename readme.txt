@@ -96,6 +96,7 @@ Start from your WordPress dashboard.
 * Bugfix: When a manual property image is removed from the property, let's make sure that a null value isn't saved to the array.
 * Bugfix: When navigating through admin submenu items to the property search page, those settings were not savable (if you navigated there by clicking "Property Settings," you were still able to save normally).
 * Improved the shortcodes section on the backend to show a few new parameters and structure them in a more logical way.
+* Added new option to hide the availability button in situations where there's a link available, but no floorplans are available (and have no upcoming availability date)
 
 = 0.18.2 =
 

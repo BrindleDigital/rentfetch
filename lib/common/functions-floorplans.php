@@ -451,13 +451,22 @@ function rentfetch_floorplan_buttons() {
  */
 function rentfetch_floorplan_default_availability_button() {
 
-	$button_enabled = get_option( 'rentfetch_options_availability_button_enabled', false );
-
-	$button_enabled = (int) $button_enabled;
+	$button_enabled = (int) get_option( 'rentfetch_options_availability_button_enabled', false );
+	$hide_if_no_availabily = (int) get_option( 'rentfetch_options_availability_button_enabled_hide_when_unavailable', false );
 
 	// bail if the button is not enabled.
 	if ( 1 !== $button_enabled ) {
 		return false;
+	}
+
+	// if the button is set to hide when there's not availability, let's check for availability and do the needful.
+	if ( $hide_if_no_availabily ) {
+		$available_units = get_post_meta( get_the_ID(), 'available_units', true );
+		$availability_date = get_post_meta( get_the_ID(), 'availability_date', true );
+		
+		if ( $available_units < 1 && empty( $availability_date ) ) {
+			return false;
+		}
 	}
 
 	echo wp_kses_post( apply_filters( 'rentfetch_floorplan_default_availability_button_markup', null ) );
