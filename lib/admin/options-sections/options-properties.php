@@ -408,8 +408,7 @@ add_action('rentfetch_do_settings_properties_property_search', 'rentfetch_settin
 /**
  * Save the property search settings
  */
-function rentfetch_save_settings_property_search()
-{
+function rentfetch_save_settings_property_search() {
 	// Get the tab and section.
 	$tab = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
@@ -495,8 +494,7 @@ add_action('rentfetch_save_settings', 'rentfetch_save_settings_property_search')
 /**
  * Save the Google settings
  */
-function rentfetch_save_settings_maps()
-{
+function rentfetch_save_settings_maps() {
 	// Get the tab and section.
 	$tab = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
