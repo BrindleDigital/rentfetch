@@ -105,7 +105,7 @@ function rentfetch_settings_properties() {
 	echo '<ul class="rent-fetch-options-submenu">';
 
 		$active = ( 'property-search' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-search" class="tab %s">Property Search</a></li>', esc_html( $active ) );
+		printf( '<li><a href="?page=rentfetch-options&tab=properties" class="tab %s">Property Search</a></li>', esc_html( $active ) );
 
 		$active = ( 'property-archives' === $section ) ? 'tab-active' : '';
 		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab %s">Property Archives</a></li>', esc_html( $active ) );
