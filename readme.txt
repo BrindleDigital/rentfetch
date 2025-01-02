@@ -95,6 +95,7 @@ Start from your WordPress dashboard.
 
 * Bugfix: When a manual property image is removed from the property, let's make sure that a null value isn't saved to the array.
 * Bugfix: When navigating through admin submenu items to the property search page, those settings were not savable (if you navigated there by clicking "Property Settings," you were still able to save normally).
+* Improved the shortcodes section on the backend to show a few new parameters and structure them in a more logical way.
 
 = 0.18.2 =
 

@@ -82,6 +82,20 @@ function rentfetch_settings_floorplans_floorplan_search()
 					Price (high to low)
 				</label>
 			</li>
+			<li>
+				<label>
+					<input type="radio" name="rentfetch_options_floorplan_default_order"
+						id="rentfetch_options_floorplan_default_order" value="alphabetical" <?php checked(get_option('rentfetch_options_floorplan_default_order'), 'alphabetical'); ?> />
+					Alphabetical (A-Z) by title
+				</label>
+			</li>
+			<li>
+				<label>
+					<input type="radio" name="rentfetch_options_floorplan_default_order"
+						id="rentfetch_options_floorplan_default_order" value="menu_order" <?php checked(get_option('rentfetch_options_floorplan_default_order'), 'menu_order'); ?> />
+					<span>Menu order (this is a <a target="_blank" href="https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters">default WordPress ordering scheme</a> that can be used in combination with other plugins like <a href="https://wordpress.org/plugins/simple-custom-post-order/" target="_blank">this one</a> that let you manually set the order of your posts)</span>
+				</label>
+			</li>
 		</ul>
   </div>
 

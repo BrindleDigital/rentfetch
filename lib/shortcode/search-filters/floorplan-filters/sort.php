@@ -124,6 +124,25 @@ function rentfetch_search_filters_sort_floorplans() {
 				</label>',
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
+			
+			if ( 'alphabetical' === $sort ) {
+				$checked = 'checked';
+			} else {
+				$checked = null;
+			}
+
+			printf(
+				'<label>
+					<input type="radio" 
+						name="sort"
+						id="sort-alphabetical"
+						value="alphabetical" 
+						data-sort="Alphabetical" 
+						%s />
+					<span>Alphabetical</span>
+				</label>',
+				$checked ? 'checked' : '', // Apply checked attribute.
+			);
 
 		echo '</div>'; // .checkboxes
 	echo '</fieldset>';
@@ -210,6 +229,18 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 			'type'    => 'numeric',
 			'compare' => '>',
 		);
+	}
+	
+	// if it's alphabetical...
+	if ( 'alphabetical' === $sort ) {
+		$floorplans_args['orderby']  = 'title';
+		$floorplans_args['order']    = 'ASC';
+	}
+	
+	// if it's menu_order...
+	if ( 'menu_order' === $sort ) {
+		$floorplans_args['orderby']  = 'menu_order';
+		$floorplans_args['order']    = 'ASC';
 	}
 
 	// return the args.

@@ -148,6 +148,8 @@ jQuery(function ($) {
 							buttonContent += 'Price (low to high)';
 						} else if (dataValues === 'pricehigh') {
 							buttonContent += 'Price (high to low)';
+						} else if (dataValues === 'alphabetical') {
+							buttonContent += 'Alphabetical';
 						} else {
 							buttonContent += dataValues.replace(/,/g, ', ');
 						}
