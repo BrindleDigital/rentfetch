@@ -17,6 +17,7 @@ function rentfetch_settings_set_defaults_properties_propertyarchives() {
 	// Add options if they don't exist with default values.
 	add_option( 'rentfetch_options_property_footer_grid_number_properties', '9' );
 	add_option( 'rentfetch_options_property_pricing_display', 'range' );
+	add_option( 'rentfetch_options_property_external_linking_behavior', 'internal' );
 	add_option( 'rentfetch_options_property_orderby', 'menu_order' );
 	add_option( 'rentfetch_options_property_order', 'ASC' );
 }
@@ -46,6 +47,31 @@ function rentfetch_settings_properties_property_archives() {
 						<input type="radio" name="rentfetch_options_property_pricing_display"
 							id="rentfetch_options_property_pricing_display" value="minimum" <?php checked( get_option( 'rentfetch_options_property_pricing_display' ), 'minimum' ); ?>>
 						Minimum (e.g. "from $1999")
+					</label>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_property_external_linking_behavior">Property Link Behavior</label>
+			<p class="description">Should we keep users on this site to view property details, or send them directly to an external site?</p>
+		</div>
+		<div class="section">
+			<ul class="radio">
+				<li>
+					<label>
+						<input type="radio" name="rentfetch_options_property_external_linking_behavior"
+							id="rentfetch_options_property_external_linking_behavior" value="internal" <?php checked( get_option( 'rentfetch_options_property_external_linking_behavior' ), 'internal' ); ?>>
+						Link to our own property detail page, even if a third-party link is available (a button will be available on that page).
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="radio" name="rentfetch_options_property_external_linking_behavior"
+							id="rentfetch_options_property_external_linking_behavior" value="external" <?php checked( get_option( 'rentfetch_options_property_external_linking_behavior' ), 'external' ); ?>>
+						Link directly to the third-party site if a link is available.
 					</label>
 				</li>
 			</ul>
@@ -186,6 +212,12 @@ function rentfetch_save_settings_property_archives() {
 	if ( isset( $_POST['rentfetch_options_property_pricing_display'] ) ) {
 		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_pricing_display'] ) );
 		update_option( 'rentfetch_options_property_pricing_display', $property_display );
+	}
+	
+	// Select field.
+	if ( isset( $_POST['rentfetch_options_property_external_linking_behavior'] ) ) {
+		$property_link_behavior = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_external_linking_behavior'] ) );
+		update_option( 'rentfetch_options_property_external_linking_behavior', $property_link_behavior );
 	}
 
 	// Select field.

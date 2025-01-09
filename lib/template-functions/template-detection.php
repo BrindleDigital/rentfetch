@@ -43,3 +43,23 @@ function rentfetch_load_single_templates( $template ) {
 	return $template;
 }
 add_filter( 'single_template', 'rentfetch_load_single_templates', 99 );
+
+/**
+ * Redirect the properties template to the website if the option for that is enabled.
+ * 
+ * @return void.
+ */
+function rentfetch_maybe_redirect_properties_template() {
+
+	if ( !is_singular( 'properties') ) {
+		return;
+	}
+
+	$permalink_behavior = get_option( 'rentfetch_options_property_external_linking_behavior', 'internal' );
+	$url = rentfetch_get_property_url();
+	
+	if ( $url && 'external' === $permalink_behavior ) {
+		wp_redirect( $url );
+	}
+}
+add_action('template_redirect', 'rentfetch_maybe_redirect_properties_template');

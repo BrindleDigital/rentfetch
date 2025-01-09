@@ -19,7 +19,7 @@ function rentfetch_each_property_in_archive_simple() {
 	$title             = rentfetch_get_property_title();
 	$property_location = rentfetch_get_property_location();
 
-	$permalink        = apply_filters( 'rentfetch_filter_property_permalink', get_the_permalink() );
+	$permalink        = rentfetch_get_property_permalink();
 	$permalink_target = rentfetch_get_link_target( $permalink );
 
 	if ( $permalink ) {

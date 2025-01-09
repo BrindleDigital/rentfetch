@@ -32,7 +32,7 @@ function rentfetch_properties_each_list() {
 		),
 	);
 
-	$permalink = get_the_permalink();
+	$permalink = rentfetch_get_property_permalink();
 	$permalink_target = rentfetch_get_link_target( $permalink );
 
 	if ( $permalink ) {

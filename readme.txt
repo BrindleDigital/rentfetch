@@ -4,7 +4,7 @@ Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.6.2
 Requires PHP: 7.3
-Stable tag: 0.18.3
+Stable tag: 0.18.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.18.4 =
+
+* Feature: adding the ability for the administrator to determine whether to automatically redirect properties to their websites, or to use our pre-built template for that.
+* Adding standard function and filter to get these URLs, so that we can do that programatically if needed.
+* Adding redirect functionality that is based on the option
 
 = 0.18.3 =
 

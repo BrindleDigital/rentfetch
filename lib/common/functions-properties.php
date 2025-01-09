@@ -391,8 +391,30 @@ function rentfetch_property_phone_button() {
 function rentfetch_get_property_url() {
 
 	$url = get_post_meta( get_the_ID(), 'url', true );
+	return esc_url( apply_filters( 'rentfetch_filter_property_url', $url ) );
+}
 
-	return $url;
+/**
+ * For property archives, we might need to get (and modify) the property permalink.
+ * 
+ * @return string The property permalink.
+ */
+function rentfetch_get_property_permalink() {
+	
+	$permalink_behavior = get_option( 'rentfetch_options_property_external_linking_behavior', 'internal' );
+	$url = rentfetch_get_property_url();
+	
+	if ( !$url ) {
+		$url = get_the_permalink();		
+	} else {
+		if ( 'external' !== $permalink_behavior ) {
+			$url = get_the_permalink();
+		} else {
+			$url = rentfetch_get_property_url();
+		}
+	}
+	
+	return esc_url( $url );
 }
 
 /**
@@ -412,7 +434,7 @@ function rentfetch_property_url() {
  * @return string The property website.
  */
 function rentfetch_get_property_website_button() {
-	$url            = apply_filters( 'rentfetch_filter_property_url', rentfetch_get_property_url() );
+	$url            = rentfetch_get_property_url();
 	$target         = rentfetch_get_link_target( $url );
 	$website_button = sprintf( '<a class="url-link property-link" href="%s" target="%s">Visit Website</a>', esc_html( $url ), esc_attr( $target ) );
 
