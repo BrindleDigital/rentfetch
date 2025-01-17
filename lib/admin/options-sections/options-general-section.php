@@ -162,15 +162,9 @@ function rentfetch_save_settings_general() {
 	}
 
 	// Text field.
-	if ( isset( $_POST['rentfetch_options_entrata_integration_creds_entrata_user'] ) ) {
-		$options_entrata_integration_creds_entrata_user = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_entrata_integration_creds_entrata_user'] ) );
-		update_option( 'rentfetch_options_entrata_integration_creds_entrata_user', $options_entrata_integration_creds_entrata_user );
-	}
-
-	// Text field.
-	if ( isset( $_POST['rentfetch_options_entrata_integration_creds_entrata_pass'] ) ) {
-		$options_entrata_integration_creds_entrata_pass = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_entrata_integration_creds_entrata_pass'] ) );
-		update_option( 'rentfetch_options_entrata_integration_creds_entrata_pass', $options_entrata_integration_creds_entrata_pass );
+	if ( isset( $_POST['rentfetch_options_entrata_integration_creds_entrata_subdomain'] ) ) {
+		$options_entrata_integration_creds_entrata_subdomain = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_entrata_integration_creds_entrata_subdomain'] ) );
+		update_option( 'rentfetch_options_entrata_integration_creds_entrata_subdomain', $options_entrata_integration_creds_entrata_subdomain );
 	}
 
 	// Textarea field.
