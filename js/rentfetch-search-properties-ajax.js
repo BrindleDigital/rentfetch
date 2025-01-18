@@ -156,7 +156,8 @@ jQuery(function ($) {
 					if (mapOffset - viewportTop > 200) {
 						$('html, body').animate(
 							{
-								scrollTop: mapOffset,
+								// scrollTop: mapOffset,
+								// TODO make the scrolldown optional
 							},
 							1000
 						);
