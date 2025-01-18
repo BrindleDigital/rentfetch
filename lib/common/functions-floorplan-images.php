@@ -24,6 +24,7 @@ function rentfetch_get_floorplan_images() {
 
 	$manual_images   = rentfetch_get_floorplan_images_manual();
 	$yardi_images    = rentfetch_get_floorplan_images_yardi();
+	$entrata_images    = rentfetch_get_floorplan_images_entrata();
 	$rentmanager_images    = rentfetch_get_floorplan_images_rentmanager();
 	$fallback_images = rentfetch_get_floorplan_images_fallback();
 
@@ -31,6 +32,8 @@ function rentfetch_get_floorplan_images() {
 		return $manual_images;
 	} elseif ( $yardi_images ) {
 		return $yardi_images;
+	} elseif( $entrata_images ) {
+		return $entrata_images;
 	} elseif( $rentmanager_images) {
 		return $rentmanager_images;
 	} elseif ( $fallback_images ) {
@@ -94,6 +97,40 @@ function rentfetch_get_floorplan_images_yardi() {
 	
 	// bail if this isn't a yardi floorplan.
 	if ( 'yardi' !== $floorplan_source ) {
+		return;
+	}
+
+	$images_array_source = explode( ',', $images_string );
+	$images_array_return = array();
+
+	foreach ( $images_array_source as $image ) {
+		$images_array_return[] = array(
+			'url' => esc_url( $image ),
+		);
+	}
+
+	return $images_array_return;
+}
+
+/**
+ * Get images that came from Entrata.
+ *
+ * @return array an array of images.
+ */
+function rentfetch_get_floorplan_images_entrata() {
+	global $post;
+	
+	$images_string = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
+	$floorplan_source = get_post_meta( get_the_ID(), 'floorplan_source', true );
+	
+
+	// bail if there's no yardi images.
+	if ( ! $images_string ) {
+		return;
+	}
+	
+	// bail if this isn't a yardi floorplan.
+	if ( 'entrata' !== $floorplan_source ) {
 		return;
 	}
 

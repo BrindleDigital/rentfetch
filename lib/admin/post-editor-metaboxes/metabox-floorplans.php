@@ -255,20 +255,19 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 		
 		<?php
 		$floorplan_source = get_post_meta( $post->ID, 'floorplan_source', true );
-		if ( 'yardi' === $floorplan_source ) {
+		if ( 'yardi' === $floorplan_source || 'entrata' === $floorplan_source ) {
 
 			// * Floorplan Images from Yardi
 			$floorplan_images = get_post_meta( $post->ID, 'floorplan_image_url', true );
 
 			// convert to array.
-			$floorplan_images = explode( ',', $floorplan_images );
-
+			$floorplan_images = explode( ',', $floorplan_images );			
 			?>
 			 
 			<div class="field">
 				<div class="column">
-					<label for="floorplan_images">Yardi Floorplan Images</label>
-					<p class="description">These images are not editable, because they're from Yardi. This is merely a preview so that you can see the images being provided. Feel free to click 'download' on any of these so that you can easily grab any that you want if you're adding more.</p>
+					<label for="floorplan_images">Synced floorplan images</label>
+					<p class="description">These images are not editable, because they're from your API. This is merely a preview so that you can see the images being provided. Feel free to click 'download' on any of these so that you can easily grab any that you want if you're adding more.</p>
 				</div>
 				<div class="column">                
 					<?php
