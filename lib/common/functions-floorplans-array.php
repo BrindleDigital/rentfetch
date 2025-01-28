@@ -217,7 +217,6 @@ function rentfetch_get_floorplans_array() {
  * @return void.
  */
 function rentfetch_set_floorplans() {
-	
 	global $rentfetch_floorplans;
 	$rentfetch_floorplans = rentfetch_get_floorplans_array();
 }

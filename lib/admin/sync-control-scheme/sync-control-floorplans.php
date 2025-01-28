@@ -21,6 +21,8 @@ function rentfetch_floorplan_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_realpage', $array_fields, $post_id );
 	} elseif ( 'rentmanager' === $floorplan_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_rentmanager', $array_fields, $post_id );
+	} elseif ( 'entrata' === $floorplan_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields_entrata', $array_fields, $post_id );
 	}
 
 	if ( !empty( $floorplan_source ) ) {
@@ -69,6 +71,38 @@ function rentfetch_floorplan_syncing_fields_yardi( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_floorplan_syncing_fields_yardi', 'rentfetch_floorplan_syncing_fields_yardi', 10, 2 );
+
+/**
+ * Filter the syncing fields for the floorplans for the Yardi API
+ *
+ * @return  array  an array of the fields that sync with the API
+ */
+function rentfetch_floorplan_syncing_fields_entrata( $array_fields, $post_id ) {
+	return array(
+		'title',
+		'property_id',
+		'floorplan_id',
+		'availability_url',
+		'available_units',
+		'baths',
+		'beds',
+		'has_specials',
+		'floorplan_image_alt_text',
+		'floorplan_image_name',
+		'floorplan_image_url',
+		'floorplan_images',
+		// 'maximum_deposit',
+		'maximum_rent',
+		'maximum_sqft',
+		// 'minimum_deposit',
+		'minimum_rent',
+		'minimum_sqft',
+		'availability_date',
+		'available_units',
+		'floorplan_description',
+	);
+}
+add_filter( 'rentfetch_filter_floorplan_syncing_fields_entrata', 'rentfetch_floorplan_syncing_fields_entrata', 10, 2 );
 
 /**
  * Filter the syncing fields for the floorplans for the Yardi API
