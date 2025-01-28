@@ -27,6 +27,7 @@ function rentfetch_get_property_images( $args = null ) {
 	$manual_images      = rentfetch_get_property_images_manual( $args );
 	$yardi_images       = rentfetch_get_property_images_yardi( $args );
 	$rentmanager_images = rentfetch_get_property_images_rentmanager( $args );
+	$entrata_images     = rentfetch_get_property_images_entrata( $args );
 	$fallback_images    = rentfetch_get_property_images_fallback( $args );
 
 	if ( $manual_images ) {
@@ -35,6 +36,8 @@ function rentfetch_get_property_images( $args = null ) {
 		return apply_filters( 'rentfetch_filter_property_images', $yardi_images );
 	} elseif ( $rentmanager_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $rentmanager_images );
+	} elseif ( $entrata_images ) {
+		return apply_filters( 'rentfetch_filter_property_images', $entrata_images );
 	} elseif ( $fallback_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $fallback_images );
 	} else {
@@ -198,6 +201,51 @@ function rentfetch_get_property_images_rentmanager( $args ) {
 
 	return $return_images;
 }
+
+/**
+ * Get the images (entrata)
+ *
+ * @param   [type]  $args  [$args description]
+ *
+ * @return  [type]         [return description]
+ */
+function rentfetch_get_property_images_entrata( $args ) {
+	
+	global $post;
+	
+	$args; // phpcs:ignore
+	
+	
+	
+	$property_source = get_post_meta( get_the_ID(), 'property_source', true );
+	$source_images_array = get_post_meta( get_the_ID(), 'synced_property_images', true );
+	$property_id = get_post_meta( get_the_ID(), 'property_id', true );
+	
+	// bail if this isn't an entrata property. (their images are stored in a different format than other APIs).
+	if ( 'entrata' !== $property_source ) {
+		return;
+	}
+	
+	// bail if there are no images, or if the data isn't in an array
+	if ( !$source_images_array || !is_array( $source_images_array ) ) {
+		return;
+	}
+	
+	foreach ( $source_images_array as $source_image ) {
+
+		$url = $source_image['Src'];
+		$url = str_replace( '&#038;', '&', $url );
+
+		$return_images[] = array(
+			'url'     => esc_url( $url ),
+			'title'   => isset( $source_image['Name'] ) ? esc_html( $source_image['Name'] ) : null,
+			'alt'     => isset( $source_image['Description'] ) ? esc_html( $source_image['Description'] ) : null,
+			'caption' => isset( $source_image['Caption'] ) ? esc_html( $source_image['Caption'] ) : null,
+		);
+	}
+
+	return $return_images;
+} 
 
 /**
  * Get the fallback property images

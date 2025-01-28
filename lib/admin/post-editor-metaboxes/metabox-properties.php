@@ -365,17 +365,24 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		<?php
 
 		$property_source = get_post_meta( $post->ID, 'property_source', true );
-		if ( 'yardi' === $property_source ) {
+		if ( 'yardi' === $property_source || 'entrata' === $property_source ) {
 
-			// * Property Images from Yardi
-			// $property_images_json = get_post_meta( $post->ID, 'synced_property_images', true );
-			$property_images = rentfetch_get_property_images_yardi( null );
+			// Property Images from Yardi
+			if ( 'yardi' === $property_source ) {
+				$property_images = rentfetch_get_property_images_yardi( null );
+			}
+			
+			// Property images from Entrata
+			if ( 'entrata' === $property_source ) {
+				$property_images = rentfetch_get_property_images_entrata( null );
+			}
+
 			?>
 			 
 			<div class="field">
 				<div class="column">
-					<label for="property_images">Yardi Property Images</label>
-					<p class="description">These images are not editable, because they're from Yardi. This is merely a preview so that you can see the images being provided. Feel free to click 'download' on any of these so that you can easily grab any that you want if you're adding more.</p>
+					<label for="property_images">Synced Property Images</label>
+					<p class="description">These images are not editable, because they're from your API. This just shows you a preview so that you can see the images being provided. Feel free to click 'download' on any of these so that you can easily grab any that you want if you're adding more.</p>
 				</div>
 				<div class="column">                
 					<?php

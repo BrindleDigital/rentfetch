@@ -195,10 +195,12 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 		$property_source = get_post_meta( $post_id, 'property_source', true );
 		$synced_images = null;
 		
-		if ( $property_source === 'yardi' ) {
+		if ( 'yardi' === $property_source ) {
 			$synced_images = rentfetch_get_property_images_yardi( null );
-		} elseif ( $property_source === 'rentmanager' ) {
+		} elseif ( 'rentmanager' === $property_source ) {
 			$synced_images = rentfetch_get_property_images_rentmanager( null );
+		} elseif ( 'entrata' === $property_source ) {
+			$synced_images = rentfetch_get_property_images_entrata( null );
 		}
 
 		if ( is_array( $synced_images ) ) {
