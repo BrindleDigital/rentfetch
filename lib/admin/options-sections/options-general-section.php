@@ -163,7 +163,17 @@ function rentfetch_save_settings_general() {
 
 	// Text field.
 	if ( isset( $_POST['rentfetch_options_entrata_integration_creds_entrata_subdomain'] ) ) {
-		$options_entrata_integration_creds_entrata_subdomain = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_entrata_integration_creds_entrata_subdomain'] ) );
+		$input_value = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_entrata_integration_creds_entrata_subdomain'] ) );
+
+		// Extract the subdomain if a full URL is provided.
+		$parsed_url = parse_url( $input_value );
+		if ( isset( $parsed_url['host'] ) ) {
+			$host_parts = explode( '.', $parsed_url['host'] );
+			$options_entrata_integration_creds_entrata_subdomain = $host_parts[0];
+		} else {
+			$options_entrata_integration_creds_entrata_subdomain = $input_value;
+		}
+
 		update_option( 'rentfetch_options_entrata_integration_creds_entrata_subdomain', $options_entrata_integration_creds_entrata_subdomain );
 	}
 
