@@ -21,6 +21,7 @@ function rentfetch_properties( $atts ) {
 		array(
 			'post_type'      => 'properties',
 			'posts_per_page' => -1,
+			'propertyids'    => null,
 			'city'           => null,
 		),
 		$atts
@@ -68,33 +69,86 @@ add_shortcode( 'rentfetch_properties', 'rentfetch_properties' );
  * @return array        the modified query arguments.
  */
 function rentfetch_properties_simple_grid_query_args_city( $args ) {
+	if ( !isset( $args['city'] ) ) {
+		return $args;
+	}
 
-	if ( isset( $args['city'] ) ) {
+	$cities_array = explode( ',', $args['city'] );
 
-		$cities_array = explode( ',', $args['city'] );
+	// Start with an empty array for the 'OR' part of the query
+	$cities_meta_query = array(
+		'relation' => 'OR'
+	);
 
-		// Start with an empty array for the 'OR' part of the query.
-		$cities_meta_query = array( 'relation' => 'OR' );
-
-		// Loop through each city in the array and add it to the $cities_meta_query.
-		foreach ( $cities_array as $city ) {
-			$cities_meta_query[] = array(
-				'key'     => 'city',
-				'value'   => $city,
-				'compare' => '=',
-			);
-		}
-
-		// Add the $cities_meta_query to the $args['meta_query'] with the correct 'AND' relation.
-		$args['meta_query'] = array(
-			'relation' => 'AND', // Overall relation.
-			$cities_meta_query,  // Nested OR for cities.
+	// Loop through each city in the array and add it to the $cities_meta_query
+	foreach ( $cities_array as $city ) {
+		$cities_meta_query[] = array(
+			'key'     => 'city',
+			'value'   => $city,
+			'compare' => '=',
 		);
 	}
 
-	// reset the city to null.
+	// If meta_query already exists, add to it; otherwise create new
+	if ( isset( $args['meta_query'] ) ) {
+		// ensure the top-level relation is AND
+		if ( !isset( $args['meta_query']['relation'] ) ) {
+			$args['meta_query']['relation'] = 'AND';
+		}
+		// add our new meta query
+		$args['meta_query'][] = $cities_meta_query;
+	} else {
+		// create new meta query
+		$args['meta_query'] = array(
+			'relation' => 'AND',
+			$cities_meta_query
+		);
+	}
+
+	// reset the city to null
 	$args['city'] = null;
 
 	return $args;
 }
 add_filter( 'rentfetch_properties_simple_grid_query_args', 'rentfetch_properties_simple_grid_query_args_city' );
+
+function rentfetch_properties_simple_grid_query_args_propertyids( $args ) {
+	
+	// bail if the propertyids parameter is not set.
+	if ( !isset( $args['propertyids'] ) ) {
+		return $args;
+	}
+	
+	// remove spaces and commas, exploding this into an array.
+	$propertyids = explode( ',', str_replace( ' ', '', $args['propertyids'] ) );
+	
+	// create the property_id meta query
+	$propertyids_meta_query = array(
+		'key'     => 'property_id',
+		'value'   => $propertyids,
+		'compare' => 'IN',
+	);
+	
+	// if meta_query already exists, add to it; otherwise create new
+	if ( isset( $args['meta_query'] ) ) {
+		// ensure the top-level relation is AND
+		if ( !isset( $args['meta_query']['relation'] ) ) {
+			$args['meta_query']['relation'] = 'AND';
+		}
+		// add our new meta query
+		$args['meta_query'][] = $propertyids_meta_query;
+	} else {
+		// create new meta query
+		$args['meta_query'] = array(
+			'relation' => 'AND',
+			$propertyids_meta_query
+		);
+	}
+	
+	// reset the propertyids to null.
+	$args['propertyids'] = null;
+	
+	return $args;
+	
+}
+add_filter( 'rentfetch_properties_simple_grid_query_args', 'rentfetch_properties_simple_grid_query_args_propertyids' );
