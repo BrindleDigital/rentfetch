@@ -16,7 +16,6 @@ function rentfetch_settings_set_defaults_general() {
 
 	// Add option if it doesn't exist.
 	add_option( 'rentfetch_options_data_sync', 'nosync' );
-	add_option( 'rentfetch_options_sync_timeline', '3600' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_general' );
 
@@ -87,12 +86,6 @@ function rentfetch_save_settings_general() {
 	if ( isset( $_POST['rentfetch_options_data_sync'] ) ) {
 		$options_data_sync = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_data_sync'] ) );
 		update_option( 'rentfetch_options_data_sync', $options_data_sync );
-	}
-
-	// Select field.
-	if ( isset( $_POST['rentfetch_options_sync_timeline'] ) ) {
-		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_sync_timeline'] ) );
-		update_option( 'rentfetch_options_sync_timeline', $property_display );
 	}
 
 	// Checkboxes field.
