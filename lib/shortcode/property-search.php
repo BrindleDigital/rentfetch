@@ -165,6 +165,7 @@ function rentfetch_filter_properties() {
 		'post_type'      => 'properties',
 		'posts_per_page' => $properties_maximum_per_page,
 		'no_found_rows'  => true,
+		'post_status' => 'publish',
 	);
 
 	$display_availability = get_option( 'rentfetch_options_property_availability_display' );
