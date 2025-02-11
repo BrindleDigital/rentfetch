@@ -24,6 +24,7 @@ function rentfetch_get_floorplans_array() {
 		'orderby'        => 'date', // we will sort posts by date.
 		'order'          => 'ASC', // ASC or DESC.
 		'no_found_rows'  => true,
+		'post_status' => 'publish',
 	);
 
 	$floorplans_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplans_args );

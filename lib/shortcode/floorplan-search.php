@@ -133,6 +133,7 @@ function rentfetch_filter_floorplans() {
 		'order'          => 'ASC',
 		'no_found_rows'  => true,
 		'posts_per_page' => -1,
+		'post_status'    => 'publish',
 	);
 
 	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
