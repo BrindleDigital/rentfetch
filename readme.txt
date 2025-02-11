@@ -91,6 +91,11 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.18.7 =
+
+* Adding a javascript hook to allow more markers to be added to the map by third-party plugins
+* FIltering the value of the Entrata subdomain to save just the subdomain if the user doesn't read the directions
+
 = 0.18.6 = 
 
 * Adding a shortcode parameter for propertyids to [rentfetch_properties]
