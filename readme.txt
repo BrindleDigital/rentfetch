@@ -93,17 +93,19 @@ Start from your WordPress dashboard.
 
 = 0.18.7 =
 
-* Adding a javascript hook to allow more markers to be added to the map by third-party plugins
-* FIltering the value of the Entrata subdomain to save just the subdomain if the user doesn't read the directions
+* Feature: Adding a javascript hook to allow more markers to be added to the map by third-party plugins
+* Feature: Filtering the value of the Entrata subdomain to save just the subdomain if the user doesn't read the directions
+* Feature: Adding a new capability for the property search to use a parameter, like [rentfetch_propertysearch propertyids="p0241141,1301505"]
+* Updating the documentation for the shortcodes, as we've added a number of parameters.
 
 = 0.18.6 = 
 
-* Adding a shortcode parameter for propertyids to [rentfetch_properties]
+* Feature: Adding a shortcode parameter for propertyids to [rentfetch_properties]
 
 = 0.18.5 =
 
-* Adding compatibility for Entrata sync (backend display of their data formats for images, columns, etc.)
-* Removing the smoothscroll being added on the main property search.
+* Feature: Adding compatibility for Entrata sync (backend display of their data formats for images, columns, etc.)
+* Bugfix: Removing the smoothscroll being added on the main property search.
 
 = 0.18.4 =
 

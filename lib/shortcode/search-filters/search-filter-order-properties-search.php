@@ -135,3 +135,31 @@ add_action( 'wp', 'rentfetch_search_properties_featured_filters' );
 function rentfetch_do_search_properties_custom_filters() {
 	do_action( 'rentfetch_do_search_properties_custom_filter_location' );
 }
+
+/**
+ * A helper function to allow getting shortcode attributes from content of the current page.
+ *
+ * @param string $shortcode_tag Shortcode tag to search for.
+ * @param int    $post_id       Post ID.
+ *
+ * @return array|null Shortcode attributes, or null if not found.
+ */
+function rentfetch_get_shortcode_attributes( string $shortcode_tag, int $post_id ): ?array {
+	$content = get_post_field( 'post_content', $post_id );
+
+	if ( ! $content ) {
+		return null;
+	}
+
+	$pattern = get_shortcode_regex( [ $shortcode_tag ] );
+	if ( ! preg_match_all( '/' . $pattern . '/s', $content, $matches, PREG_SET_ORDER ) ) {
+		return null;
+	}
+
+	if ( empty( $matches ) ) {
+		return null;
+	}
+
+	// Parse attributes.
+	return shortcode_parse_atts( $matches[0][3] );
+}

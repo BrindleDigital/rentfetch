@@ -83,12 +83,15 @@ function rentfetch_documentation_shortcodes()
 			<div class="section" style="padding-bottom: 20px;">
 				<h2>Properties</h2>
 				<h3>Default search (with the map)</h3>
+				<strong>We strongly recommend using this somewhere it can span the full width of the screen.</strong>
 				<p>The main properties search can be rendered using the default shortcode, which will create a side-by-side layout
 					with the properties and search filters next to the map, or you can render each component individually to make
 					the layout work however you'd like it to.</p>
 				<p>This one includes everything; just use this and you're done. This will attempt to force itself to be full-width
 					on the page regardless of your theme styles.</p>
 				<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearch]<!-- /wp:shortcode --></span></p>
+				<p>This shortcode only takes one parameter, and it's a complete list of propertyids to limit what can possibly show in the search.</p>
+				<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearch propertyids="propertyid1,propertyid2"]<!-- /wp:shortcode --></span></p>
 				<h4>Individual components</h4>
 				<p>
 					Use these individually to arrange various components. It's quite likely, using these, that you'll need to write
@@ -100,10 +103,9 @@ function rentfetch_documentation_shortcodes()
 					<span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearchresults]<!-- /wp:shortcode --></span>
 				</p>
 				<h3>Properties grid</h3>
-				<p>This layout ignores availability, and is most suitable for smaller ownership groups with 5-20 properties.
-					<strong>We strongly recommend using this somewhere it can span the full width of the screen.</strong>
-				</p>
+				<p>This layout ignores availability, and is most suitable for smaller ownership groups with 5-20 properties.</p>
 				<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_properties]<!-- /wp:shortcode --></span></p>
+				<p>Available parameters: propertyids, city, posts_per_page</p>
 			</div>
 			<div class="separator"></div>
 			<div class="section">

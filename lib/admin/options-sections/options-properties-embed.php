@@ -23,39 +23,39 @@ function rentfetch_settings_properties_property_embed() {
 	</div>
 
 	<div class="row">
-	<div class="section">
-		<h3>Default search</h3>
-		<p>
-		This one includes everything; just use this and you're done. This will attempt to force itself to be full-width on
-		the page regardless of your theme styles. Copy and paste the default shortcode within your page builder, which
-		will create a side-by-side layout with the properties and search filters next to a map.
-		</p>
-		<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearch]<!-- /wp:shortcode --></span></p>
+		<div class="section">
+			<h2>Property Search</h2>
+			<h3>Default layout</h3>
+			<p>
+			This one includes everything; just use this and you're done. This will attempt to force itself to be full-width on
+			the page regardless of your theme styles. Copy and paste the default shortcode within your page builder, which
+			will create a side-by-side layout with the properties and search filters next to a map.
+			</p>
+			<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearch]<!-- /wp:shortcode --></span></p>
+			<p>This shortcode only takes one parameter, and it's a complete list of propertyids to limit what can possibly show in the search.</p>
+			<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearch propertyids="propertyid1,propertyid2"]<!-- /wp:shortcode --></span></p>
+			<h3>Individual components</h3>
+			<p>
+			Use these individually to arrange various components. It's quite likely, using these, that you'll need to write
+			some styles to position them the way you'd like on the page.
+			</p>
+			<p>
+			<span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearchmap]<!-- /wp:shortcode --></span>
+			<span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearchfilters]<!-- /wp:shortcode --></span>
+			<span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearchresults]<!-- /wp:shortcode --></span>
+			</p>
+		</div>
 	</div>
-
-	<div class="separator"></div>
-
-	<div class="column" style="width: calc(100% - 520px);">
-		<h2>Properties grid</h2>
-		<p>
-		This layout ignores availability and shows all properties in a grid, without a map view. We strongly recommend
-		using this somewhere it can span the full width of the screen.
-		</p>
-		<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_properties]<!-- /wp:shortcode --></span></p>
-	</div>
-
-	<div class="column" style="min-width: 520px; width: 520px;">
-		<h3>Individual components</h3>
-		<p>
-		Use these individually to arrange various components. It's quite likely, using these, that you'll need to write
-		some styles to position them the way you'd like on the page.
-		</p>
-		<p>
-		<span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearchmap]<!-- /wp:shortcode --></span>
-		<span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearchfilters]<!-- /wp:shortcode --></span>
-		<span class="shortcode"><!-- wp:shortcode -->[rentfetch_propertysearchresults]<!-- /wp:shortcode --></span>
-		</p>
-	</div>
+	<div class="row">
+		<div class="section">
+			<h2>Properties grid</h2>
+			<p>
+			This layout ignores availability and shows all properties in a grid, without a map view. We strongly recommend
+			using this somewhere it can span the full width of the screen.
+			</p>
+			<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_properties]<!-- /wp:shortcode --></span></p>
+			<p>Available parameters: propertyids, city, posts_per_page</p>		
+		</div>
 	</div>
 	<script>
 	jQuery(document).ready(function ($) {
