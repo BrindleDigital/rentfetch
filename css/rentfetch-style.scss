@@ -1,5 +1,5 @@
 // import the global stuff first
 @import 'global';
 
-// import everything from subfolders of this folder automatically
-@import '*/**/*';
+// import all scss files from subfolders, but not this file
+@import '*/*/*.scss';

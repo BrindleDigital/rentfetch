@@ -1,6 +1,5 @@
 .rent-fetch_page_rentfetch-shortcodes,
 .container.shortcodes {
-
 	span.shortcode {
 		background-color: white;
 		border: 1px solid rgba(black, 0.12);
@@ -25,7 +24,7 @@
 
 	span.shortcode.copied {
 		&:before {
-			content: url(../images/copied.svg);
+			// content: url('../images/copied.svg');
 			position: absolute;
 			inset: 0;
 			background-color: white;
@@ -45,7 +44,7 @@
 
 #rent-fetch-shortcodes-page {
 	.separator {
-    border-bottom: 1px solid #E6E6E6;
-    width: 100%;
-  }
+		border-bottom: 1px solid #e6e6e6;
+		width: 100%;
+	}
 }

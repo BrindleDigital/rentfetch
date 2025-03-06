@@ -1,30 +1,21 @@
 {
-  "name": "rentfetch",
-  "version": "1.0.0",
-  "description": "A plugin which displays property, floorplan and unit availability and information. [Visit the official site](https://rentfetch.io)",
-  "main": "gulpfile.js",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://jonschr@github.com/BrindleDigital/rentfetch.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/BrindleDigital/rentfetch/issues"
-  },
-  "homepage": "https://github.com/BrindleDigital/rentfetch#readme",
-  "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-sass": "^5.1.0",
-    "gulp-sass-glob": "^1.1.0",
-    "gulp-sourcemaps": "^3.0.0",
-    "sass": "^1.80.6"
-  }
+	"name": "elodin-base-plugin",
+	"version": "1.0.0",
+	"main": "editor.js",
+	"scripts": {
+		"dev": "npx mix",
+		"watch": "npx mix watch",
+		"prod": "npx mix --production",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"file-loader": "^6.2.0",
+		"laravel-mix": "^6.0.49",
+		"node-sass-glob-importer": "^5.3.3",
+		"resolve-url-loader": "^5.0.0",
+		"sass": "^1.81.0",
+		"sass-loader": "^12.6.0"
+	}
 }
