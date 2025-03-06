@@ -7,9 +7,8 @@ html {
   --rentfetch-base: #f7f7f7;
   --rentfetch-default: #999999;
   --rentfetch-dark: #000000;
-  --rentfetch-gold-pale: #ffebb1;
-  --rentfetch-gold: #fbbc00;
-  --rentfetch-orange: #e57a3a;
+  --rentfetch-accent-specials-background: #ffebb1;
+  --rentfetch-accent-specials-star: #fbbc00;
   --rentfetch-accent: #086ddb;
   --rentfetch-accent-active: #1f88fa;
   --rentfetch-black-5-percent: rgba(0, 0, 0, 0.05);
@@ -706,7 +705,6 @@ form.rent-fetch-options select,
   padding: 8px 15px;
   position: relative;
   transition: 0.3s all ease;
-  transition: 0.3s all ease;
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode:hover,
 .container.shortcodes span.shortcode:hover {
@@ -885,7 +883,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   transition: 0.3s all ease;
 }
 .tour-link-wrapper a:hover:after {
-  background-color: var(--rentfetch-gold-pale);
+  background-color: var(--rentfetch-accent-specials-background);
 }
 
 .floorplans-loop,
@@ -1036,7 +1034,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   top: 15px;
   left: 15px;
   padding: 5px 10px 5px 30px;
-  background-color: var(--rentfetch-gold-pale);
+  background-color: var(--rentfetch-accent-specials-background);
   z-index: 5;
   font-size: var(--rentfetch-font-size-small);
   border-radius: 3px;
@@ -1047,7 +1045,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 .floorplans-simple-grid p.specials:before {
   content: "\f155";
   font-family: "dashicons";
-  color: var(--rentfetch-gold);
+  color: var(--rentfetch-accent-specials-star);
   font-size: var(--rentfetch-font-size-medium);
   position: absolute;
   left: 10px;
@@ -1203,7 +1201,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   top: 15px;
   left: 15px;
   padding: 5px 10px 5px 30px;
-  background-color: var(--rentfetch-gold-pale);
+  background-color: var(--rentfetch-accent-specials-background);
   z-index: 5;
   font-size: var(--rentfetch-font-size-small);
   border-radius: 3px;
@@ -1213,7 +1211,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 .floorplans-in-archive p.specials:before {
   content: "\f155";
   font-family: "dashicons";
-  color: var(--rentfetch-gold);
+  color: var(--rentfetch-accent-specials-star);
   font-size: var(--rentfetch-font-size-medium);
   position: absolute;
   left: 10px;
@@ -1711,7 +1709,7 @@ form.minisearch .filters-wrap #featured-filters button#minisearch-submit:after {
   top: 15px;
   left: 15px;
   padding: 5px 10px 5px 30px;
-  background-color: var(--rentfetch-gold-pale);
+  background-color: var(--rentfetch-accent-specials-background);
   z-index: 5;
   font-size: var(--rentfetch-font-size-small);
   border-radius: 3px;
@@ -1721,7 +1719,7 @@ form.minisearch .filters-wrap #featured-filters button#minisearch-submit:after {
 .properties-loop p.specials:before {
   content: "\f155";
   font-family: "dashicons";
-  color: var(--rentfetch-gold);
+  color: var(--rentfetch-accent-specials-star);
   font-size: var(--rentfetch-font-size-medium);
   position: absolute;
   left: 10px;
@@ -1782,25 +1780,7 @@ form.minisearch .filters-wrap #featured-filters button#minisearch-submit:after {
   letter-spacing: 0.05em;
   line-height: 1;
 }
-.map-property-popup a.permalink {
-  text-decoration: none;
-  font-size: var(--rentfetch-font-size-small);
-  color: var(--rentfetch-orange);
-  font-weight: bold;
-  display: block;
-  position: relative;
-  outline: none;
-}
-.map-property-popup a.permalink:after {
-  content: "\f344";
-  font-family: "dashicons";
-  margin-left: 5px;
-  font-size: var(--rentfetch-font-size-small);
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: 0.3s all ease;
-}
+
 .gm-style-iw.gm-style-iw-c {
   border-radius: 3px;
 }
@@ -1815,7 +1795,7 @@ form.minisearch .filters-wrap #featured-filters button#minisearch-submit:after {
   margin-top: 10px;
   position: relative;
   display: inline-block;
-  background-color: #ffebb1;
+  background-color: var(--rentfetch-accent-specials-background);
   z-index: 20;
   font-size: 14px;
   line-height: 1em;
@@ -2454,7 +2434,7 @@ body.single-floorplans .current-floorplan-info .images-column img {
 body.single-floorplans .current-floorplan-info p.specials {
   position: relative;
   padding: 5px 10px 5px 30px;
-  background-color: var(--rentfetch-gold-pale);
+  background-color: var(--rentfetch-accent-specials-background);
   z-index: 5;
   font-size: var(--rentfetch-font-size-small);
   border-radius: 3px;
@@ -2465,7 +2445,7 @@ body.single-floorplans .current-floorplan-info p.specials {
 body.single-floorplans .current-floorplan-info p.specials:before {
   content: "\f155";
   font-family: "dashicons";
-  color: var(--rentfetch-gold);
+  color: var(--rentfetch-accent-specials-star);
   font-size: var(--rentfetch-font-size-medium);
   position: absolute;
   left: 10px;
