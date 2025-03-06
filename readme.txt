@@ -91,6 +91,14 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.18.8 = 
+
+* Improvement: removed the amenities classes from the post_class, as this significantly can impact performance on sites with dozens of amenities, and we've not seen those used in any instance.
+* Updated scss processing setup, as our previous version had become deprecated.
+* Updated css variables to generalize them, removing specific color names.
+* Add unavailable classes and option to automatically fade out properties without availability.
+* Improvement: add better handling to rent numbers shown on the property level to filter out negative numbers and rent values below 100, as some clients like to use junk data when things aren't available.
+
 = 0.18.7 =
 
 * Feature: Adding a javascript hook to allow more markers to be added to the map by third-party plugins
@@ -211,7 +219,7 @@ Start from your WordPress dashboard.
 = 0.15.11 =
 
 * Feature: adding a 'no-units-available' or 'has-units-available' class on all floorplan archive views, based on whether units are available.
-* Feature: adding a setting to allow default faded styles on unavailable floorplan views with 'no-units-unavailable-faded' and adding those default styles.
+* Feature: adding a setting to allow default faded styles on unavailable floorplan views with 'no-units-available-faded' and adding those default styles.
 * Feature: adding a button option and output for when a floorplan has no units available
 * Update: adding styles for Google's updated map markup
 

@@ -65,8 +65,10 @@ function rentfetch_single_properties_parts_more_properties() {
 								while ( $custom_query->have_posts() ) {
 
 									$custom_query->the_post();
-
-									$class = implode( ' ', get_post_class() );
+									
+									$classes_array = get_post_class();
+									$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
+									$class = implode( ' ', $classes_array );
 
 									printf( '<div class="%s">', esc_attr( $class ) );
 										do_action( 'rentfetch_do_each_property_in_archive' );

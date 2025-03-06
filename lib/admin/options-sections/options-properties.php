@@ -328,11 +328,20 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 		<div class="column">
 			<ul class="checkboxes">
-				<label for="rentfetch_options_properties_hide_number_of_units" class="checkbox-right" style="width: 190px">
-					<input type="checkbox" name="rentfetch_options_properties_hide_number_of_units"
-						id="rentfetch_options_properties_hide_number_of_units" <?php checked( get_option( 'rentfetch_options_properties_hide_number_of_units' ), '1' ); ?>>
-					<b>Hide the number of units</b>
-				</label>
+				<li>
+					<label for="rentfetch_options_properties_hide_number_of_units" class="checkbox-right" style="width: 275px;">
+						<b>Hide the number of units</b>
+						<input type="checkbox" name="rentfetch_options_properties_hide_number_of_units"
+							id="rentfetch_options_properties_hide_number_of_units" <?php checked( get_option( 'rentfetch_options_properties_hide_number_of_units' ), '1' ); ?>>
+					</label>
+				</li>
+				<li>
+					<label for="rentfetch_options_property_apply_styles_no_floorplans" class="checkbox-right" style="width: 275px;">
+						<b>Apply faded styles to properties without availability</b>
+						<input type="checkbox" name="rentfetch_options_property_apply_styles_no_floorplans"
+							id="rentfetch_options_property_apply_styles_no_floorplans" <?php checked( get_option( 'rentfetch_options_property_apply_styles_no_floorplans' ), '1' ); ?>>
+					</label>
+				</li>
 			</ul>
 		</div>
 		<div class="column">
@@ -486,6 +495,10 @@ function rentfetch_save_settings_property_search() {
 	// Checkbox field - Enable the availability button.
 	$hide_number_of_units = isset( $_POST['rentfetch_options_properties_hide_number_of_units'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_properties_hide_number_of_units', $hide_number_of_units );
+	
+	// Checkbox field - Fade properties without availability.
+	$hide_number_of_units = isset( $_POST['rentfetch_options_property_apply_styles_no_floorplans'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_property_apply_styles_no_floorplans', $hide_number_of_units );
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_property_search' );
 

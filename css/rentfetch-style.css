@@ -810,8 +810,8 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 /* ==========================================================================
    Styles for floorplans on single-properties templates
    ========================================================================== */
-.floorplans-in-archive .type-floorplans.no-units-unavailable-faded .images-column,
-.floorplans-in-archive .type-floorplans.no-units-unavailable-faded .content-column {
+.floorplans-in-archive .type-floorplans.no-units-available-faded .images-column,
+.floorplans-in-archive .type-floorplans.no-units-available-faded .content-column {
   filter: grayscale(1);
   opacity: 0.5;
 }
@@ -819,16 +819,16 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 /* ==========================================================================
    Floorplan grid and search results
    ========================================================================== */
-.floorplans-simple-grid .type-floorplans.no-units-unavailable-faded .floorplan-single-image-wrap,
-.floorplans-simple-grid .type-floorplans.no-units-unavailable-faded .specials,
-.floorplans-simple-grid .type-floorplans.no-units-unavailable-faded .floorplan-content,
-.floorplans-simple-grid .type-floorplans.no-units-unavailable-faded .floorplan-availability,
-.floorplans-simple-grid .type-floorplans.no-units-unavailable-faded .tour-link-wrapper,
-.floorplans-loop .type-floorplans.no-units-unavailable-faded .floorplan-single-image-wrap,
-.floorplans-loop .type-floorplans.no-units-unavailable-faded .specials,
-.floorplans-loop .type-floorplans.no-units-unavailable-faded .floorplan-content,
-.floorplans-loop .type-floorplans.no-units-unavailable-faded .floorplan-availability,
-.floorplans-loop .type-floorplans.no-units-unavailable-faded .tour-link-wrapper {
+.floorplans-simple-grid .type-floorplans.no-units-available-faded .floorplan-single-image-wrap,
+.floorplans-simple-grid .type-floorplans.no-units-available-faded .specials,
+.floorplans-simple-grid .type-floorplans.no-units-available-faded .floorplan-content,
+.floorplans-simple-grid .type-floorplans.no-units-available-faded .floorplan-availability,
+.floorplans-simple-grid .type-floorplans.no-units-available-faded .tour-link-wrapper,
+.floorplans-loop .type-floorplans.no-units-available-faded .floorplan-single-image-wrap,
+.floorplans-loop .type-floorplans.no-units-available-faded .specials,
+.floorplans-loop .type-floorplans.no-units-available-faded .floorplan-content,
+.floorplans-loop .type-floorplans.no-units-available-faded .floorplan-availability,
+.floorplans-loop .type-floorplans.no-units-available-faded .tour-link-wrapper {
   filter: grayscale(1);
   opacity: 0.5;
 }
@@ -1410,6 +1410,33 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   background-color: #f7f7f7;
   margin: 0;
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* ==========================================================================
+   The properties loop
+   ========================================================================== */
+.properties-simple-grid .type-properties.no-units-available-faded .property-single-image-wrap,
+.properties-simple-grid .type-properties.no-units-available-faded .property-content {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   The properties search
+   ========================================================================== */
+.properties-loop .type-properties.no-units-available-faded .property-single-image-wrap,
+.properties-loop .type-properties.no-units-available-faded .property-details {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   More properties slider on the single-properties template
+   ========================================================================== */
+.more-properties-slider .type-properties.no-units-available-faded .property-single-image-wrap,
+.more-properties-slider .type-properties.no-units-available-faded .property-content {
+  filter: grayscale(1);
+  opacity: 0.5;
 }
 
 form.minisearch {

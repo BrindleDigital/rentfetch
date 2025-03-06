@@ -1,0 +1,41 @@
+/* ==========================================================================
+   The properties loop
+   ========================================================================== */
+
+.properties-simple-grid {
+	.type-properties.no-units-available-faded {
+		.property-single-image-wrap,
+		.property-content {
+			filter: grayscale(1);
+			opacity: 0.5;
+		}
+	}
+}
+
+/* ==========================================================================
+   The properties search
+   ========================================================================== */
+
+.properties-loop {
+	.type-properties.no-units-available-faded {
+		.property-single-image-wrap,
+		.property-details {
+			filter: grayscale(1);
+			opacity: 0.5;
+		}
+	}
+}
+
+/* ==========================================================================
+   More properties slider on the single-properties template
+   ========================================================================== */
+
+.more-properties-slider {
+	.type-properties.no-units-available-faded {
+		.property-single-image-wrap,
+		.property-content {
+			filter: grayscale(1);
+			opacity: 0.5;
+		}
+	}
+}

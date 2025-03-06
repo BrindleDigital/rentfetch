@@ -243,7 +243,9 @@ function rentfetch_filter_properties() {
 				continue;
 			}
 
-			$class = implode( ' ', get_post_class() );
+			$classes_array = get_post_class();
+			$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
+			$class = implode( ' ', $classes_array );
 
 			printf(
 				'<div class="%s" data-latitude="%s" data-longitude="%s" data-id="%s" data-marker-id="%s">',

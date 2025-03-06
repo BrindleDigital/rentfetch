@@ -9,6 +9,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Add a filter to the properties post classes.
+ *
+ * @param   [type]  $classes  [$classes description]
+ *
+ * @return  [type]            [return description]
+ */
+function rentfetch_properties_post_classes( $classes ) {
+	
+	$property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
+	$floorplan_data = rentfetch_get_floorplans( $property_id );
+	$units_count = $floorplan_data['availability'];
+
+	if ( $units_count > 0 ) {
+		$classes[] = 'has-units-available';
+	} else {
+		$classes[] = 'no-units-available';
+		
+		$fade_out_unavailable = get_option( 'rentfetch_options_property_apply_styles_no_floorplans' );
+		if ( $fade_out_unavailable === '1' ) {
+			$classes[] = 'no-units-available-faded';
+		}
+	}
+
+	return $classes;
+
+}
+add_filter( 'rentfetch_filter_properties_post_classes', 'rentfetch_properties_post_classes', 10, 1 );
+
 // * PROPERTY TITLE
 
 /**
@@ -656,35 +685,51 @@ function rentfetch_property_square_feet() {
  */
 function rentfetch_get_property_pricing() {
 	$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+	
+	//TODO Need to improve this display such that we don't get junk data showing when min is selected.
 
 	$floorplan_data  = rentfetch_get_floorplans( $property_id );
 	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
 	$rent_range = null;
-
+	
+	// get the rent range if avail.
 	if ( isset( $floorplan_data['rentrange'] ) ) {
-		if ( null !== $floorplan_data['rentrange'] ) {
-			$rent_range = '$' . $floorplan_data['rentrange'];
-		} else {
-			$rent_range = 'Call for Pricing';
-		}
-	}
-
-	if ( isset( $floorplan_data['minimum_rent'] ) ) {
-		if ( is_array( $floorplan_data['minimum_rent'] ) ) {
-			$rent_min = 'From $' . number_format( (int) min( $floorplan_data['minimum_rent'] ) );
-		} else {
-			$rent_min = 'Call for Pricing';
-		}
-	} else {
-		$rent_min = 'Call for Pricing';
-	}
-
-	if ( 'range' === $pricing_display ) {
-		$rent = $rent_range;
-	} elseif ( 'minimum' === $pricing_display ) {
-		$rent = $rent_min;
+		$rent_range = $floorplan_data['rentrange'];
 	}
 	
+	// get the min rent array if avail.
+	if ( isset( $floorplan_data['minimum_rent'] ) ) {
+		$min_rent_array = $floorplan_data['minimum_rent'];
+		
+		// filter this array to remove any null values and any values below 100.
+		$min_rent_array = array_filter( $min_rent_array, fn( $value ) => $value !== null && $value >= 100 );
+		
+		// if there's noting left in the array after filtering, set it to null.
+		if ( !empty( $min_rent_array ) ) {
+			
+			// get the lowest remaining value in the array.
+			$min_rent = number_format( (int) min( $min_rent_array ) );
+		} else {
+			$min_rent = null;
+		}
+	}
+
+	// return the string for display.
+	if ( 'range' === $pricing_display ) {
+		if ( $rent_range ) {
+			$rent = '$' . $rent_range;
+		} else {
+			$rent = 'Call for Pricing';
+		}
+	} elseif ( 'minimum' === $pricing_display ) {
+		if ( $min_rent ) {
+			$rent = 'From $' . $min_rent;
+		} else {
+			$rent = 'Call for Pricing';
+		}
+	}
+	
+	// make our variables a bit friendlier in case this filter is used, to make it easier to understand what's going on.
 	if ( !isset( $floorplan_data['rentrange'] ) ) {
 		$floorplan_data['rentrange'] = null;
 	}

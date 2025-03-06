@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .floorplans-in-archive {
-	.type-floorplans.no-units-unavailable-faded {
+	.type-floorplans.no-units-available-faded {
 		.images-column,
 		.content-column {
 			filter: grayscale(1);
@@ -18,7 +18,7 @@
 
 .floorplans-simple-grid,
 .floorplans-loop {
-	.type-floorplans.no-units-unavailable-faded {
+	.type-floorplans.no-units-available-faded {
 		.floorplan-single-image-wrap,
 		.specials,
 		.floorplan-content,

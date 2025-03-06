@@ -39,14 +39,14 @@ function rentfetch_settings_properties_property_archives() {
 					<label>
 						<input type="radio" name="rentfetch_options_property_pricing_display"
 							id="rentfetch_options_property_pricing_display" value="range" <?php checked( get_option( 'rentfetch_options_property_pricing_display' ), 'range' ); ?>>
-						Range (e.g. "$1999 to $2999")
+						Range (e.g. "$1,999 to 2,999")
 					</label>
 				</li>
 				<li>
 					<label>
 						<input type="radio" name="rentfetch_options_property_pricing_display"
 							id="rentfetch_options_property_pricing_display" value="minimum" <?php checked( get_option( 'rentfetch_options_property_pricing_display' ), 'minimum' ); ?>>
-						Minimum (e.g. "from $1999")
+						Minimum (e.g. "from $1,999")
 					</label>
 				</li>
 			</ul>
