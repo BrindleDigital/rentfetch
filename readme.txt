@@ -1,5 +1,5 @@
 === Rent Fetch ===
-Contributors: jonschr
+Contributors: jonbrindle, jonschr
 Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.6.2
