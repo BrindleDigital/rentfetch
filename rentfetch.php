@@ -1,16 +1,20 @@
 <?php
 /**
-	Plugin Name:    Rent Fetch
-	Plugin URI:     http://wordpress.org/plugins/rentfetch/
-	Description:    Displays searchable rental properties, floorplans, and unit availability.
-	Version:        0.18.9
-	Author:         Brindle Digital
-	Author URI:     https://www.brindledigital.com
-	Text Domain:    rentfetch
-	License:        GPLv2 or later
-	License URI:    http://www.gnu.org/licenses/gpl-2.0.html
- *
-	@package rentfetch
+ * Rent Fetch
+ * 
+ * @package rentfetch
+ * @author Brindle Digital
+ * 
+ * @wordpress-plugin
+ * Plugin Name:    Rent Fetch
+ * Plugin URI:     http://wordpress.org/plugins/rentfetch/
+ * Description:    Displays searchable rental properties, floorplans, and unit availability.
+ * Version:        0.18.9
+ * Author:         Brindle Digital
+ * Author URI:     https://www.brindledigital.com
+ * Text Domain:    rentfetch
+ * License:        GPLv2 or later
+ * License URI:    http://www.gnu.org/licenses/gpl-2.0.html
  */
 
 // Prevent direct access to the plugin.
