@@ -1,10 +1,10 @@
 === Rent Fetch ===
-Contributors: jonbrindle, jonschr
+Contributors: jonschr
 Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.6.2
 Requires PHP: 7.3
-Stable tag: 0.18.9
+Stable tag: 0.18.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,14 +103,24 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.18.10 = 
+
+* Bugfix: the filters for floorplan searches were not being shown on mobile. Those are now visible again.
+* Improvement: minor CSS update to improve the display of the filters on property searches on older (smaller) mobile devices.
+* Changing the structure of our plugin header to more closely align with ACF, since the author of the plugin is currently showing wrong and ACF has gone through a renaming recently. (Possible fix)
+
+= 0.18.9 = 
+
+* Updates to readme file, etc.
+
 = 0.18.8 = 
 
 * Improvement: removed the amenities classes from the post_class, as this significantly can impact performance on sites with dozens of amenities, and we've not seen those used in any instance.
-* Updated scss processing setup, as our previous version had become deprecated.
-* Updated css variables to generalize them, removing specific color names.
-* Add unavailable classes and option to automatically fade out properties without availability.
+* Improvement: Updated scss processing setup, as our previous version had become deprecated.
+* Improvement: Updated css variables to generalize them, removing specific color names.
+* Feature: Add unavailable classes and option to automatically fade out properties without availability.
 * Improvement: add better handling to rent numbers shown on the property level to filter out negative numbers and rent values below 100, as some clients like to use junk data when things aren't available.
-* Add an option allowing for forcing links to the single-floorplans template and supporting functionality.
+* Feature: Add an option allowing for forcing links to the single-floorplans template and supporting functionality.
 
 = 0.18.7 =
 

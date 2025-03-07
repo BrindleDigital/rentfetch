@@ -2080,6 +2080,9 @@ footer.property-search-filters-footer button#show-properties {
   border-radius: 3px;
 }
 
+/* ==========================================================================
+   Both properties and floorplans
+   ========================================================================== */
 #featured-filters {
   display: flex;
   flex-flow: row wrap;
@@ -2090,7 +2093,7 @@ footer.property-search-filters-footer button#show-properties {
 @media (max-width: 600px) {
   #featured-filters {
     display: grid;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 #featured-filters button,
@@ -2155,11 +2158,6 @@ footer.property-search-filters-footer button#show-properties {
   border: none;
   padding: 0;
   position: relative;
-}
-@media (max-width: 600px) {
-  #featured-filters fieldset {
-    display: none;
-  }
 }
 #featured-filters fieldset legend {
   display: none;
@@ -2304,6 +2302,33 @@ footer.property-search-filters-footer button#show-properties {
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
+}
+
+/* ==========================================================================
+   Specifically the properties filters
+   ========================================================================== */
+@media (max-width: 600px) {
+  .rent-fetch-property-search-default-layout #featured-filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .rent-fetch-property-search-default-layout fieldset:not(.text-based-search) {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .rent-fetch-floorplan-search-default-layout #featured-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .rent-fetch-floorplan-search-default-layout #featured-filters button.toggle {
+    text-align: left;
+    width: 100%;
+  }
 }
 
 #filter-toggles button {

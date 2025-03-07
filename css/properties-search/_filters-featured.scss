@@ -1,3 +1,7 @@
+/* ==========================================================================
+   Both properties and floorplans
+   ========================================================================== */
+
 #featured-filters {
 	display: flex;
 	flex-flow: row wrap;
@@ -7,7 +11,7 @@
 
 	@include mobile {
 		display: grid;
-		grid-template-columns: 3fr 1fr;
+		grid-template-columns: 1fr;
 	}
 
 	button,
@@ -82,10 +86,6 @@
 		border: none;
 		padding: 0;
 		position: relative;
-
-		@include mobile {
-			display: none;
-		}
 
 		legend {
 			display: none;
@@ -260,6 +260,40 @@
 			background-size: contain;
 			background-position: center center;
 			background-repeat: no-repeat;
+		}
+	}
+}
+
+/* ==========================================================================
+   Specifically the properties filters
+   ========================================================================== */
+
+.rent-fetch-property-search-default-layout {
+	#featured-filters {
+		@include mobile {
+			display: grid;
+			grid-template-columns: 2fr 1fr;
+		}
+	}
+
+	fieldset:not(.text-based-search) {
+		@include mobile {
+			display: none;
+		}
+	}
+}
+
+.rent-fetch-floorplan-search-default-layout {
+	@include mobile {
+		#featured-filters {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 3px;
+
+			button.toggle {
+				text-align: left;
+				width: 100%;
+			}
 		}
 	}
 }
