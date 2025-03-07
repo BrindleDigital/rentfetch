@@ -216,6 +216,31 @@ function rentfetch_settings_floorplans_floorplan_search()
     </ul>
   </div>
 
+	<div class="separator"></div>
+  
+	<div class="section pb-0">
+		<label><b>Always link to the floorplans single template?</b></label>
+		<p class="description">Force enable the single-floorplan page regardless of whether there are units</p>
+	</div>
+	<div class="section">
+		<ul class="radio">
+			<li>
+				<label for="rentfetch_options_floorplan_force_single_template_link">
+					<input type="radio" name="rentfetch_options_floorplan_force_single_template_link"
+						id="rentfetch_options_floorplan_force_single_template_link" value="enabled" <?php checked( get_option( 'rentfetch_options_floorplan_force_single_template_link' ), 'enabled' ); ?>>
+					Yes, always link to the single-floorplan template
+				</label>
+			</li>
+			<li>
+				<label for="rentfetch_options_floorplan_force_single_template_link">
+					<input type="radio" name="rentfetch_options_floorplan_force_single_template_link"
+						id="rentfetch_options_floorplan_force_single_template_link" value="disabled" <?php checked( get_option( 'rentfetch_options_floorplan_force_single_template_link' ), 'disabled' ); ?>>
+					No, use the default behavior (link to the single-floorplan template only if there are units)
+				</label>
+			</li>
+		</ul>
+	</div>
+
   <div class="separator"></div>
 
   <div class="section pb-0">
@@ -301,5 +326,10 @@ function rentfetch_save_settings_floorplan_search()
 	$fade_out_unavailable_floorplans = isset($_POST['rentfetch_options_floorplan_apply_styles_no_floorplans']) ? '1' : '0';
 	update_option('rentfetch_options_floorplan_apply_styles_no_floorplans', $fade_out_unavailable_floorplans);
 
+	// Select field.
+	if (isset($_POST['rentfetch_options_floorplan_force_single_template_link'])) {
+		$force_floorplans_single_template = sanitize_text_field(wp_unslash($_POST['rentfetch_options_floorplan_force_single_template_link']));
+		update_option('rentfetch_options_floorplan_force_single_template_link', $force_floorplans_single_template);
+	}
 }
 add_action('rentfetch_save_settings', 'rentfetch_save_settings_floorplan_search');

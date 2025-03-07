@@ -393,10 +393,11 @@ function rentfetch_floorplan_tour_embed() {
 function rentfetch_get_floorplan_links() {
 
 	$units_count = rentfetch_get_floorplan_units_count_from_cpt();
+	$force_enable_fb_single = get_option( 'rentfetch_options_floorplan_force_single_template_link', 'disabled' );
 
 	ob_start();
 
-	if ( $units_count > 0 ) {
+	if ( $units_count > 0 || 'enabled' === $force_enable_fb_single ) {
 
 		// if there are units attached to this floorplan, then link to the permalink of the floorplan.
 		$overlay = sprintf( '<a href="%s" class="overlay-link"></a>', get_the_permalink() );

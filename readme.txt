@@ -4,7 +4,7 @@ Tags: property, apartment, rent, yardi, realpage
 Requires at least: 6.4
 Tested up to: 6.6.2
 Requires PHP: 7.3
-Stable tag: 0.18.7
+Stable tag: 0.18.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,7 @@ Start from your WordPress dashboard.
 * Updated css variables to generalize them, removing specific color names.
 * Add unavailable classes and option to automatically fade out properties without availability.
 * Improvement: add better handling to rent numbers shown on the property level to filter out negative numbers and rent values below 100, as some clients like to use junk data when things aren't available.
+* Add an option allowing for forcing links to the single-floorplans template and supporting functionality.
 
 = 0.18.7 =
 
