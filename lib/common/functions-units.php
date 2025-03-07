@@ -193,6 +193,8 @@ function rentfetch_get_floorplan_units_count_from_cpt() {
 	$args = array(
 		'post_type'      => 'units',
 		'posts_per_page' => -1,
+		'fields'         => 'ids',
+		'status'         => 'publish',
 		'meta_query'     => array(
 			'relation' => 'AND',
 			array(
@@ -211,6 +213,7 @@ function rentfetch_get_floorplan_units_count_from_cpt() {
 	$posts = get_posts( $args );
 
 	$count = count( $posts );
+
 	return (int) $count;
 }
 
