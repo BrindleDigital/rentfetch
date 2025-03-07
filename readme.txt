@@ -1,6 +1,6 @@
 === Rent Fetch ===
 Contributors: jonschr
-Tags: property, apartment, rent, yardi, realpage
+Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.6.2
 Requires PHP: 7.3
@@ -13,41 +13,55 @@ Displays searchable rental properties, floorplans, and unit availability.
 
 == Description ==
 
-Rent Fetch for apartments is a powerful plugin solution for displaying current floor plan pricing & availability for your apartment and rental properties.
+Rent Fetch for apartments and property managers is a powerful plugin solution for displaying current floor plan pricing & availability for your apartment and rental properties.
 
-**Pro**
+## Rent Fetch Sync (premium version)
 
-Automatically display updated pricing, availability, and property info for your single apartment or multi-property / corporate site with our premium Rent Fetch Sync add-on that integrates with popular property management leasing softwares. 
+Automatically display updated pricing, availability, and property info for your single apartment or multi-property (corporate site) with our premium Rent Fetch Sync add-on that integrates with popular property management leasing software.
 
-[Rent Fetch Sync](https://rentfetch.io) works with Yardi/RentCafe (Entrata, Appfolio and RealPage support coming soon!). Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/) to discuss!
+[Rent Fetch Sync](https://rentfetch.io) works with Yardi RentCafe, Entrata, Appfolio, Rent Manager, and more. Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/) to discuss!
 
-**For Apartment Sites: Display Floor Plan & Unit Availability**
+### For Single Property Apartment Sites
 
-Showcase your floor plan data – including featured photos and 3D floor plans, beds, baths, sq ft, unit availability, 3D video tour links, and pricing. Plus let users filter and search.
+**Display Pricing & Availability Info**
 
-**Units listing:** Our individual floor plan template goes all the way down to the unit level, including unique availability links on a per-unit basis.
+Showcase your floor plan and unit data – including pricing, photos, video tours, beds, baths, sq ft, unit availability, and more. 
+
+Our individual floor plan page filters down to the unit level, including unique availability links on a per-unit basis.
+
+**For Corporate Sites: Property Availability Map**
+
+View multiple properties with availability on an interactive Google map, and let users filter by property name, beds, baths, price, and more. Text-based search is also available. 
+
+**Units listing** 
+
+Our individual floor plan template goes all the way down to the unit level, including unique availability links on a per-unit basis.
 
 **For Corporate Sites: Property Availability Map**
 
 View multiple properties with available floor plans on a Google map, and let users filter by property name, beds, baths, price, and more. Text-based search is also available, and we integrate with Relevanssi, so your users can search for anything at all (the city or zip code works fine).
 
-**Single Property Template:** Showcase your property – and all associated floorplans – with a unique URL for each property. Each one has a floorplan listing including availability, image gallery, location map, and more!
+**Single Property Template:** 
+
+Showcase your property info and availability on a single webpage. Each property page can sync (or you can manually manage) photos, contact info, external links, availability, amenity info, tour videos, nearby locations, and more.
+
+Rent Fetch is the engine behind our sites at [Brindle Digital Marketing](https://brindledigital.com/) – at Brindle, we help multifamily apartment properties increase their online presence through web design, social media, branding, and digital advertising.
 
 == Features ==
 
 * Native WordPress content types are used for everything, so a developer can create their own layouts.
-* Google maps integration (both for the property search and for use on each property page. To use this, you'll need to set up an API key for the Google Maps Javascript API at [maps.googleapis.com](https://maps.googleapis.com))
-* Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed [Blaze Slider](https://blaze-slider.dev) for these, and you don't need to set up anything for these to work)
+* Google Maps integration (both for the property search and for use on each property page. To use this, you’ll need to set up an API key for the Google Maps Javascript API at [maps.googleapis.com](https://maps.googleapis.com))
+* Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed  [Blaze Slider](https://blaze-slider.dev) for these, and you don’t need to set up anything for these to work)
 * Your floorplans can display [Matterport](https://my.matterport.com) and [YouTube](https://www.youtube.com) tours.
-* TONS of hooks, letting you (or your developer) customize to your heart's content. The single layouts for both floorplans and properties can be fully replaced by the theme, and we have lots of helpful functions to let you grab preprocessed information for display.
-* This plugin works with both single-property websites and websites that showcase hundreds of properties.
-* Mini search capability
+* TONS of hooks, letting you (or your developer) customize to your heart’s content. The single layouts for both floorplans and properties can be fully replaced by the theme, and we have lots of helpful functions to let you grab preprocessed information for display.
+* This plugin works with both single-property apartment websites and websites that showcase hundreds of properties.
+* Adding mini search capability
 
 == Frequently Asked Questions ==
 
-= What APIs do you work with? =
+= What APIs and PMS’s do you work with? =
 
-This free version of the plugin allows for unlimited usage with *manual data entry*. Our Premium [Rent Fetch Sync](https://rentfetch.io) add-on works with Yardi RentCafe, Appfolio and RealPage OneSite (Entrata coming soon). Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/) to discuss!
+The free version of the plugin allows for unlimited usage with *manual data entry*. Our Premium  [Rent Fetch Sync](https://rentfetch.io) add-on works with Yardi RentCafe, Entrata, Rent Manager, and Appfolio (more coming soon). Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/) to discuss!
 
 = Will this work on a site showing just one property and a handful of floorplans? =
 
@@ -514,4 +528,3 @@ Start from your WordPress dashboard.
 = 0.1 =
 
 * Initial version
-
