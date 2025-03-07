@@ -15,13 +15,13 @@ Displays searchable rental properties, floorplans, and unit availability.
 
 Rent Fetch for apartments and property managers is a powerful plugin solution for displaying current floor plan pricing & availability for your apartment and rental properties.
 
-## Rent Fetch Sync (premium version)
+#### Rent Fetch Sync (premium version)
 
 Automatically display updated pricing, availability, and property info for your single apartment or multi-property (corporate site) with our premium Rent Fetch Sync add-on that integrates with popular property management leasing software.
 
 [Rent Fetch Sync](https://rentfetch.io) works with Yardi RentCafe, Entrata, Appfolio, Rent Manager, and more. Looking to integrate with a different property management system? [Contact us](https://rentfetch.io/get-started/) to discuss!
 
-### For Single Property Apartment Sites
+#### For Single Property Apartment Sites
 
 **Display Pricing & Availability Info**
 
@@ -29,17 +29,15 @@ Showcase your floor plan and unit data – including pricing, photos, video tour
 
 Our individual floor plan page filters down to the unit level, including unique availability links on a per-unit basis.
 
-**For Corporate Sites: Property Availability Map**
+#### For Corporate Sites 
+
+**Property Availability Map**
 
 View multiple properties with availability on an interactive Google map, and let users filter by property name, beds, baths, price, and more. Text-based search is also available. 
 
 **Units listing** 
 
 Our individual floor plan template goes all the way down to the unit level, including unique availability links on a per-unit basis.
-
-**For Corporate Sites: Property Availability Map**
-
-View multiple properties with available floor plans on a Google map, and let users filter by property name, beds, baths, price, and more. Text-based search is also available, and we integrate with Relevanssi, so your users can search for anything at all (the city or zip code works fine).
 
 **Single Property Template:** 
 
@@ -528,3 +526,4 @@ Start from your WordPress dashboard.
 = 0.1 =
 
 * Initial version
+
