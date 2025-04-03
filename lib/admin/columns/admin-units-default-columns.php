@@ -45,6 +45,8 @@ function rentfetch_default_units_admin_columns( $columns ) {
 		'cb'                    => '<input type="checkbox" />',
 		'title'                 => __( 'Title', 'rentfetch' ),
 		'unit_id'               => __( 'Unit ID', 'rentfetch' ),
+		'building_name'         => __( 'Building Name', 'rentfetch' ),
+		'floor_number'          => __( 'Floor Number', 'rentfetch' ),
 		'floorplan_id'          => __( 'Floorplan ID', 'rentfetch' ),
 		'floorplan_name'        => __( 'Floorplan Name', 'rentfetch' ),
 		'property_id'           => __( 'Property ID', 'rentfetch' ),
@@ -83,6 +85,14 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 
 	if ( 'unit_id' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'unit_id', true ) );
+	}
+	
+	if ( 'building_name' === $column ) {
+		echo esc_attr( get_post_meta( $post_id, 'building_name', true ) );
+	
+	}
+	if ( 'floor_number' === $column ) {
+		echo esc_attr( get_post_meta( $post_id, 'floor_number', true ) );
 	}
 
 	if ( 'floorplan_id' === $column ) {

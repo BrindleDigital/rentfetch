@@ -350,6 +350,7 @@ td.api_response .api-responses {
 html {
   --rentfetch-white: #ffffff;
   --rentfetch-base: #f7f7f7;
+  --rentfetch-base-2: #e2e2e2;
   --rentfetch-default: #999999;
   --rentfetch-dark: #000000;
   --rentfetch-accent-specials-background: #ffebb1;

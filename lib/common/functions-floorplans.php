@@ -632,9 +632,33 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 	$columns[] = 'title';
 
 	// * Pricing.
-	// (This is the whole point of the display, so we're not going to bother with this one being optional).
-	$columns[] = 'pricing';
-
+	// We need to get the 'minimum_rent' and 'maximum_rent' meta values and make sure they're not empty. If there are any values, then we add the pricing column.
+	$args_pricing      = $args;
+	$args_pricing_meta = array(
+		'key'     => 'minimum_rent',
+		'value'   => 0,
+		'compare' => '>',
+	);
+	$args_pricing['meta_query'][] = $args_pricing_meta;
+	
+	
+	// We need to get the 'maximum_rent' meta values and make sure they're not empty. If there are any values, then we add the pricing column.
+	$args_pricing_max      = $args;
+	$args_pricing_max_meta = array(
+		'key'     => 'maximum_rent',
+		'value'   => 0,
+		'compare' => '>',
+	);
+	$args_pricing_max['meta_query'][] = $args_pricing_max_meta;
+	
+	$posts_pricing = get_posts( $args_pricing );
+	$posts_pricing_max = get_posts( $args_pricing_max );
+	
+	// If either $posts_pricing or $posts_pricing_max is an array with at least one item, then we'll add the pricing column.
+	if ( ( is_array( $posts_pricing ) && count( $posts_pricing ) > 0 ) || ( is_array( $posts_pricing_max ) && count( $posts_pricing_max ) > 0 ) ) {
+		$columns[] = 'pricing';
+	}
+	
 	// * Deposit.
 	// We need to add an array to args that looks for 'deposit' in the meta key and makes sure the value is non-zero and not empty/null.
 	$args_deposit      = $args;
@@ -727,6 +751,39 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 	if ( is_array( $posts_specials ) && count( $posts_specials ) > 0 ) {
 		$columns[] = 'specials';
 	}
+	
+	//* Building name.
+	// We need to add an array to args that looks for 'building_name' in the meta key and makes sure the value is non-empty.
+	$args_building_name      = $args;
+	$args_building_name_meta = array(
+		'key'     => 'building_name',
+		'value'   => '',
+		'compare' => '!=',
+	);
+	
+	$args_building_name['meta_query'][] = $args_building_name_meta;
+	$posts_building_name = get_posts( $args_building_name );
+	
+	// if $posts_building_name is an array with at least one item, then we'll add the building name column.
+	if ( is_array( $posts_building_name ) && count( $posts_building_name ) > 0 ) {
+		$columns[] = 'building_name';
+	}
+	
+	//* Floor number.
+	// We need to add an array to args that looks for 'floor_number' in the meta key and makes sure the value is non-empty.
+	$args_floor_number      = $args;
+	$args_floor_number_meta = array(
+		'key'     => 'floor_number',
+		'value'   => '',
+		'compare' => '!=',
+	);
+	$args_floor_number['meta_query'][] = $args_floor_number_meta;
+	$posts_floor_number = get_posts( $args_floor_number );
+	
+	// if $posts_floor_number is an array with at least one item, then we'll add the floor number column.
+	if ( is_array( $posts_floor_number ) && count( $posts_floor_number ) > 0 ) {
+		$columns[] = 'floor_number';
+	}
 
 	return apply_filters( 'rentfetch_floorplan_unit_display_columns', $columns, $args );
 }
@@ -774,8 +831,16 @@ function rentfetch_floorplan_unit_table() {
 		echo '<table class="unit-details-table">';
 			echo '<tr>';
 
+				if ( in_array( 'building_name', $columns, true ) ) {
+					echo '<th class="unit-buliding-name">Building</th>';
+				}
+				
 				if ( in_array( 'title', $columns, true ) ) {
 					echo '<th class="unit-title">Apt #</th>';
+				
+				}
+				if ( in_array( 'floor_number', $columns, true ) ) {
+					echo '<th class="building-floor-number">Floor</th>';
 				}
 
 				if ( in_array( 'pricing', $columns, true ) ) {
@@ -806,17 +871,26 @@ function rentfetch_floorplan_unit_table() {
 				$units_table_query->the_post();
 
 				$title             = rentfetch_get_unit_title();
+				$building_name     = rentfetch_get_unit_building_name();
+				$floor_number      = rentfetch_get_unit_floor_number();
 				$pricing           = rentfetch_get_unit_pricing();
 				$deposit           = rentfetch_get_unit_deposit();
 				$availability_date = rentfetch_get_unit_availability_date();
 				$amenities         = rentfetch_get_unit_amenities();
-				$floor             = null;
 				$specials          = rentfetch_get_unit_specials();
 
 				echo '<tr>';
+				
+					if ( in_array( 'building_name', $columns, true ) ) {
+						printf( '<td class="unit-building-name">%s</td>', esc_html( $building_name ) );
+					}
 
 					if ( in_array( 'title', $columns, true ) ) {
 						printf( '<td class="unit-title">%s</td>', esc_html( $title ) );
+					}
+					
+					if ( in_array( 'floor_number', $columns, true ) ) {
+						printf( '<td class="unit-floor-number">%s</td>', esc_html( $floor_number ) );
 					}
 
 					if ( in_array( 'pricing', $columns, true ) ) {
@@ -896,20 +970,33 @@ function rentfetch_floorplan_unit_list() {
 			$units_list_query->the_post();
 
 			$title             = rentfetch_get_unit_title();
+			$building_name     = rentfetch_get_unit_building_name();
+			$floor_number      = rentfetch_get_unit_floor_number();
 			$pricing           = rentfetch_get_unit_pricing();
 			$deposit           = rentfetch_get_unit_deposit();
 			$availability_date = rentfetch_get_unit_availability_date();
 			$amenities         = rentfetch_get_unit_amenities();
-			$floor             = null;
 			$specials          = rentfetch_get_unit_specials();
 
 			echo '<details class="unit-details">';
 				echo '<summary class="unit-summary">';
-					printf( '<p class="unit-title">%s, <span class="label">starting at</span> %s<span class="dropdown"></span></p>', esc_html( $title ), esc_html( $pricing ) );
+					if ( $pricing ) {
+						printf( '<p class="unit-title">%s, <span class="label">starting at</span> %s<span class="dropdown"></span></p>', esc_html( $title ), esc_html( $pricing ) );
+					} else {
+						printf( '<p class="unit-title">%s<span class="dropdown"></span></p>', esc_html( $title ) );
+					}
 				echo '</summary>';
 				echo '<ul class="unit-details-list-wrap">';
 
-					if ( $deposit ) {
+					if ( $building_name ) {
+						printf( '<li class="unit-building-name"><span class="label">Building:</span> %s</li>', esc_html( $building_name ) );
+					}
+					
+					if ( $floor_number ) {
+						printf( '<li class="unit-floor-number"><span class="label">Floor number:</span> %s</li>', esc_html( $floor_number ) );
+					}
+					
+					if ( $deposit && 'Please inquire' !== $deposit ) {
 						printf( '<li class="unit-deposit"><span class="label">Deposit:</span> %s</li>', esc_html( $deposit ) );
 					}
 

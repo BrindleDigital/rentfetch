@@ -5,6 +5,7 @@
 html {
   --rentfetch-white: #ffffff;
   --rentfetch-base: #f7f7f7;
+  --rentfetch-base-2: #e2e2e2;
   --rentfetch-default: #999999;
   --rentfetch-dark: #000000;
   --rentfetch-accent-specials-background: #ffebb1;
@@ -2086,83 +2087,28 @@ footer.property-search-filters-footer button#show-properties {
 #featured-filters {
   display: flex;
   flex-flow: row wrap;
-  gap: 0;
+  gap: 6px;
   width: 100%;
   max-width: 100%;
 }
-@media (max-width: 600px) {
-  #featured-filters {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-}
-#featured-filters button,
-#featured-filters input[type=text],
-#featured-filters label {
-  color: var(--rentfetch-dark);
-}
-@media (max-width: 1200px) {
-  #featured-filters {
-    flex-flow: row wrap;
-  }
-}
-#featured-filters button.toggle,
-#featured-filters button#open-search-filters {
-  background-color: transparent;
-  border: none;
-  font-size: var(--rentfetch-font-size-medium);
-  line-height: 50px;
-  margin: 0;
-  outline: none;
-  padding: 0 15px;
-  transition: 0.3s all ease;
-  cursor: pointer;
-}
-@media (max-width: 1200px) {
-  #featured-filters button.toggle,
-  #featured-filters button#open-search-filters {
-    margin: 0;
-  }
-}
-#featured-filters button.toggle:hover,
-#featured-filters button#open-search-filters:hover {
-  background-color: var(--rentfetch-base);
-}
-#featured-filters button.toggle:after {
-  content: "\f347";
-  font-family: "dashicons";
-  font-size: var(--rentfetch-font-size-small);
-  transform: translateY(3px);
-  margin-left: 0.5em;
-}
-#featured-filters input[type=text],
-#featured-filters input[type=number],
-#featured-filters input[type=date] {
-  display: block;
-  line-height: 48px;
-  padding: 0 0 0 15px;
-  width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
-}
-#featured-filters input[type=date]::-webkit-calendar-picker-indicator {
-  opacity: 0.3;
-  margin-right: 15px;
-  -webkit-transition: 0.3s all ease;
-  transition: 0.3s all ease;
-}
-#featured-filters input[type=date]:hover::-webkit-calendar-picker-indicator, #featured-filters input[type=date]:active::-webkit-calendar-picker-indicator, #featured-filters input[type=date]:focus::-webkit-calendar-picker-indicator {
-  opacity: 1;
+#featured-filters input {
+  box-sizing: border-box;
 }
 #featured-filters fieldset {
   border: none;
   padding: 0;
   position: relative;
 }
+@media (max-width: 600px) {
+  #featured-filters fieldset {
+    position: static;
+  }
+}
 #featured-filters fieldset legend {
   display: none;
 }
 #featured-filters fieldset .input-wrap:not(.text) {
+  margin-top: -1px;
   display: none;
   position: absolute;
   z-index: 50;
@@ -2170,6 +2116,12 @@ footer.property-search-filters-footer button#show-properties {
   overflow-y: auto;
   padding: 15px;
   border: 1px solid rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 600px) {
+  #featured-filters fieldset .input-wrap:not(.text) {
+    left: 0;
+    right: 0;
+  }
 }
 #featured-filters fieldset .input-wrap:not(.text) input[type=text],
 #featured-filters fieldset .input-wrap:not(.text) input[type=number] {
@@ -2249,7 +2201,6 @@ footer.property-search-filters-footer button#show-properties {
 #featured-filters fieldset.text-based-search {
   display: block;
   min-width: 200px;
-  margin-right: 15px;
 }
 @media (max-width: 1200px) {
   #featured-filters fieldset.text-based-search {
@@ -2286,10 +2237,79 @@ footer.property-search-filters-footer button#show-properties {
     right: 0;
   }
 }
+#featured-filters button,
+#featured-filters input[type=text],
+#featured-filters label {
+  color: var(--rentfetch-dark);
+  box-sizing: border-box;
+}
+@media (max-width: 1200px) {
+  #featured-filters {
+    flex-flow: row wrap;
+  }
+}
+#featured-filters button.toggle,
+#featured-filters button#open-search-filters {
+  background-color: transparent;
+  border: none;
+  font-size: var(--rentfetch-font-size-medium);
+  line-height: 48px;
+  margin: 0;
+  outline: none;
+  padding: 0 15px;
+  transition: 0.3s all ease;
+  cursor: pointer;
+  border: 1px solid var(--rentfetch-base-2);
+  border-radius: 3px;
+}
+@media (max-width: 600px) {
+  #featured-filters button.toggle,
+  #featured-filters button#open-search-filters {
+    padding: 0 8px 0 12px;
+    font-size: var(--rentfetch-font-size-small);
+    line-height: 35px;
+  }
+}
+#featured-filters button.toggle:hover,
+#featured-filters button#open-search-filters:hover {
+  background-color: var(--rentfetch-base);
+}
+#featured-filters button.toggle:after {
+  content: "\f347";
+  font-family: "dashicons";
+  font-size: var(--rentfetch-font-size-small);
+  margin-left: 0.3em;
+  position: relative;
+  top: 2px;
+}
+#featured-filters input[type=text],
+#featured-filters input[type=number],
+#featured-filters input[type=date] {
+  display: block;
+  line-height: 50px;
+  padding: 0 0 0 15px;
+  width: 100%;
+  border: 1px solid var(--rentfetch-base-2);
+  border-radius: 3px;
+}
+#featured-filters input[type=date]::-webkit-calendar-picker-indicator {
+  opacity: 0.3;
+  margin-right: 15px;
+  -webkit-transition: 0.3s all ease;
+  transition: 0.3s all ease;
+}
+#featured-filters input[type=date]:hover::-webkit-calendar-picker-indicator, #featured-filters input[type=date]:active::-webkit-calendar-picker-indicator, #featured-filters input[type=date]:focus::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
 #featured-filters button#open-search-filters {
   margin-left: auto;
   position: relative;
   padding-right: 43px;
+}
+@media (max-width: 1400px) {
+  #featured-filters button#open-search-filters {
+    margin-left: inherit;
+  }
 }
 #featured-filters button#open-search-filters:after {
   content: "";
@@ -2310,24 +2330,13 @@ footer.property-search-filters-footer button#show-properties {
 @media (max-width: 600px) {
   .rent-fetch-property-search-default-layout #featured-filters {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr auto;
+    gap: 0.5em;
   }
 }
 @media (max-width: 600px) {
   .rent-fetch-property-search-default-layout fieldset:not(.text-based-search) {
     display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .rent-fetch-floorplan-search-default-layout #featured-filters {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3px;
-  }
-  .rent-fetch-floorplan-search-default-layout #featured-filters button.toggle {
-    text-align: left;
-    width: 100%;
   }
 }
 

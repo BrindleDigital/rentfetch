@@ -29,7 +29,7 @@ function rentfetch_search_filters_squarefoot() {
 		$value_big = intval( sanitize_text_field( wp_unslash( $_GET['sqftbig'] ) ) );
 	}
 	
-	$label = apply_filters( 'rentfetch_search_filters_sqft_label', 'Square footage' );
+	$label = apply_filters( 'rentfetch_search_filters_sqft_label', 'Sqft' );
 
 	// * build the price search.
 	echo '<fieldset class="square-footage number-range">';

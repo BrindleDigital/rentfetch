@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.6.2
 Requires PHP: 7.3
-Stable tag: 0.18.10
+Stable tag: 0.19
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,13 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.19 = 
+
+* Feature: Adding the ability to output the building name and floor number for units (these exist in the Entrata API)
+* Feature: Adding building name and floor number on the backend display
+* Bugfix: In the units table, we were set up to always show pricing. However, the Entrata API has situations where there is no pricing and yet there's an Apply Online link. So we're removing that column when it's not useful.
+* Update: modifying the styles on the filters such that they display better on mobile. On desktop, there's also minor (possibly breaking, in a minor way) changes to this, but should be a significant improvement to UI.
 
 = 0.18.10 = 
 

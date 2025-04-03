@@ -152,6 +152,26 @@ function rentfetch_get_unit_amenities() {
 }
 
 /**
+ * Get the building name for the unit
+ *
+ * @return  string the building name.
+ */
+function rentfetch_get_unit_building_name() {
+	$building_name = get_post_meta( get_the_ID(), 'building_name', true );
+	return apply_filters( 'rentfetch_filter_unit_building_name', $building_name );
+}
+
+/**
+ * Get the unit floor number
+ *
+ * @return  string the unit floor number.
+ */
+function rentfetch_get_unit_floor_number() {
+	$floor_number = get_post_meta( get_the_ID(), 'floor_number', true );
+	return apply_filters( 'rentfetch_filter_unit_floor_number', $floor_number );
+}
+
+/**
  * Get the specials for the unit
  *
  * @return  string the specials.
