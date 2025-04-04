@@ -125,7 +125,7 @@ if ( have_posts() ) {
 				echo '<div class="single-floorplans-container-inner">';
 					echo '<div class="similar-floorplans">';
 
-						echo wp_kses_post( apply_filters( 'rentfetch_single_floorplan_more_floorplans_headline', '<h2>Similar floorplans</h2>' ) );
+						echo wp_kses_post( apply_filters( 'rentfetch_single_floorplan_more_floorplans_headline', '<h2>Similar Floor Plans</h2>' ) );
 						rentfetch_similar_floorplans();
 
 					echo '</div>'; // .similar-floorplans
