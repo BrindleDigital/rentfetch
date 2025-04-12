@@ -20,8 +20,13 @@ function rentfetch_properties_post_classes( $classes ) {
 	
 	$property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
 	$floorplan_data = rentfetch_get_floorplans( $property_id );
-	$units_count = $floorplan_data['availability'];
-
+	
+	if ( isset( $floorplan_data['availability'] ) ) {
+		$units_count = $floorplan_data['availability'];
+	} else {
+		$units_count = 0;
+	}
+	
 	if ( $units_count > 0 ) {
 		$classes[] = 'has-units-available';
 	} else {
@@ -407,7 +412,11 @@ function rentfetch_get_property_phone_button() {
  * @return void
  */
 function rentfetch_property_phone_button() {
-	echo wp_kses_post( rentfetch_get_property_phone_button() );
+	$button = rentfetch_get_property_phone_button();
+	
+	if ( $button ) {
+		echo wp_kses_post( $button );
+	}
 }
 
 // * PROPERTY URL.
@@ -686,11 +695,10 @@ function rentfetch_property_square_feet() {
 function rentfetch_get_property_pricing() {
 	$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
 	
-	//TODO Need to improve this display such that we don't get junk data showing when min is selected.
-
 	$floorplan_data  = rentfetch_get_floorplans( $property_id );
 	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
 	$rent_range = null;
+	$min_rent = null;
 	
 	// get the rent range if avail.
 	if ( isset( $floorplan_data['rentrange'] ) ) {

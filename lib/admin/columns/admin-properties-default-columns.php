@@ -129,6 +129,7 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 	if ( 'images' === $column ) {
 		$images = get_post_meta( $post_id, 'images', true );
+		$remaining_images = 0;
 
 		if ( is_array( $images ) && array( '' ) !== $images ) {
 

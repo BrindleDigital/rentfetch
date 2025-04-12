@@ -106,6 +106,7 @@ Start from your WordPress dashboard.
 = 0.19.1 = 
 
 * Updating default verbiage on the single-floorplans template ("Floorplan" to "Floor Plan")
+* Fixing several php notices in relatively rare situations on both the backend and frontend.
 
 = 0.19 = 
 
