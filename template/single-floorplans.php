@@ -18,6 +18,18 @@ if ( have_posts() ) {
 		the_post();
 
 		global $post;
+		
+		// vars.
+		$specials        = rentfetch_get_floorplan_specials();
+		$floorplan_title = rentfetch_get_floorplan_title();
+		$beds            = rentfetch_get_floorplan_bedrooms();
+		$baths           = rentfetch_get_floorplan_bathrooms();
+		$square_feet     = rentfetch_get_floorplan_square_feet();
+		$available_units = rentfetch_get_floorplan_available_units();
+		$links           = rentfetch_get_floorplan_links();
+		$pricing         = rentfetch_get_floorplan_pricing();
+		$units_count     = rentfetch_get_floorplan_units_count_from_cpt();
+		$description     = rentfetch_get_floorplan_description();
 
 		echo '<div class="single-floorplans-container-outer container-current-floorplan-info">';
 			echo '<div class="single-floorplans-container-inner">';
@@ -27,18 +39,6 @@ if ( have_posts() ) {
 						do_action( 'rentfetch_do_floorplan_images' );
 					echo '</div>';
 					echo '<div class="content-column">';
-
-						// vars.
-						$specials        = rentfetch_get_floorplan_specials();
-						$floorplan_title = rentfetch_get_floorplan_title();
-						$beds            = rentfetch_get_floorplan_bedrooms();
-						$baths           = rentfetch_get_floorplan_bathrooms();
-						$square_feet     = rentfetch_get_floorplan_square_feet();
-						$available_units = rentfetch_get_floorplan_available_units();
-						$links           = rentfetch_get_floorplan_links();
-						$pricing         = rentfetch_get_floorplan_pricing();
-						$units_count     = rentfetch_get_floorplan_units_count_from_meta();
-						$description     = rentfetch_get_floorplan_description();
 						
 						if ( $specials ) {
 							printf( '<p class="specials">%s</p>', esc_html( $specials ) );
