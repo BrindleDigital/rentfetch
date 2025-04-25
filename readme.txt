@@ -106,6 +106,7 @@ Start from your WordPress dashboard.
 = 0.19.2 = 
 
 * Updating our methodology for pulling the number of units (and whether to show the units section) on the single-floorplans template. We previously pulled this from the floorplan meta, but for manual-entry sites with no units and forced floorplan single template enabled, this could result in a blank section.
+* Switching to hover capabilities for all of the dropdowns on both the properties and floorplans searches. This makes the user experience much less clicky.
 
 = 0.19.1 = 
 
