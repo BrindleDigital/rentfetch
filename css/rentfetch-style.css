@@ -12,6 +12,7 @@ html {
   --rentfetch-accent-specials-star: #fbbc00;
   --rentfetch-accent: #086ddb;
   --rentfetch-accent-active: #1f88fa;
+  --rentfetch-accent-light: #f1f6fb;
   --rentfetch-black-5-percent: rgba(0, 0, 0, 0.05);
   --rentfetch-black-7-percent: rgba(0, 0, 0, 0.07);
   --rentfetch-black-10-percent: rgba(0, 0, 0, 0.1);
@@ -1415,6 +1416,12 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
+.rentfetch-form .rentfetch-hidden {
+  display: none !important; /* Use !important if necessary to override other styles */
+}
+.rentfetch-form .rentfetch-visible {
+  display: block !important;
+}
 .rentfetch-form .rentfetch-form-message-area {
   padding: 15px 25px;
   border: 1px solid var(--rentfetch-base-2);
@@ -1524,7 +1531,14 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   display: none;
 }
 .rentfetch-form .rentfetch-form-submit-group {
-  margin-top: 20px;
+  margin-top: 2em;
+}
+.rentfetch-form .rentfetch-form-button {
+  background-color: var(--rentfetch-accent);
+  color: white;
+  border-radius: 3px;
+  font-size: var(--rentfetch-font-size-medium);
+  line-height: 1;
 }
 
 .rentfetch-form.rentfetch-form-tour .rentfetch-form-fieldset-name {
@@ -1563,6 +1577,76 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 .rentfetch-form.rentfetch-form-tour .rentfetch-form-field-message {
   display: none;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates,
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-times {
+  grid-column: span 12;
+}
+
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5em;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li {
+  padding: 30px 15px;
+  color: var(--rentfetch-accent);
+  background-color: var(--rentfetch-accent-light);
+  text-align: center;
+  transition: 0.3s all ease;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li span.rentfetch-weekday {
+  display: block;
+  font-size: var(--rentfetch-font-size-smallest);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li span.rentfetch-date {
+  display: block;
+  font-size: var(--rentfetch-font-size-large);
+  font-weight: 500;
+  line-height: 1;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li:hover {
+  box-shadow: 0 0 0 2px var(--rentfetch-accent);
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li.selected {
+  background-color: var(--rentfetch-accent);
+  color: white;
+  box-shadow: none;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-times ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5em;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-times ul li {
+  box-shadow: 0 0 0 1px var(--rentfetch-accent);
+  background-color: white;
+  color: var(--rentfetch-accent);
+  padding: 15px;
+  text-align: center;
+  border-radius: 3px;
+  font-size: var(--rentfetch-font-size-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s all ease;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-times ul li:hover {
+  background-color: var(--rentfetch-accent-light);
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-times ul li.selected {
+  background-color: var(--rentfetch-accent);
+  color: white;
+  box-shadow: none;
 }
 
 /* ==========================================================================

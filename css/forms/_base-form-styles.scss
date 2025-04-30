@@ -1,4 +1,12 @@
 .rentfetch-form {
+	.rentfetch-hidden {
+		display: none !important; /* Use !important if necessary to override other styles */
+	}
+
+	.rentfetch-visible {
+		display: block !important;
+	}
+
 	.rentfetch-form-message-area {
 		padding: 15px 25px;
 		border: 1px solid var(--rentfetch-base-2);
@@ -122,7 +130,15 @@
 	}
 
 	.rentfetch-form-submit-group {
-		margin-top: 20px;
+		margin-top: 2em;
+	}
+
+	.rentfetch-form-button {
+		background-color: var(--rentfetch-accent);
+		color: white;
+		border-radius: 3px;
+		font-size: var(--rentfetch-font-size-medium);
+		line-height: 1;
 	}
 }
 
@@ -161,5 +177,10 @@
 
 	.rentfetch-form-field-message {
 		display: none;
+	}
+
+	.rentfetch-availability-dates,
+	.rentfetch-availability-times {
+		grid-column: span 12;
 	}
 }
