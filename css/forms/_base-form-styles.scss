@@ -1,0 +1,165 @@
+.rentfetch-form {
+	.rentfetch-form-message-area {
+		padding: 15px 25px;
+		border: 1px solid var(--rentfetch-base-2);
+		margin-bottom: 20px;
+		border-radius: 3px;
+
+		&.error {
+			background-color: var(--rentfetch-error);
+		}
+
+		&.success {
+			background-color: var(--rentfetch-success);
+		}
+
+		p {
+			margin: 0;
+			padding: 0;
+			font-size: var(--rentfetch-font-size-small);
+			line-height: 1.5;
+		}
+
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			li {
+				font-size: var(--rentfetch-font-size-small);
+				margin-bottom: 5px;
+				padding-bottom: 5px;
+				border-bottom: 1px solid var(--rentfetch-base-2);
+
+				&:last-child {
+					border-bottom: none;
+					padding-bottom: 0;
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+
+	.rentfetch-form-body,
+	.rentfetch-form-fieldset {
+		display: grid;
+		grid-template-columns: repeat(12, 1fr); /* 12 equal columns */
+		gap: 2em 1em;
+	}
+
+	input[type='text'],
+	input[type='email'],
+	input[type='tel'],
+	select,
+	textarea {
+		border: 1px solid var(--rentfetch-base-2);
+		padding: 0 15px;
+		font-size: var(--rentfetch-font-size-small);
+	}
+
+	textarea {
+		padding: 15px;
+	}
+
+	.rentfetch-form-required-label {
+		color: var(--rentfetch-accent);
+		font-size: var(--rentfetch-font-size-smallest);
+	}
+
+	input[type='text'],
+	input[type='email'],
+	input[type='tel'],
+	select {
+		line-height: 50px;
+		height: 50px;
+	}
+
+	.rentfetch-form-field-group,
+	.rentfetch-form-fieldset {
+		grid-column: span 12;
+	}
+
+	.rentfetch-form-field-email,
+	.rentfetch-form-field-phone,
+	.rentfetch-form-field-first-name,
+	.rentfetch-form-field-last-name {
+		grid-column: span 6;
+
+		@include mobile {
+			grid-column: span 12;
+		}
+	}
+
+	.rentfetch-form-label {
+		font-size: var(--rentfetch-font-size-medium);
+		line-height: 1.5;
+		margin-bottom: 5px;
+		display: block;
+		width: 100%;
+		font-weight: 500;
+	}
+
+	.rentfetch-form-label-subfield {
+		line-height: 1;
+		font-size: var(--rentfetch-font-size-small);
+		margin-bottom: 0;
+		margin-top: 8px;
+		display: block;
+		width: 100%;
+	}
+
+	.rentfetch-form-field-group input[type='text'],
+	.rentfetch-form-field-group input[type='email'],
+	.rentfetch-form-field-group input[type='tel'],
+	.rentfetch-form-field-group select,
+	.rentfetch-form-field-group textarea {
+		width: 100%;
+		box-sizing: border-box; /* Include padding and border in the element's total width */
+	}
+
+	.rentfetch-form-field-hidden {
+		display: none;
+	}
+
+	.rentfetch-form-submit-group {
+		margin-top: 20px;
+	}
+}
+
+.rentfetch-form.rentfetch-form-tour {
+	.rentfetch-form-fieldset-name {
+		grid-column: span 6;
+
+		@include notdesktop {
+			grid-column: span 12;
+		}
+	}
+
+	.rentfetch-form-field-email {
+		grid-column: span 3;
+
+		@include tablet {
+			grid-column: span 6;
+		}
+
+		@include mobile {
+			grid-column: span 12;
+		}
+	}
+
+	.rentfetch-form-field-phone {
+		grid-column: span 3;
+
+		@include tablet {
+			grid-column: span 6;
+		}
+
+		@include mobile {
+			grid-column: span 12;
+		}
+	}
+
+	.rentfetch-form-field-message {
+		display: none;
+	}
+}

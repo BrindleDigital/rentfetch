@@ -27,6 +27,8 @@ html {
   --rentfetch-box-shadow: rgba(0, 0, 0, 0.07) 0px 3px 12px;
   --rentfetch-box-shadow-hover: rgba(0, 0, 0, 0.12) 0px 8px 15px;
   --rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
+  --rentfetch-error: #ffe5e5;
+  --rentfetch-success: #e6f4e6;
   --rentfetch-font-size-smallest: 13px;
   --rentfetch-font-size-small: 15px;
   --rentfetch-font-size-medium: 17px;
@@ -1411,6 +1413,156 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   background-color: #f7f7f7;
   margin: 0;
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.rentfetch-form .rentfetch-form-message-area {
+  padding: 15px 25px;
+  border: 1px solid var(--rentfetch-base-2);
+  margin-bottom: 20px;
+  border-radius: 3px;
+}
+.rentfetch-form .rentfetch-form-message-area.error {
+  background-color: var(--rentfetch-error);
+}
+.rentfetch-form .rentfetch-form-message-area.success {
+  background-color: var(--rentfetch-success);
+}
+.rentfetch-form .rentfetch-form-message-area p {
+  margin: 0;
+  padding: 0;
+  font-size: var(--rentfetch-font-size-small);
+  line-height: 1.5;
+}
+.rentfetch-form .rentfetch-form-message-area ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rentfetch-form .rentfetch-form-message-area ul li {
+  font-size: var(--rentfetch-font-size-small);
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--rentfetch-base-2);
+}
+.rentfetch-form .rentfetch-form-message-area ul li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.rentfetch-form .rentfetch-form-body,
+.rentfetch-form .rentfetch-form-fieldset {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* 12 equal columns */
+  gap: 2em 1em;
+}
+.rentfetch-form input[type=text],
+.rentfetch-form input[type=email],
+.rentfetch-form input[type=tel],
+.rentfetch-form select,
+.rentfetch-form textarea {
+  border: 1px solid var(--rentfetch-base-2);
+  padding: 0 15px;
+  font-size: var(--rentfetch-font-size-small);
+}
+.rentfetch-form textarea {
+  padding: 15px;
+}
+.rentfetch-form .rentfetch-form-required-label {
+  color: var(--rentfetch-accent);
+  font-size: var(--rentfetch-font-size-smallest);
+}
+.rentfetch-form input[type=text],
+.rentfetch-form input[type=email],
+.rentfetch-form input[type=tel],
+.rentfetch-form select {
+  line-height: 50px;
+  height: 50px;
+}
+.rentfetch-form .rentfetch-form-field-group,
+.rentfetch-form .rentfetch-form-fieldset {
+  grid-column: span 12;
+}
+.rentfetch-form .rentfetch-form-field-email,
+.rentfetch-form .rentfetch-form-field-phone,
+.rentfetch-form .rentfetch-form-field-first-name,
+.rentfetch-form .rentfetch-form-field-last-name {
+  grid-column: span 6;
+}
+@media (max-width: 600px) {
+  .rentfetch-form .rentfetch-form-field-email,
+  .rentfetch-form .rentfetch-form-field-phone,
+  .rentfetch-form .rentfetch-form-field-first-name,
+  .rentfetch-form .rentfetch-form-field-last-name {
+    grid-column: span 12;
+  }
+}
+.rentfetch-form .rentfetch-form-label {
+  font-size: var(--rentfetch-font-size-medium);
+  line-height: 1.5;
+  margin-bottom: 5px;
+  display: block;
+  width: 100%;
+  font-weight: 500;
+}
+.rentfetch-form .rentfetch-form-label-subfield {
+  line-height: 1;
+  font-size: var(--rentfetch-font-size-small);
+  margin-bottom: 0;
+  margin-top: 8px;
+  display: block;
+  width: 100%;
+}
+.rentfetch-form .rentfetch-form-field-group input[type=text],
+.rentfetch-form .rentfetch-form-field-group input[type=email],
+.rentfetch-form .rentfetch-form-field-group input[type=tel],
+.rentfetch-form .rentfetch-form-field-group select,
+.rentfetch-form .rentfetch-form-field-group textarea {
+  width: 100%;
+  box-sizing: border-box; /* Include padding and border in the element's total width */
+}
+.rentfetch-form .rentfetch-form-field-hidden {
+  display: none;
+}
+.rentfetch-form .rentfetch-form-submit-group {
+  margin-top: 20px;
+}
+
+.rentfetch-form.rentfetch-form-tour .rentfetch-form-fieldset-name {
+  grid-column: span 6;
+}
+@media (max-width: 960px) {
+  .rentfetch-form.rentfetch-form-tour .rentfetch-form-fieldset-name {
+    grid-column: span 12;
+  }
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-form-field-email {
+  grid-column: span 3;
+}
+@media (min-width: 600px) and (max-width: 960px) {
+  .rentfetch-form.rentfetch-form-tour .rentfetch-form-field-email {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 600px) {
+  .rentfetch-form.rentfetch-form-tour .rentfetch-form-field-email {
+    grid-column: span 12;
+  }
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-form-field-phone {
+  grid-column: span 3;
+}
+@media (min-width: 600px) and (max-width: 960px) {
+  .rentfetch-form.rentfetch-form-tour .rentfetch-form-field-phone {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 600px) {
+  .rentfetch-form.rentfetch-form-tour .rentfetch-form-field-phone {
+    grid-column: span 12;
+  }
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-form-field-message {
+  display: none;
 }
 
 /* ==========================================================================
