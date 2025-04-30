@@ -7,7 +7,7 @@ body {
 	margin-right: calc(50% - 50dvw) !important;
 	max-width: 100dvw !important;
 	width: 100dvw !important;
-	position: sticky;
+	// position: sticky;
 	top: 0; /* Add this line to stick the layout container to the top */
 	display: grid;
 	grid-template-columns: 1.5fr 1fr;
