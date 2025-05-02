@@ -10,7 +10,8 @@ html {
 	// colors
 	--rentfetch-white: #ffffff;
 	--rentfetch-base: #f7f7f7;
-	--rentfetch-base-2: #e2e2e2;
+	--rentfetch-base-2: #eaeaea;
+	--rentfetch-base-3: #d4d4d4;
 	--rentfetch-default: #999999;
 	--rentfetch-dark: #000000;
 	--rentfetch-accent-specials-background: #ffebb1;
@@ -35,6 +36,10 @@ html {
 	--rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
 	--rentfetch-error: #ffe5e5;
 	--rentfetch-success: #e6f4e6;
+	--rentfetch-branding-contrast: #1f313b;
+	--rentfetch-branding-contrast-2: #283f4b;
+	--rentfetch-branding-accent: #eb6836;
+	--rentfetch-branding-base: #f0f7fc;
 
 	// font sizes
 	--rentfetch-font-size-smallest: 13px;
@@ -42,6 +47,7 @@ html {
 	--rentfetch-font-size-medium: 17px;
 	--rentfetch-font-size-large: 22px;
 	--rentfetch-font-size-larger: 25px;
+	--rentfetch-font-size-largest: 30px;
 }
 
 /* ==========================================================================

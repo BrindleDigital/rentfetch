@@ -2,44 +2,63 @@
    Subnavigation
    ========================================================================== */
 
+.rent-fetch-options-sticky-wrap {
+	position: sticky;
+	top: 56px;
+}
+
 ul.rent-fetch-options-submenu {
 	display: flex;
 	flex-direction: column;
-	min-width: 170px;
-	width: 170px;
-	margin: 0;
+	width: 100%;
+	margin: 48px 0 0;
 
 	li {
 		list-style: none;
-		display: inline-block;
+		display: block;
+		padding: 0 0 16px;
+		margin: 0 0 16px;
+		border-bottom: 1px solid var(--rentfetch-base-3);
+		line-height: 1;
+
+		&:last-child {
+			border-bottom: none;
+		}
 
 		a {
-			font-size: 16px;
-			display: block;
-			color: inherit;
+			font-size: var(--rentfetch-font-size-small);
+			color: var(--rentfetch-branding-contrast);
 			text-decoration: none;
 			text-align: left;
-			padding: 12px;
-			line-height: 22px;
-			border-radius: 10px;
+			line-height: 1;
+			display: block;
+			box-shadow: none !important;
 
+			&:hover,
+			&.tab-active,
 			&:focus {
-				box-shadow: none;
-				border: none;
+				text-decoration: underline;
 			}
 
 			&.tab-active {
-				background: white;
-				font-weight: bold;
+				// background: white;
 			}
 		}
 	}
 }
 
 .options-container {
-	padding-top: 60px;
-	display: flex;
-	gap: 32px;
+	display: grid;
+	gap: 0;
+	grid-template-columns: 255px 1fr;
+	border-top: 1px solid var(--rentfetch-base-3);
+	border-bottom: 1px solid var(--rentfetch-base-3);
+	// padding-top: 48px;
+
+	.container {
+		padding-top: 60px;
+		margin: 0 auto;
+	}
 
 	.header {
 		margin-bottom: 24px;
@@ -54,6 +73,13 @@ ul.rent-fetch-options-submenu {
 			line-height: 20px;
 			color: black;
 		}
+	}
+
+	.rent-fetch-options-nav-wrap {
+		padding: 24px;
+		// box-shadow: inset -30px 0 30px -15px #00000009;
+		border-right: 1px solid var(--rentfetch-base-3);
+		background-color: white;
 	}
 
 	p.submit {
@@ -204,7 +230,7 @@ form.rent-fetch-options,
 
 				&:has(input:checked) {
 					&::before {
-						background: #369af6;
+						background: var(--rentfetch-branding-contrast);
 					}
 
 					&::after {
@@ -336,11 +362,6 @@ form.rent-fetch-options,
 }
 
 #rent-fetch-floorplans-page {
-	ul.rent-fetch-options-submenu {
-		min-width: 175px;
-		width: 175px;
-	}
-
 	.white-box {
 		border: none;
 		padding: 0;

@@ -5,7 +5,8 @@
 html {
   --rentfetch-white: #ffffff;
   --rentfetch-base: #f7f7f7;
-  --rentfetch-base-2: #e2e2e2;
+  --rentfetch-base-2: #eaeaea;
+  --rentfetch-base-3: #d4d4d4;
   --rentfetch-default: #999999;
   --rentfetch-dark: #000000;
   --rentfetch-accent-specials-background: #ffebb1;
@@ -30,11 +31,16 @@ html {
   --rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
   --rentfetch-error: #ffe5e5;
   --rentfetch-success: #e6f4e6;
+  --rentfetch-branding-contrast: #1f313b;
+  --rentfetch-branding-contrast-2: #283f4b;
+  --rentfetch-branding-accent: #eb6836;
+  --rentfetch-branding-base: #f0f7fc;
   --rentfetch-font-size-smallest: 13px;
   --rentfetch-font-size-small: 15px;
   --rentfetch-font-size-medium: 17px;
   --rentfetch-font-size-large: 22px;
   --rentfetch-font-size-larger: 25px;
+  --rentfetch-font-size-largest: 30px;
 }
 
 /* ==========================================================================
@@ -45,66 +51,79 @@ pre {
   line-height: 1.2em;
 }
 
+body.toplevel_page_rentfetch-options {
+  background-color: var(--rentfetch-branding-base);
+}
+body.toplevel_page_rentfetch-options .notice:not(.is-dismissible) {
+  display: none;
+}
+body.toplevel_page_rentfetch-options #wpcontent {
+  padding-left: 0;
+}
+
 #rent-fetch-wrap-page {
   margin: 0;
   position: relative;
 }
 #rent-fetch-wrap-page .notice {
-  margin: 20px 10px;
+  margin: 0;
 }
 #rent-fetch-wrap-page .nav-container {
-  padding-top: 20px;
+  padding: 24px 24px 0;
   background: white;
   position: relative;
 }
-#rent-fetch-wrap-page .nav-container::before {
-  content: "";
-  background: white;
-  display: block;
-  height: 100%;
-  width: 25px;
-  position: absolute;
-  left: -20px;
-  top: 0;
+#rent-fetch-wrap-page .nav-container .rentfetch-logo {
+  width: 206px;
+  height: auto !important;
 }
 #rent-fetch-wrap-page .nav-tab-wrapper {
   border: none;
   display: flex;
   gap: 16px;
-  padding-top: 16px;
+  position: relative;
+  z-index: 2;
+  margin-left: 231px;
+  justify-content: center;
+  padding-top: 0;
+  margin-top: -20px;
 }
 #rent-fetch-wrap-page .nav-tab-wrapper a {
-  background: #f0f0f0;
-  border-radius: 4px 4px 0 0;
-  border: none;
-  color: #1f313b;
-  font-size: 20px;
-  margin: 0;
-  padding: 14px 18px;
+  border-radius: 3px 3px 0 0;
+  border: 1px solid var(--rentfetch-base-3);
+  font-size: var(--rentfetch-font-size-small);
+  margin: 0 0 -1px 0;
+  font-weight: normal;
+  padding: 12px 24px;
   line-height: 100%;
+  color: var(--rentfetch-branding-contrast);
+  background-color: white;
+  transition: 0.3s all ease;
 }
 #rent-fetch-wrap-page .nav-tab-wrapper a:first-of-type {
-  margin-left: 8px;
+  margin-left: 0px;
 }
 #rent-fetch-wrap-page .nav-tab-wrapper a:focus {
   box-shadow: none;
 }
-#rent-fetch-wrap-page .nav-tab-wrapper a:not(.nav-tab-active) {
-  background: #1f313b;
-  color: white;
+#rent-fetch-wrap-page .nav-tab-wrapper a.nav-tab-active {
+  background-color: var(--rentfetch-branding-base);
+  color: var(--rentfetch-branding-contrast);
+  border: 1px solid var(--rentfetch-base-3);
+  border-bottom: none;
+  margin-bottom: -1px;
 }
 #rent-fetch-wrap-page p.submit {
   padding-top: 0;
+  padding-bottom: 0;
 }
 #rent-fetch-wrap-page p.submit input {
   background: #1f313b;
-  border-radius: 8px;
+  border-radius: 3px;
   border: none;
   color: white;
-  font-size: 13px;
-  line-height: 100%;
-  padding: 0px 16px;
-  font-weight: 400;
+  width: 100%;
+  padding: 12px;
 }
 #rent-fetch-wrap-page p.submit input:hover {
   background: #375565;
@@ -338,40 +357,50 @@ pre {
 /* ==========================================================================
    Subnavigation
    ========================================================================== */
+.rent-fetch-options-sticky-wrap {
+  position: sticky;
+  top: 56px;
+}
+
 ul.rent-fetch-options-submenu {
   display: flex;
   flex-direction: column;
-  min-width: 170px;
-  width: 170px;
-  margin: 0;
+  width: 100%;
+  margin: 48px 0 0;
 }
 ul.rent-fetch-options-submenu li {
   list-style: none;
-  display: inline-block;
+  display: block;
+  padding: 0 0 16px;
+  margin: 0 0 16px;
+  border-bottom: 1px solid var(--rentfetch-base-3);
+  line-height: 1;
+}
+ul.rent-fetch-options-submenu li:last-child {
+  border-bottom: none;
 }
 ul.rent-fetch-options-submenu li a {
-  font-size: 16px;
-  display: block;
-  color: inherit;
+  font-size: var(--rentfetch-font-size-small);
+  color: var(--rentfetch-branding-contrast);
   text-decoration: none;
   text-align: left;
-  padding: 12px;
-  line-height: 22px;
-  border-radius: 10px;
+  line-height: 1;
+  display: block;
+  box-shadow: none !important;
 }
-ul.rent-fetch-options-submenu li a:focus {
-  box-shadow: none;
-  border: none;
+ul.rent-fetch-options-submenu li a:hover, ul.rent-fetch-options-submenu li a.tab-active, ul.rent-fetch-options-submenu li a:focus {
+  text-decoration: underline;
 }
-ul.rent-fetch-options-submenu li a.tab-active {
-  background: white;
-  font-weight: bold;
-}
-
 .options-container {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 255px 1fr;
+  border-top: 1px solid var(--rentfetch-base-3);
+  border-bottom: 1px solid var(--rentfetch-base-3);
+}
+.options-container .container {
   padding-top: 60px;
-  display: flex;
-  gap: 32px;
+  margin: 0 auto;
 }
 .options-container .header {
   margin-bottom: 24px;
@@ -385,6 +414,11 @@ ul.rent-fetch-options-submenu li a.tab-active {
   font-size: 13px;
   line-height: 20px;
   color: black;
+}
+.options-container .rent-fetch-options-nav-wrap {
+  padding: 24px;
+  border-right: 1px solid var(--rentfetch-base-3);
+  background-color: white;
 }
 .options-container p.submit {
   margin: 0 0 24px 0 !important;
@@ -532,7 +566,7 @@ form.rent-fetch-options ul.radio label:has(input[type=checkbox]):has(input:check
 form.rent-fetch-options ul.checkboxes label:has(input[type=checkbox]):has(input:checked)::before,
 .shortcodes-container ul.radio label:has(input[type=checkbox]):has(input:checked)::before,
 .shortcodes-container ul.checkboxes label:has(input[type=checkbox]):has(input:checked)::before {
-  background: #369af6;
+  background: var(--rentfetch-branding-contrast);
 }
 form.rent-fetch-options ul.radio label:has(input[type=checkbox]):has(input:checked)::after,
 form.rent-fetch-options ul.checkboxes label:has(input[type=checkbox]):has(input:checked)::after,
@@ -673,10 +707,6 @@ form.rent-fetch-options select,
   padding-top: 16px;
 }
 
-#rent-fetch-floorplans-page ul.rent-fetch-options-submenu {
-  min-width: 175px;
-  width: 175px;
-}
 #rent-fetch-floorplans-page .white-box {
   border: none;
   padding: 0;
