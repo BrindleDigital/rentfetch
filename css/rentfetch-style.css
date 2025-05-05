@@ -399,7 +399,7 @@ ul.rent-fetch-options-submenu li a:hover, ul.rent-fetch-options-submenu li a.tab
   border-bottom: 1px solid var(--rentfetch-base-3);
 }
 .options-container .container {
-  padding-top: 60px;
+  padding: 60px 25px;
   margin: 0 auto;
 }
 .options-container .header {
@@ -426,14 +426,8 @@ ul.rent-fetch-options-submenu li a:hover, ul.rent-fetch-options-submenu li a.tab
 .options-container .container {
   display: flex;
   flex-direction: column;
-  max-width: 690px;
-}
-.options-container .container.wide {
-  max-width: 910px;
-}
-.options-container .container.wide .row {
-  max-width: 910px;
-  width: 910px;
+  max-width: 800px;
+  width: 100%;
 }
 .options-container .container .separator {
   border-bottom: 1px solid #e6e6e6;
@@ -463,8 +457,6 @@ form.rent-fetch-options .row,
   background: white;
   border-radius: 10px;
   display: flex;
-  max-width: 690px;
-  width: 690px;
   margin-bottom: 24px;
   flex-wrap: wrap;
 }

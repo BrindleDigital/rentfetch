@@ -56,7 +56,7 @@ ul.rent-fetch-options-submenu {
 	// padding-top: 48px;
 
 	.container {
-		padding-top: 60px;
+		padding: 60px 25px;
 		margin: 0 auto;
 	}
 
@@ -89,16 +89,8 @@ ul.rent-fetch-options-submenu {
 	.container {
 		display: flex;
 		flex-direction: column;
-		max-width: 690px;
-
-		&.wide {
-			max-width: 910px;
-
-			.row {
-				max-width: 910px;
-				width: 910px;
-			}
-		}
+		max-width: 800px;
+		width: 100%;
 
 		.separator {
 			border-bottom: 1px solid #e6e6e6;
@@ -135,8 +127,6 @@ form.rent-fetch-options,
 		background: white;
 		border-radius: 10px;
 		display: flex;
-		max-width: 690px;
-		width: 690px;
 		margin-bottom: 24px;
 		flex-wrap: wrap;
 
