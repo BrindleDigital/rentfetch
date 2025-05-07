@@ -1438,45 +1438,49 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
-.rentfetch-form .rentfetch-hidden {
-  display: none !important; /* Use !important if necessary to override other styles */
-}
-.rentfetch-form .rentfetch-visible {
-  display: block !important;
-}
-.rentfetch-form .rentfetch-form-message-area {
+.rentfetch-form-message-area {
   padding: 15px 25px;
   border: 1px solid var(--rentfetch-base-2);
   margin-bottom: 20px;
   border-radius: 3px;
 }
-.rentfetch-form .rentfetch-form-message-area.error {
+.rentfetch-form-message-area:last-child {
+  margin-bottom: 0;
+}
+.rentfetch-form-message-area.error {
   background-color: var(--rentfetch-error);
 }
-.rentfetch-form .rentfetch-form-message-area.success {
+.rentfetch-form-message-area.success {
   background-color: var(--rentfetch-success);
 }
-.rentfetch-form .rentfetch-form-message-area p {
+.rentfetch-form-message-area p {
   margin: 0;
   padding: 0;
   font-size: var(--rentfetch-font-size-small);
   line-height: 1.5;
 }
-.rentfetch-form .rentfetch-form-message-area ul {
+.rentfetch-form-message-area ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.rentfetch-form .rentfetch-form-message-area ul li {
+.rentfetch-form-message-area ul li {
   font-size: var(--rentfetch-font-size-small);
   margin-bottom: 5px;
   padding-bottom: 5px;
   border-bottom: 1px solid var(--rentfetch-base-2);
 }
-.rentfetch-form .rentfetch-form-message-area ul li:last-child {
+.rentfetch-form-message-area ul li:last-child {
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 0;
+}
+
+.rentfetch-form .rentfetch-hidden {
+  display: none !important; /* Use !important if necessary to override other styles */
+}
+.rentfetch-form .rentfetch-visible {
+  display: block !important;
 }
 .rentfetch-form .rentfetch-form-body,
 .rentfetch-form .rentfetch-form-fieldset {
