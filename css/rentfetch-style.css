@@ -1651,7 +1651,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0.5em;
 }
 .rentfetch-form.rentfetch-form-tour .rentfetch-availability-times ul li {
