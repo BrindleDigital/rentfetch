@@ -376,6 +376,7 @@ html {
   --rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
   --rentfetch-error: #ffe5e5;
   --rentfetch-success: #e6f4e6;
+  --rentfetch-notice: #f8f8e9;
   --rentfetch-branding-contrast: #1f313b;
   --rentfetch-branding-contrast-2: #283f4b;
   --rentfetch-branding-accent: #eb6836;
