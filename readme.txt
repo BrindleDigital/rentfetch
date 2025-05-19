@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.20.1
+Stable tag: 0.21.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.21.0 =
+
+* New base styles for the site backend. This should continue to be improved over time, but because we're working with the base plugin and addons, it's getting increasingly complex to maintain both admins.
+* A few additional styles for new Entrata forms.
+* Removing the units and floorplans CPTs from SEOPress notifications (this won't remove existing notices, but should help not spawn new ones all the time)
 
 = 0.20.1 = 
 
