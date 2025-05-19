@@ -1,69 +1,107 @@
+body.toplevel_page_rentfetch-options {
+	background-color: var(--rentfetch-branding-base);
+
+	.notice:not(.is-dismissible) {
+		display: none;
+	}
+
+	#wpcontent {
+		padding-left: 0;
+	}
+}
+
 #rent-fetch-wrap-page {
 	margin: 0;
 	position: relative;
 
 	.notice {
-		margin: 20px 10px;
+		margin: 0;
 	}
 
 	.nav-container {
-		padding-top: 20px;
+		padding: 24px 24px 0;
 		background: white;
 		position: relative;
-		&::before {
-			content: '';
-			background: white;
-			display: block;
-			height: 100%;
-			width: 25px;
-			position: absolute;
-			left: -20px;
-			top: 0;
+
+		.rentfetch-logo {
+			width: 206px;
+			height: auto !important;
 		}
+
+		// &::before {
+		// 	content: '';
+		// 	background: white;
+		// 	display: block;
+		// 	height: 100%;
+		// 	width: 24px;
+		// 	position: absolute;
+		// 	left: -24px;
+		// 	top: 0;
+		// 	z-index: 1;
+		// 	border-top: 1px solid var(--rentfetch-base-3);
+		// }
 	}
 
 	.nav-tab-wrapper {
 		border: none;
 		display: flex;
 		gap: 16px;
-		padding-top: 16px;
+		position: relative;
+		z-index: 2;
+		margin-left: 231px;
+		justify-content: center;
+		padding-top: 0;
+		margin-top: -20px;
 
 		a {
-			background: #f0f0f0;
-			border-radius: 4px 4px 0 0;
-			border: none;
-			color: #1f313b;
-			font-size: 20px;
-			margin: 0;
-			padding: 14px 18px;
+			border-radius: 3px 3px 0 0;
+			border: 1px solid var(--rentfetch-base-3);
+			font-size: var(--rentfetch-font-size-small);
+			margin: 0 0 -1px 0;
+			font-weight: normal;
+			padding: 12px 24px;
 			line-height: 100%;
+			color: var(--rentfetch-branding-contrast);
+			background-color: white;
+			transition: 0.3s all ease;
 
 			&:first-of-type {
-				margin-left: 8px;
+				margin-left: 0px;
 			}
 
 			&:focus {
 				box-shadow: none;
 			}
 
-			&:not(.nav-tab-active) {
-				background: #1f313b;
-				color: white;
+			&:hover {
+				// background-color: var(--rentfetch-branding-contrast-2);
+			}
+
+			&.nav-tab-active {
+				background-color: var(--rentfetch-branding-base);
+				color: var(--rentfetch-branding-contrast);
+				border: 1px solid var(--rentfetch-base-3);
+				border-bottom: none;
+				margin-bottom: -1px;
 			}
 		}
 	}
 
 	p.submit {
 		padding-top: 0;
+		padding-bottom: 0;
+
 		input {
 			background: #1f313b;
-			border-radius: 8px;
+			border-radius: 3px;
 			border: none;
 			color: white;
-			font-size: 13px;
-			line-height: 100%;
-			padding: 0px 16px;
-			font-weight: 400;
+			width: 100%;
+			padding: 12px;
+			// font-size: 13px;
+			// line-height: 100%;
+			// padding: 0px 16px;
+			// font-weight: 400;
 
 			&:hover {
 				background: #375565;

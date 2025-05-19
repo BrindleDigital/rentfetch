@@ -28,10 +28,12 @@ function rentfetch_options_page_html() {
 		$action = esc_url( admin_url( 'admin-post.php' ) );
 
 		printf( '<form method="post" class="rent-fetch-options" action="%s">', esc_url( $action ) );
+		
+			echo '<h1 style="display: none;">RentFetch</h1>';
 			
 			echo '<section class="nav-container">';
-				echo '<img src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" />';
-				echo '<h1 style="display: none;">RentFetch</h1>';
+				echo '<img class="rentfetch-logo" src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" />';
+				
 				echo '<nav class="nav-tab-wrapper">';
 
 					$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
@@ -101,44 +103,52 @@ function rentfetch_settings_properties() {
 	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : 'property-search';
 
 	echo '<section id="rent-fetch-property-settings-page" class="options-container">';
-
-	echo '<ul class="rent-fetch-options-submenu">';
-
-		$active = ( 'property-search' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=properties" class="tab %s">Property Search</a></li>', esc_html( $active ) );
-
-		$active = ( 'property-archives' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab %s">Property Archives</a></li>', esc_html( $active ) );
-
-		$active = ( 'property-single' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property Single</a></li>', esc_html( $active ) );
-
-		$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
-
-	echo '</ul>';
 	
-	$containerDiv = '<div class="container">';
+		echo '<div class="rent-fetch-options-nav-wrap">';
+			echo '<div class="rent-fetch-options-sticky-wrap">';
+				// add a wordpress save button here
+				submit_button();
+			
+				echo '<ul class="rent-fetch-options-submenu">';
 
-	if ('property-settings-embed' === $section) {
-		$containerDiv = '<div class="container shortcodes wide">';
-	}
+					$active = ( 'property-search' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=properties" class="tab %s">Property Search</a></li>', esc_html( $active ) );
 
-	echo $containerDiv;
+					$active = ( 'property-archives' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab %s">Property Archives</a></li>', esc_html( $active ) );
 
-	if ( 'property-search' === $section ) {
-		do_action( 'rentfetch_do_settings_properties_property_search' );
-	} elseif ( 'property-archives' === $section ) {
-		do_action( 'rentfetch_do_settings_properties_property_archives' );
-	} elseif ( 'property-single' === $section ) {
-		do_action( 'rentfetch_do_settings_properties_property_single' );
-	} elseif ( 'property-settings-embed' === $section ) {
-		do_action( 'rentfetch_do_settings_properties_property_embed' );
-	} else {
-		do_action( 'rentfetch_do_settings_properties_property_search' );
-	}
+					$active = ( 'property-single' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property Single</a></li>', esc_html( $active ) );
 
-	echo '</div><!-- .container -->';
+					$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
+
+				echo '</ul>';
+				
+			echo '</div>';
+		echo '</div>';
+		
+		$containerDiv = '<div class="container">';
+
+		if ('property-settings-embed' === $section) {
+			$containerDiv = '<div class="container shortcodes wide">';
+		}
+
+		echo $containerDiv;
+
+		if ( 'property-search' === $section ) {
+			do_action( 'rentfetch_do_settings_properties_property_search' );
+		} elseif ( 'property-archives' === $section ) {
+			do_action( 'rentfetch_do_settings_properties_property_archives' );
+		} elseif ( 'property-single' === $section ) {
+			do_action( 'rentfetch_do_settings_properties_property_single' );
+		} elseif ( 'property-settings-embed' === $section ) {
+			do_action( 'rentfetch_do_settings_properties_property_embed' );
+		} else {
+			do_action( 'rentfetch_do_settings_properties_property_search' );
+		}
+
+		echo '</div><!-- .container -->';
 	echo '</section><!-- #rent-fetch-property-settings-page -->';
 
 }
@@ -157,34 +167,42 @@ function rentfetch_settings_floorplans() {
 	// set the section to 'property-search' if it's not set.
 	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : 'floorplan-search';
 
-	echo '<section id="rent-fetch-floorplans-page" class="options-container">';
-	echo '<ul class="rent-fetch-options-submenu">';
+	echo '<section id="rent-fetch-floorplans-page" class="options-container">';	
+		echo '<div class="rent-fetch-options-nav-wrap">';
+			echo '<div class="rent-fetch-options-sticky-wrap">';
+				// add a wordpress save button here
+				submit_button();
+				
+				echo '<ul class="rent-fetch-options-submenu">';
 
-		$active = ( 'floorplan-search' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floor Plan Settings</a></li>', esc_html( $active ) );
+					$active = ( 'floorplan-search' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floor Plan Settings</a></li>', esc_html( $active ) );
 
-		$active = ( 'floorplan-embed' === $section ) ? 'tab-active' : '';
-		printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
+					$active = ( 'floorplan-embed' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
 
-	echo '</ul>';
-	$containerDiv = '<div class="container">';
+				echo '</ul>';
+			echo '</div>';
+		echo '</div>';
 
-	if ('floorplan-embed' === $section) {
-		$containerDiv = '<div class="container shortcodes">';
-	}
+		$containerDiv = '<div class="container">';
 
-	echo $containerDiv;
+		if ('floorplan-embed' === $section) {
+			$containerDiv = '<div class="container shortcodes">';
+		}
 
-	if ( 'floorplan-search' === $section ) {
-		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
-	} elseif ( 'floorplan-buttons' === $section ) {
-		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
-	} elseif ( 'floorplan-embed' === $section ) {
-		do_action( 'rentfetch_do_settings_floorplans_floorplan_embed' );
-	} else {
-		do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
-	}
-	echo '</div><!-- .container -->';
+		echo $containerDiv;
+
+		if ( 'floorplan-search' === $section ) {
+			do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
+		} elseif ( 'floorplan-buttons' === $section ) {
+			do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
+		} elseif ( 'floorplan-embed' === $section ) {
+			do_action( 'rentfetch_do_settings_floorplans_floorplan_embed' );
+		} else {
+			do_action( 'rentfetch_do_settings_floorplans_floorplan_search' );
+		}
+		echo '</div><!-- .container -->';
 	echo '</section><!-- #rent-fetch-floorplans-page -->';
 }
 add_action( 'rentfetch_do_settings_floorplans', 'rentfetch_settings_floorplans' );
