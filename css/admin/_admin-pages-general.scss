@@ -14,6 +14,13 @@ body.toplevel_page_rentfetch-options {
 	margin: 0;
 	position: relative;
 
+	a.rentfetch-logo-link,
+	a.rentfetch-logo-link:hover,
+	a.rentfetch-logo-link:focus {
+		display: inline-block;
+		box-shadow: none;
+	}
+
 	.notice {
 		margin: 0;
 	}

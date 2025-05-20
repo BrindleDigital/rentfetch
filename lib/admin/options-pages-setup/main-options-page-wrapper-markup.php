@@ -32,7 +32,7 @@ function rentfetch_options_page_html() {
 			echo '<h1 style="display: none;">RentFetch</h1>';
 			
 			echo '<section class="nav-container">';
-				echo '<img class="rentfetch-logo" src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" />';
+				echo '<a class="rentfetch-logo-link" href="/wp-admin/admin.php?page=rentfetch-options"><img class="rentfetch-logo" src="' . RENTFETCH_PATH . '/images/logo.svg' . '" alt="logo" /></a>';
 				
 				echo '<nav class="nav-tab-wrapper">';
 
@@ -40,7 +40,7 @@ function rentfetch_options_page_html() {
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
 
 					$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
-					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Search' ) );
 					
 					$active = ( 'properties' === $tab ) ? 'nav-tab-active' : '';
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Property Settings' ) );
@@ -176,7 +176,7 @@ function rentfetch_settings_floorplans() {
 				echo '<ul class="rent-fetch-options-submenu">';
 
 					$active = ( 'floorplan-search' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floor Plan Settings</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floor Plan Search</a></li>', esc_html( $active ) );
 
 					$active = ( 'floorplan-embed' === $section ) ? 'tab-active' : '';
 					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );

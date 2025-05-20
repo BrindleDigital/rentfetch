@@ -66,6 +66,12 @@ body.toplevel_page_rentfetch-options #wpcontent {
   margin: 0;
   position: relative;
 }
+#rent-fetch-wrap-page a.rentfetch-logo-link,
+#rent-fetch-wrap-page a.rentfetch-logo-link:hover,
+#rent-fetch-wrap-page a.rentfetch-logo-link:focus {
+  display: inline-block;
+  box-shadow: none;
+}
 #rent-fetch-wrap-page .notice {
   margin: 0;
 }

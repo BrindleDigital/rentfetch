@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.21.2 = 
+
+* Minor admin UI updates (fixing a few labels, adding internal link to the Rent Fetch logo)
+
 = 0.21.1 =
 
 * Fixing bad commit (accidentally committed the previous version, resulting in no update being available)
