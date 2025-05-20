@@ -135,10 +135,6 @@ body.toplevel_page_rentfetch-options #wpcontent {
 #rent-fetch-wrap-page p.submit input:hover {
   background: #375565;
 }
-#rent-fetch-wrap-page p.description {
-  font-size: 13px;
-  line-height: 110%;
-}
 #rent-fetch-wrap-page input {
   border: 1px solid #c3c3c3;
   border-radius: 2px;
@@ -412,16 +408,6 @@ ul.rent-fetch-options-submenu li a:hover, ul.rent-fetch-options-submenu li a.tab
 .options-container .header {
   margin-bottom: 24px;
 }
-.options-container .header .title {
-  margin: 0 0 14px;
-  font-weight: 700;
-  font-size: 18px;
-}
-.options-container .header .description {
-  font-size: 13px;
-  line-height: 20px;
-  color: black;
-}
 .options-container .rent-fetch-options-nav-wrap {
   padding: 24px;
   border-right: 1px solid var(--rentfetch-base-3);
@@ -473,11 +459,6 @@ form.rent-fetch-options .row .header,
 .shortcodes-container .row .header {
   padding: 24px;
   width: 100%;
-}
-form.rent-fetch-options .row .section p.description,
-.shortcodes-container .row .section p.description {
-  line-height: 20px;
-  color: black;
 }
 form.rent-fetch-options .row .header,
 .shortcodes-container .row .header {
