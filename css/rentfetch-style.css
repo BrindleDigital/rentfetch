@@ -73,8 +73,8 @@ body.post-type-floorplans table.wp-list-table td {
   white-space: nowrap;
 }
 body.post-type-floorplans table.wp-list-table td.disabled {
-  color: #066cd3;
-  background-color: rgba(6, 108, 211, 0.0784313725);
+  color: var(--rentfetch-branding-contrast);
+  background-color: rgba(31, 49, 59, 0.1019607843);
   height: 100%;
 }
 body.post-type-floorplans table.wp-list-table th {
@@ -180,8 +180,9 @@ body.post-type-properties table.wp-list-table td {
   white-space: nowrap;
 }
 body.post-type-properties table.wp-list-table td.disabled {
-  color: #066cd3;
-  background-color: rgba(6, 108, 211, 0.0784313725);
+  color: var(--rentfetch-branding-contrast);
+  background-color: rgba(31, 49, 59, 0.1019607843);
+  height: 100%;
 }
 body.post-type-properties table.wp-list-table th {
   width: auto;
@@ -296,8 +297,9 @@ body.post-type-units table.wp-list-table td {
   white-space: nowrap;
 }
 body.post-type-units table.wp-list-table td.disabled {
-  color: #066cd3;
-  background-color: rgba(6, 108, 211, 0.0784313725);
+  color: var(--rentfetch-branding-contrast);
+  background-color: rgba(31, 49, 59, 0.1019607843);
+  height: 100%;
 }
 body.post-type-units table.wp-list-table th {
   width: 100px;
@@ -429,7 +431,7 @@ body.toplevel_page_rentfetch-options #wpcontent {
   background: #375565;
 }
 #rent-fetch-wrap-page input {
-  border: 1px solid #c3c3c3;
+  border: 1px solid var(--rentfetch-base-3);
   border-radius: 2px;
 }
 #rent-fetch-wrap-page input:focus {
@@ -440,7 +442,7 @@ body.toplevel_page_rentfetch-options #wpcontent {
      -moz-appearance: none;
           appearance: none;
   border-radius: 50%;
-  border: 1px solid #555555;
+  border: 1px solid var(--rentfetch-branding-contrast);
   box-sizing: content-box;
   display: inline;
   height: 11px;
@@ -460,7 +462,7 @@ body.toplevel_page_rentfetch-options #wpcontent {
   margin: 0;
   border: 1px solid white;
   box-sizing: border-box;
-  background-color: #369af6;
+  background-color: var(--rentfetch-branding-contrast);
 }
 
 #rentfetch-footer {
@@ -742,10 +744,11 @@ form.rent-fetch-options p.submit {
 form.rent-fetch-options .row,
 .shortcodes-container .row {
   background: white;
-  border-radius: 10px;
+  border-radius: 6px;
   display: flex;
   margin-bottom: 24px;
   flex-wrap: wrap;
+  border: 1px solid var(--rentfetch-base-3);
 }
 form.rent-fetch-options .row .section,
 form.rent-fetch-options .row .header,
@@ -760,17 +763,6 @@ form.rent-fetch-options .row .header,
   font-weight: 700;
   margin: 0;
 }
-form.rent-fetch-options .row .section:first-child,
-.shortcodes-container .row .section:first-child {
-  padding-bottom: 0;
-}
-form.rent-fetch-options .row .section:first-child label,
-.shortcodes-container .row .section:first-child label {
-  color: black;
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
 form.rent-fetch-options .row .column,
 .shortcodes-container .row .column {
   box-sizing: border-box;
@@ -781,13 +773,16 @@ form.rent-fetch-options .row .column,
 form.rent-fetch-options .rows,
 .shortcodes-container .rows {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 6px;
   margin-bottom: 24px;
   padding-bottom: 24px;
+  border: 1px solid var(--rentfetch-base-3);
 }
 form.rent-fetch-options .rows .row,
 .shortcodes-container .rows .row {
   margin-bottom: 0;
+  border: none;
+  background-color: transparent;
 }
 form.rent-fetch-options .rows .row .section,
 .shortcodes-container .rows .row .section {
@@ -805,10 +800,16 @@ form.rent-fetch-options ul.radio,
 form.rent-fetch-options ul.checkboxes,
 .shortcodes-container ul.radio,
 .shortcodes-container ul.checkboxes {
-  margin: 0;
+  margin: 1.5em 0 0 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+form.rent-fetch-options ul.radio:first-child,
+form.rent-fetch-options ul.checkboxes:first-child,
+.shortcodes-container ul.radio:first-child,
+.shortcodes-container ul.checkboxes:first-child {
+  margin-top: 0;
 }
 form.rent-fetch-options ul.radio li,
 form.rent-fetch-options ul.checkboxes li,
@@ -822,13 +823,12 @@ form.rent-fetch-options ul.checkboxes label,
 .shortcodes-container ul.radio label,
 .shortcodes-container ul.checkboxes label {
   align-items: center;
-  color: black;
   display: flex;
-  font-size: 13px;
-  font-weight: normal;
-  line-height: 20px;
+  line-height: 1.2;
   padding-left: 14px;
   position: relative;
+  font-weight: normal;
+  margin-bottom: 0;
 }
 form.rent-fetch-options ul.radio label:has(input[type=checkbox]) input,
 form.rent-fetch-options ul.checkboxes label:has(input[type=checkbox]) input,
@@ -917,9 +917,6 @@ form.rent-fetch-options ul.radio label,
   align-items: flex-start;
   padding-left: 0;
   gap: 8px;
-  font-size: 13px;
-  color: black;
-  font-weight: 400;
 }
 form.rent-fetch-options ul.radios label,
 .shortcodes-container ul.radios label {
@@ -933,14 +930,12 @@ form.rent-fetch-options ul.radios label input,
 }
 form.rent-fetch-options .white-box,
 .shortcodes-container .white-box {
-  padding: 15px;
-  border: 1px solid #cdd0d3;
+  padding: 15px 0;
   background-color: white;
   margin-bottom: -1px;
 }
 form.rent-fetch-options .white-box label,
 .shortcodes-container .white-box label {
-  font-weight: normal;
   margin-bottom: 4px;
   display: block;
 }
@@ -966,15 +961,100 @@ form.rent-fetch-options select,
 .shortcodes-container input[type=url],
 .shortcodes-container input[type=number],
 .shortcodes-container select {
-  background: #ffffff;
-  border-radius: 2px;
+  background: white;
+  border-radius: 3px;
   box-sizing: border-box;
   max-width: 100%;
   width: 100%;
+  border: 1px solid var(--rentfetch-base-3);
+  height: 48px;
+  padding: 0 16px;
+  line-height: 48px;
+  font-size: var(--rentfetch-font-size-small);
 }
-
-.pb-0 {
-  padding-bottom: 0 !important;
+form.rent-fetch-options textarea,
+.shortcodes-container textarea {
+  background: white;
+  border-radius: 3px;
+  box-sizing: border-box;
+  max-width: 100%;
+  width: 100%;
+  border: 1px solid var(--rentfetch-base-3);
+  padding: 16px;
+}
+form.rent-fetch-options p:last-child,
+.shortcodes-container p:last-child {
+  margin-bottom: 0;
+}
+form.rent-fetch-options h1,
+form.rent-fetch-options h2,
+form.rent-fetch-options h3,
+form.rent-fetch-options label,
+.shortcodes-container h1,
+.shortcodes-container h2,
+.shortcodes-container h3,
+.shortcodes-container label {
+  color: var(--rentfetch-branding-contrast);
+}
+form.rent-fetch-options h1 a,
+form.rent-fetch-options h2 a,
+form.rent-fetch-options h3 a,
+form.rent-fetch-options label a,
+.shortcodes-container h1 a,
+.shortcodes-container h2 a,
+.shortcodes-container h3 a,
+.shortcodes-container label a {
+  color: var(--rentfetch-branding-contrast);
+  text-decoration: underline;
+}
+form.rent-fetch-options p,
+.shortcodes-container p {
+  color: var(--rentfetch-branding-contrast-2);
+  font-size: var(--rentfetch-font-size-small);
+  line-height: 1.4;
+}
+form.rent-fetch-options p a,
+.shortcodes-container p a {
+  color: var(--rentfetch-branding-contrast);
+  text-decoration: underline;
+}
+form.rent-fetch-options label,
+.shortcodes-container label {
+  font-size: var(--rentfetch-font-size-small);
+  line-height: 1.4;
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+}
+form.rent-fetch-options label a,
+.shortcodes-container label a {
+  color: var(--rentfetch-branding-contrast);
+  text-decoration: underline;
+}
+form.rent-fetch-options label.label-large,
+.shortcodes-container label.label-large {
+  display: block;
+  margin-bottom: 0.5em !important;
+  font-size: var(--rentfetch-font-size-medium);
+  font-weight: 500 !important;
+}
+form.rent-fetch-options label.label-large:last-child,
+.shortcodes-container label.label-large:last-child {
+  margin-bottom: 0 !important;
+}
+form.rent-fetch-options h2,
+.shortcodes-container h2 {
+  font-size: var(--rentfetch-font-size-large);
+  line-height: 1.4;
+  margin: 0 0 5px 0;
+  font-weight: 500;
+}
+form.rent-fetch-options h3,
+.shortcodes-container h3 {
+  font-size: var(--rentfetch-font-size-medium);
+  line-height: 1.4;
+  margin: 0 0 5px 0;
+  font-weight: 500;
 }
 
 .pt-2 {
@@ -985,21 +1065,6 @@ form.rent-fetch-options select,
   border: none;
   padding: 0;
   padding-top: 24px;
-}
-
-#floorplans-buttons-section .row {
-  margin: 0;
-  border-radius: 0;
-  border-bottom: 1px solid #e6e6e6;
-}
-#floorplans-buttons-section .row:first-of-type {
-  border-radius: 24px 24px 0 0;
-}
-#floorplans-buttons-section .row:last-of-type {
-  border-radius: 0 0 24px 24px;
-  margin-bottom: 24px;
-  border-bottom: none;
-  padding-bottom: 20px;
 }
 
 .rent-fetch_page_rentfetch-shortcodes span.shortcode,
@@ -1033,11 +1098,6 @@ form.rent-fetch-options select,
   justify-content: center;
   opacity: 1;
   padding-top: 3px;
-}
-.rent-fetch_page_rentfetch-shortcodes h2,
-.container.shortcodes h2 {
-  font-size: 20px;
-  margin-top: 0;
 }
 
 #rent-fetch-shortcodes-page .separator {

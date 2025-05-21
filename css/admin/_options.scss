@@ -121,10 +121,11 @@ form.rent-fetch-options,
 .shortcodes-container {
 	.row {
 		background: white;
-		border-radius: 10px;
+		border-radius: 6px;
 		display: flex;
 		margin-bottom: 24px;
 		flex-wrap: wrap;
+		border: 1px solid var(--rentfetch-base-3);
 
 		.section,
 		.header {
@@ -146,14 +147,14 @@ form.rent-fetch-options,
 		}
 
 		.section:first-child {
-			padding-bottom: 0;
+			// padding-bottom: 0;
 
-			label {
-				color: black;
-				display: block;
-				font-weight: bold;
-				margin-bottom: 8px;
-			}
+			// label {
+			// 	color: black;
+			// 	display: block;
+			// 	font-weight: bold;
+			// 	margin-bottom: 8px;
+			// }
 		}
 
 		.column {
@@ -166,12 +167,15 @@ form.rent-fetch-options,
 
 	.rows {
 		background-color: white;
-		border-radius: 10px;
+		border-radius: 6px;
 		margin-bottom: 24px;
 		padding-bottom: 24px;
+		border: 1px solid var(--rentfetch-base-3);
 
 		.row {
 			margin-bottom: 0;
+			border: none;
+			background-color: transparent;
 
 			.section {
 				padding: 0 24px;
@@ -189,10 +193,14 @@ form.rent-fetch-options,
 
 	ul.radio,
 	ul.checkboxes {
-		margin: 0;
+		margin: 1.5em 0 0 0;
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+
+		&:first-child {
+			margin-top: 0;
+		}
 
 		li {
 			margin: 0;
@@ -201,13 +209,15 @@ form.rent-fetch-options,
 
 		label {
 			align-items: center;
-			color: black;
+			// color: black;
 			display: flex;
-			font-size: 13px;
-			font-weight: normal;
-			line-height: 20px;
+			// font-size: 13px;
+			// font-weight: normal;
+			line-height: 1.2;
 			padding-left: 14px;
 			position: relative;
+			font-weight: normal;
+			margin-bottom: 0;
 
 			&:has(input[type='checkbox']) {
 				input {
@@ -280,9 +290,9 @@ form.rent-fetch-options,
 			align-items: flex-start;
 			padding-left: 0;
 			gap: 8px;
-			font-size: 13px;
-			color: black;
-			font-weight: 400;
+			// font-size: 13px;
+			// color: black;
+			// font-weight: 400;
 		}
 	}
 
@@ -299,13 +309,12 @@ form.rent-fetch-options,
 	}
 
 	.white-box {
-		padding: 15px;
-		border: 1px solid #cdd0d3;
+		padding: 15px 0;
 		background-color: white;
 		margin-bottom: -1px;
 
 		label {
-			font-weight: normal;
+			// font-weight: normal;
 			margin-bottom: 4px;
 			display: block;
 
@@ -331,17 +340,97 @@ form.rent-fetch-options,
 	input[type='url'],
 	input[type='number'],
 	select {
-		background: #ffffff;
-		border-radius: 2px;
+		background: white;
+		border-radius: 3px;
 		box-sizing: border-box;
 		max-width: 100%;
 		width: 100%;
+		border: 1px solid var(--rentfetch-base-3);
+		height: 48px;
+		padding: 0 16px;
+		line-height: 48px;
+		font-size: var(--rentfetch-font-size-small);
+	}
+
+	textarea {
+		background: white;
+		border-radius: 3px;
+		box-sizing: border-box;
+		max-width: 100%;
+		width: 100%;
+		border: 1px solid var(--rentfetch-base-3);
+		padding: 16px;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+
+	h1,
+	h2,
+	h3,
+	label {
+		color: var(--rentfetch-branding-contrast);
+
+		a {
+			color: var(--rentfetch-branding-contrast);
+			text-decoration: underline;
+		}
+	}
+
+	p {
+		color: var(--rentfetch-branding-contrast-2);
+		font-size: var(--rentfetch-font-size-small);
+		line-height: 1.4;
+
+		a {
+			color: var(--rentfetch-branding-contrast);
+			text-decoration: underline;
+		}
+	}
+
+	label {
+		font-size: var(--rentfetch-font-size-small);
+		line-height: 1.4;
+		font-weight: 500;
+		margin-bottom: 5px;
+		display: block;
+
+		a {
+			color: var(--rentfetch-branding-contrast);
+			text-decoration: underline;
+		}
+	}
+
+	label.label-large {
+		display: block;
+		margin-bottom: 0.5em !important;
+		font-size: var(--rentfetch-font-size-medium);
+		font-weight: 500 !important;
+
+		&:last-child {
+			margin-bottom: 0 !important;
+		}
+	}
+
+	h2 {
+		font-size: var(--rentfetch-font-size-large);
+		line-height: 1.4;
+		margin: 0 0 5px 0;
+		font-weight: 500;
+	}
+
+	h3 {
+		font-size: var(--rentfetch-font-size-medium);
+		line-height: 1.4;
+		margin: 0 0 5px 0;
+		font-weight: 500;
 	}
 }
 
-.pb-0 {
-	padding-bottom: 0 !important;
-}
+// .pb-0 {
+// 	padding-bottom: 0 !important;
+// }
 
 .pt-2 {
 	padding-top: 16px;
@@ -355,21 +444,22 @@ form.rent-fetch-options,
 	}
 }
 
-#floorplans-buttons-section {
-	.row {
-		margin: 0;
-		border-radius: 0;
-		border-bottom: 1px solid #e6e6e6;
+// #floorplans-buttons-section {
+// 	.row {
+// 		margin: 0;
+// 		border-radius: 0;
+// 		border-bottom: 1px solid #e6e6e6;
+// 		margin-bottom: -1px;
 
-		&:first-of-type {
-			border-radius: 24px 24px 0 0;
-		}
+// 		&:first-of-type {
+// 			border-radius: 5px 5px 0 0;
+// 		}
 
-		&:last-of-type {
-			border-radius: 0 0 24px 24px;
-			margin-bottom: 24px;
-			border-bottom: none;
-			padding-bottom: 20px;
-		}
-	}
-}
+// 		&:last-of-type {
+// 			border-radius: 0 0 5px 5px;
+// 			margin-bottom: 24px;
+// 			border-bottom: none;
+// 			padding-bottom: 20px;
+// 		}
+// 	}
+// }

@@ -120,8 +120,6 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 	</div>
 
-	<?php submit_button(); ?>
-
 	<div class="header">
 		<h2 class="title">Property Search</h2>
 		<p class="description">The settings configured for the property search capabilities on a multi-property website.</p>
@@ -129,10 +127,8 @@ function rentfetch_settings_properties_property_search() {
 
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_featured_filters">Featured property filters</label>
+			<label class="label-large" for="rentfetch_options_featured_filters">Featured property filters</label>
 			<p class="description">Which components should be shown by default?</p>
-		</div>
-		<div class="section">
 			<?php
 
 			// Get saved options.
@@ -215,10 +211,8 @@ function rentfetch_settings_properties_property_search() {
 
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_dialog_filters">Additional Search Filters</label>
+			<label class="label-large" for="rentfetch_options_dialog_filters">Additional Search Filters</label>
 			<p class="description">Which components should be shown in the filters lightbox?</p>
-		</div>
-		<div class="section">
 			<?php
 
 			// Get saved options.
@@ -301,14 +295,12 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 	</div>
 
-	<?php submit_button(); ?>
-
 	<div class="row">
 		<div class="header">
-			<label for="rentfetch_options_maximum_number_of_properties_to_show">Search Display Settings</label>
+			<label class="label-large" for="rentfetch_options_maximum_number_of_properties_to_show">Search Display Settings</label>
 		</div>
 		<div class="column">
-			<b>Property Availability Display</b>
+			<label>Property Availability Display</label>
 			<ul class="radios">
 				<li>
 					<label>
@@ -329,23 +321,21 @@ function rentfetch_settings_properties_property_search() {
 		<div class="column">
 			<ul class="checkboxes">
 				<li>
-					<label for="rentfetch_options_properties_hide_number_of_units" class="checkbox-right" style="width: 275px;">
-						<b>Hide the number of units</b>
-						<input type="checkbox" name="rentfetch_options_properties_hide_number_of_units"
-							id="rentfetch_options_properties_hide_number_of_units" <?php checked( get_option( 'rentfetch_options_properties_hide_number_of_units' ), '1' ); ?>>
+					<label for="rentfetch_options_properties_hide_number_of_units">
+						<input type="checkbox" name="rentfetch_options_properties_hide_number_of_units" id="rentfetch_options_properties_hide_number_of_units" <?php checked( get_option( 'rentfetch_options_properties_hide_number_of_units' ), '1' ); ?>>
+						Hide the number of units
 					</label>
 				</li>
 				<li>
-					<label for="rentfetch_options_property_apply_styles_no_floorplans" class="checkbox-right" style="width: 275px;">
-						<b>Apply faded styles to properties without availability</b>
-						<input type="checkbox" name="rentfetch_options_property_apply_styles_no_floorplans"
-							id="rentfetch_options_property_apply_styles_no_floorplans" <?php checked( get_option( 'rentfetch_options_property_apply_styles_no_floorplans' ), '1' ); ?>>
+					<label for="rentfetch_options_property_apply_styles_no_floorplans">
+						<input type="checkbox" name="rentfetch_options_property_apply_styles_no_floorplans" id="rentfetch_options_property_apply_styles_no_floorplans" <?php checked( get_option( 'rentfetch_options_property_apply_styles_no_floorplans' ), '1' ); ?>>
+						Apply faded styles to properties without availability
 					</label>
 				</li>
 			</ul>
 		</div>
 		<div class="column">
-			<label for="rentfetch_options_maximum_bedrooms_to_search"><b>Max Bedrooms To Search</b></label>
+			<label for="rentfetch_options_maximum_bedrooms_to_search">Max Bedrooms To Search</label>
 			<input type="text" name="rentfetch_options_maximum_bedrooms_to_search"
 				id="rentfetch_options_maximum_bedrooms_to_search"
 				value="<?php echo esc_attr( get_option( 'rentfetch_options_maximum_bedrooms_to_search' ) ); ?>">
@@ -354,14 +344,13 @@ function rentfetch_settings_properties_property_search() {
 			<br />
 			<br />
 
-			<label for="rentfetch_options_number_of_amenities_to_show"><b>Max Number of amenities to show</b></label>
+			<label for="rentfetch_options_number_of_amenities_to_show">Max Number of amenities to show</label>
 			<input type="text" name="rentfetch_options_number_of_amenities_to_show"
 				id="rentfetch_options_number_of_amenities_to_show"
 				value="<?php echo esc_attr( get_option( 'rentfetch_options_number_of_amenities_to_show' ) ); ?>">
 		</div>
 		<div class="column">
-			<label for="rentfetch_options_maximum_number_of_properties_to_show"><b>Maximum Number of Properties
-					Displayed</b></label>
+			<label for="rentfetch_options_maximum_number_of_properties_to_show">Maximum Number of Properties Displayed</label>
 			<p class="description">
 				The most properties we should attempt to show while matching a search. We recommend for performance reasons that
 				this number is not set above ~200 properties.
@@ -372,11 +361,9 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 	</div>
 
-	<?php submit_button(); ?>
-
 	<div class="row">
 		<div class="header">
-			<label for="rentfetch_options_price_filter_minimum">Price filter</label>
+			<label class="label-large" for="rentfetch_options_price_filter_minimum">Price filter</label>
 		</div>
 
 		<div class="section" style="padding-bottom: 0;">
@@ -407,8 +394,6 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 	</div>
 	<?php
-
-	submit_button();
 }
 add_action( 'rentfetch_do_settings_properties_property_search', 'rentfetch_settings_properties_property_search' );
 

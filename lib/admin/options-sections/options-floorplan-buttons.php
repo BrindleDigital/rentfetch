@@ -38,10 +38,9 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_availability_button_enabled" class="checkbox-right" style="width: 150px">
-							<b>Availability Button</b>
-							<input type="checkbox" name="rentfetch_options_availability_button_enabled"
-								id="rentfetch_options_availability_button_enabled" <?php checked(get_option('rentfetch_options_availability_button_enabled'), '1'); ?>>
+						<label class="label-large" for="rentfetch_options_availability_button_enabled">
+							<input type="checkbox" name="rentfetch_options_availability_button_enabled" id="rentfetch_options_availability_button_enabled" <?php checked(get_option('rentfetch_options_availability_button_enabled'), '1'); ?>>
+							Availability Button
 						</label>
 						<p class="description pt-2">A button which can pull in the availability link for each individual floorplan. This button
 							will display by default whenever there's an availability URL, whether units are available or not.
@@ -55,9 +54,9 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 				<input type="text" name="rentfetch_options_availability_button_button_label" id="rentfetch_options_availability_button_button_label" value="<?php echo esc_attr(get_option('rentfetch_options_availability_button_button_label', 'Lease now')); ?>">
 				<ul class="checkboxes" style="margin-top: 20px;">
 					<li>
-						<label for="rentfetch_options_availability_button_enabled_hide_when_unavailable" class="checkbox-right" style="width: 150px">
-							<b>Hide unavailable</b>
+						<label for="rentfetch_options_availability_button_enabled_hide_when_unavailable">
 							<input type="checkbox" name="rentfetch_options_availability_button_enabled_hide_when_unavailable" id="rentfetch_options_availability_button_enabled_hide_when_unavailable" <?php checked(get_option('rentfetch_options_availability_button_enabled_hide_when_unavailable'), '1' ); ?>>
+							Hide unavailable
 						</label>
 						<p>Only show this button when the floorplan *also* has units available or a date when they'll become avialable.</p>
 					</li>
@@ -73,13 +72,11 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_unavailability_button_enabled" class="checkbox-right" style="width: 170px">
-							<b>Unavailability Button</b>
-							<input type="checkbox" name="rentfetch_options_unavailability_button_enabled"
-								id="rentfetch_options_unavailability_button_enabled" <?php checked(get_option('rentfetch_options_unavailability_button_enabled'), '1'); ?>>
+						<label class="label-large" for="rentfetch_options_unavailability_button_enabled">
+							<input type="checkbox" name="rentfetch_options_unavailability_button_enabled" id="rentfetch_options_unavailability_button_enabled" <?php checked(get_option('rentfetch_options_unavailability_button_enabled'), '1'); ?>>
+							Unavailability Button
 						</label>
-						<p class="description pt-2">A button which only displays on floorplans without any availability. This will be the same
-							link for every floorplan (it is not dynamic).
+						<p class="description pt-2">A button which only displays on floorplans without any availability. This will be the same link for every floorplan (it is not dynamic).
 						</p>
 					</li>
 				</ul>
@@ -105,10 +102,9 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_contact_button_enabled" class="checkbox-right" style="width: 125px">
-							<b>Contact Button</b>
-							<input type="checkbox" name="rentfetch_options_contact_button_enabled"
-								id="rentfetch_options_contact_button_enabled" <?php checked(get_option('rentfetch_options_contact_button_enabled', 'Contact'), true); ?>>
+						<label class="label-large" for="rentfetch_options_contact_button_enabled">
+							<input type="checkbox" name="rentfetch_options_contact_button_enabled" id="rentfetch_options_contact_button_enabled" <?php checked(get_option('rentfetch_options_contact_button_enabled', 'Contact'), true); ?>>
+							Contact Button
 						</label>
 						<p class="description pt-2">A button linking either to a static page on the site or to a single third-party location.
 							This will be the same link for every floorplan (it is not dynamic).
@@ -137,11 +133,9 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 			<div class="always-visible">
 				<ul class="checkboxes">
 					<li>
-						<label for="rentfetch_options_tour_button_enabled" class="checkbox-right" style="width: 105px">
-							<b>Tour Button</b>
-							<input type="checkbox" name="rentfetch_options_tour_button_enabled" id="rentfetch_options_tour_button_enabled"
-								<?php checked(get_option('rentfetch_options_tour_button_enabled'), true); ?>
-							/>
+						<label class="label-large" for="rentfetch_options_tour_button_enabled">
+							<input type="checkbox" name="rentfetch_options_tour_button_enabled" id="rentfetch_options_tour_button_enabled" <?php checked(get_option('rentfetch_options_tour_button_enabled'), true); ?> />
+							Tour Button
 						</label>
 						<p class="description pt-2">A typically-external link to schedule a tour. You can set a global link below.</p>
 					</li>

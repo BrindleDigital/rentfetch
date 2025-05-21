@@ -26,8 +26,10 @@ body.post-type-properties {
 		}
 
 		td.disabled {
-			color: #066cd3;
-			background-color: #066cd314;
+			color: var(--rentfetch-branding-contrast);
+
+			background-color: #1f313b1a;
+			height: 100%;
 		}
 
 		th {

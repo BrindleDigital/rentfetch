@@ -44,15 +44,13 @@ function rentfetch_settings_floorplans_floorplan_search()
 </div>
 
 <div class="row">
-  <div class="section">
-    <label for="rentfetch_options_floorplan_default_order">Floor Plan Default order</label>
-    <p class="description">
-      The default order in which the floor plans search should display. (NOTE: the floorplans grid
-      order can be set <a target="_blank" href="/wp-admin/admin.php?page=rentfetch-shortcodes">through shortcode
-        parameters)</a>.
-    </p>
-  </div>
-  <div class="section">
+	<div class="section">
+		<label class="label-large" for="rentfetch_options_floorplan_default_order">Floor Plan Default order</label>
+		<p class="description">
+		The default order in which the floor plans search should display. (NOTE: the floorplans grid
+		order can be set <a target="_blank" href="/wp-admin/admin.php?page=rentfetch-shortcodes">through shortcode
+		parameters)</a>
+		</p>
 		<ul class="radio">
 			<li>
 				<label>
@@ -102,10 +100,8 @@ function rentfetch_settings_floorplans_floorplan_search()
   <div class="separator"></div>
 
   <div class="section pb-0">
-    <label for="rentfetch_options_floorplan_pricing_display"><b>Floor Plan Pricing Display</b></label>
+    <label class="label-large" for="rentfetch_options_floorplan_pricing_display">Floor Plan Pricing Display</label>
     <p class="description">How should pricing be shown on floor plan archives?</p>
-  </div>
-  <div class="section">
     <ul class="radio">
       <li>
         <label>
@@ -129,10 +125,8 @@ function rentfetch_settings_floorplans_floorplan_search()
   <div class="separator"></div>
 
   <div class="section pb-0">
-    <label for="rentfetch_options_floorplan_filters"><b>Floor Plan Search Filters</b></label>
+    <label class="label-large" for="rentfetch_options_floorplan_filters">Floor Plan Search Filters</label>
     <p class="description">Which components should be shown floor plans search?</p>
-  </div>
-  <div class="section">
     <?php
 	
 			// Get saved options.
@@ -189,9 +183,8 @@ function rentfetch_settings_floorplans_floorplan_search()
       </li>
       <li>
         <label>
-          <input type="checkbox" name="rentfetch_options_floorplan_filters[]" value="squarefoot_search"
-            <?php checked(in_array('squarefoot_search', $options_floorplan_filters, true)); ?>>
-          Square footage search
+			<input type="checkbox" name="rentfetch_options_floorplan_filters[]" value="squarefoot_search" <?php checked(in_array('squarefoot_search', $options_floorplan_filters, true)); ?>>
+			Square footage search
         </label>
       </li>
     </ul>
@@ -200,17 +193,14 @@ function rentfetch_settings_floorplans_floorplan_search()
   <div class="separator"></div>
 
   <div class="section pb-0">
-    <label for="rentfetch_options_floorplan_hide_number_of_units"><b>Hide the number of units</b></label>
+    <label class="label-large" for="rentfetch_options_floorplan_hide_number_of_units">Hide the number of units</label>
     <p class="description">There are a number of reasons you might want to hide the number of units. </p>
-  </div>
-  <div class="section">
+  
     <ul class="checkboxes">
       <li>
-        <label for="rentfetch_options_floorplan_hide_number_of_units" class="checkbox-right" style="width: 190px;">
-          Hide it in floor plan archives
-          <input type="checkbox" name="rentfetch_options_floorplan_hide_number_of_units"
-            id="rentfetch_options_floorplan_hide_number_of_units"
-            <?php checked(get_option('rentfetch_options_floorplan_hide_number_of_units'), '1'); ?>>
+        <label for="rentfetch_options_floorplan_hide_number_of_units">
+			<input type="checkbox" name="rentfetch_options_floorplan_hide_number_of_units" id="rentfetch_options_floorplan_hide_number_of_units" <?php checked(get_option('rentfetch_options_floorplan_hide_number_of_units'), '1'); ?>>
+			Hide it in floor plan archives
         </label>
       </li>
     </ul>
@@ -219,10 +209,8 @@ function rentfetch_settings_floorplans_floorplan_search()
 	<div class="separator"></div>
   
 	<div class="section pb-0">
-		<label><b>Always link to the floorplans single template?</b></label>
+		<label class="label-large">Always link to the floorplans single template?</label>
 		<p class="description">Force enable the single-floorplan page regardless of whether there are units</p>
-	</div>
-	<div class="section">
 		<ul class="radio">
 			<li>
 				<label for="rentfetch_options_floorplan_force_single_template_link">
@@ -243,26 +231,18 @@ function rentfetch_settings_floorplans_floorplan_search()
 
   <div class="separator"></div>
 
-  <div class="section pb-0">
-    <label for="rentfetch_options_floorplan_apply_styles_no_floorplans"><b>Fade out unavailable floorplans</b></label>
-    <!-- <p class="description">When a floorplan has no units available, should we apply default styles to fade out that floorplan?</p> -->
-  </div>
   <div class="section">
+  <label class="label-large" for="rentfetch_options_floorplan_apply_styles_no_floorplans">Fade out unavailable floorplans</label>
     <ul class="checkboxes">
       <li>
-        <label for="rentfetch_options_floorplan_apply_styles_no_floorplans" class="checkbox-right"
-          style="width: 350px;">
-          Apply faded styles to floorplans with no units available
-          <input type="checkbox" name="rentfetch_options_floorplan_apply_styles_no_floorplans"
-            id="rentfetch_options_floorplan_apply_styles_no_floorplans"
-            <?php checked(get_option('rentfetch_options_floorplan_apply_styles_no_floorplans'), '1'); ?>>
+        <label for="rentfetch_options_floorplan_apply_styles_no_floorplans">
+			<input type="checkbox" name="rentfetch_options_floorplan_apply_styles_no_floorplans" id="rentfetch_options_floorplan_apply_styles_no_floorplans" <?php checked(get_option('rentfetch_options_floorplan_apply_styles_no_floorplans'), '1'); ?>>
+			Apply faded styles to floorplans with no units available
         </label>
       </li>
     </ul>
   </div>
 </div>
-
-<?php submit_button(); ?>
 
 <div class="header">
   <h2 class="title">Floor Plan Buttons</h2>
@@ -273,7 +253,6 @@ function rentfetch_settings_floorplans_floorplan_search()
 
 	do_action('rentfetch_do_settings_floorplans_floorplan_buttons');
 
-	submit_button();
 }
 add_action('rentfetch_do_settings_floorplans_floorplan_search', 'rentfetch_settings_floorplans_floorplan_search');
 

@@ -30,10 +30,8 @@ function rentfetch_settings_properties_property_archives() {
 	?>
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_property_pricing_display">Property Pricing Display</label>
+			<label class="label-large" for="rentfetch_options_property_pricing_display">Property Pricing Display</label>
 			<p class="description">How should pricing be shown on property archives?</p>
-		</div>
-		<div class="section">
 			<ul class="radio">
 				<li>
 					<label>
@@ -55,10 +53,8 @@ function rentfetch_settings_properties_property_archives() {
 	
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_property_external_linking_behavior">Property Link Behavior</label>
+			<label class="label-large" for="rentfetch_options_property_external_linking_behavior">Property Link Behavior</label>
 			<p class="description">Should we keep users on this site to view property details, or send them directly to an external site?</p>
-		</div>
-		<div class="section">
 			<ul class="radio">
 				<li>
 					<label>
@@ -80,10 +76,8 @@ function rentfetch_settings_properties_property_archives() {
 
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_property_orderby">Order Properties By</label>
+			<label class="label-large" for="rentfetch_options_property_orderby">Order Properties By</label>
 			<p class="description">In archives, what order would you like properties to be shown in by default?</p>
-		</div>
-		<div class="section">
 			<ul class="radio">
 				<li>
 					<label>
@@ -140,9 +134,7 @@ function rentfetch_settings_properties_property_archives() {
 
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_property_order">Property Order Direction</label>
-		</div>
-		<div class="section">
+			<label class="label-large" for="rentfetch_options_property_order">Property Order Direction</label>
 			<ul class="radio">
 				<li>
 					<label>
@@ -164,21 +156,13 @@ function rentfetch_settings_properties_property_archives() {
 
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_property_footer_grid_number_properties">Property Footer Grid Maximum</label>
-			<p class="description">By default, this shows on the individual properties template. If there are less than two
-				properties that would show, this area simply does not appear.</p>
-		</div>
-		<div class="section">
+			<label class="label-large" for="rentfetch_options_property_footer_grid_number_properties">Property Footer Grid Maximum</label>
+			<p class="description">By default, this shows on the individual properties template. If there are less than two properties that would show, this area simply does not appear.</p>
+			<input type="number" name="rentfetch_options_property_footer_grid_number_properties" id="rentfetch_options_property_footer_grid_number_properties" value="<?php echo esc_attr( get_option( 'rentfetch_options_property_footer_grid_number_properties' ) ); ?>" />
 			<p class="description">The maximum number of properties to show. By default, this will show all (-1) properties</p>
-			<input type="number" name="rentfetch_options_property_footer_grid_number_properties"
-				id="rentfetch_options_property_footer_grid_number_properties"
-				value="<?php echo esc_attr( get_option( 'rentfetch_options_property_footer_grid_number_properties' ) ); ?>"
-			/>
 		</div>
 	</div>
 	<?php
-
-	submit_button();
 }
 add_action( 'rentfetch_do_settings_properties_property_archives', 'rentfetch_settings_properties_property_archives' );
 
