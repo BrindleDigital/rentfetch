@@ -78,9 +78,12 @@ body.post-type-properties {
 		}
 
 		th#url,
-		td.url {
+		td.url,
+		th#url_override,
+		td.url_override {
 			width: 300px !important;
 			max-width: 300px;
+			min-width: 100px !important;
 		}
 
 		th#images {

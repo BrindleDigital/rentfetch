@@ -31,6 +31,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 		'email'                 => __( 'Email', 'rentfetch' ),
 		'phone'                 => __( 'Phone', 'rentfetch' ),
 		'url'                   => __( 'URL', 'rentfetch' ),
+		'url_override'          => __( 'URL override', 'rentfetch' ),
 		'images'                => __( 'Manual Images', 'rentfetch' ),
 		'synced_property_images' => __( 'Synced Images', 'rentfetch' ),
 		'description'           => __( 'Description', 'rentfetch' ),
@@ -101,6 +102,10 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 	if ( 'url' === $column ) {
 		printf( '<a target="_blank" href="%s">%s</a>', esc_url( get_post_meta( $post_id, 'url', true ) ), esc_attr( get_post_meta( $post_id, 'url', true ) ) );
+	}
+	
+	if ( 'url_override' === $column ) {
+		printf( '<a target="_blank" href="%s">%s</a>', esc_url( get_post_meta( $post_id, 'url_override', true ) ), esc_attr( get_post_meta( $post_id, 'url_override', true ) ) );
 	}
 
 	if ( 'images' === $column ) {

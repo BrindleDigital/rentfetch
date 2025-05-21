@@ -250,7 +250,7 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
-		<div class="columns columns-3">
+		<div class="columns columns-2">
 			
 			<?php
 			// * Property Email
@@ -291,6 +291,21 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 				</div>
 				<div class="column">
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="url" name="url" value="<?php echo esc_attr( $url ); ?>">
+				</div>
+			</div>
+			
+			<?php
+			// * Property URL
+			$url      = get_post_meta( $post->ID, 'url_override', true );
+			$disabled = in_array( 'url_override', $array_disabled_fields, true ) ? 'disabled' : '';
+			?>
+			<div class="field">
+				<div class="column">
+					<label for="url">URL override</label>
+				</div>
+				<div class="column">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="url_override" name="url_override" value="<?php echo esc_attr( $url ); ?>">
+					<p class="description">Some APIs don't allow for full control. Override the synced URL here.</p>
 				</div>
 			</div>
 			
@@ -561,6 +576,10 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 	if ( isset( $_POST['url'] ) ) {
 		update_post_meta( $post_id, 'url', sanitize_text_field( wp_unslash( $_POST['url'] ) ) );
+	}
+	
+	if ( isset( $_POST['url_override'] ) ) {
+		update_post_meta( $post_id, 'url_override', esc_url_raw( wp_unslash( $_POST['url_override'] ) ) );
 	}
 
 	if ( isset( $_POST['images'] ) ) {

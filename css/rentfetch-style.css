@@ -219,9 +219,12 @@ body.post-type-properties table.wp-list-table th#phone {
   width: 100px !important;
 }
 body.post-type-properties table.wp-list-table th#url,
-body.post-type-properties table.wp-list-table td.url {
+body.post-type-properties table.wp-list-table td.url,
+body.post-type-properties table.wp-list-table th#url_override,
+body.post-type-properties table.wp-list-table td.url_override {
   width: 300px !important;
   max-width: 300px;
+  min-width: 100px !important;
 }
 body.post-type-properties table.wp-list-table th#images {
   width: 200px !important;
@@ -824,7 +827,7 @@ form.rent-fetch-options ul.checkboxes label,
 .shortcodes-container ul.checkboxes label {
   align-items: center;
   display: flex;
-  line-height: 1.2;
+  line-height: 1.4;
   padding-left: 14px;
   position: relative;
   font-weight: normal;

@@ -429,6 +429,12 @@ function rentfetch_property_phone_button() {
 function rentfetch_get_property_url() {
 
 	$url = get_post_meta( get_the_ID(), 'url', true );
+	$url_override = get_post_meta( get_the_ID(), 'url_override', true );
+	
+	if ( $url_override ) {
+		$url = $url_override;
+	}
+	
 	return esc_url( apply_filters( 'rentfetch_filter_property_url', $url ) );
 }
 
