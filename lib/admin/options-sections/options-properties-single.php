@@ -55,43 +55,43 @@ function rentfetch_settings_properties_property_single() {
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="property_images" <?php checked( in_array( 'property_images', $options_single_property_components, true ) ); ?>>
-						Enable property images
+						Property images
 					</label>
 				</li>
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="section_navigation" <?php checked( in_array( 'section_navigation', $options_single_property_components, true ) ); ?>>
-						Enable section navigation
+						Section navigation
 					</label>
 				</li>
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="property_details" <?php checked( in_array( 'property_details', $options_single_property_components, true ) ); ?>>
-						Enable property details 
+						Property details 
 					</label>
 				</li>
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="floorplans_display" <?php checked( in_array( 'floorplans_display', $options_single_property_components, true ) ); ?>>
-						Enable floorplan display
+						Floorplan display
 					</label>
 				</li>
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="amenities_display" <?php checked( in_array( 'amenities_display', $options_single_property_components, true ) ); ?>>
-						Enable amenities display
+						Amenities display
 					</label>
 				</li>
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="property_map" <?php checked( in_array( 'property_map', $options_single_property_components, true ) ); ?>>
-						Enable property map
+						Property map
 					</label>
 				</li>
 				<li>
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="nearby_properties" <?php checked( in_array( 'nearby_properties', $options_single_property_components, true ) ); ?>>
-						Enable nearby properties
+						Nearby properties
 					</label>
 				</li>
 			</ul>
