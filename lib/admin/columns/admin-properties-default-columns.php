@@ -10,30 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Enqueue the admin style for the properties custom post type.
- *
- * @return void
- */
-function rentfetch_enqueue_properties_admin_style() {
-
-	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
-	// if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
-	// return;
-	// }
-
-	$current_screen = get_current_screen();
-
-	// Check if the current screen is the admin archive page of the properties content type.
-	if ( 'edit' === $current_screen->base && 'properties' === $current_screen->post_type ) {
-
-		// Enqueue your custom admin style.
-		wp_enqueue_style( 'properties-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-properties.css', array(), RENTFETCH_VERSION, 'screen' );
-
-	}
-}
-add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_properties_admin_style' );
-
-/**
  * Set up the admin columns order.
  *
  * @param array $columns an array of the columns we'd like to use.

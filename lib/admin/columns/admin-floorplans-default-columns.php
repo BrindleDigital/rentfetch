@@ -10,30 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Set up the admin style for the floorplans custom post type.
- *
- * @return void.
- */
-function rentfetch_enqueue_floorplans_admin_style() {
-
-	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
-	// if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
-	// return;
-	// }
-
-	$current_screen = get_current_screen();
-
-	// Check if the current screen is the admin archive page of the floorplans content type.
-	if ( 'edit' === $current_screen->base && 'floorplans' === $current_screen->post_type ) {
-
-		wp_enqueue_style( 'floorplans-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-floorplans.css', array(), RENTFETCH_VERSION, 'screen' );
-		// wp_enqueue_script( 'floorplans-edit-admin-script', RENTFETCH_PATH . 'js/floorplans-edit-admin-script.js', array( 'jquery' ), RENTFETCH_VERSION, true );
-
-	}
-}
-add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_floorplans_admin_style' );
-
-/**
  * Set the admin columns order.
  *
  * @param array $columns an array of the columns we'd like to use.
@@ -220,7 +196,12 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'floorplan_description' === $column ) {
-		echo esc_attr( get_post_meta( $post_id, 'floorplan_description', true ) );
+		if ( get_post_meta( $post_id, 'floorplan_description', true ) ) {
+			echo '<span class="floorplan-description">';
+				echo esc_attr( get_post_meta( $post_id, 'floorplan_description', true ) );
+			echo '</span>';
+		}
+		
 	}
 
 	if ( 'floorplan_video_or_tour' === $column ) {

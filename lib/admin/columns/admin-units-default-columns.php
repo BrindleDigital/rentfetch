@@ -10,29 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Enqueue the admin style for the units custom post type.
- *
- * @return void
- */
-function rentfetch_enqueue_units_admin_style() {
-
-	// bail if admin columns pro is active, or admin columns is active, since our styles conflict with those plugins.
-	// if ( is_plugin_active( 'admin-columns-pro/admin-columns-pro.php' ) || is_plugin_active( 'codepress-admin-columns/codepress-admin-columns.php' ) ) {
-	// 	return;
-	// }
-
-	$current_screen = get_current_screen();
-
-	// Check if the current screen is the admin archive page of the units content type.
-	if ( 'edit' === $current_screen->base && 'units' === $current_screen->post_type ) {
-
-		// Enqueue your custom admin style.
-		wp_enqueue_style( 'units-edit-admin-style', RENTFETCH_PATH . 'css/admin/admin-edit-units.css', array(), RENTFETCH_VERSION, 'screen' );
-	}
-}
-add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_units_admin_style' );
-
-/**
  * Set up the admin columns order.
  *
  * @param array $columns an array of the columns we'd like to use.
@@ -58,9 +35,9 @@ function rentfetch_default_units_admin_columns( $columns ) {
 		'minimum_rent'          => __( 'Min Rent', 'rentfetch' ),
 		'maximum_rent'          => __( 'Max Rent', 'rentfetch' ),
 		'sqrft'                 => __( 'Sqrft', 'rentfetch' ),
-		'yardi_unit_image_urls' => __( 'Synced Images', 'rentfetch' ),
-		'amenities'             => __( 'Amenities', 'rentfetch' ),
-		'specials'              => __( 'Specials', 'rentfetch' ),
+		// 'yardi_unit_image_urls' => __( 'Synced Images', 'rentfetch' ),
+		// 'amenities'             => __( 'Amenities', 'rentfetch' ),
+		// 'specials'              => __( 'Specials', 'rentfetch' ),
 		'unit_source'           => __( 'Integration', 'rentfetch' ),
 		'api_response'          => __( 'API response', 'rentfetch' ),
 	);
@@ -81,6 +58,28 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 
 	if ( 'title' === $column ) {
 		echo esc_attr( get_the_title( $post_id ) );
+	}
+	
+	if ( 'unit_source' === $column ) {
+		echo esc_attr( get_post_meta( $post_id, 'unit_source', true ) );
+		
+		// let's also run the script for this post here, showing disabled fields.
+		$array_disabled_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields', array(), $post_id );
+				
+		// Output the inline script to add 'disabled' class
+		echo '<script>
+			document.addEventListener("DOMContentLoaded", function() {
+				var disabledFields = ' . json_encode( $array_disabled_fields ) . ';
+				var postId = ' . json_encode( $post_id ) . ';
+				
+				disabledFields.forEach(function(field) {
+					document.querySelectorAll("tr#post-" + postId + " td." + field).forEach(function(td) {
+						td.classList.add("disabled");
+					});
+				});
+			});
+		</script>';
+		
 	}
 
 	if ( 'unit_id' === $column ) {
@@ -214,10 +213,6 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 				}
 			}
 		}
-	}
-
-	if ( 'unit_source' === $column ) {
-		echo esc_attr( get_post_meta( $post_id, 'unit_source', true ) );
 	}
 
 	if ( 'updated' === $column ) {

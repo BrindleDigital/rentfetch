@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.21.1
+Stable tag: 0.21.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,9 @@ Start from your WordPress dashboard.
 = 0.21.2 = 
 
 * Minor admin UI updates (fixing a few labels, adding internal link to the Rent Fetch logo)
+* Adding ability to edit units
+* Adding highlighting for the synced unit fields
+* Adding filters to auto-highlight/disable synced unit fields for Yardi and Entrata
 
 = 0.21.1 =
 

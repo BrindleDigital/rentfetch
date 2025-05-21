@@ -499,6 +499,7 @@ function rentfetch_floorplans_availability_metabox_callback( $post ) {
 		// * Availability Date
 
 		// enqueue jquery-ui datepicker so that this can be a datepicker.
+		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		wp_enqueue_style( 'rentfetch-jquery-style' );
 
