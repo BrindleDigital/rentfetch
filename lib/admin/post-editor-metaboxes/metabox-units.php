@@ -43,7 +43,6 @@ function rentfetch_register_units_details_metabox() {
 		'default' // Context of the metabox.
 	);
 }
-add_action( 'add_meta_boxes', 'rentfetch_register_units_details_metabox' );
 
 /**
  * Units identifiers callback
