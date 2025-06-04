@@ -3057,6 +3057,28 @@ footer.property-search-filters-footer button#show-properties {
 .properties.type-properties .property-content :last-child {
   margin-bottom: 0;
 }
+.properties.type-properties p.specials {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 5px 10px 5px 30px;
+  background-color: var(--rentfetch-accent-specials-background);
+  z-index: 5;
+  font-size: var(--rentfetch-font-size-small);
+  border-radius: 3px;
+  color: var(--rentfetch-dark);
+  margin: 0;
+}
+.properties.type-properties p.specials:before {
+  content: "\f155";
+  font-family: "dashicons";
+  color: var(--rentfetch-accent-specials-star);
+  font-size: var(--rentfetch-font-size-medium);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
 .properties.type-properties a.post-edit-link {
   position: absolute;
   top: 0;

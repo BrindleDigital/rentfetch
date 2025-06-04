@@ -467,6 +467,35 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 				<div id="tour-preview"></div>
 			</div>
 		</div>
+
+		<?php
+		// * Has Specials
+		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
+		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="has_specials">Has Specials</label>
+			</div>
+			<div class="column">
+				<input type="checkbox" <?php echo esc_attr( $disabled ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
+			</div>
+		</div>
+		
+		<?php
+		// * Specials override text
+		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="specials_override_text">Specials Override Text</label>
+				<p class="description">Manually customize the specials text displayed. This will not sync with any specials in your PMS and will override what's in the PMS.</p>
+			</div>
+			<div class="column">
+				<input type="text" id="specials_override_text" name="specials_override_text" maxlength="25" value="<?php echo esc_attr( $specials_override_text ); ?>">
+				<p class="description"><em>Maximum 25 characters</em></p>
+			</div>
+		</div>
 				
 		<?php
 		// * Property Pets
@@ -618,6 +647,16 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 		update_post_meta( $post_id, 'tour', wp_kses( wp_unslash( $_POST['tour'] ), $allowed_tags ) );
 
+	}
+
+	if ( isset( $_POST['has_specials'] ) ) {
+		update_post_meta( $post_id, 'has_specials', '1' );
+	} else {
+		delete_post_meta( $post_id, 'has_specials' );
+	}
+
+	if ( isset( $_POST['specials_override_text'] ) ) {
+		update_post_meta( $post_id, 'specials_override_text', sanitize_text_field( wp_unslash( $_POST['specials_override_text'] ) ) );
 	}
 
 	if ( isset( $_POST['video'] ) ) {

@@ -18,6 +18,7 @@ function rentfetch_each_property_in_archive_simple() {
 
 	$title             = rentfetch_get_property_title();
 	$property_location = rentfetch_get_property_location();
+	$specials          = rentfetch_get_property_specials_from_meta();
 
 	$permalink        = rentfetch_get_property_permalink();
 	$permalink_target = rentfetch_get_link_target( $permalink );
@@ -27,6 +28,10 @@ function rentfetch_each_property_in_archive_simple() {
 	}
 
 	do_action( 'rentfetch_do_property_images' );
+
+	if ( $specials ) {
+		printf( '<p class="specials">%s</p>', esc_html( $specials ) );
+	}
 	
 	edit_post_link();
 

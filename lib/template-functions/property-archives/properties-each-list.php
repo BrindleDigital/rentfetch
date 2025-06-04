@@ -23,7 +23,7 @@ function rentfetch_properties_each_list() {
 	$square_feet       = rentfetch_get_property_square_feet();
 	$rent              = rentfetch_get_property_pricing();
 	$availability      = rentfetch_get_property_availability();
-	$specials          = rentfetch_get_property_specials();
+	$specials          = rentfetch_get_property_specials_from_meta();
 	$tour              = rentfetch_get_property_tour();
 	$allowed_tags      = array(
 		'p'    => array(),

@@ -906,6 +906,57 @@ function rentfetch_default_property_specials_label( $specials ) {
 add_filter( 'rentfetch_filter_property_specials', 'rentfetch_default_property_specials_label', 10, 1 );
 
 /**
+ * Get property specials based on property-level meta fields (similar to floorplan specials).
+ *
+ * @return string|null The property specials text.
+ */
+function rentfetch_get_property_specials_from_meta() {
+
+	$has_specials = get_post_meta( get_the_ID(), 'has_specials', true );
+	$specials_override_text = get_post_meta( get_the_ID(), 'specials_override_text', true );
+	
+	if ( $has_specials && !$specials_override_text ) {
+		$specials_text = 'Specials available';
+	} elseif ( $specials_override_text ) {
+		$specials_text = $specials_override_text;
+	} else {
+		$specials_text = null;
+	}
+
+	return apply_filters( 'rentfetch_filter_property_specials_from_meta', $specials_text );
+}
+
+/**
+ * Echo property specials from meta fields.
+ *
+ * @return void.
+ */
+function rentfetch_property_specials_from_meta() {
+	$specials = rentfetch_get_property_specials_from_meta();
+	
+	if ( $specials ) {
+		echo wp_kses_post( $specials );
+	}
+}
+
+/**
+ * Property specials label filter (similar to floorplan specials label).
+ *
+ * @param string $specials_text The specials text.
+ *
+ * @return string|null The filtered specials text.
+ */
+function rentfetch_property_specials_label( $specials_text ) {
+
+	if ( $specials_text ) {
+		return $specials_text;
+	}
+
+	return null;
+}
+add_filter( 'rentfetch_filter_property_specials_from_meta', 'rentfetch_property_specials_label', 10, 1 );
+
+/**
  * Get the property permalink.
  *
  * @param   string $url The property permalink.
