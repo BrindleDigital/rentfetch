@@ -1955,15 +1955,30 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   grid-column: span 12;
 }
 
-.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul {
-  list-style: none;
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .blaze-slider {
+  position: relative;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .blaze-slider .blaze-buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+  transform: translateY(-100%);
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.5em;
+  display: flex;
 }
-.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li {
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .blaze-slider .blaze-buttons button {
+  padding: 10px 15px;
+  font-size: 20px;
+  line-height: 20px;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .blaze-slider .blaze-buttons button:after {
+  font-size: 20px;
+  line-height: 20px;
+}
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .availability-date {
   padding: 30px 15px;
   color: var(--rentfetch-accent);
   background-color: var(--rentfetch-accent-light);
@@ -1972,22 +1987,22 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   border-radius: 3px;
   cursor: pointer;
 }
-.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li span.rentfetch-weekday {
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .availability-date span.rentfetch-weekday {
   display: block;
   font-size: var(--rentfetch-font-size-smallest);
   line-height: 1;
   margin-bottom: 8px;
 }
-.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li span.rentfetch-date {
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .availability-date span.rentfetch-date {
   display: block;
-  font-size: var(--rentfetch-font-size-large);
+  font-size: var(--rentfetch-font-size-medium);
   font-weight: 500;
   line-height: 1;
 }
-.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li:hover {
-  box-shadow: 0 0 0 2px var(--rentfetch-accent);
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .availability-date:hover {
+  box-shadow: inset 0 0 0 2px var(--rentfetch-accent);
 }
-.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates ul li.selected {
+.rentfetch-form.rentfetch-form-tour .rentfetch-availability-dates .availability-date.selected {
   background-color: var(--rentfetch-accent);
   color: white;
   box-shadow: none;
