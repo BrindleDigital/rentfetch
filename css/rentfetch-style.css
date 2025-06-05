@@ -1842,6 +1842,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   border: 1px solid var(--rentfetch-base-2);
   padding: 0 15px;
   font-size: var(--rentfetch-font-size-small);
+  background-color: white;
 }
 .rentfetch-form textarea {
   padding: 15px;
