@@ -2012,17 +2012,17 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.5em;
 }
 .rentfetch-form.rentfetch-form-tour .rentfetch-availability-times ul li {
   box-shadow: 0 0 0 1px var(--rentfetch-accent);
   background-color: white;
   color: var(--rentfetch-accent);
-  padding: 15px;
+  padding: 10px;
   text-align: center;
   border-radius: 3px;
-  font-size: var(--rentfetch-font-size-small);
+  font-size: var(--rentfetch-font-size-smallest);
   font-weight: 500;
   cursor: pointer;
   transition: 0.3s all ease;
