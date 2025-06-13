@@ -469,6 +469,20 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		</div>
 
 		<?php
+		// * Property Fees Embed
+		$property_fees_embed = get_post_meta( $post->ID, 'property_fees_embed', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="property_fees_embed">Property Fees Embed Code</label>
+			</div>
+			<div class="column">
+				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>
+				<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
+			</div>
+		</div>
+
+		<?php
 		// * Has Specials
 		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
 		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
@@ -647,6 +661,10 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 		update_post_meta( $post_id, 'tour', wp_kses( wp_unslash( $_POST['tour'] ), $allowed_tags ) );
 
+	}
+
+	if ( isset( $_POST['property_fees_embed'] ) ) {
+		update_post_meta( $post_id, 'property_fees_embed', wp_unslash( $_POST['property_fees_embed'] ) );
 	}
 
 	if ( isset( $_POST['has_specials'] ) ) {

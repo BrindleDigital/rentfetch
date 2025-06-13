@@ -1,0 +1,19 @@
+.rentfetch-before-floorplans-grid-search-property-fees-notes {
+	margin-bottom: 30px;
+
+	@include mobile {
+		margin-bottom: 15px;
+	}
+
+	p {
+		font-size: var(--rentfetch-font-size-small);
+	}
+}
+
+.rentfetch-after-floorplans-grid-search-property-fees-embed-wrapper {
+	margin-top: 60px;
+
+	@include mobile {
+		margin-top: 25px;
+	}
+}

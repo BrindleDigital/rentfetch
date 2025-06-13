@@ -3116,6 +3116,27 @@ footer.property-search-filters-footer button#show-properties {
   color: var(--rentfetch-white);
 }
 
+.rentfetch-before-floorplans-grid-search-property-fees-notes {
+  margin-bottom: 30px;
+}
+@media (max-width: 600px) {
+  .rentfetch-before-floorplans-grid-search-property-fees-notes {
+    margin-bottom: 15px;
+  }
+}
+.rentfetch-before-floorplans-grid-search-property-fees-notes p {
+  font-size: var(--rentfetch-font-size-small);
+}
+
+.rentfetch-after-floorplans-grid-search-property-fees-embed-wrapper {
+  margin-top: 60px;
+}
+@media (max-width: 600px) {
+  .rentfetch-after-floorplans-grid-search-property-fees-embed-wrapper {
+    margin-top: 25px;
+  }
+}
+
 body.single-floorplans .site-content {
   display: block;
 }

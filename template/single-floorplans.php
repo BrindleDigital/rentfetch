@@ -97,6 +97,21 @@ if ( have_posts() ) {
 			echo '</div>'; // .container-outer.
 		}
 
+		$embed = rentfetch_get_property_fee_embed_from_floorplan_id( get_the_ID() );
+		
+		if ( $embed ) {
+			echo '<div class="single-floorplans-container-outer container-property-fees">';
+				echo '<div class="single-floorplans-container-inner">';
+					echo '<div class="property-fees">';
+
+						echo wp_kses_post( apply_filters( 'rentfetch_single_floorplan_property_fees_headline', '<h2>Property Fees</h2>' ) );
+						echo $embed;
+
+					echo '</div>'; // .property-fees
+				echo '</div>'; // .container-inner
+			echo '</div>'; // .container-outer
+		}
+
 		$iframe = rentfetch_get_floorplan_tour_embed();
 
 		if ( $iframe ) {

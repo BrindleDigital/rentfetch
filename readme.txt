@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.21.7
+Stable tag: 0.22
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,17 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.22 =
+
+* Adding new functionality aimed at meeting new legal requirements for apartments in regard to pricing.
+* Added embed code option.
+* Added embed code and section nav conditionally to single-properties template
+* Added new option and logic for the section nav on the single-properties template
+* Added embed code conditionally to single-floorplans template
+* Added embed code and description conditionally to floorplans grid
+* Added embed code and description conditionally to floorplans search
+* Added functionality to check whether the site is a single-property site 
 
 = 0.21.7 =
 

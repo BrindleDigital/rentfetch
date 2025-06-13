@@ -1059,3 +1059,103 @@ function rentfetch_get_property_tour() {
 
 	return apply_filters( 'rentfetch_filter_property_tour', $embedlink );
 }
+
+/**
+ * Echoes the property fees embed code.
+ *
+ * @param int|null $post_id Post ID.
+ * @return void
+ */
+function rentfetch_property_fees_embed( $post_id = null ) {
+	echo rentfetch_get_property_fees_embed( $post_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+/**
+ * Gets the property fees embed code.
+ *
+ * @param int|null $post_id Post ID.
+ * @return string The property fees embed code.
+ */
+function rentfetch_get_property_fees_embed( $post_id = null ) {
+	if ( ! $post_id ) {
+		$post_id = get_the_ID();
+	}
+
+	$property_fees_embed = get_post_meta( $post_id, 'property_fees_embed', true );
+
+	return apply_filters( 'rentfetch_filter_property_fees_embed', $property_fees_embed, $post_id );
+}
+
+function rentfetch_website_single_property_site_get_property_id() {
+	// check if this is a single-property website by querying the 'properties' post type and checking the CPT to see if we have a single post or more than one (or zero).
+	$property_query = new WP_Query( array(
+		'post_type'      => 'properties',
+		'posts_per_page' => 2,
+		'post_status'    => 'publish',
+	) );
+	
+	// if there's exactly one property, get the value of the property_id meta field.
+	if ( $property_query->have_posts() && $property_query->found_posts === 1 ) {
+		$property_query->the_post();
+		$post_id = $property_query->posts[0]->ID;	
+	} else {
+		return;
+	}
+	
+	return $post_id;
+}
+
+function rentfetch_property_fees_embed_and_wrap() {
+	
+	// check to see if this is a single-property website. If it is, the property post_id will be returned.
+	$post_id = rentfetch_website_single_property_site_get_property_id();
+	
+	if ( ! $post_id ) {
+		return; // if we don't have a post ID, we can't output the fees embed.
+	}
+	
+	$embed = rentfetch_get_property_fees_embed( $post_id );
+	if ( ! $embed ) {
+		return; // if we don't have an embed, we can't output the fees embed.
+	}
+
+	// output the property fees embed code.
+	// Note: This function is used in both the simple grid and search results, so we need to pass the post ID.
+	// rentfetch_property_fees_embed( $post_id );
+	echo '<div class="rentfetch-after-floorplans-grid-search-property-fees-embed-wrapper">';
+		echo $embed;
+	echo '</div>';
+	// reset the post data after the query.
+	wp_reset_postdata();
+	
+}
+add_action( 'rentfetch_after_floorplans_simple_grid', 'rentfetch_property_fees_embed_and_wrap' );
+add_action( 'rentfetch_after_floorplans_search', 'rentfetch_property_fees_embed_and_wrap' );
+
+
+function rentfetch_property_fees_notes() {
+	
+	// check to see if this is a single-property website. If it is, the property post_id will be returned.
+	$post_id = rentfetch_website_single_property_site_get_property_id();
+	
+	if ( ! $post_id ) {
+		return; // if we don't have a post ID, we can't output the fees notes.
+	}
+	
+	$embed = rentfetch_get_property_fees_embed( $post_id );
+	if ( ! $embed ) {
+		return; // if we don't have an embed, we aren't going to output the notes about it.
+	}
+
+	// get the property fees notes with default text that can be filtered.
+	$default_fees_notes = "Please note that prices shown are base rent. To help budget your monthly costs and make it easy to understand what your rent includes and what may be additional, we've included the list of potential fees below the floor plans, found at the bottom of the page.";
+	$property_fees_notes = apply_filters( 'rentfetch_filter_property_fees_notes', $default_fees_notes, $post_id );
+
+	if ( $property_fees_notes ) {
+		echo '<div class="rentfetch-before-floorplans-grid-search-property-fees-notes">';
+			echo wp_kses_post( wpautop( $property_fees_notes ) );
+		echo '</div>';
+	}
+}
+add_action( 'rentfetch_before_floorplans_simple_grid', 'rentfetch_property_fees_notes' );
+add_action( 'rentfetch_before_floorplans_search', 'rentfetch_property_fees_notes' );

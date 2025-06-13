@@ -21,6 +21,7 @@ function rentfetch_settings_set_defaults_properties_propertiessingle() {
 		'section_navigation',
 		'property_details',
 		'floorplans_display',
+		'fees_embed_display',
 		'amenities_display',
 	);
 	add_option( 'rentfetch_options_single_property_components', $default_options );
@@ -74,6 +75,12 @@ function rentfetch_settings_properties_property_single() {
 					<label>
 						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="floorplans_display" <?php checked( in_array( 'floorplans_display', $options_single_property_components, true ) ); ?>>
 						Floorplan display
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_single_property_components[]" value="fees_embed_display" <?php checked( in_array( 'fees_embed_display', $options_single_property_components, true ) ); ?>>
+						Property fees display
 					</label>
 				</li>
 				<li>

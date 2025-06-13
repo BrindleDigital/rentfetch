@@ -32,6 +32,8 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 			$string_atts .= ' ' . $key . '=' . $value;
 		}
 	}
+	
+	do_action( 'rentfetch_before_floorplans_search' );
 
 	// * Our container markup for the results
 	echo '<div class="rent-fetch-floorplan-search-default-layout">';
@@ -58,6 +60,8 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		echo '</form>';
 
 	echo '</div>';
+	
+	do_action( 'rentfetch_after_floorplans_search' );
 
 	return ob_get_clean();
 }

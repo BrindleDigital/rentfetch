@@ -1136,3 +1136,48 @@ function rentfetch_floorplan_description() {
 
 	echo wp_kses_post( $description );
 }
+
+function rentfetch_get_property_fee_embed_from_floorplan_id( $post_id = null ) {
+
+	// the post_id is the *floorplan* post ID, not the property post ID.
+	if ( ! $post_id ) {
+		return;
+	}
+
+	// get the id of the property this floorplan belongs to.
+	$property_id = get_post_meta( $post_id, 'property_id', true );
+		
+	// query the properties to get the $post->ID of the property with 'property_id' of $property_id. Limit to one post.
+	$property_args = array(
+		'post_type'      => 'properties',
+		'posts_per_page' => 1,
+		'post_status'    => 'publish',
+		'meta_query'     => array(
+			array(
+				'key'   => 'property_id',
+				'value' => $property_id,
+			),
+		),
+		'fields'         => 'ids',
+	);
+	$property_posts = get_posts( $property_args );
+	$property_post_id = $property_posts ? $property_posts[0] : null;
+	
+	// reset the global post to the original floorplan post.
+	wp_reset_postdata();
+	
+	// bail if we can't find the id.
+	if ( ! $property_post_id ) {
+		return;
+	}
+	
+	$embed = rentfetch_get_property_fees_embed( $property_post_id );
+	
+	// if the embed is empty, return null.
+	if ( ! $embed ) {
+		return null;
+	}
+	
+	// if the embed is not empty, return the embed.
+	return $embed;
+}

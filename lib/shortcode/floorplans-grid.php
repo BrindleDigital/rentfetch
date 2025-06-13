@@ -38,6 +38,8 @@ function rentfetch_floorplans( $atts ) {
 
 	// The Loop.
 	if ( $custom_query->have_posts() ) {
+		
+		do_action( 'rentfetch_before_floorplans_simple_grid' );
 
 		echo '<div class="floorplans-simple-grid">';
 
@@ -58,6 +60,8 @@ function rentfetch_floorplans( $atts ) {
 		}
 
 		echo '</div>';
+		
+		do_action( 'rentfetch_after_floorplans_simple_grid' );
 
 		// Restore postdata.
 		wp_reset_postdata();
