@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.22.1
+
+* Bugfix: Fixing a php notice 8.4.4 of php where we're using array_sum on an array that includes a mixture of strings and ints.
+
 = 0.22 =
 
 * Adding new functionality aimed at meeting new legal requirements for apartments in regard to pricing.

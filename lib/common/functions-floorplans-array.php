@@ -155,8 +155,12 @@ function rentfetch_get_floorplans_array() {
 		// * AVAILABLE UNITS.
 
 		$units_array = $floorplan['available_units'];
-		if ( $units_array ) {
-			$units = array_sum( $units_array );
+		if ( $units_array && is_array( $units_array ) ) {
+			// Filter out non-numeric values and convert to integers
+			$numeric_units = array_filter( array_map( 'intval', $units_array ), function( $value ) {
+				return $value > 0;
+			});
+			$units = array_sum( $numeric_units );
 		} else {
 			$units = 0;
 		}
