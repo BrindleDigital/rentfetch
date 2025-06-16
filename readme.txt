@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.22
+Stable tag: 0.22.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,7 @@ Start from your WordPress dashboard.
 = 0.22.1
 
 * Bugfix: Fixing a php notice 8.4.4 of php where we're using array_sum on an array that includes a mixture of strings and ints.
+* Bugfix: When we queried to get the property pricing embed, we were resetting the query *after* the function had bailed in cases where a null value was found. This could result in other queries lower on the page failing in this circumstance (caused a site to show a sidebar when it shouldn't have.)
 
 = 0.22 =
 

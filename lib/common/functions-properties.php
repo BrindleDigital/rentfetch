@@ -1102,6 +1102,9 @@ function rentfetch_website_single_property_site_get_property_id() {
 		return;
 	}
 	
+	// need to reset the query so that we don't mess up the main query.
+	wp_reset_postdata();
+	
 	return $post_id;
 }
 
@@ -1125,8 +1128,6 @@ function rentfetch_property_fees_embed_and_wrap() {
 	echo '<div class="rentfetch-after-floorplans-grid-search-property-fees-embed-wrapper">';
 		echo $embed;
 	echo '</div>';
-	// reset the post data after the query.
-	wp_reset_postdata();
 	
 }
 add_action( 'rentfetch_after_floorplans_simple_grid', 'rentfetch_property_fees_embed_and_wrap' );
