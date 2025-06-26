@@ -171,6 +171,12 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 				<li>
 					<label>
+						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="city_search" <?php checked( in_array( 'city_search', $options_featured_filters, true ) ); ?>>
+						City search
+					</label>
+				</li>
+				<li>
+					<label>
 						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_featured_filters, true ) ); ?>>
 						Property type search
 					</label>
@@ -212,7 +218,7 @@ function rentfetch_settings_properties_property_search() {
 	<div class="row">
 		<div class="section">
 			<label class="label-large" for="rentfetch_options_dialog_filters">Additional Search Filters</label>
-			<p class="description">Which components should be shown in the filters lightbox?</p>
+			<p class="description">Which components should be shown in the filters lightbox? (Please note that you cannot enable "Featured property filters" above without having at LEAST the same ones selected here).</p>
 			<?php
 
 			// Get saved options.
@@ -259,6 +265,12 @@ function rentfetch_settings_properties_property_search() {
 					<label>
 						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="type_search" <?php checked( in_array( 'type_search', $options_dialog_filters, true ) ); ?>>
 						Property type search
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="city_search" <?php checked( in_array( 'type_search', $options_dialog_filters, true ) ); ?>>
+						City search
 					</label>
 				</li>
 				<li>

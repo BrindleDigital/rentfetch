@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.22.2 =
+
+* Feature addition: new filter on the property level for "Cities"
+
 = 0.22.1
 
 * Bugfix: Fixing a php notice 8.4.4 of php where we're using array_sum on an array that includes a mixture of strings and ints.
