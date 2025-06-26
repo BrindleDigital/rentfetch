@@ -269,7 +269,7 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="city_search" <?php checked( in_array( 'type_search', $options_dialog_filters, true ) ); ?>>
+						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="city_search" <?php checked( in_array( 'city_search', $options_dialog_filters, true ) ); ?>>
 						City search
 					</label>
 				</li>
