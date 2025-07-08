@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.22.2
+Stable tag: 0.22.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,10 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.22.3 =
+
+* Compatibility fix: Popup Maker seems to do something a little odd with add_meta_boxes, causing our addition of the units metabox to run before the RF plugin is fully loaded. The result of this is an error on PUM pages on the site, which can be fixed when RFS is disabled. Adding more specific logic to make sure that we're only loading the meta boxes for the units when we're actualy on a units page in the admin.
 
 = 0.22.2 =
 

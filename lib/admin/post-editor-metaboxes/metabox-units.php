@@ -15,6 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return void
  */
 function rentfetch_register_units_details_metabox() {
+	
+	// bail if we're not on the 'units' post type.
+	if ( 'units' !== get_current_screen()->post_type ) {
+		return;
+	}
 
 	add_meta_box(
 		'rentfetch_units_identifiers', // ID of the metabox.
