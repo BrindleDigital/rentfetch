@@ -81,7 +81,6 @@ function rentfetch_property_syncing_fields_entrata( $array_fields, $post_id ) {
 		'url',
 		'description',
 		'email',
-		'phone',
 		'latitude',
 		'longitude',
 		'synced_property_images',

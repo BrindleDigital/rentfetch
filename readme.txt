@@ -105,6 +105,7 @@ Start from your WordPress dashboard.
 
 = 0.22.4 =
 
+* Enabling editing on the 'phone' field for Entrata properties, as the API doesn't provide a phone number and the field was also being disabled.
 * Updating verbiage of "floorplans" to "floor plans" throughout.
 
 = 0.22.3 =
