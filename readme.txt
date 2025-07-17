@@ -107,6 +107,7 @@ Start from your WordPress dashboard.
 
 * Enabling editing on the 'phone' field for Entrata properties, as the API doesn't provide a phone number and the field was also being disabled.
 * Updating verbiage of "floorplans" to "floor plans" throughout.
+* Backend options for property filters now pull in the *current* label of the various taxonomies for properties rather than pulling in their default labels, as this will make more sense to the user when seeing those settings (this is often customized by end users in code)
 
 = 0.22.3 =
 
