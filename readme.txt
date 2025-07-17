@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.22.4 =
+
+* Updating verbiage of "floorplans" to "floor plans" throughout.
+
 = 0.22.3 =
 
 * Compatibility fix: Popup Maker seems to do something a little odd with add_meta_boxes, causing our addition of the units metabox to run before the RF plugin is fully loaded. The result of this is an error on PUM pages on the site, which can be fixed when RFS is disabled. Adding more specific logic to make sure that we're only loading the meta boxes for the units when we're actualy on a units page in the admin.

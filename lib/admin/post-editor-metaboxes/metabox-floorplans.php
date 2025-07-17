@@ -18,7 +18,7 @@ function rentfetch_register_floorplans_details_metabox() {
 
 	add_meta_box(
 		'rentfetch_floorplans_identifiers', // ID of the metabox.
-		'Floorplan Identifiers', // Title of the metabox.
+		'Floor Plan Identifiers', // Title of the metabox.
 		'rentfetch_floorplans_identifiers_metabox_callback', // Callback function to render the metabox.
 		'floorplans', // Post type to add the metabox to.
 		'normal', // Priority of the metabox.
@@ -27,7 +27,7 @@ function rentfetch_register_floorplans_details_metabox() {
 
 	add_meta_box(
 		'rentfetch_floorplans_display', // ID of the metabox.
-		'Floorplan Display Information', // Title of the metabox.
+		'Floor Plan Display Information', // Title of the metabox.
 		'rentfetch_floorplans_display_metabox_callback', // Callback function to render the metabox.
 		'floorplans', // Post type to add the metabox to.
 		'normal', // Priority of the metabox.
@@ -36,7 +36,7 @@ function rentfetch_register_floorplans_details_metabox() {
 
 	add_meta_box(
 		'rentfetch_floorplans_info', // ID of the metabox.
-		'Floorplan Information', // Title of the metabox.
+		'Floor Plan Information', // Title of the metabox.
 		'rentfetch_floorplans_info_metabox_callback', // Callback function to render the metabox.
 		'floorplans', // Post type to add the metabox to.
 		'normal', // Priority of the metabox.
@@ -45,7 +45,7 @@ function rentfetch_register_floorplans_details_metabox() {
 
 	add_meta_box(
 		'rentfetch_floorplans_availability', // ID of the metabox.
-		'Floorplan Availability', // Title of the metabox.
+		'Floor Plan Availability', // Title of the metabox.
 		'rentfetch_floorplans_availability_metabox_callback', // Callback function to render the metabox.
 		'floorplans', // Post type to add the metabox to.
 		'normal', // Priority of the metabox.
@@ -79,7 +79,7 @@ function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
 			
 			<div class="field">
 				<div class="column">
-					<label for="floorplan_source">Floorplan Source</label>
+					<label for="floorplan_source">Floor Plan Source</label>
 				</div>
 				<div class="column">
 					<input disabled type="text" id="floorplan_source" name="floorplan_source" value="<?php echo esc_attr( $floorplan_source ); ?>">
@@ -266,7 +266,7 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 			 
 			<div class="field">
 				<div class="column">
-					<label for="floorplan_images">Synced floorplan images</label>
+					<label for="floorplan_images">Synced floor plan images</label>
 					<p class="description">These images are not editable, because they're from your API. This is merely a preview so that you can see the images being provided. Feel free to click 'download' on any of these so that you can easily grab any that you want if you're adding more.</p>
 				</div>
 				<div class="column">                
@@ -294,7 +294,7 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="floorplan_description">Floorplan Description</label>
+				<label for="floorplan_description">Floor Plan Description</label>
 			</div>
 			<div class="column">
 				<?php

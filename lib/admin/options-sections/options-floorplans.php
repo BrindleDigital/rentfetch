@@ -47,7 +47,7 @@ function rentfetch_settings_floorplans_floorplan_search()
 	<div class="section">
 		<label class="label-large" for="rentfetch_options_floorplan_default_order">Floor Plan Default order</label>
 		<p class="description">
-		The default order in which the floor plans search should display. (NOTE: the floorplans grid
+		The default order in which the floor plans search should display. (NOTE: the floor plans grid
 		order can be set <a target="_blank" href="/wp-admin/admin.php?page=rentfetch-shortcodes">through shortcode
 		parameters)</a>
 		</p>
@@ -157,14 +157,20 @@ function rentfetch_settings_floorplans_floorplan_search()
         <label>
           <input type="checkbox" name="rentfetch_options_floorplan_filters[]" value="floorplan_category"
             <?php checked(in_array('floorplan_category', $options_floorplan_filters, true)); ?>>
-          Floorplan category
+		  <?php
+		  $taxonomy = get_taxonomy('floorplancategory');
+		  echo $taxonomy ? $taxonomy->label : 'Floorplan category';
+		  ?>
         </label>
       </li>
       <li>
         <label>
           <input type="checkbox" name="rentfetch_options_floorplan_filters[]" value="floorplan_type"
             <?php checked(in_array('floorplan_type', $options_floorplan_filters, true)); ?>>
-          Floorplan type
+		<?php
+				  $taxonomy = get_taxonomy('floorplantype');
+				  echo $taxonomy ? $taxonomy->label : 'Floorplan type';
+				  ?>
         </label>
       </li>
       <li>
@@ -209,7 +215,7 @@ function rentfetch_settings_floorplans_floorplan_search()
 	<div class="separator"></div>
   
 	<div class="section pb-0">
-		<label class="label-large">Always link to the floorplans single template?</label>
+		<label class="label-large">Always link to the floor plans single template?</label>
 		<p class="description">Force enable the single-floorplan page regardless of whether there are units</p>
 		<ul class="radio">
 			<li>
@@ -232,12 +238,12 @@ function rentfetch_settings_floorplans_floorplan_search()
   <div class="separator"></div>
 
   <div class="section">
-  <label class="label-large" for="rentfetch_options_floorplan_apply_styles_no_floorplans">Fade out unavailable floorplans</label>
+  <label class="label-large" for="rentfetch_options_floorplan_apply_styles_no_floorplans">Fade out unavailable floor plans</label>
     <ul class="checkboxes">
       <li>
         <label for="rentfetch_options_floorplan_apply_styles_no_floorplans">
 			<input type="checkbox" name="rentfetch_options_floorplan_apply_styles_no_floorplans" id="rentfetch_options_floorplan_apply_styles_no_floorplans" <?php checked(get_option('rentfetch_options_floorplan_apply_styles_no_floorplans'), '1'); ?>>
-			Apply faded styles to floorplans with no units available
+			Apply faded styles to floor plans with no units available
         </label>
       </li>
     </ul>

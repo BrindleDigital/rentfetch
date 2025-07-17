@@ -58,7 +58,7 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 							<input type="checkbox" name="rentfetch_options_availability_button_enabled_hide_when_unavailable" id="rentfetch_options_availability_button_enabled_hide_when_unavailable" <?php checked(get_option('rentfetch_options_availability_button_enabled_hide_when_unavailable'), '1' ); ?>>
 							Hide unavailable
 						</label>
-						<p>Only show this button when the floorplan *also* has units available or a date when they'll become avialable.</p>
+						<p>Only show this button when the floor plan *also* has units available or a date when they'll become avialable.</p>
 					</li>
 				</ul>
 				
@@ -76,7 +76,7 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 							<input type="checkbox" name="rentfetch_options_unavailability_button_enabled" id="rentfetch_options_unavailability_button_enabled" <?php checked(get_option('rentfetch_options_unavailability_button_enabled'), '1'); ?>>
 							Unavailability Button
 						</label>
-						<p class="description pt-2">A button which only displays on floorplans without any availability. This will be the same link for every floorplan (it is not dynamic).
+						<p class="description pt-2">A button which only displays on floor plans without any availability. This will be the same link for every floor plan (it is not dynamic).
 						</p>
 					</li>
 				</ul>
@@ -107,7 +107,7 @@ function rentfetch_settings_floorplans_floorplan_buttons()
 							Contact Button
 						</label>
 						<p class="description pt-2">A button linking either to a static page on the site or to a single third-party location.
-							This will be the same link for every floorplan (it is not dynamic).
+							This will be the same link for every floor plan (it is not dynamic).
 						</p>
 					</li>
 				</ul>

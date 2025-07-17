@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_register_floorplans_cpt() {
 
 	// * Floorplans
-	$name_plural   = 'Floorplans';
-	$name_singular = 'Floorplan';
+	$name_plural   = 'Floor Plans';
+	$name_singular = 'Floor Plan';
 	$post_type     = 'floorplans';
 	$slug          = 'floorplans';
 	$supports      = array( 'title' );

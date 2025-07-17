@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Output the default layout for the floorplans grid
  *
  * @param  array $atts  the attributes passed to the shortcode.
- * @return string       the markup for the floorplans grid.
+ * @return string       the markup for the floor plans grid.
  */
 function rentfetch_floorplans( $atts ) {
 	$args = shortcode_atts(

@@ -24,7 +24,7 @@ function rentfetch_single_properties_parts_floorplans() {
 	echo '<div id="floorplans" class="single-properties-section">';
 		echo '<div class="wrap">';
 
-			echo '<h2>Floorplans</h2>';
+			echo '<h2>Floor plans</h2>';
 
 			global $post;
 
@@ -143,7 +143,7 @@ add_filter( 'rentfetch_maybe_do_property_part_floorplans', 'rentfetch_maybe_prop
 function rentfetch_single_properties_parts_subnav_floorplans() {
 	$maybe_do_floorplans = apply_filters( 'rentfetch_maybe_do_property_part_floorplans', true );
 	if ( true === $maybe_do_floorplans ) {
-		$label = apply_filters( 'rentfetch_floorplans_display_subnav_label', 'Floorplans' );
+		$label = apply_filters( 'rentfetch_floorplans_display_subnav_label', 'Floor plans' );
 		printf( '<li><a href="#floorplans">%s</a></li>', esc_attr( $label ) );
 	}
 }

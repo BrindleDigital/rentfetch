@@ -19,7 +19,7 @@ function rentfetch_register_taxonomy_floorplancategory() {
 		'floorplancategory',
 		'floorplans',
 		array(
-			'label'        => __( 'Floorplan categories' ),
+			'label'        => __( 'Floor plan categories' ),
 			'rewrite'      => array( 'slug' => 'floorplancategory' ),
 			'hierarchical' => true,
 			'show_in_rest' => true,
