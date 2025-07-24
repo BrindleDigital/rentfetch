@@ -162,7 +162,7 @@ add_shortcode( 'rentfetch_propertysearchresults', 'rentfetch_propertysearchresul
  */
 function rentfetch_filter_properties() {
 
-	$floorplans = rentfetch_get_floorplans_array();
+	$floorplans = rentfetch_get_floorplans_array_sql();
 
 	$property_ids = array_keys( $floorplans );
 	if ( empty( $property_ids ) ) {

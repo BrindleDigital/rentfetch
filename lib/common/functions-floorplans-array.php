@@ -10,7 +10,166 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Get the floorplans and return them as an array using custom SQL for efficiency.
+ *
+ * @return array an array of floorplans.
+ */
+function rentfetch_get_floorplans_array_sql() {
+	
+	if ( is_admin() && ! wp_doing_ajax() ) {
+		return;
+	}
+	
+	global $wpdb;
+	$floorplans = array();
+	$meta_keys = array(
+		'property_id', 'beds', 'baths', 'minimum_rent', 'maximum_rent',
+		'minimum_sqft', 'maximum_sqft', 'available_units', 'availability_date', 'has_specials'
+	);
+	$meta_keys_sql = implode("','", $meta_keys);
+
+	// Get all published floorplan posts and their meta in one query
+	$sql = $wpdb->prepare("
+		SELECT p.ID as floorplan_id, m.meta_key, m.meta_value
+		FROM {$wpdb->posts} p
+		INNER JOIN {$wpdb->postmeta} m ON p.ID = m.post_id
+		WHERE p.post_type = %s AND p.post_status = 'publish' AND m.meta_key IN ('$meta_keys_sql')
+		ORDER BY p.ID ASC
+	", 'floorplans');
+
+	$results = $wpdb->get_results($sql, ARRAY_A);
+
+	// Group meta by floorplan, storing all meta as strings (not cast yet)
+	$floorplan_meta = array();
+	foreach ($results as $row) {
+		$fid = $row['floorplan_id'];
+		$key = $row['meta_key'];
+		$val = (string) $row['meta_value']; // always string, like get_post_meta
+		if (!isset($floorplan_meta[$fid])) {
+			$floorplan_meta[$fid] = array();
+		}
+		$floorplan_meta[$fid][$key] = $val;
+	}
+
+	// Aggregate by property_id, storing all values as arrays of strings (like original)
+	foreach ($floorplan_meta as $fid => $meta) {
+		$property_id = isset($meta['property_id']) ? $meta['property_id'] : '';
+		$beds = isset($meta['beds']) ? $meta['beds'] : '';
+		$baths = isset($meta['baths']) ? $meta['baths'] : '';
+		$minimum_rent = isset($meta['minimum_rent']) ? $meta['minimum_rent'] : '';
+		$maximum_rent = isset($meta['maximum_rent']) ? $meta['maximum_rent'] : '';
+		$minimum_sqft = isset($meta['minimum_sqft']) ? $meta['minimum_sqft'] : '';
+		$maximum_sqft = isset($meta['maximum_sqft']) ? $meta['maximum_sqft'] : '';
+		$available_units = isset($meta['available_units']) ? $meta['available_units'] : '';
+		$availability_date = isset($meta['availability_date']) ? $meta['availability_date'] : '';
+		$has_specials = isset($meta['has_specials']) ? $meta['has_specials'] : '';
+
+		// Always store as arrays, even if empty string
+		if (!isset($floorplans[$property_id])) {
+			$floorplans[$property_id] = array(
+				'id'                => array($fid),
+				'beds'              => array($beds),
+				'baths'             => array($baths),
+				'minimum_rent'      => array($minimum_rent),
+				'maximum_rent'      => array($maximum_rent),
+				'minimum_sqft'      => array($minimum_sqft),
+				'maximum_sqft'      => array($maximum_sqft),
+				'available_units'   => array($available_units),
+				'availability_date' => array($availability_date),
+				'has_specials'      => array($has_specials),
+			);
+		} else {
+			$floorplans[$property_id]['id'][]                = $fid;
+			$floorplans[$property_id]['beds'][]              = $beds;
+			$floorplans[$property_id]['baths'][]             = $baths;
+			$floorplans[$property_id]['minimum_rent'][]      = $minimum_rent;
+			$floorplans[$property_id]['maximum_rent'][]      = $maximum_rent;
+			$floorplans[$property_id]['minimum_sqft'][]      = $minimum_sqft;
+			$floorplans[$property_id]['maximum_sqft'][]      = $maximum_sqft;
+			$floorplans[$property_id]['available_units'][]   = $available_units;
+			$floorplans[$property_id]['availability_date'][] = $availability_date;
+			$floorplans[$property_id]['has_specials'][]      = $has_specials;
+		}
+	}
+
+	// Post-process to match the original function's output
+	foreach ($floorplans as $key => $floorplan) {
+		// * BEDS
+		$beds_arr = array_map('floatval', $floorplan['beds']);
+		$max = max($beds_arr);
+		$min = min($beds_arr);
+		$floorplans[$key]['bedsrange'] = ($max === $min) ? $max : ($min . '-' . $max);
+
+		// * BATHS
+		$baths_arr = array_map('floatval', $floorplan['baths']);
+		$max = max($baths_arr);
+		$min = min($baths_arr);
+		$floorplans[$key]['bathsrange'] = ($max === $min) ? $max : ($min . '-' . $max);
+
+		// * MAX RENT
+		$max_rent_arr = array_filter(array_map('floatval', $floorplan['maximum_rent']), 'rentfetch_check_if_above_100');
+		$min_rent_arr = array_filter(array_map('floatval', $floorplan['minimum_rent']), 'rentfetch_check_if_above_100');
+		$max = !empty($max_rent_arr) ? max($max_rent_arr) : 0;
+		$min = !empty($min_rent_arr) ? min($min_rent_arr) : 0;
+		$max = (float)$max;
+		$min = (float)$min;
+		if ($max === $min) {
+			$floorplans[$key]['rentrange'] = number_format($max);
+		} else {
+			$floorplans[$key]['rentrange'] = number_format($min) . '-' . number_format($max);
+		}
+		if ($min < 100 || $max < 100) {
+			$floorplans[$key]['rentrange'] = null;
+		}
+
+		// * SQFT RANGE
+		$max_sqft_arr = array_map('intval', $floorplan['maximum_sqft']);
+		$min_sqft_arr = array_map('intval', $floorplan['minimum_sqft']);
+		$max = intval(max($max_sqft_arr));
+		$min = intval(min($min_sqft_arr));
+		$floorplans[$key]['sqftrange'] = ($max === $min) ? number_format($max) : (number_format($min) . '-' . number_format($max));
+
+		// * AVAILABLE UNITS
+		$units_array = $floorplan['available_units'];
+		if ($units_array && is_array($units_array)) {
+			$numeric_units = array_filter(array_map('intval', $units_array), function($value) { return $value > 0; });
+			$units = array_sum($numeric_units);
+		} else {
+			$units = 0;
+		}
+		$floorplans[$key]['availability'] = $units;
+
+		// * AVAILABILITY DATE
+		$availability_date_array = $floorplan['availability_date'];
+		$floorplans[$key]['available_date'] = null;
+		if ($availability_date_array) {
+			foreach ($availability_date_array as $date_string) {
+				if ('' === $date_string) continue;
+				$date = DateTime::createFromFormat('Ymd', $date_string);
+				if (false === $date) continue;
+				if (null === $floorplans[$key]['available_date'] || $date < $floorplans[$key]['available_date']) {
+					$floorplans[$key]['available_date'] = $date;
+				}
+			}
+		}
+		if (null !== $floorplans[$key]['available_date']) {
+			$floorplans[$key]['available_date'] = $floorplans[$key]['available_date']->format('F j');
+		}
+
+		// * SPECIALS
+		$floorplans[$key]['property_has_specials'] = false;
+		$has_specials = $floorplan['has_specials']; // keep as string array
+		if (in_array('1', $has_specials, true) || in_array(1, $has_specials, true) || in_array(true, $has_specials, true)) {
+			$floorplans[$key]['property_has_specials'] = true;
+		}
+	}
+
+	return $floorplans;
+}
+
+/**
  * Get the floorplans and return them as an array.
+ * Possibly deprecated, use rentfetch_get_floorplans_array_sql() instead.
  *
  * @return array an array of floorplans.
  */
@@ -222,8 +381,9 @@ function rentfetch_get_floorplans_array() {
  * @return void.
  */
 function rentfetch_set_floorplans() {
+
 	global $rentfetch_floorplans;
-	$rentfetch_floorplans = rentfetch_get_floorplans_array();
+	$rentfetch_floorplans = rentfetch_get_floorplans_array_sql();
 }
 add_action( 'wp_loaded', 'rentfetch_set_floorplans' );
 
