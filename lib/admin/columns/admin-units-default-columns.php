@@ -36,7 +36,7 @@ function rentfetch_default_units_admin_columns( $columns ) {
 		'maximum_rent'          => __( 'Max Rent', 'rentfetch' ),
 		'sqrft'                 => __( 'Sqrft', 'rentfetch' ),
 		// 'yardi_unit_image_urls' => __( 'Synced Images', 'rentfetch' ),
-		// 'amenities'             => __( 'Amenities', 'rentfetch' ),
+		'amenities'             => __( 'Amenities', 'rentfetch' ),
 		// 'specials'              => __( 'Specials', 'rentfetch' ),
 		'unit_source'           => __( 'Integration', 'rentfetch' ),
 		'api_response'          => __( 'API response', 'rentfetch' ),
