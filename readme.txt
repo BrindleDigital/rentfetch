@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.22.5 =
+
+* More efficient queries for the main floorplans loop (for property searches), as we're seeing some examples of sites with 10k+ floorplans that were struggling. This should be a 1-to-1 change.
+
 = 0.22.4 =
 
 * Enabling editing on the 'phone' field for Entrata properties, as the API doesn't provide a phone number and the field was also being disabled.
