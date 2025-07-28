@@ -106,6 +106,7 @@ Start from your WordPress dashboard.
 = 0.22.5 =
 
 * More efficient queries for the main floorplans loop (for property searches), as we're seeing some examples of sites with 10k+ floorplans that were struggling. This should be a 1-to-1 change.
+* Adding the backend column for 'amenities' to units for easier visibility into which units have amenities attached.
 
 = 0.22.4 =
 
