@@ -20,17 +20,14 @@ function rentfetch_floorplans_search_join( $join ) {
 
 	global $pagenow, $wpdb;
 
-	if ( ! isset( $_GET['s'] ) ) {
+	if ( empty( $_GET['s'] ) || empty( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		return $join;
 	}
 
-	if ( ! isset( $_GET['post_type'] ) ) {
-		return $join;
-	}
-
-	// I want the filter only when performing a search on edit page of Custom Post Type named "floorplans".
-	if ( is_admin() && 'edit.php' === $pagenow && 'floorplans' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
-		$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+	if ( is_admin() && 'edit.php' === $pagenow && 'floorplans' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
+		if ( false === strpos( $join, 'searchmeta_floorplans' ) ) {
+			$join .= ' LEFT JOIN ' . $wpdb->postmeta . ' AS searchmeta_floorplans ON ( ' . $wpdb->posts . '.ID = searchmeta_floorplans.post_id ) ';
+		}
 	}
 
 	return $join;
@@ -48,23 +45,16 @@ function rentfetch_floorplans_search_where( $where ) {
 
 	global $pagenow, $wpdb;
 
-	if ( ! isset( $_GET['s'] ) ) {
+	if ( empty( $_GET['s'] ) || empty( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		return $where;
 	}
 
-	if ( ! isset( $_GET['post_type'] ) ) {
-		return $where;
-	}
-
-	// I want the filter only when performing a search on edit page of Custom Post Type named "floorplans".
-	if ( is_admin() && 'edit.php' === $pagenow && 'floorplans' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
-
+	if ( is_admin() && 'edit.php' === $pagenow && 'floorplans' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		$where = preg_replace(
 			'/\(\s*' . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-			'(' . $wpdb->posts . '.post_title LIKE $1) OR (' . $wpdb->postmeta . '.meta_value LIKE $1)',
+			'(' . $wpdb->posts . '.post_title LIKE $1) OR (searchmeta_floorplans.meta_value LIKE $1)',
 			$where
 		);
-
 	}
 
 	return $where;
@@ -80,16 +70,12 @@ add_filter( 'posts_where', 'rentfetch_floorplans_search_where' );
  */
 function rentfetch_floorplans_limits( $groupby ) {
 
-	if ( ! isset( $_GET['s'] ) ) {
-		return $groupby;
-	}
-
-	if ( ! isset( $_GET['post_type'] ) ) {
+	if ( empty( $_GET['s'] ) || empty( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		return $groupby;
 	}
 
 	global $pagenow, $wpdb;
-	if ( is_admin() && 'edit.php' === $pagenow && 'floorplans' === $_GET['post_type'] && '' !== $_GET['s'] ) {
+	if ( is_admin() && 'edit.php' === $pagenow && 'floorplans' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		$groupby = "$wpdb->posts.ID";
 	}
 

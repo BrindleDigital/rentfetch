@@ -20,17 +20,14 @@ function rentfetch_properties_search_join( $join ) {
 
 	global $pagenow, $wpdb;
 
-	if ( ! isset( $_GET['s'] ) ) {
+	if ( empty( $_GET['s'] ) || empty( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		return $join;
 	}
 
-	if ( ! isset( $_GET['post_type'] ) ) {
-		return $join;
-	}
-
-	// I want the filter only when performing a search on edit page of Custom Post Type named "properties".
-	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
-		$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
+		if ( false === strpos( $join, 'searchmeta_properties' ) ) {
+			$join .= ' LEFT JOIN ' . $wpdb->postmeta . ' AS searchmeta_properties ON ( ' . $wpdb->posts . '.ID = searchmeta_properties.post_id ) ';
+		}
 	}
 
 	return $join;
@@ -48,23 +45,16 @@ function rentfetch_properties_search_where( $where ) {
 
 	global $pagenow, $wpdb;
 
-	if ( ! isset( $_GET['s'] ) ) {
+	if ( empty( $_GET['s'] ) || empty( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		return $where;
 	}
 
-	if ( ! isset( $_GET['post_type'] ) ) {
-		return $where;
-	}
-
-	// I want the filter only when performing a search on edit page of Custom Post Type named "properties".
-	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && ! empty( $_GET['s'] ) ) {
-
+	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		$where = preg_replace(
 			'/\(\s*' . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
-			'(' . $wpdb->posts . '.post_title LIKE $1) OR (' . $wpdb->postmeta . '.meta_value LIKE $1)',
+			'(' . $wpdb->posts . '.post_title LIKE $1) OR (searchmeta_properties.meta_value LIKE $1)',
 			$where
 		);
-
 	}
 
 	return $where;
@@ -82,15 +72,11 @@ function rentfetch_properties_limits( $groupby ) {
 
 	global $pagenow, $wpdb;
 
-	if ( ! isset( $_GET['s'] ) ) {
+	if ( empty( $_GET['s'] ) || empty( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		return $groupby;
 	}
 
-	if ( ! isset( $_GET['post_type'] ) ) {
-		return $groupby;
-	}
-
-	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] && '' !== $_GET['s'] ) {
+	if ( is_admin() && 'edit.php' === $pagenow && 'properties' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only.
 		$groupby = "$wpdb->posts.ID";
 	}
 
