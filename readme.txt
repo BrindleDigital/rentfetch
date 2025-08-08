@@ -108,6 +108,8 @@ Start from your WordPress dashboard.
 * More efficient queries for the main floorplans loop (for property searches), as we're seeing some examples of sites with 10k+ floorplans that were struggling. This should be a 1-to-1 change.
 * Adding the backend column for 'amenities' to units for easier visibility into which units have amenities attached.
 * Making the 'phone' field readonly for Entrata-synced properties, since that data is being dynamically pulled.
+* Fixing the columns display on the admin for unit-level amenities.
+* Fixing several sql duplicate joins that were throwing an error when searching the units for a particular unit, etc.
 
 = 0.22.4 =
 
