@@ -84,6 +84,7 @@ function rentfetch_property_syncing_fields_entrata( $array_fields, $post_id ) {
 		'latitude',
 		'longitude',
 		'synced_property_images',
+		'phone'
 	);
 }
 add_filter( 'rentfetch_filter_property_syncing_fields_entrata', 'rentfetch_property_syncing_fields_entrata', 10, 2 );
