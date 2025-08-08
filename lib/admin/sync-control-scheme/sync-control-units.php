@@ -57,6 +57,7 @@ function rentfetch_unit_syncing_fields_yardi( $array_fields, $post_id ) {
 		'baths',
 		'apply_online_url',
 		'availability_date',
+		'amenities',
 		'deposit',
 		'minimum_rent',
 		'maximum_rent',

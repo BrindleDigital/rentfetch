@@ -136,19 +136,11 @@ function rentfetch_get_unit_availability_date() {
  * @return void
  */
 function rentfetch_get_unit_amenities() {
-	$amenities_array = get_post_meta( get_the_ID(), 'amenities', true );
-	
-	$amenities_array = apply_filters( 'rentfetch_filter_unit_amenities', $amenities_array );
+	$amenities = esc_html( get_post_meta( get_the_ID(), 'amenities', true ) );
 
-	// bail if the amenities are not an array.
-	if ( !is_array( $amenities_array ) ) { 
-		return;
-	}
+	$amenities = apply_filters( 'rentfetch_filter_unit_amenities', $amenities );
 
-	$amenities_array = array_map( 'esc_html', $amenities_array );
-	$amenities_string = implode( ', ', $amenities_array );
-
-	return $amenities_string;
+	return $amenities;
 }
 
 /**
