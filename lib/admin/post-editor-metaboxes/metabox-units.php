@@ -203,7 +203,7 @@ function rentfetch_units_info_metabox_callback( $post ) {
 	?>
 	
 	<div class="rf-metabox rf-metabox-floorplans">
-		<div class="columns columns-5">
+		<div class="columns columns-3">
 			
 			<?php
 			// * Beds
@@ -272,6 +272,21 @@ function rentfetch_units_info_metabox_callback( $post ) {
 				</div>
 				<div class="column">
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="floor_number" name="floor_number" value="<?php echo esc_attr( $floor_number ); ?>">
+				</div>
+			</div>
+
+			<?php
+			// * Amenities (comma separated list)
+			$amenities = get_post_meta( $post->ID, 'amenities', true );
+			$disabled  = in_array( 'amenities', $array_disabled_fields, true ) ? 'disabled' : '';
+			?>
+			<div class="field">
+				<div class="column">
+					<label for="amenities">Amenities</label>
+				</div>
+				<div class="column">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="amenities" name="amenities" value="<?php echo esc_attr( $amenities ); ?>" placeholder="e.g. Pool, Fitness Center, Pet Friendly">
+					<p class="description">Comma-separated list used in unit displays.</p>
 				</div>
 			</div>
 		
@@ -458,6 +473,10 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 	
 	if ( isset( $_POST['building_name'] ) ) {
 		update_post_meta( $post_id, 'building_name', sanitize_text_field( wp_unslash( $_POST['building_name'] ) ) );
+	}
+
+	if ( isset( $_POST['amenities'] ) ) {
+		update_post_meta( $post_id, 'amenities', sanitize_text_field( wp_unslash( $_POST['amenities'] ) ) );
 	}
 	
 }
