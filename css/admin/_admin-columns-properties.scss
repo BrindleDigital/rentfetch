@@ -134,20 +134,24 @@ body.post-type-properties {
 			max-width: 200px;
 		}
 
-		td.api_response,
-		th#api_response {
-			width: auto !important;
-			max-width: auto;
-		}
+		td.api_response {
+			padding-top: 0;
+			padding-bottom: 0;
 
-		td.api_response .api-responses {
-			display: grid;
-			gap: 10px;
-			grid-template-columns: 1fr 1fr;
-		}
+			.api-responses {
+				display: flex;
+				gap: 15px;
+				// grid-template-columns: 1fr 1fr;
+				height: 6em;
+				overflow-y: hidden;
 
-		td.api_response .api-responses .api-response {
-			line-height: 1.1;
+				.api-response {
+					width: 250px;
+					height: 6em;
+					overflow-x: auto;
+					margin: 0;
+				}
+			}
 		}
 	}
 }

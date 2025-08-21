@@ -142,18 +142,13 @@ body.post-type-floorplans table.wp-list-table th#availability_url,
 body.post-type-floorplans table.wp-list-table td.availability_url {
   max-width: 150px !important;
 }
-body.post-type-floorplans table.wp-list-table td.api_response,
-body.post-type-floorplans table.wp-list-table th#api_response {
-  width: auto !important;
-  max-width: auto;
-}
 body.post-type-floorplans table.wp-list-table td.api_response .api-responses {
   display: grid;
   gap: 10px;
   grid-template-columns: 1fr 1fr;
-}
-body.post-type-floorplans table.wp-list-table td.api_response .api-responses .api-response {
-  line-height: 1.1;
+  max-width: 200px;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
 body.post-type-properties .row-actions {
@@ -265,18 +260,21 @@ body.post-type-properties table.wp-list-table td.synced_property_images {
   width: 200px !important;
   max-width: 200px;
 }
-body.post-type-properties table.wp-list-table td.api_response,
-body.post-type-properties table.wp-list-table th#api_response {
-  width: auto !important;
-  max-width: auto;
+body.post-type-properties table.wp-list-table td.api_response {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 body.post-type-properties table.wp-list-table td.api_response .api-responses {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  gap: 15px;
+  height: 6em;
+  overflow-y: hidden;
 }
 body.post-type-properties table.wp-list-table td.api_response .api-responses .api-response {
-  line-height: 1.1;
+  width: 250px;
+  height: 6em;
+  overflow-x: auto;
+  margin: 0;
 }
 
 body.post-type-units .row-actions {

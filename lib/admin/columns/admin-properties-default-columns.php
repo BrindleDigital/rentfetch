@@ -21,6 +21,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 	$columns = array(
 		'cb'                    => '<input type="checkbox" />',
 		'title'                 => __( 'Title', 'rentfetch' ),
+		'property_source'       => __( 'Property Source', 'rentfetch' ),
 		'property_id'           => __( 'Property ID', 'rentfetch' ),
 		'address'               => __( 'Address', 'rentfetch' ),
 		'city'                  => __( 'City', 'rentfetch' ),
@@ -38,7 +39,6 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 		'tour'                  => __( 'Tour', 'rentfetch' ),
 		// 'pets'                  => __( 'Pets', 'rentfetch' ),
 		'content_area'          => __( 'Content Area', 'rentfetch' ),
-		'property_source'       => __( 'Property Source', 'rentfetch' ),
 		'api_response'          => __( 'API response', 'rentfetch' ),
 	);
 

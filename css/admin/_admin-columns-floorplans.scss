@@ -111,20 +111,13 @@ body.post-type-floorplans {
 			max-width: 150px !important;
 		}
 
-		td.api_response,
-		th#api_response {
-			width: auto !important;
-			max-width: auto;
-		}
-
 		td.api_response .api-responses {
 			display: grid;
 			gap: 10px;
 			grid-template-columns: 1fr 1fr;
-		}
-
-		td.api_response .api-responses .api-response {
-			line-height: 1.1;
+			max-width: 200px;
+			overflow-x: scroll;
+			overflow-y: hidden;
 		}
 	}
 }
