@@ -185,3 +185,26 @@
 		}
 	}
 }
+
+.api-response {
+	margin-bottom: 45px;
+	h3 {
+		margin: 0;
+	}
+
+	p {
+		margin: 0;
+	}
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	.json-content {
+		border: 1px solid rgba(black, 0.1);
+		margin-top: 8px;
+	}
+
+	.rentfetch-api-response-json {
+		background-color: #f7f7f7 !important;
+	}
+}

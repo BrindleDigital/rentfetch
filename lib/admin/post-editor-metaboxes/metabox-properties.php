@@ -51,6 +51,31 @@ function rentfetch_register_properties_details_metabox() {
 		'normal', // Priority of the metabox.
 		'default' // Context of the metabox.
 	);
+
+	// Conditionally add an API Response metabox when this post has an `api_response` meta value.
+	global $post;
+	$post_id = 0;
+	if ( isset( $_GET['post'] ) ) {
+		$post_id = (int) $_GET['post'];
+	} elseif ( isset( $_GET['post_ID'] ) ) {
+		$post_id = (int) $_GET['post_ID'];
+	} elseif ( is_object( $post ) && isset( $post->ID ) ) {
+		$post_id = (int) $post->ID;
+	}
+
+	if ( $post_id ) {
+		$api_response = get_post_meta( $post_id, 'api_response', true );
+		if ( ! empty( $api_response ) ) {
+			add_meta_box(
+				'rentfetch_properties_api_response', // ID
+				'API Response', // Title
+				'rentfetch_properties_api_response_metabox_callback', // Callback
+				'properties', // screen
+				'normal', // context
+				'default' // priority
+			);
+		}
+	}
 }
 add_action( 'add_meta_boxes', 'rentfetch_register_properties_details_metabox' );
 
@@ -707,3 +732,87 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 	}
 }
 add_action( 'save_post', 'rentfetch_save_properties_metaboxes' );
+
+
+/**
+ * Render the API Response metabox. Displays structured api_response post meta when present.
+ *
+ * @param WP_Post $post The post object.
+ * @return void
+ */
+function rentfetch_properties_api_response_metabox_callback( $post ) {
+	$api_response = get_post_meta( $post->ID, 'api_response', true );
+
+	if ( ! is_array( $api_response ) ) {
+		$api_response = array();
+	}
+
+	echo '<div class="rf-metabox rf-metabox-api-response">';
+
+	foreach ( $api_response as $key => $value ) {
+		echo '<div class="api-response">';
+		printf( '<h3 style="margin-top: 0;">%s</h3>', esc_html( $key ) );
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $subkey => $subvalue ) {
+					if ( 'api_response' === $subkey ) {
+						// Use the shared JSON utility to pretty-print or lightly repair the value.
+						$formatted = rentfetch_pretty_json( $subvalue );
+
+						echo '<div class="json-content">';
+						// Output as a readonly textarea so we can attach WP CodeMirror (with folding) to it.
+						printf( '<textarea class="rentfetch-api-response-json" readonly rows="10" style="width:100%%;">%s</textarea>', esc_textarea( $formatted ) );
+						echo '</div>';
+					} else {
+						printf( '<p>%s</p>', esc_html( $subvalue ) );
+					}
+			}
+		} else {
+			echo esc_html( $value );
+		}
+
+		echo '</div>';
+	}
+
+	echo '</div>';
+
+}
+
+
+/**
+ * Enqueue admin scripts/styles for API response code editor.
+ *
+ * @param string $hook The current admin page hook.
+ * @return void
+ */
+function rentfetch_enqueue_api_response_editor_assets( $hook ) {
+	// Only load on post edit screens.
+	if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
+		return;
+	}
+
+	$screen = get_current_screen();
+	if ( ! $screen ) {
+		return;
+	}
+
+	// Only enqueue on properties, floorplans, or units edit screens.
+	if ( ! in_array( $screen->post_type, array( 'properties', 'floorplans', 'units' ), true ) ) {
+		return;
+	}
+
+	// Ensure wp.codeEditor is available and get settings so WP can enqueue required addons.
+	$settings = wp_enqueue_code_editor( array( 'type' => 'application/json' ) );
+
+	// Fallback settings if enqueue didn't return anything.
+	if ( false === $settings ) {
+		$settings = array();
+	}
+
+	// Enqueue the script handle registered in lib/initialization/enqueue.php and localize the settings.
+	wp_enqueue_script( 'rentfetch-api-response-editor' );
+
+	// Make the settings available to our script so it uses the same assets/addons WP enqueued.
+	wp_localize_script( 'rentfetch-api-response-editor', 'rentfetchCodeEditorSettings', $settings );
+}
+add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_api_response_editor_assets' );

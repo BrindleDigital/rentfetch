@@ -654,6 +654,26 @@ body.toplevel_page_rentfetch-options #wpcontent {
   position: absolute;
 }
 
+.api-response {
+  margin-bottom: 45px;
+}
+.api-response h3 {
+  margin: 0;
+}
+.api-response p {
+  margin: 0;
+}
+.api-response:last-child {
+  margin-bottom: 0;
+}
+.api-response .json-content {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+}
+.api-response .rentfetch-api-response-json {
+  background-color: #f7f7f7 !important;
+}
+
 /* ==========================================================================
    Subnavigation
    ========================================================================== */

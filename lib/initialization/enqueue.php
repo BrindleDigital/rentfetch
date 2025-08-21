@@ -95,6 +95,12 @@ function rentfetch_enqueue_in_admin_metabox_properties() {
 	wp_register_script( 'rentfetch-metabox-floorplans-images', RENTFETCH_PATH . 'js/metabox-floorplans-images.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-metabox-properties', RENTFETCH_PATH . 'js/metabox-properties.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
+	// API response editor (CodeMirror initializer). Registered here; enqueued where needed.
+	// Note: don't include 'wp-code-editor' here as a dependency because we call wp_enqueue_code_editor()
+	// at enqueue time in the metabox; including it here may surface a 'missing dependency' warning
+	// in some environments.
+	wp_register_script( 'rentfetch-api-response-editor', RENTFETCH_PATH . 'js/rentfetch-api-response-editor.js', array( 'jquery', 'underscore' ), RENTFETCH_VERSION, true );
+
 	// WordPress doesn't include any jQuery UI styles by default, so we need to include them.
 	wp_register_style( 'rentfetch-jquery-style', RENTFETCH_PATH . 'vendor/jquery-theme-smoothness/jquery-ui.css', array(), RENTFETCH_VERSION );
 

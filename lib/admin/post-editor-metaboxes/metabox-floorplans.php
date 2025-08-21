@@ -51,6 +51,31 @@ function rentfetch_register_floorplans_details_metabox() {
 		'normal', // Priority of the metabox.
 		'default' // Context of the metabox.
 	);
+
+	// Conditionally add an API Response metabox when this post has an `api_response` meta value.
+	global $post;
+	$post_id = 0;
+	if ( isset( $_GET['post'] ) ) {
+		$post_id = (int) $_GET['post'];
+	} elseif ( isset( $_GET['post_ID'] ) ) {
+		$post_id = (int) $_GET['post_ID'];
+	} elseif ( is_object( $post ) && isset( $post->ID ) ) {
+		$post_id = (int) $post->ID;
+	}
+
+	if ( $post_id ) {
+		$api_response = get_post_meta( $post_id, 'api_response', true );
+		if ( ! empty( $api_response ) ) {
+			add_meta_box(
+				'rentfetch_floorplans_api_response', // ID
+				'API Response', // Title
+				'rentfetch_floorplans_api_response_metabox_callback', // Callback
+				'floorplans', // screen
+				'normal', // context
+				'default' // priority
+			);
+		}
+	}
 }
 add_action( 'add_meta_boxes', 'rentfetch_register_floorplans_details_metabox' );
 
@@ -724,3 +749,45 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 	}
 }
 add_action( 'save_post', 'rentfetch_save_floorplans_metaboxes' );
+
+
+/**
+ * Render the Floorplan API Response metabox. Displays structured api_response post meta when present.
+ *
+ * @param WP_Post $post The post object.
+ * @return void
+ */
+function rentfetch_floorplans_api_response_metabox_callback( $post ) {
+	$api_response = get_post_meta( $post->ID, 'api_response', true );
+
+	if ( ! is_array( $api_response ) ) {
+		$api_response = array();
+	}
+
+	echo '<div class="rf-metabox rf-metabox-api-response">';
+
+	foreach ( $api_response as $key => $value ) {
+		echo '<div class="api-response">';
+		printf( '<h3 style="margin-top: 0;">%s</h3>', esc_html( $key ) );
+
+		if ( is_array( $value ) ) {
+			foreach ( $value as $subkey => $subvalue ) {
+				if ( 'api_response' === $subkey ) {
+					$formatted = rentfetch_pretty_json( $subvalue );
+					echo '<div class="json-content">';
+					printf( '<textarea class="rentfetch-api-response-json" readonly rows="10" style="width:100%%;">%s</textarea>', esc_textarea( $formatted ) );
+					echo '</div>';
+				} else {
+					printf( '<p>%s</p>', esc_html( $subvalue ) );
+				}
+			}
+		} else {
+			echo esc_html( $value );
+		}
+
+		echo '</div>';
+	}
+
+	echo '</div>';
+
+}
