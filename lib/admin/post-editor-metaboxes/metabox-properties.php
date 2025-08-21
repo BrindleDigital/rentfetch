@@ -112,17 +112,6 @@ function rentfetch_properties_identifiers_metabox_callback( $post ) {
 				<div class="column">
 					<input disabled type="text" id="property_source" name="property_source" value="<?php echo esc_attr( $property_source ); ?>">
 					<p class="description">This isn't a field meant to be edited; it's here to show you how this property is currently being managed (whether it syncs from a data source or it's manually managed).</p>
-					<?php
-
-					if ( $last_updated ) {
-						printf( '<p class="description"><strong>Property metadata last updated:</strong> %s</p>', esc_html( $last_updated ) );
-					}
-
-					if ( $api_error ) {
-						printf( '<p class="description"><strong>API response:</strong> %s</p>', wp_kses_post( $api_error ) );
-					}
-
-					?>
 				</div>
 			</div>
 								
