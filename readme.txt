@@ -103,6 +103,12 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.22.6 =
+
+* Updating column order for properties since the data source is one of the most important pieces of information
+* Updating column styles to accommodate more debugging data
+* Adding capability to show the most recent request completed for properties, floorplans, and units to help with more quickly debugging (and finding out what the API actually is telling us)
+
 = 0.22.5 =
 
 * More efficient queries for the main floorplans loop (for property searches), as we're seeing some examples of sites with 10k+ floorplans that were struggling. This should be a 1-to-1 change.
