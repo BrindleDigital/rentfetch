@@ -103,7 +103,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.22.6 =
+= 0.23 =
 
 * Updating column order for properties since the data source is one of the most important pieces of information
 * Updating column styles to accommodate more debugging data
