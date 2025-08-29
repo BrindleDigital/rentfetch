@@ -156,69 +156,13 @@ function rentfetch_propertysearchresults() {
 add_shortcode( 'rentfetch_propertysearchresults', 'rentfetch_propertysearchresults' );
 
 /**
- * AJAX handler for the property search
+ * Render the property query results and return the markup as a string.
  *
- * @return void
+ * @param array $property_args WP_Query args for properties.
+ * @return string HTML markup for the properties results.
  */
-function rentfetch_filter_properties() {
-
-	$floorplans = rentfetch_get_floorplans_array_sql();
-
-	$property_ids = array_keys( $floorplans );
-	if ( empty( $property_ids ) ) {
-		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything – empty array will let us find everything, so let's pass nonsense to make the search find nothing.
-	}
-	
-	// Get a list of the possible properties to show from the shortcode attributes.
-	$referring_page_id = url_to_postid( wp_get_referer() );
-	$atts = rentfetch_get_shortcode_attributes( 'rentfetch_propertysearch', $referring_page_id );
-	
-	
-	// set -1 for $properties_posts_per_page if it's not set.
-	$properties_maximum_per_page = get_option( 'rentfetch_options_maximum_number_of_properties_to_show' );
-	if ( 0 === $properties_maximum_per_page ) {
-		$properties_maximum_per_page = -1;
-	}
-
-	// * The base property query.
-	$property_args = array(
-		'post_type'      => 'properties',
-		'posts_per_page' => $properties_maximum_per_page,
-		'no_found_rows'  => true,
-		'post_status' => 'publish',
-	);
-
-	$display_availability = get_option( 'rentfetch_options_property_availability_display' );
-	if ( 'all' !== $display_availability ) {
-		
-		// If we have a propertyids attribute, use the intersection of that and the $property_ids array.
-		if ( isset( $atts['propertyids'] ) ) {
-			$property_ids = array_intersect( $property_ids, explode( ',', $atts['propertyids'] ) );
-		}
-
-		// * Add all of our property IDs into the property search
-		$property_args['meta_query'] = array(
-			array(
-				'key'   => 'property_id',
-				'value' => $property_ids,
-			),
-		);
-
-	} else {
-		if ( isset( $atts['propertyids'] ) ) {
-			$property_ids = explode( ',', $atts['propertyids'] );
-		}
-		
-		// * Add all of our property IDs into the property search
-		$property_args['meta_query'] = array(
-			array(
-				'key'   => 'property_id',
-				'value' => $property_ids,
-			),
-		);
-	}
-
-	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
+function rentfetch_render_property_query_results( $property_args ) {
+	ob_start();
 
 	$propertyquery = new WP_Query( $property_args );
 
@@ -276,6 +220,88 @@ function rentfetch_filter_properties() {
 	} else {
 		echo 'No properties with availability were found matching the current search parameters.';
 	}
+
+	return ob_get_clean();
+}
+
+/**
+ * AJAX handler for the property search
+ *
+ * @return void
+ */
+function rentfetch_filter_properties() {
+
+	$floorplans = rentfetch_get_floorplans_array_sql();
+
+	$property_ids = array_keys( $floorplans );
+	if ( empty( $property_ids ) ) {
+		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything – empty array will let us find everything, so let's pass nonsense to make the search find nothing.
+	}
+	
+	// Get a list of the possible properties to show from the shortcode attributes.
+	$referring_page_id = url_to_postid( wp_get_referer() );
+	$atts = rentfetch_get_shortcode_attributes( 'rentfetch_propertysearch', $referring_page_id );
+	
+
+	// set -1 for $properties_posts_per_page if it's not set.
+	$properties_maximum_per_page = get_option( 'rentfetch_options_maximum_number_of_properties_to_show' );
+	if ( 0 === $properties_maximum_per_page ) {
+		$properties_maximum_per_page = -1;
+	}
+
+	// * The base property query.
+	$property_args = array(
+		'post_type'      => 'properties',
+		'posts_per_page' => $properties_maximum_per_page,
+		'no_found_rows'  => true,
+		'post_status' => 'publish',
+	);
+
+	$display_availability = get_option( 'rentfetch_options_property_availability_display' );
+	if ( 'all' !== $display_availability ) {
+		
+		// If we have a propertyids attribute, use the intersection of that and the $property_ids array.
+		if ( isset( $atts['propertyids'] ) ) {
+			$property_ids = array_intersect( $property_ids, explode( ',', $atts['propertyids'] ) );
+		}
+
+		// * Add all of our property IDs into the property search
+		$property_args['meta_query'] = array(
+			array(
+				'key'   => 'property_id',
+				'value' => $property_ids,
+			),
+		);
+
+	} else {
+		if ( isset( $atts['propertyids'] ) ) {
+			$property_ids = explode( ',', $atts['propertyids'] );
+		}
+		
+		// * Add all of our property IDs into the property search
+		$property_args['meta_query'] = array(
+			array(
+				'key'   => 'property_id',
+				'value' => $property_ids,
+			),
+		);
+	}
+
+	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
+
+	// Build a cache key from the property args and shortcode atts so different filters cache separately.
+	$cache_key = 'rentfetch_propertysearch_markup_' . md5( wp_json_encode( array( 'args' => $property_args, 'atts' => $atts ) ) );
+	$cached_markup = get_transient( $cache_key );
+	if ( false !== $cached_markup && is_string( $cached_markup ) ) {
+		echo $cached_markup;
+		die();
+	}
+
+	// Render and cache the results.
+	$markup = rentfetch_render_property_query_results( $property_args );
+	set_transient( $cache_key, $markup, 5 * MINUTE_IN_SECONDS );
+
+	echo $markup;
 
 	die();
 }

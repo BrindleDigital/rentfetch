@@ -37,6 +37,16 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	$args = wp_parse_args( $args, $default_args );
 	$args = apply_filters( 'rentfetch_search_floorplans_query_args', $args );
 
+	// Pseudocache: use a transient keyed by the query args to avoid expensive SQL on
+	// repeated calls. Expires after 5 minutes.
+	$cache_key = 'rentfetch_floorplans_array_sql_' . md5( wp_json_encode( $args ) );
+	$cached = get_transient( $cache_key );
+	if ( false !== $cached && is_array( $cached ) ) {
+		// Populate the global and return cached value.
+		$floorplans = $cached;
+		return $floorplans;
+	}
+
 
 
 	// Step 1: Get filtered, ordered, and limited list of floorplan IDs
@@ -93,6 +103,10 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	$ids = $wpdb->get_col( $ids_sql );
 
 	if ( empty( $ids ) ) {
+		// Cache empty results briefly to avoid repeated queries returning no IDs.
+		if ( isset( $cache_key ) ) {
+			set_transient( $cache_key, array(), 5 * MINUTE_IN_SECONDS );
+		}
 		return array();
 	}
 
@@ -229,6 +243,11 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 		if (in_array('1', $has_specials, true) || in_array(1, $has_specials, true) || in_array(true, $has_specials, true)) {
 			$floorplans[$key]['property_has_specials'] = true;
 		}
+	}
+
+	// Save computed floorplans to transient for 5 minutes to improve performance.
+	if ( isset( $cache_key ) ) {
+		set_transient( $cache_key, $floorplans, 5 * MINUTE_IN_SECONDS );
 	}
 
 	return $floorplans;
