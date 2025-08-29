@@ -39,8 +39,10 @@ function rentfetch_search_filters_squarefoot() {
 			echo '<div>';
 				echo '<div class="price-slider-wrap slider-wrap"><div id="price-slider" style="width:100%;"></div></div>';
 				echo '<div class="inputs-square-footage inputs-slider">';
+					echo '<label style="display:none;" for="sqftsmall">Minimum square feet</label>';
 					printf( '<div class="input-square-footage-wrap input-slider-wrap"><input type="number" min="1" name="sqftsmall" data-default-value="%s" id="sqftsmall" value="%s" /></div>', esc_html( $value_small ), esc_html( $value_small ) );
 					echo '<div class="price-dash dash"></div>';
+					echo '<label style="display:none;" for="sqftbig">Maximum square feet</label>';
 					printf( '<div class="input-square-footage-wrap input-slider-wrap"><input type="number" min="1" name="sqftbig" data-default-value="%s" id="sqftbig" value="%s" /></div>', esc_html( $value_big ), esc_html( $value_big ) );
 				echo '</div>'; // .inputs-prices.
 			echo '</div>'; // .slider.

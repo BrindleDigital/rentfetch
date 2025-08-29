@@ -33,7 +33,15 @@ function rentfetch_property_single_image() {
 
 	echo '<div class="property-single-image-wrap">';
 	if ( ! empty( $images ) && isset( $images[0]['url'] ) ) {
-		printf( '<img class="property-single-image" src="%s" loading="lazy" decoding="async" />', esc_url( $images[0]['url'] ) );
+
+		$alt = $images[0]['alt'] ?? '';
+		
+		if ( !$alt ) {
+			// set the alt to the name of the property
+			$alt = get_the_title();
+		}
+		
+		printf( '<img class="property-single-image" src="%s" alt="%s" loading="lazy" decoding="async" />', esc_url( $images[0]['url'] ), esc_html( $alt ) );
 	} else {
 		// Fallback: empty image placeholder (keeps layout stable)
 		echo '<img class="property-single-image" src="" alt="" loading="lazy" decoding="async" />';
