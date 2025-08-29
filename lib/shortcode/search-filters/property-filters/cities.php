@@ -26,20 +26,22 @@ function rentfetch_search_filters_cities() {
 	$filter_label = 'Cities';
 
 	// get unique city values from the database.
-	global $wpdb;
-	$cities = $wpdb->get_col(
-		$wpdb->prepare(
-			"SELECT DISTINCT meta_value 
-			FROM {$wpdb->postmeta} pm 
-			INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID 
-			WHERE pm.meta_key = %s 
-			AND pm.meta_value != '' 
-			AND p.post_type = 'properties' 
-			AND p.post_status = 'publish' 
-			ORDER BY pm.meta_value ASC",
-			$meta_key
-		)
-	);
+	// Retrieve city meta values via the helper (uses transient pseudocache).
+	$all_cities = rentfetch_get_meta_values( $meta_key, 'properties', 'publish' );
+
+	if ( empty( $all_cities ) ) {
+		return;
+	}
+
+	// Normalize, remove empties and duplicates, then sort case-insensitively.
+	$cities = array_map( 'trim', $all_cities );
+	$cities = array_filter( $cities, function( $v ) { return '' !== $v; } );
+	$cities = array_unique( $cities );
+	if ( empty( $cities ) ) {
+		return;
+	}
+	natcasesort( $cities );
+	$cities = array_values( $cities );
 
 	// bail if there aren't any cities.
 	if ( empty( $cities ) ) {

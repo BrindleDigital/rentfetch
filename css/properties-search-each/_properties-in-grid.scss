@@ -52,6 +52,19 @@
 			height: 100%;
 			position: absolute;
 			inset: 0;
+
+			/* Promote the image to its own compositing layer so the GPU can handle
+			   transforms and opacity changes. This avoids forcing layout/paint on
+			   the main thread when images are resized or animated. */
+			-will-change: transform, opacity;
+			transform: translateZ(0);
+			-backface-visibility: hidden;
+			-webkit-transform: translateZ(0);
+			-webkit-backface-visibility: hidden;
+
+			/* Prefer transform-based transitions if you animate the image (avoid
+			   animating width/height or top/left since those trigger layout). */
+			transition: transform 0.3s ease, opacity 0.3s ease;
 		}
 	}
 

@@ -32,6 +32,11 @@ function rentfetch_property_single_image() {
 	$images = rentfetch_get_property_images();
 
 	echo '<div class="property-single-image-wrap">';
-		printf( '<img class="property-single-image" src="%s" loading="lazy" />', esc_url( $images[0]['url'] ) );
+	if ( ! empty( $images ) && isset( $images[0]['url'] ) ) {
+		printf( '<img class="property-single-image" src="%s" loading="lazy" decoding="async" />', esc_url( $images[0]['url'] ) );
+	} else {
+		// Fallback: empty image placeholder (keeps layout stable)
+		echo '<img class="property-single-image" src="" alt="" loading="lazy" decoding="async" />';
+	}
 	echo '</div>';
 }
