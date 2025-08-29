@@ -40,7 +40,7 @@ function rentfetch_options_page_html() {
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
 
 					$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
-					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Search' ) );
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
 					
 					$active = ( 'properties' === $tab ) ? 'nav-tab-active' : '';
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Property Settings' ) );

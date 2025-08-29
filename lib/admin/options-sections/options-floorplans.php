@@ -39,7 +39,7 @@ function rentfetch_settings_floorplans_floorplan_search()
 {
 	?>
 <div class="header">
-  <h2 class="title">Floor Plan Search Settings</h2>
+  <h2 class="title">Floor Plan Settings</h2>
   <p class="description">The settings configured for the property search capabilities on a multi-property website.</p>
 </div>
 
