@@ -306,6 +306,12 @@ function rentfetch_property_images_grid( $args = null ) {
 	printf( '<div class="property-images-grid %s">', esc_attr( $count_class ) );
 
 	foreach ( $images as $image ) {
+		
+		// if there's no alt text, fall back to the property title
+		if ( empty( $image['alt'] ) ) {
+			$image['alt'] = get_the_title();
+		}
+
 		printf( '<div class="image-item"><a class="property-image-grid-link" data-gallery="property-images-grid" href="%s"><img src="%s" alt="%s" title="%s" /></a></div>', esc_url( $image['url'] ), esc_url( $image['url'] ), esc_html( $image['alt'] ), esc_html( $image['title'] ) );
 	}
 
