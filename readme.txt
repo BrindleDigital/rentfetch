@@ -103,6 +103,13 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.24 = 
+
+* Implementing transient-based pseudocaching for recent queries on the floorplan and property level (we're caching the actual post-processed markup on the property level). This should reduce server load and make property searches faster.
+* Adding alt attribues to images in the properties grid.
+* Improvements to the scroll when we click on a property in the map, making that feel smoother
+* Adding explicit lazy loading to property images.
+
 = 0.23 =
 
 * Updating column order for properties since the data source is one of the most important pieces of information
