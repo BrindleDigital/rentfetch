@@ -124,23 +124,13 @@ function rentfetch_floorplan_search_results() {
 add_shortcode( 'rentfetch_floorplansearchresults', 'rentfetch_floorplan_search_results' );
 
 /**
- * Filter the floorplans
+ * Render floorplan query results markup
  *
- * @return void
+ * @param array $floorplan_args WP_Query args for floorplans.
+ * @return string HTML markup for the floorplan results.
  */
-function rentfetch_filter_floorplans() {
-
-	// * The base floorplan query
-	$floorplan_args = array(
-		'post_type'      => 'floorplans',
-		'orderby'        => 'menu_order',
-		'order'          => 'ASC',
-		'no_found_rows'  => true,
-		'posts_per_page' => -1,
-		'post_status'    => 'publish',
-	);
-
-	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
+function rentfetch_render_floorplan_query_results( $floorplan_args ) {
+	ob_start();
 
 	$floorplanquery = new WP_Query( $floorplan_args );
 
@@ -174,6 +164,46 @@ function rentfetch_filter_floorplans() {
 	} else {
 		echo 'No floorplans with availability were found matching the current search parameters.';
 	}
+
+	return ob_get_clean();
+}
+
+/**
+ * Filter the floorplans
+ *
+ * @return void
+ */
+function rentfetch_filter_floorplans() {
+
+	// * The base floorplan query
+	$floorplan_args = array(
+		'post_type'      => 'floorplans',
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC',
+		'no_found_rows'  => true,
+		'posts_per_page' => -1,
+		'post_status'    => 'publish',
+	);
+
+	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
+
+	// Build a cache key from the floorplan args so different filters cache separately.
+	$cache_key = 'rentfetch_floorplansearch_markup_' . md5( wp_json_encode( $floorplan_args ) );
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		$cached_markup = get_transient( $cache_key );
+		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
+			echo $cached_markup;
+			die();
+		}
+	}
+
+	// Render and cache the results.
+	$markup = rentfetch_render_floorplan_query_results( $floorplan_args );
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		set_transient( $cache_key, $markup, 5 * MINUTE_IN_SECONDS );
+	}
+
+	echo $markup;
 
 	die();
 }
