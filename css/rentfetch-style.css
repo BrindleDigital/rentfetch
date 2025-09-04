@@ -3740,6 +3740,9 @@ table.unit-details-table td {
   border: none;
   border-bottom: 1px solid var(--rentfetch-black-10-percent);
   padding: 5px 0;
+  min-width: 70px;
+  max-width: 200px;
+  line-height: 1.4;
 }
 @media (max-width: 600px) {
   table.unit-details-table td {
@@ -3748,6 +3751,7 @@ table.unit-details-table td {
 }
 table.unit-details-table td.unit-buttons {
   text-align: right;
+  min-width: 150px;
 }
 table.unit-details-table tr:last-child {
   border-bottom: none;

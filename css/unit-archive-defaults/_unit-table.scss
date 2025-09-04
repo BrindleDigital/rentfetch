@@ -32,6 +32,9 @@ table.unit-details-table {
 		border: none;
 		border-bottom: 1px solid var(--rentfetch-black-10-percent);
 		padding: 5px 0;
+		min-width: 70px;
+		max-width: 200px;
+		line-height: 1.4;
 
 		@include mobile {
 			font-size: var(--rentfetch-font-size-small);
@@ -40,6 +43,7 @@ table.unit-details-table {
 
 	td.unit-buttons {
 		text-align: right;
+		min-width: 150px;
 	}
 
 	tr:last-child {

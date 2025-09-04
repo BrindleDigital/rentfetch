@@ -109,6 +109,7 @@ Start from your WordPress dashboard.
 * Adding alt attribues to images in the properties grid.
 * Improvements to the scroll when we click on a property in the map, making that feel smoother
 * Adding explicit lazy loading to property images.
+* Adding min and max values to the cells in the unit details table, so that we don't get weird formatting if we encounter significantly more data in a cell than expected.
 
 = 0.23 =
 
