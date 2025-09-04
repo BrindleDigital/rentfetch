@@ -448,21 +448,23 @@ function rentfetch_save_settings_property_search() {
 		update_option( 'rentfetch_options_property_availability_display', $property_display );
 	}
 
-	// Checkboxes field.
-	if ( isset( $_POST['rentfetch_options_dialog_filters'] ) ) {
-		$options_dialog_filters = array_map( 'sanitize_text_field', wp_unslash( $_POST['rentfetch_options_dialog_filters'] ) );
-		update_option( 'rentfetch_options_dialog_filters', $options_dialog_filters );
-	} else {
-		update_option( 'rentfetch_options_dialog_filters', array() );
-	}
-
-	// Checkboxes field.
+	// Checkboxes field - Featured filters.
 	if ( isset( $_POST['rentfetch_options_featured_filters'] ) ) {
 		$options_featured_filters = array_map( 'sanitize_text_field', wp_unslash( $_POST['rentfetch_options_featured_filters'] ) );
-		update_option( 'rentfetch_options_featured_filters', $options_featured_filters );
 	} else {
-		update_option( 'rentfetch_options_featured_filters', array() );
+		$options_featured_filters = array();
 	}
+	update_option( 'rentfetch_options_featured_filters', $options_featured_filters );
+
+	// Checkboxes field - Dialog filters (must include all featured filters).
+	if ( isset( $_POST['rentfetch_options_dialog_filters'] ) ) {
+		$options_dialog_filters = array_map( 'sanitize_text_field', wp_unslash( $_POST['rentfetch_options_dialog_filters'] ) );
+	} else {
+		$options_dialog_filters = array();
+	}
+	// Ensure dialog filters include all featured filters.
+	$options_dialog_filters = array_unique( array_merge( $options_dialog_filters, $options_featured_filters ) );
+	update_option( 'rentfetch_options_dialog_filters', $options_dialog_filters );
 
 	// Number field.
 	if ( isset( $_POST['rentfetch_options_maximum_bedrooms_to_search'] ) ) {
