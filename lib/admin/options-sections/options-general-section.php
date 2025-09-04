@@ -16,6 +16,7 @@ function rentfetch_settings_set_defaults_general() {
 
 	// Add option if it doesn't exist.
 	add_option( 'rentfetch_options_data_sync', 'nosync' );
+	add_option( 'rentfetch_options_disable_query_caching', '0' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_general' );
 
@@ -35,22 +36,61 @@ add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_general' );
  */
 function rentfetch_settings_sync_functionality_notice() {
 	echo '<section id="rent-fetch-general-page" class="options-container">';
-	?>
-	<div class="row">
-		<div class="section">
-			<label for="">Data Automation</label>
+	
+		echo '<div class="rent-fetch-options-nav-wrap">';
+			echo '<div class="rent-fetch-options-sticky-wrap">';
+				// add a wordpress save button here
+				submit_button();
+			echo '</div>';
+		echo '</div>';
+		
+		echo '<div class="container">';
+		?>
+		<div class="header">
+			<h2 class="title">Rent Fetch General Settings</h2>
+			<p class="description">Let’s get started. Select from the options below to configure Rent Fetch and any integrations.</p>
 		</div>
-		<div class="section">
-			<div class="white-box">
-				<h2 style="margin-top: 0;">Our premium availability syncing addon</h3>
-				<p class="description">You can already manually enter data for as many properties, floorplans, and units as you'd like, and all layouts are enabled for this information.</p><p>However, if you'd like to automate the addition of properties and sync availability information hourly, we offer the <strong>Rent Fetch Sync</strong> addon to sync data with the Yardi/RentCafe, Realpage, Appfolio, and Entrata platforms. More information at <a href="https://rentfetch.io" target="_blank">rentfetch.io</a></p>
+
+		<div class="row">
+			<div class="section">
+				<!-- <div class="white-box"> -->
+					<h2 class="title">Our premium availability syncing addon</h2>
+					<p class="description">You can already manually enter data for as many properties, floorplans, and units as you'd like, and all layouts are enabled for this information.</p><p>However, if you'd like to automate the addition of properties and sync availability information hourly, we offer the <strong>Rent Fetch Sync</strong> addon to sync data with the Yardi/RentCafe, Realpage, Appfolio, and Entrata platforms. More information at <a href="https://rentfetch.io" target="_blank">rentfetch.io</a></p>
+				<!-- </div> -->
 			</div>
 		</div>
-	</div>
-	<?php
+		<?php
+		do_action( 'rentfetch_do_settings_general_shared' );
+
+		echo '</div>';
 	echo '</section><!-- #rent-fetch-general-page -->';
 }
 add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_sync_functionality_notice', 25 );
+
+/**
+ * Add shared general settings
+ *
+ * @return void
+ */
+function rentfetch_settings_shared_general() {
+	?>
+	<div class="row">
+		<div class="section">
+			<label class="label-large" for="rentfetch_options_disable_query_caching">Disable query caching</label>
+			<p class="description">Disable caching for database queries to ensure fresh data on each load.</p>
+			<ul class="checkboxes">
+				<li>
+					<label for="rentfetch_options_disable_query_caching">
+						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '1' ); ?>>
+						Disable query caching
+					</label>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<?php
+}
+add_action( 'rentfetch_do_settings_general_shared', 'rentfetch_settings_shared_general' );
 
 /**
  * Save the general settings
@@ -263,6 +303,10 @@ function rentfetch_save_settings_general() {
 
 		update_option( 'rentfetch_options_appfolio_integration_creds_appfolio_property_ids', $options_appfolio_integration_creds_appfolio_property_ids );
 	}
+
+	// Checkbox field - Disable query caching
+	$disable_query_caching = isset( $_POST['rentfetch_options_disable_query_caching'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_disable_query_caching', $disable_query_caching );
 
 	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
 	delete_transient( 'rentfetch_api_info' );
