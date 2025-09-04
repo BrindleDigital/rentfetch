@@ -154,14 +154,6 @@ function rentfetch_settings_properties_property_archives() {
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="section">
-			<label class="label-large" for="rentfetch_options_property_footer_grid_number_properties">Property Footer Grid Maximum</label>
-			<p class="description">By default, this shows on the individual properties template. If there are less than two properties that would show, this area simply does not appear.</p>
-			<input type="number" name="rentfetch_options_property_footer_grid_number_properties" id="rentfetch_options_property_footer_grid_number_properties" value="<?php echo esc_attr( get_option( 'rentfetch_options_property_footer_grid_number_properties' ) ); ?>" />
-			<p class="description">The maximum number of properties to show. By default, this will show all (-1) properties</p>
-		</div>
-	</div>
 	<?php
 }
 add_action( 'rentfetch_do_settings_properties_property_archives', 'rentfetch_settings_properties_property_archives' );
@@ -184,12 +176,6 @@ function rentfetch_save_settings_property_archives() {
 	// * Verify the nonce
 	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
 		die( 'Security check failed' );
-	}
-
-	// Number field.
-	if ( isset( $_POST['rentfetch_options_property_footer_grid_number_properties'] ) ) {
-		$max_properties = intval( $_POST['rentfetch_options_property_footer_grid_number_properties'] );
-		update_option( 'rentfetch_options_property_footer_grid_number_properties', $max_properties );
 	}
 
 	// Select field.

@@ -478,15 +478,12 @@ body.toplevel_page_rentfetch-options #wpcontent {
   display: block;
 }
 
-.rf-metabox {
-  padding: 15px 10px;
-}
 @media (max-width: 600px) {
-  .rf-metabox .field {
+  .field {
     grid-template-columns: 1fr !important;
   }
 }
-.rf-metabox .field {
+.field {
   display: grid;
   grid-template-columns: 250px 1fr;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -494,21 +491,21 @@ body.toplevel_page_rentfetch-options #wpcontent {
   margin: 0 0 30px;
   gap: 30px;
 }
-.rf-metabox .field:last-child {
+.field:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
   border-bottom: none;
 }
-.rf-metabox .field input[type=text],
-.rf-metabox .field input[type=number],
-.rf-metabox .field textarea {
+.field input[type=text],
+.field input[type=number],
+.field textarea {
   display: block;
   width: 100%;
 }
-.rf-metabox .field .column {
+.field .column {
   display: block;
 }
-.rf-metabox .field label {
+.field label {
   font-weight: 600;
   color: black;
   width: 100%;
@@ -516,63 +513,64 @@ body.toplevel_page_rentfetch-options #wpcontent {
   line-height: 1.4;
   display: block;
 }
-.rf-metabox .field ul.checkboxes {
+.field ul.checkboxes {
   margin: 0;
   padding: 0;
 }
-.rf-metabox .field ul.checkboxes li.checkbox {
+.field ul.checkboxes li.checkbox {
   display: grid;
   grid-template-columns: auto 1fr;
   margin: 0;
   padding: 0;
   gap: 10px;
 }
-.rf-metabox .field ul.checkboxes li.checkbox label {
+.field ul.checkboxes li.checkbox label {
   font-weight: normal;
   padding: 0;
   margin: 0;
   color: inherit;
 }
-.rf-metabox .field ul.checkboxes li.checkbox input {
+.field ul.checkboxes li.checkbox input {
   display: block;
   margin: 3px 0 0;
 }
-.rf-metabox .columns {
+
+.columns {
   display: grid;
   gap: 30px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   padding: 0 0 30px;
   margin: 0 0 30px;
 }
-.rf-metabox .columns .field {
+.columns .field {
   display: block;
 }
-.rf-metabox .columns:last-child {
+.columns:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
   border: none;
 }
 @media (min-width: 600px) {
-  .rf-metabox .columns.columns-2 {
+  .columns.columns-2 {
     grid-template-columns: 1fr 1fr;
   }
 }
 @media (min-width: 600px) {
-  .rf-metabox .columns.columns-3 {
+  .columns.columns-3 {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
 @media (min-width: 600px) {
-  .rf-metabox .columns.columns-4 {
+  .columns.columns-4 {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
 @media (min-width: 600px) {
-  .rf-metabox .columns.columns-5 {
+  .columns.columns-5 {
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   }
 }
-.rf-metabox .columns .field {
+.columns .field {
   margin: 0;
   padding: 0;
   border: none;

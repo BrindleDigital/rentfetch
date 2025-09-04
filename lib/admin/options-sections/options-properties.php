@@ -51,7 +51,7 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_p
 /**
  * Adds the property search settings subsection to the Rent Fetch settings page
  */
-function rentfetch_settings_properties_property_search() {
+function rentfetch_settings_properties_property_maps() {
 	?>
 	<div class="header">
 		<h2 class="title">Maps API</h2>
@@ -120,12 +120,25 @@ function rentfetch_settings_properties_property_search() {
 		</div>
 	</div>
 
+	<?php
+}
+add_action( 'rentfetch_do_settings_properties_property_maps', 'rentfetch_settings_properties_property_maps' );
+
+/**
+ * Output property search settings
+ */
+function rentfetch_settings_properties_property_search_settings() {
+	?>
 	<div class="header">
 		<h2 class="title">Property Search</h2>
 		<p class="description">The settings configured for the property search capabilities on a multi-property website.</p>
 	</div>
 
 	<div class="row">
+		<div class="section">
+			<label for="" class="label-large">Search filters</label>
+		</div>
+		<div class="separator"></div>
 		<div class="section">
 			<label class="label-large" for="rentfetch_options_featured_filters">Featured property filters</label>
 			<p class="description">Which components should be shown by default?</p>
@@ -213,9 +226,7 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 			</ul>
 		</div>
-	</div>
-
-	<div class="row">
+		<div class="separator"></div>
 		<div class="section">
 			<label class="label-large" for="rentfetch_options_dialog_filters">Additional Search Filters</label>
 			<p class="description">Which components should be shown in the filters lightbox? (Please note that you cannot enable "Featured property filters" above without having at LEAST the same ones selected here).</p>
@@ -308,10 +319,11 @@ function rentfetch_settings_properties_property_search() {
 	</div>
 
 	<div class="row">
-		<div class="header">
+		<div class="section">
 			<label class="label-large" for="rentfetch_options_maximum_number_of_properties_to_show">Search Display Settings</label>
 		</div>
-		<div class="column">
+		<div class="separator"></div>
+		<div class="section">
 			<label>Property Availability Display</label>
 			<ul class="radios">
 				<li>
@@ -330,7 +342,8 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 			</ul>
 		</div>
-		<div class="column">
+		<div class="separator"></div>
+		<div class="section">
 			<ul class="checkboxes">
 				<li>
 					<label for="rentfetch_options_properties_hide_number_of_units">
@@ -346,22 +359,20 @@ function rentfetch_settings_properties_property_search() {
 				</li>
 			</ul>
 		</div>
-		<div class="column">
+		<div class="separator"></div>
+		<div class="section">
 			<label for="rentfetch_options_maximum_bedrooms_to_search">Max Bedrooms To Search</label>
 			<input type="text" name="rentfetch_options_maximum_bedrooms_to_search"
 				id="rentfetch_options_maximum_bedrooms_to_search"
 				value="<?php echo esc_attr( get_option( 'rentfetch_options_maximum_bedrooms_to_search' ) ); ?>">
-
-			<br />
-			<br />
-			<br />
-
+		</div>
+		<div class="section">
 			<label for="rentfetch_options_number_of_amenities_to_show">Max Number of amenities to show</label>
 			<input type="text" name="rentfetch_options_number_of_amenities_to_show"
 				id="rentfetch_options_number_of_amenities_to_show"
 				value="<?php echo esc_attr( get_option( 'rentfetch_options_number_of_amenities_to_show' ) ); ?>">
 		</div>
-		<div class="column">
+		<div class="section">
 			<label for="rentfetch_options_maximum_number_of_properties_to_show">Maximum Number of Properties Displayed</label>
 			<p class="description">
 				The most properties we should attempt to show while matching a search. We recommend for performance reasons that
@@ -374,40 +385,37 @@ function rentfetch_settings_properties_property_search() {
 	</div>
 
 	<div class="row">
-		<div class="header">
+		<div class="section">
 			<label class="label-large" for="rentfetch_options_price_filter_minimum">Price filter</label>
-		</div>
-
-		<div class="section" style="padding-bottom: 0;">
 			<p class="description">
 				Set a pre-determined minimum and maximum price filter to be displayed. If left empty, a user can type in any
 				desired price range.
 			</p>
 		</div>
-
-		<div class="column">
-			<label for="rentfetch_options_price_filter_minimum">Price filter minimum</label>
-			<input type="text" name="rentfetch_options_price_filter_minimum" id="rentfetch_options_price_filter_minimum"
-				value="<?php echo esc_attr( get_option( 'rentfetch_options_price_filter_minimum' ) ); ?>">
-
-			<br />
-			<br />
-
-			<label for="rentfetch_options_price_filter_maximum">Price filter maximum</label>
-			<input type="text" name="rentfetch_options_price_filter_maximum" id="rentfetch_options_price_filter_maximum"
-				value="<?php echo esc_attr( get_option( 'rentfetch_options_price_filter_maximum' ) ); ?>">
-
-			<br />
-			<br />
-
-			<label for="rentfetch_options_price_filter_step">Price filter step</label>
-			<input type="text" name="rentfetch_options_price_filter_step" id="rentfetch_options_price_filter_step"
-				value="<?php echo esc_attr( get_option( 'rentfetch_options_price_filter_step' ) ); ?>">
+		<div class="section">
+			<div class="columns columns-3">
+				<div>
+					<label for="rentfetch_options_price_filter_minimum">Price filter minimum</label>
+					<input type="text" name="rentfetch_options_price_filter_minimum" id="rentfetch_options_price_filter_minimum"
+						value="<?php echo esc_attr( get_option( 'rentfetch_options_price_filter_minimum' ) ); ?>">
+				</div>
+				<div>
+					<label for="rentfetch_options_price_filter_maximum">Price filter maximum</label>
+					<input type="text" name="rentfetch_options_price_filter_maximum" id="rentfetch_options_price_filter_maximum"
+						value="<?php echo esc_attr( get_option( 'rentfetch_options_price_filter_maximum' ) ); ?>">
+				</div>
+				<div>
+					<label for="rentfetch_options_price_filter_step">Price filter step</label>
+					<input type="text" name="rentfetch_options_price_filter_step" id="rentfetch_options_price_filter_step"
+						value="<?php echo esc_attr( get_option( 'rentfetch_options_price_filter_step' ) ); ?>">
+				</div>
+			</div>
 		</div>
+
 	</div>
 	<?php
 }
-add_action( 'rentfetch_do_settings_properties_property_search', 'rentfetch_settings_properties_property_search' );
+add_action( 'rentfetch_do_settings_properties_property_search', 'rentfetch_settings_properties_property_search_settings' );
 
 /**
  * Save the property search settings
@@ -417,7 +425,7 @@ function rentfetch_save_settings_property_search() {
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( 'properties' !== $tab || ! empty( $section ) ) {
+	if ( 'properties' !== $tab || 'property-search' !== $section ) {
 		return;
 	}
 
@@ -507,7 +515,7 @@ function rentfetch_save_settings_maps() {
 	$tab     = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ( 'properties' !== $tab || ! empty( $section ) ) {
+	if ( 'properties' !== $tab || 'property-maps' !== $section ) {
 		return;
 	}
 

@@ -110,6 +110,7 @@ Start from your WordPress dashboard.
 * Improvements to the scroll when we click on a property in the map, making that feel smoother
 * Adding explicit lazy loading to property images.
 * Adding min and max values to the cells in the unit details table, so that we don't get weird formatting if we encounter significantly more data in a cell than expected.
+* Adding a new option for disabling those transients (it starts enabled to reduce server load, but for debugging it would be nice to do actual queries)
 
 = 0.23 =
 

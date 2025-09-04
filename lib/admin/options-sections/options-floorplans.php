@@ -29,6 +29,7 @@ function rentfetch_settings_set_defaults_floorplans()
 	add_option('rentfetch_options_floorplan_default_order', $default_values);
 
 	add_option('rentfetch_options_floorplan_pricing_display', 'range');
+	add_option('rentfetch_options_floorplan_force_single_template_link', 'disabled');
 }
 register_activation_hook(RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_floorplans');
 
@@ -39,7 +40,7 @@ function rentfetch_settings_floorplans_floorplan_search()
 {
 	?>
 <div class="header">
-  <h2 class="title">Floor Plan Settings</h2>
+  <h2 class="title">Floor Plan Search Settings</h2>
   <p class="description">The settings configured for the property search capabilities on a multi-property website.</p>
 </div>
 
@@ -196,12 +197,47 @@ function rentfetch_settings_floorplans_floorplan_search()
     </ul>
   </div>
 
-  <div class="separator"></div>
+</div>
 
+<?php
+
+}
+add_action('rentfetch_do_settings_floorplans_floorplan_search', 'rentfetch_settings_floorplans_floorplan_search');
+
+/**
+ * Output floorplan buttons settings page
+ */
+function rentfetch_settings_floorplans_floorplan_buttons_page()
+{
+	?>
+<div class="header">
+  <h2 class="title">Floor Plan Buttons</h2>
+  <p class="description">The settings configured for the buttons shown on the floor plans grid when you hover on a
+    single floor plan.</p>
+</div>
+<?php
+
+	do_action('rentfetch_do_settings_floorplans_floorplan_buttons');
+
+}
+add_action('rentfetch_do_settings_floorplans_floorplan_buttons_page', 'rentfetch_settings_floorplans_floorplan_buttons_page');
+
+/**
+ * Output floorplan display settings page
+ */
+function rentfetch_settings_floorplans_floorplan_display()
+{
+	?>
+<div class="header">
+  <h2 class="title">Floor Plan Display Settings</h2>
+  <p class="description">Settings that control how floor plans are displayed on your website.</p>
+</div>
+
+<div class="row">
   <div class="section pb-0">
     <label class="label-large" for="rentfetch_options_floorplan_hide_number_of_units">Hide the number of units</label>
     <p class="description">There are a number of reasons you might want to hide the number of units. </p>
-  
+
     <ul class="checkboxes">
       <li>
         <label for="rentfetch_options_floorplan_hide_number_of_units">
@@ -213,7 +249,7 @@ function rentfetch_settings_floorplans_floorplan_search()
   </div>
 
 	<div class="separator"></div>
-  
+
 	<div class="section pb-0">
 		<label class="label-large">Always link to the floor plans single template?</label>
 		<p class="description">Force enable the single-floorplan page regardless of whether there are units</p>
@@ -250,17 +286,10 @@ function rentfetch_settings_floorplans_floorplan_search()
   </div>
 </div>
 
-<div class="header">
-  <h2 class="title">Floor Plan Buttons</h2>
-  <p class="description">The settings configured for the buttons shown on the floor plans grid when you hover on a
-    single floor plan.</p>
-</div>
 <?php
 
-	do_action('rentfetch_do_settings_floorplans_floorplan_buttons');
-
 }
-add_action('rentfetch_do_settings_floorplans_floorplan_search', 'rentfetch_settings_floorplans_floorplan_search');
+add_action('rentfetch_do_settings_floorplans_floorplan_display', 'rentfetch_settings_floorplans_floorplan_display');
 
 /**
  * Save the floorplan
@@ -272,7 +301,7 @@ function rentfetch_save_settings_floorplan_search()
 	$tab = rentfetch_settings_get_tab();
 	$section = rentfetch_settings_get_section();
 
-	if ('floorplans' !== $tab || !empty($section)) {
+	if ('floorplans' !== $tab || (!empty($section) && 'floorplan-search' !== $section)) {
 		return;
 	}
 
@@ -302,8 +331,31 @@ function rentfetch_save_settings_floorplan_search()
 		$property_display = sanitize_text_field(wp_unslash($_POST['rentfetch_options_floorplan_pricing_display']));
 		update_option('rentfetch_options_floorplan_pricing_display', $property_display);
 	}
+}
+add_action('rentfetch_save_settings', 'rentfetch_save_settings_floorplan_search');
 
-	// Checkbox field - Enable the availability button.
+/**
+ * Save the floorplan display settings
+ */
+function rentfetch_save_settings_floorplan_display()
+{
+
+	// Get the tab and section.
+	$tab = rentfetch_settings_get_tab();
+	$section = rentfetch_settings_get_section();
+
+	if ('floorplans' !== $tab || 'floorplan-display' !== $section) {
+		return;
+	}
+
+	$nonce = isset($_POST['rentfetch_main_options_nonce_field']) ? sanitize_text_field(wp_unslash($_POST['rentfetch_main_options_nonce_field'])) : '';
+
+	// * Verify the nonce
+	if (!wp_verify_nonce(wp_unslash($nonce), 'rentfetch_main_options_nonce_action')) {
+		die('Security check failed');
+	}
+
+	// Checkbox field - Hide the number of units.
 	$hide_number_of_units = isset($_POST['rentfetch_options_floorplan_hide_number_of_units']) ? '1' : '0';
 	update_option('rentfetch_options_floorplan_hide_number_of_units', $hide_number_of_units);
 
@@ -317,4 +369,4 @@ function rentfetch_save_settings_floorplan_search()
 		update_option('rentfetch_options_floorplan_force_single_template_link', $force_floorplans_single_template);
 	}
 }
-add_action('rentfetch_save_settings', 'rentfetch_save_settings_floorplan_search');
+add_action('rentfetch_save_settings', 'rentfetch_save_settings_floorplan_display');
