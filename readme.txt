@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.23
+Stable tag: 0.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,7 +109,7 @@ Start from your WordPress dashboard.
 * Adding alt attribues to images in the properties grid.
 * Improvements to the scroll when we click on a property in the map, making that feel smoother
 * Adding explicit lazy loading to property images.
-* Adding min and max values to the cells in the unit details table, so that we don't get weird formatting if we encounter significantly more data in a cell than expected.
+* Adding min and max width values to the cells in the unit details table, so that we don't get weird formatting if we encounter significantly more data in a cell than expected.
 * Adding a new option for disabling those transients (it starts enabled to reduce server load, but for debugging it would be nice to do actual queries)
 * Lots of reorganization and improvement in our settings pages. There were a few settings that were just on the wrong page, and there were a few places that settings mismatches could break something. General improvements.
 
