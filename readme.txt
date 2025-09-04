@@ -111,6 +111,7 @@ Start from your WordPress dashboard.
 * Adding explicit lazy loading to property images.
 * Adding min and max values to the cells in the unit details table, so that we don't get weird formatting if we encounter significantly more data in a cell than expected.
 * Adding a new option for disabling those transients (it starts enabled to reduce server load, but for debugging it would be nice to do actual queries)
+* Lots of reorganization and improvement in our settings pages. There were a few settings that were just on the wrong page, and there were a few places that settings mismatches could break something. General improvements.
 
 = 0.23 =
 
