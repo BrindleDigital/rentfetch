@@ -40,11 +40,13 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	// Pseudocache: use a transient keyed by the query args to avoid expensive SQL on
 	// repeated calls. Expires after 5 minutes.
 	$cache_key = 'rentfetch_floorplans_array_sql_' . md5( wp_json_encode( $args ) );
-	$cached = get_transient( $cache_key );
-	if ( false !== $cached && is_array( $cached ) ) {
-		// Populate the global and return cached value.
-		$floorplans = $cached;
-		return $floorplans;
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		$cached = get_transient( $cache_key );
+		if ( false !== $cached && is_array( $cached ) ) {
+			// Populate the global and return cached value.
+			$floorplans = $cached;
+			return $floorplans;
+		}
 	}
 
 
@@ -104,7 +106,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 
 	if ( empty( $ids ) ) {
 		// Cache empty results briefly to avoid repeated queries returning no IDs.
-		if ( isset( $cache_key ) ) {
+		if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' && isset( $cache_key ) ) {
 			set_transient( $cache_key, array(), 5 * MINUTE_IN_SECONDS );
 		}
 		return array();
@@ -246,7 +248,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	}
 
 	// Save computed floorplans to transient for 5 minutes to improve performance.
-	if ( isset( $cache_key ) ) {
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' && isset( $cache_key ) ) {
 		set_transient( $cache_key, $floorplans, 5 * MINUTE_IN_SECONDS );
 	}
 

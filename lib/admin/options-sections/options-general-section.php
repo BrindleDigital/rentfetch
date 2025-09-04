@@ -308,6 +308,16 @@ function rentfetch_save_settings_general() {
 	$disable_query_caching = isset( $_POST['rentfetch_options_disable_query_caching'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_disable_query_caching', $disable_query_caching );
 
+	// If caching is disabled, clear existing transients
+	if ( $disable_query_caching === '1' ) {
+		global $wpdb;
+		$transients = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_rentfetch_%'" );
+		foreach ( $transients as $transient ) {
+			$key = str_replace( '_transient_', '', $transient );
+			delete_transient( $key );
+		}
+	}
+
 	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
 	delete_transient( 'rentfetch_api_info' );
 }

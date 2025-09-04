@@ -291,15 +291,19 @@ function rentfetch_filter_properties() {
 
 	// Build a cache key from the property args and shortcode atts so different filters cache separately.
 	$cache_key = 'rentfetch_propertysearch_markup_' . md5( wp_json_encode( array( 'args' => $property_args, 'atts' => $atts ) ) );
-	$cached_markup = get_transient( $cache_key );
-	if ( false !== $cached_markup && is_string( $cached_markup ) ) {
-		echo $cached_markup;
-		die();
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		$cached_markup = get_transient( $cache_key );
+		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
+			echo $cached_markup;
+			die();
+		}
 	}
 
 	// Render and cache the results.
 	$markup = rentfetch_render_property_query_results( $property_args );
-	set_transient( $cache_key, $markup, 5 * MINUTE_IN_SECONDS );
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		set_transient( $cache_key, $markup, 5 * MINUTE_IN_SECONDS );
+	}
 
 	echo $markup;
 
