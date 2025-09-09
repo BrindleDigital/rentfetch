@@ -75,7 +75,7 @@ Yes. You can use the `[rentfetch_properties]` shortcode, or you can build your o
 
 = What APIs do you work with? =
 
-This free version of the plugin allows for unlimited usage *with manual data entry*. Our [Rent Fetch Sync](https://rentfetch.io) addon works with Yardi/RentCafe (Entrata, Appfolio and RealPage support coming soon!).
+This free version of the plugin allows for unlimited usage *with manual data entry*. Our [Rent Fetch Sync](https://rentfetch.io) addon works with Yardi/RentCafe, Entrata, and Rent Manager).
 
 = Can synced properties be customized in WordPress? =
 
@@ -102,6 +102,10 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.25 =
+
+* Removing RealPage from the options, since we're not actually using that API.
 
 = 0.24 = 
 
