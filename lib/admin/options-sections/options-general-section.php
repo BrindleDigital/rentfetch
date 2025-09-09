@@ -223,36 +223,6 @@ function rentfetch_save_settings_general() {
 		update_option( 'rentfetch_options_entrata_integration_creds_entrata_property_ids', $options_entrata_integration_creds_entrata_property_ids );
 	}
 
-	// Text field.
-	if ( isset( $_POST['rentfetch_options_realpage_integration_creds_realpage_user'] ) ) {
-		$options_realpage_integration_creds_realpage_user = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_realpage_integration_creds_realpage_user'] ) );
-		update_option( 'rentfetch_options_realpage_integration_creds_realpage_user', $options_realpage_integration_creds_realpage_user );
-	}
-
-	// Text field.
-	if ( isset( $_POST['rentfetch_options_realpage_integration_creds_realpage_pass'] ) ) {
-		$options_realpage_integration_creds_realpage_pass = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_realpage_integration_creds_realpage_pass'] ) );
-		update_option( 'rentfetch_options_realpage_integration_creds_realpage_pass', $options_realpage_integration_creds_realpage_pass );
-	}
-
-	// Text field.
-	if ( isset( $_POST['rentfetch_options_realpage_integration_creds_realpage_pmc_id'] ) ) {
-		$options_realpage_integration_creds_realpage_pmc_id = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_realpage_integration_creds_realpage_pmc_id'] ) );
-		update_option( 'rentfetch_options_realpage_integration_creds_realpage_pmc_id', $options_realpage_integration_creds_realpage_pmc_id );
-	}
-
-	// Textarea field.
-	if ( isset( $_POST['rentfetch_options_realpage_integration_creds_realpage_site_ids'] ) ) {
-		$options_realpage_integration_creds_realpage_site_ids = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_realpage_integration_creds_realpage_site_ids'] ) );
-
-		// Remove all whitespace.
-		$options_realpage_integration_creds_realpage_site_ids = preg_replace( '/\s+/', '', $options_realpage_integration_creds_realpage_site_ids );
-
-		// Add a space after each comma.
-		$options_realpage_integration_creds_realpage_site_ids = preg_replace( '/,/', ', ', $options_realpage_integration_creds_realpage_site_ids );
-
-		update_option( 'rentfetch_options_realpage_integration_creds_realpage_site_ids', $options_realpage_integration_creds_realpage_site_ids );
-	}
 
 	// Text field.
 	if ( isset( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_companycode'] ) ) {
