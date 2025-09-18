@@ -19,10 +19,12 @@ function rentfetch_properties( $atts ) {
 		
 	$args = shortcode_atts(
 		array(
-			'post_type'      => 'properties',
-			'posts_per_page' => -1,
-			'propertyids'    => null,
-			'city'           => null,
+			'post_type'         => 'properties',
+			'posts_per_page'    => -1,
+			'propertyids'       => null,
+			'city'              => null,
+			'propertytypes'     => null,
+			'propertycategories' => null,
 		),
 		$atts
 	);
@@ -156,3 +158,87 @@ function rentfetch_properties_simple_grid_query_args_propertyids( $args ) {
 	
 }
 add_filter( 'rentfetch_properties_simple_grid_query_args', 'rentfetch_properties_simple_grid_query_args_propertyids' );
+
+function rentfetch_properties_simple_grid_query_args_propertytypes( $args ) {
+	
+	// bail if the propertytypes parameter is not set.
+	if ( !isset( $args['propertytypes'] ) ) {
+		return $args;
+	}
+	
+	// remove spaces and commas, exploding this into an array.
+	$propertytypes = explode( ',', str_replace( ' ', '', $args['propertytypes'] ) );
+	
+	// create the propertytypes tax query
+	$propertytypes_tax_query = array(
+		'taxonomy' => 'propertytypes',
+		'field'    => 'slug',
+		'terms'    => $propertytypes,
+		'operator' => 'IN',
+	);
+	
+	// if tax_query already exists, add to it; otherwise create new
+	if ( isset( $args['tax_query'] ) ) {
+		// ensure the top-level relation is AND
+		if ( !isset( $args['tax_query']['relation'] ) ) {
+			$args['tax_query']['relation'] = 'AND';
+		}
+		// add our new tax query
+		$args['tax_query'][] = $propertytypes_tax_query;
+	} else {
+		// create new tax query
+		$args['tax_query'] = array(
+			'relation' => 'AND',
+			$propertytypes_tax_query
+		);
+	}
+	
+	// reset the propertytypes to null.
+	$args['propertytypes'] = null;
+	
+	return $args;
+	
+}
+add_filter( 'rentfetch_properties_simple_grid_query_args', 'rentfetch_properties_simple_grid_query_args_propertytypes' );
+
+function rentfetch_properties_simple_grid_query_args_propertycategories( $args ) {
+	
+	// bail if the propertycategories parameter is not set.
+	if ( !isset( $args['propertycategories'] ) ) {
+		return $args;
+	}
+	
+	// remove spaces and commas, exploding this into an array.
+	$propertycategories = explode( ',', str_replace( ' ', '', $args['propertycategories'] ) );
+	
+	// create the propertycategories tax query
+	$propertycategories_tax_query = array(
+		'taxonomy' => 'propertycategories',
+		'field'    => 'slug',
+		'terms'    => $propertycategories,
+		'operator' => 'IN',
+	);
+	
+	// if tax_query already exists, add to it; otherwise create new
+	if ( isset( $args['tax_query'] ) ) {
+		// ensure the top-level relation is AND
+		if ( !isset( $args['tax_query']['relation'] ) ) {
+			$args['tax_query']['relation'] = 'AND';
+		}
+		// add our new tax query
+		$args['tax_query'][] = $propertycategories_tax_query;
+	} else {
+		// create new tax query
+		$args['tax_query'] = array(
+			'relation' => 'AND',
+			$propertycategories_tax_query
+		);
+	}
+	
+	// reset the propertycategories to null.
+	$args['propertycategories'] = null;
+	
+	return $args;
+	
+}
+add_filter( 'rentfetch_properties_simple_grid_query_args', 'rentfetch_properties_simple_grid_query_args_propertycategories' );
