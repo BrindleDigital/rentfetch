@@ -733,13 +733,13 @@ function rentfetch_get_property_pricing() {
 		if ( $rent_range ) {
 			$rent = '$' . $rent_range;
 		} else {
-			$rent = 'Call for Pricing';
+			$rent = apply_filters( 'rentfetch_filter_property_pricing_no_price_available', 'Call for Pricing' );
 		}
 	} elseif ( 'minimum' === $pricing_display ) {
 		if ( $min_rent ) {
 			$rent = 'From $' . $min_rent;
 		} else {
-			$rent = 'Call for Pricing';
+			$rent = apply_filters( 'rentfetch_filter_property_pricing_no_price_available', 'Call for Pricing' );
 		}
 	}
 	
@@ -755,7 +755,7 @@ function rentfetch_get_property_pricing() {
 	if ( !isset( $floorplan_data['maximum_rent'] ) ) {
 		$floorplan_data['maximum_rent'] = null;
 	}
-
+	
 	return apply_filters( 'rentfetch_filter_property_pricing', $rent, $floorplan_data['rentrange'], $floorplan_data['minimum_rent'], $floorplan_data['maximum_rent'] );
 }
 
