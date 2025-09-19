@@ -343,15 +343,11 @@ function rentfetch_floorplans_display_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="tour">Tour embed code (Matterport or Youtube iframe)</label>
+				<label for="tour">Tour Link (Youtube or Matterport)</label>
 			</div>
 			<div class="column">
 				<input type="text" id="tour" name="tour" value="<?php echo esc_attr( $tour ); ?>">
-				<?php
-				$iframe_code = '<iframe src="https://my.matterport.com/showcase-beta?m=VBHn8iJQ1h4" width="640" height="480" frameborder="0" allowfullscreen allow="vr"></iframe> or <iframe width="560" height="315" src="https://www.youtube.com/embed/C0DPdy98e4c?si=RltNyDXGANGUanKW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
-				?>
-
-				<p class="description">Paste in a Matterport or Youtube iframe code. This code will look something like this: <?php echo esc_html( $iframe_code ); ?></p>
+				<p class="description">Example: https://my.matterport.com/show/?m=sc3ykepsN4s</p>
 				<div id="tour-preview"></div>
 			</div>
 		</div>

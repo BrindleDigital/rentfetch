@@ -107,6 +107,7 @@ Start from your WordPress dashboard.
 
 * Adding parameters for the propertytypes and propertycategories to the [rentfetch_properties] shortcode.
 * Adding a filter to modify the text shown when there's a property and we don't know what price to show. 'Call for pricing' is the default.
+* Updating Matterport/Youtube descriptions
 
 = 0.25 =
 
