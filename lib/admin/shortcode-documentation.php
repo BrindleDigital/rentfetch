@@ -47,7 +47,7 @@ function rentfetch_property_search_shortcode_docs()
 function rentfetch_properties_grid_shortcode_docs()
 {
 	?>
-	<p>This layout ignores availability and shows all properties in a grid, without a map view. We strongly recommend
+	<p>This layout ignores availability and shwos all properties in a grid, without a map view. We strongly recommend
 		using this somewhere it can span the full width of the screen.</p>
 	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_properties]<!-- /wp:shortcode --></span></p>
 	<p>Available parameters: propertyids, city, posts_per_page</p>
