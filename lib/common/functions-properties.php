@@ -10,16 +10,54 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Helper function to get the WordPress post ID from a property_id meta value.
+ *
+ * @param string $property_id The property_id meta value.
+ * @return int|null The post ID if found, null otherwise.
+ */
+function rentfetch_get_post_id_from_property_id( $property_id ) {
+	if ( ! $property_id ) {
+		return null;
+	}
+
+	$args = array(
+		'post_type'      => 'properties',
+		'meta_key'       => 'property_id',
+		'meta_value'     => $property_id,
+		'posts_per_page' => 1,
+		'fields'         => 'ids',
+	);
+
+	$posts = get_posts( $args );
+
+	if ( ! empty( $posts ) ) {
+		return $posts[0];
+	}
+
+	return null;
+}
+
+/**
  * Add a filter to the properties post classes.
  *
- * @param   [type]  $classes  [$classes description]
+ * @param   array   $classes    The current classes array.
+ * @param   string  $property_id Optional property_id meta value.
  *
- * @return  [type]            [return description]
+ * @return  array               The modified classes array.
  */
-function rentfetch_properties_post_classes( $classes ) {
+function rentfetch_properties_post_classes( $classes, $property_id = null ) {
 	
-	$property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
-	$floorplan_data = rentfetch_get_floorplans( $property_id );
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return $classes;
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	
+	$property_id_meta = esc_html( get_post_meta( $post_id, 'property_id', true ) );
+	$floorplan_data = rentfetch_get_floorplans( $property_id_meta );
 	
 	if ( isset( $floorplan_data['availability'] ) ) {
 		$units_count = $floorplan_data['availability'];
@@ -41,27 +79,38 @@ function rentfetch_properties_post_classes( $classes ) {
 	return $classes;
 
 }
-add_filter( 'rentfetch_filter_properties_post_classes', 'rentfetch_properties_post_classes', 10, 1 );
+add_filter( 'rentfetch_filter_properties_post_classes', 'rentfetch_properties_post_classes', 10, 2 );
 
 // * PROPERTY TITLE
 
 /**
  * Get the property title.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property title.
  */
-function rentfetch_get_property_title() {
-	$title = apply_filters( 'rentfetch_filter_property_title', get_the_title() );
+function rentfetch_get_property_title( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+		$title = get_the_title( $post_id );
+	} else {
+		$title = get_the_title();
+	}
+	$title = apply_filters( 'rentfetch_filter_property_title', $title );
 	return $title;
 }
 
 /**
  * Echo the property title.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_title() {
-	$title = rentfetch_get_property_title();
+function rentfetch_property_title( $property_id = null ) {
+	$title = rentfetch_get_property_title( $property_id );
 	if ( $title ) {
 		echo esc_html( $title );
 	}
@@ -72,20 +121,30 @@ function rentfetch_property_title() {
 /**
  * Get the property address
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property address.
  */
-function rentfetch_get_property_address() {
-	$address = get_post_meta( get_the_ID(), 'address', true );
+function rentfetch_get_property_address( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$address = get_post_meta( $post_id, 'address', true );
 	return $address;
 }
 
 /**
  * Echo the property address.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_address() {
-	$address = get_post_meta( get_the_ID(), 'address', true );
+function rentfetch_property_address( $property_id = null ) {
+	$address = rentfetch_get_property_address( $property_id );
 
 	if ( $address ) {
 		echo esc_html( $address );
@@ -95,20 +154,30 @@ function rentfetch_property_address() {
 /**
  * Get the city of the property.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property city.
  */
-function rentfetch_get_property_city() {
-	$city = get_post_meta( get_the_ID(), 'city', true );
+function rentfetch_get_property_city( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$city = get_post_meta( $post_id, 'city', true );
 	return $city;
 }
 
 /**
  * Echo the city of the property.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_city() {
-	$city = get_post_meta( get_the_ID(), 'city', true );
+function rentfetch_property_city( $property_id = null ) {
+	$city = rentfetch_get_property_city( $property_id );
 
 	if ( $city ) {
 		echo esc_html( $city );
@@ -118,20 +187,30 @@ function rentfetch_property_city() {
 /**
  * Get the state of the property.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property state.
  */
-function rentfetch_get_property_state() {
-	$state = get_post_meta( get_the_ID(), 'state', true );
+function rentfetch_get_property_state( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$state = get_post_meta( $post_id, 'state', true );
 	return $state;
 }
 
 /**
  * Echo the state of the property.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_state() {
-	$state = get_post_meta( get_the_ID(), 'state', true );
+function rentfetch_property_state( $property_id = null ) {
+	$state = rentfetch_get_property_state( $property_id );
 
 	if ( $state ) {
 		echo esc_html( $state );
@@ -141,20 +220,30 @@ function rentfetch_property_state() {
 /**
  * Get the property zipcode.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property zipcode.
  */
-function rentfetch_get_property_zipcode() {
-	$zipcode = get_post_meta( get_the_ID(), 'zipcode', true );
+function rentfetch_get_property_zipcode( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$zipcode = get_post_meta( $post_id, 'zipcode', true );
 	return $zipcode;
 }
 
 /**
  * Echo the property zipcode.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_zipcode() {
-	$zipcode = get_post_meta( get_the_ID(), 'zipcode', true );
+function rentfetch_property_zipcode( $property_id = null ) {
+	$zipcode = rentfetch_get_property_zipcode( $property_id );
 
 	if ( $zipcode ) {
 		echo esc_html( $zipcode );
@@ -164,14 +253,23 @@ function rentfetch_property_zipcode() {
 /**
  * Get the property location
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property location.
  */
-function rentfetch_get_property_location() {
+function rentfetch_get_property_location( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
 
-	$address = sanitize_text_field( get_post_meta( get_the_ID(), 'address', true ) );
-	$city    = sanitize_text_field( get_post_meta( get_the_ID(), 'city', true ) );
-	$state   = sanitize_text_field( get_post_meta( get_the_ID(), 'state', true ) );
-	$zipcode = sanitize_text_field( get_post_meta( get_the_ID(), 'zipcode', true ) );
+	$address = sanitize_text_field( get_post_meta( $post_id, 'address', true ) );
+	$city    = sanitize_text_field( get_post_meta( $post_id, 'city', true ) );
+	$state   = sanitize_text_field( get_post_meta( $post_id, 'state', true ) );
+	$zipcode = sanitize_text_field( get_post_meta( $post_id, 'zipcode', true ) );
 
 	$location = '';
 
@@ -201,17 +299,17 @@ function rentfetch_get_property_location() {
 		$location .= $zipcode;
 	}
 
-	$location = apply_filters( 'rentfetch_filter_property_location', $location );
-	return $location;
+	return apply_filters( 'rentfetch_filter_property_location', $location );
 }
 
 /**
  * Echo the property location.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_location() {
-	$location = rentfetch_get_property_location();
+function rentfetch_property_location( $property_id = null ) {
+	$location = rentfetch_get_property_location( $property_id );
 
 	if ( $location ) {
 		echo esc_html( $location );
@@ -228,11 +326,12 @@ add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_tour_butto
 /**
  * Get the property location link
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property location link.
  */
-function rentfetch_get_property_location_link() {
-	$location = rentfetch_get_property_location();
-	$title    = rentfetch_get_property_title();
+function rentfetch_get_property_location_link( $property_id = null ) {
+	$location = rentfetch_get_property_location( $property_id );
+	$title    = rentfetch_get_property_title( $property_id );
 
 	$location_link = sprintf( 'https://www.google.com/maps/search/?api=1&query=%s', $title . ' ' . $location );
 
@@ -244,10 +343,11 @@ function rentfetch_get_property_location_link() {
 /**
  * Get the property location button
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property location button.
  */
-function rentfetch_get_property_location_button() {
-	$location_link   = rentfetch_get_property_location_link();
+function rentfetch_get_property_location_button( $property_id = null ) {
+	$location_link   = rentfetch_get_property_location_link( $property_id );
 	$location_button = sprintf( '<a class="location-link property-link" href="%s" target="_blank">Get Directions</a>', esc_url( $location_link ) );
 	return apply_filters( 'rentfetch_filter_property_location_button', $location_button );
 }
@@ -255,21 +355,31 @@ function rentfetch_get_property_location_button() {
 /**
  * Echo the property location button
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_location_button() {
-	echo wp_kses_post( rentfetch_get_property_location_button() );
+function rentfetch_property_location_button( $property_id = null ) {
+	echo wp_kses_post( rentfetch_get_property_location_button( $property_id ) );
 }
 
 /**
  * Get the property city and state
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property city and state.
  */
-function rentfetch_get_property_city_state() {
+function rentfetch_get_property_city_state( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
 
-	$city  = sanitize_text_field( get_post_meta( get_the_ID(), 'city', true ) );
-	$state = sanitize_text_field( get_post_meta( get_the_ID(), 'state', true ) );
+	$city  = sanitize_text_field( get_post_meta( $post_id, 'city', true ) );
+	$state = sanitize_text_field( get_post_meta( $post_id, 'state', true ) );
 
 	if ( $city && $state ) {
 		$citystate = sprintf( '%s, %s', $city, $state );
@@ -287,10 +397,11 @@ function rentfetch_get_property_city_state() {
 /**
  * Echo the property city and state
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_city_state() {
-	$citystate = rentfetch_get_property_city_state();
+function rentfetch_property_city_state( $property_id = null ) {
+	$citystate = rentfetch_get_property_city_state( $property_id );
 
 	if ( $citystate ) {
 		echo esc_html( $citystate );
@@ -362,10 +473,19 @@ function rentfetch_format_phone_number_link( $phone ) {
 /**
  * Get the property phone number
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property phone number.
  */
-function rentfetch_get_property_phone() {
-	$phone = sanitize_text_field( get_post_meta( get_the_ID(), 'phone', true ) );
+function rentfetch_get_property_phone( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$phone = sanitize_text_field( get_post_meta( $post_id, 'phone', true ) );
 
 	if ( $phone ) {
 
@@ -379,10 +499,11 @@ function rentfetch_get_property_phone() {
 /**
  * Echo the property phone number
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void
  */
-function rentfetch_property_phone() {
-	$phone = rentfetch_get_property_phone();
+function rentfetch_property_phone( $property_id = null ) {
+	$phone = rentfetch_get_property_phone( $property_id );
 
 	if ( $phone ) {
 		echo esc_html( $phone );
@@ -392,10 +513,11 @@ function rentfetch_property_phone() {
 /**
  * Get the property phone number
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property phone number.
  */
-function rentfetch_get_property_phone_button() {
-	$phone        = rentfetch_get_property_phone();
+function rentfetch_get_property_phone_button( $property_id = null ) {
+	$phone        = rentfetch_get_property_phone( $property_id );
 	$phone_link   = rentfetch_format_phone_number_link( $phone );
 	$phone_button = sprintf( '<a class="phone-link property-link" href="tel:%s">%s</a>', esc_html( $phone_link ), esc_html( $phone ) );
 
@@ -409,10 +531,11 @@ function rentfetch_get_property_phone_button() {
 /**
  * Echo the property phone number
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void
  */
-function rentfetch_property_phone_button() {
-	$button = rentfetch_get_property_phone_button();
+function rentfetch_property_phone_button( $property_id = null ) {
+	$button = rentfetch_get_property_phone_button( $property_id );
 	
 	if ( $button ) {
 		echo wp_kses_post( $button );
@@ -424,12 +547,21 @@ function rentfetch_property_phone_button() {
 /**
  * Get the property URL.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property URL.
  */
-function rentfetch_get_property_url() {
+function rentfetch_get_property_url( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
 
-	$url = get_post_meta( get_the_ID(), 'url', true );
-	$url_override = get_post_meta( get_the_ID(), 'url_override', true );
+	$url = get_post_meta( $post_id, 'url', true );
+	$url_override = get_post_meta( $post_id, 'url_override', true );
 	
 	if ( $url_override ) {
 		$url = $url_override;
@@ -440,21 +572,30 @@ function rentfetch_get_property_url() {
 
 /**
  * For property archives, we might need to get (and modify) the property permalink.
- * 
+ *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property permalink.
  */
-function rentfetch_get_property_permalink() {
+function rentfetch_get_property_permalink( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
 	
 	$permalink_behavior = get_option( 'rentfetch_options_property_external_linking_behavior', 'internal' );
-	$url = rentfetch_get_property_url();
+	$url = rentfetch_get_property_url( $property_id );
 	
 	if ( !$url ) {
-		$url = get_the_permalink();		
+		$url = get_the_permalink( $post_id );		
 	} else {
 		if ( 'external' !== $permalink_behavior ) {
-			$url = get_the_permalink();
+			$url = get_the_permalink( $post_id );
 		} else {
-			$url = rentfetch_get_property_url();
+			$url = rentfetch_get_property_url( $property_id );
 		}
 	}
 	
@@ -464,10 +605,11 @@ function rentfetch_get_property_permalink() {
 /**
  * Echo the property URL.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_url() {
-	echo esc_url( rentfetch_get_property_url() );
+function rentfetch_property_url( $property_id = null ) {
+	echo esc_url( rentfetch_get_property_url( $property_id ) );
 }
 
 // * PROPERTY WEBSITE
@@ -475,10 +617,11 @@ function rentfetch_property_url() {
 /**
  * Get the property website.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property website.
  */
-function rentfetch_get_property_website_button() {
-	$url            = rentfetch_get_property_url();
+function rentfetch_get_property_website_button( $property_id = null ) {
+	$url            = rentfetch_get_property_url( $property_id );
 	$target         = rentfetch_get_link_target( $url );
 	$website_button = sprintf( '<a class="url-link property-link" href="%s" target="%s">Visit Website</a>', esc_html( $url ), esc_attr( $target ) );
 
@@ -492,11 +635,12 @@ function rentfetch_get_property_website_button() {
 /**
  * Echo the property website.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_website_button() {
-	if ( rentfetch_get_property_url() ) {
-		echo wp_kses_post( rentfetch_get_property_website_button() );
+function rentfetch_property_website_button( $property_id = null ) {
+	if ( rentfetch_get_property_url( $property_id ) ) {
+		echo wp_kses_post( rentfetch_get_property_website_button( $property_id ) );
 	}
 }
 
@@ -505,10 +649,19 @@ function rentfetch_property_website_button() {
 /**
  * Get the property email.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property email.
  */
-function rentfetch_get_property_contact_button() {
-	$email          = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( get_the_ID(), 'email', true ) ) );
+function rentfetch_get_property_contact_button( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$email          = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( $post_id, 'email', true ) ) );
 	$email_link     = 'mailto:' . $email;
 	$contact_button = sprintf( '<a class="email-link property-link" href="%s">Reach Out</a>', esc_html( $email_link ) );
 	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button );
@@ -523,11 +676,12 @@ function rentfetch_get_property_contact_button() {
 /**
  * Echo the property email.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_contact_button() {
-	if ( rentfetch_get_property_contact_button() ) {
-		echo wp_kses_post( rentfetch_get_property_contact_button() );
+function rentfetch_property_contact_button( $property_id = null ) {
+	if ( rentfetch_get_property_contact_button( $property_id ) ) {
+		echo wp_kses_post( rentfetch_get_property_contact_button( $property_id ) );
 	}
 }
 
@@ -536,11 +690,20 @@ function rentfetch_property_contact_button() {
 /**
  * Get the property email.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property email.
  */
-function rentfetch_get_property_tour_button() {
+function rentfetch_get_property_tour_button( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
 		
-	$iframe    = get_post_meta( get_the_ID(), 'tour', true );
+	$iframe    = get_post_meta( $post_id, 'tour', true );
 	$embedlink = null;
 	$tour_link_text = 'Video Tour';
 	
@@ -561,7 +724,7 @@ function rentfetch_get_property_tour_button() {
 	if ( isset( $youtube_matches[1] ) ) {
 		$video_id   = $youtube_matches[1];
 		$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
-		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s">%s</a>', get_the_ID(), $oembedlink, $tour_link_text );
+		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s">%s</a>', $post_id, $oembedlink, $tour_link_text );
 	}
 
 	$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
@@ -570,13 +733,13 @@ function rentfetch_get_property_tour_button() {
 	// if it's matterport and it's a full iframe.
 	if ( isset( $matterport_matches[1] ) ) {
 		$oembedlink = $matterport_matches[1];
-		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-matterport" data-gallery="post-%s" href="%s">%s</a>', get_the_ID(), $oembedlink, $tour_link_text );
+		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-matterport" data-gallery="post-%s" href="%s">%s</a>', $post_id, $oembedlink, $tour_link_text );
 	}
 
 	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
 	if ( ! $embedlink ) {
 		$oembedlink = $iframe;
-		$embedlink  = sprintf( '<a class="tour-link property-link" target="_blank" data-gallery="post-%s" href="%s">%s</a>', get_the_ID(), $oembedlink, $tour_link_text );
+		$embedlink  = sprintf( '<a class="tour-link property-link" target="_blank" data-gallery="post-%s" href="%s">%s</a>', $post_id, $oembedlink, $tour_link_text );
 	}
 	
 	return $embedlink;
@@ -585,11 +748,12 @@ function rentfetch_get_property_tour_button() {
 /**
  * Echo the property email.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_tour_button() {
-	if ( rentfetch_get_property_tour_button() ) {
-		echo wp_kses_post( rentfetch_get_property_tour_button() );
+function rentfetch_property_tour_button( $property_id = null ) {
+	if ( rentfetch_get_property_tour_button( $property_id ) ) {
+		echo wp_kses_post( rentfetch_get_property_tour_button( $property_id ) );
 	}
 }
 
@@ -598,11 +762,13 @@ function rentfetch_property_tour_button() {
 /**
  * Get the property bedrooms.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property bedrooms.
  */
-function rentfetch_get_property_bedrooms() {
-
-	$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+function rentfetch_get_property_bedrooms( $property_id = null ) {
+	if ( ! $property_id ) {
+		$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+	}
 
 	$floorplan_data = rentfetch_get_floorplans( $property_id );
 
@@ -616,10 +782,11 @@ function rentfetch_get_property_bedrooms() {
 /**
  * Echo the property bedrooms.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_bedrooms() {
-	$bedrooms = rentfetch_get_property_bedrooms();
+function rentfetch_property_bedrooms( $property_id = null ) {
+	$bedrooms = rentfetch_get_property_bedrooms( $property_id );
 
 	if ( $bedrooms ) {
 		echo wp_kses_post( $bedrooms );
@@ -631,11 +798,13 @@ function rentfetch_property_bedrooms() {
 /**
  * Get the property bathrooms.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property bathrooms.
  */
-function rentfetch_get_property_bathrooms() {
-
-	$property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
+function rentfetch_get_property_bathrooms( $property_id = null ) {
+	if ( ! $property_id ) {
+		$property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
+	}
 
 	$floorplan_data = rentfetch_get_floorplans( $property_id );
 
@@ -649,10 +818,11 @@ function rentfetch_get_property_bathrooms() {
 /**
  * Echo the property bathrooms.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_bathrooms() {
-	$bathrooms = rentfetch_get_property_bathrooms();
+function rentfetch_property_bathrooms( $property_id = null ) {
+	$bathrooms = rentfetch_get_property_bathrooms( $property_id );
 
 	if ( $bathrooms ) {
 		echo wp_kses_post( $bathrooms );
@@ -664,10 +834,13 @@ function rentfetch_property_bathrooms() {
 /**
  * Get the property square feet.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property square feet.
  */
-function rentfetch_get_property_square_feet() {
-	$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+function rentfetch_get_property_square_feet( $property_id = null ) {
+	if ( ! $property_id ) {
+		$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+	}
 
 	$floorplan_data = rentfetch_get_floorplans( $property_id );
 
@@ -681,10 +854,11 @@ function rentfetch_get_property_square_feet() {
 /**
  * Echo the property square feet.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_square_feet() {
-	$square_feet = rentfetch_get_property_square_feet();
+function rentfetch_property_square_feet( $property_id = null ) {
+	$square_feet = rentfetch_get_property_square_feet( $property_id );
 
 	if ( $square_feet ) {
 		echo wp_kses_post( $square_feet );
@@ -696,10 +870,13 @@ function rentfetch_property_square_feet() {
 /**
  * Get the property rent.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property rent.
  */
-function rentfetch_get_property_pricing() {
-	$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+function rentfetch_get_property_pricing( $property_id = null ) {
+	if ( ! $property_id ) {
+		$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+	}
 	
 	$floorplan_data  = rentfetch_get_floorplans( $property_id );
 	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
@@ -762,10 +939,11 @@ function rentfetch_get_property_pricing() {
 /**
  * Echo the property rent.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_pricing() {
-	$rent = rentfetch_get_property_pricing();
+function rentfetch_property_pricing( $property_id = null ) {
+	$rent = rentfetch_get_property_pricing( $property_id );
 
 	if ( $rent ) {
 		echo esc_html( $rent );
@@ -777,10 +955,13 @@ function rentfetch_property_pricing() {
 /**
  * Get the property availability.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string|null The property availability.
  */
-function rentfetch_get_property_availability() {
-	$property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
+function rentfetch_get_property_availability( $property_id = null ) {
+	if ( ! $property_id ) {
+		$property_id = esc_html( get_post_meta( get_the_ID(), 'property_id', true ) );
+	}
 
 	$floorplan_data = rentfetch_get_floorplans( $property_id );
 
@@ -807,10 +988,11 @@ function rentfetch_get_property_availability() {
 /**
  * Echo the property availability.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_availability() {
-	$availability = rentfetch_get_property_availability();
+function rentfetch_property_availability( $property_id = null ) {
+	$availability = rentfetch_get_property_availability( $property_id );
 
 	if ( $availability ) {
 		echo esc_html( $availability );
@@ -860,10 +1042,13 @@ add_filter( 'rentfetch_filter_property_availability_date', 'rentfetch_default_pr
 /**
  * Get the property specials.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string The property specials.
  */
-function rentfetch_get_property_specials() {
-	$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+function rentfetch_get_property_specials( $property_id = null ) {
+	if ( ! $property_id ) {
+		$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
+	}
 
 	$floorplan_data = rentfetch_get_floorplans( $property_id );
 
@@ -878,10 +1063,11 @@ function rentfetch_get_property_specials() {
 /**
  * Echo the property specials.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_specials() {
-	$specials = rentfetch_get_property_specials();
+function rentfetch_property_specials( $property_id = null ) {
+	$specials = rentfetch_get_property_specials( $property_id );
 
 	if ( $specials ) {
 		echo wp_kses_post( $specials );
@@ -908,12 +1094,21 @@ add_filter( 'rentfetch_filter_property_specials', 'rentfetch_default_property_sp
 /**
  * Get property specials based on property-level meta fields (similar to floorplan specials).
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string|null The property specials text.
  */
-function rentfetch_get_property_specials_from_meta() {
+function rentfetch_get_property_specials_from_meta( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return null;
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
 
-	$has_specials = get_post_meta( get_the_ID(), 'has_specials', true );
-	$specials_override_text = get_post_meta( get_the_ID(), 'specials_override_text', true );
+	$has_specials = get_post_meta( $post_id, 'has_specials', true );
+	$specials_override_text = get_post_meta( $post_id, 'specials_override_text', true );
 	
 	if ( $has_specials && !$specials_override_text ) {
 		$specials_text = 'Specials available';
@@ -929,10 +1124,11 @@ function rentfetch_get_property_specials_from_meta() {
 /**
  * Echo property specials from meta fields.
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_specials_from_meta() {
-	$specials = rentfetch_get_property_specials_from_meta();
+function rentfetch_property_specials_from_meta( $property_id = null ) {
+	$specials = rentfetch_get_property_specials_from_meta( $property_id );
 	
 	if ( $specials ) {
 		echo wp_kses_post( $specials );
@@ -991,10 +1187,19 @@ add_filter( 'rentfetch_filter_property_permalink_label', 'rentfetch_default_prop
 /**
  * Get the property description
  *
+ * @param string $property_id Optional property_id meta value.
  * @return  string The property description.
  */
-function rentfetch_get_property_description() {
-	$property_description = get_post_meta( get_the_ID(), 'description', true );
+function rentfetch_get_property_description( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$property_description = get_post_meta( $post_id, 'description', true );
 	$property_description = apply_filters( 'the_content', $property_description );
 	$property_description = apply_filters( 'rentfetch_filter_property_description', $property_description );
 	return $property_description;
@@ -1003,10 +1208,11 @@ function rentfetch_get_property_description() {
 /**
  * Echo the property description
  *
+ * @param string $property_id Optional property_id meta value.
  * @return void.
  */
-function rentfetch_property_description() {
-	$property_description = rentfetch_get_property_description();
+function rentfetch_property_description( $property_id = null ) {
+	$property_description = rentfetch_get_property_description( $property_id );
 	if ( $property_description ) {
 		echo wp_kses_post( $property_description );
 	}
@@ -1017,11 +1223,20 @@ function rentfetch_property_description() {
 /**
  * Get the tour markup
  *
+ * @param string $property_id Optional property_id meta value.
  * @return string the tour markup.
  */
-function rentfetch_get_property_tour() {
+function rentfetch_get_property_tour( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
 
-	$iframe    = get_post_meta( get_the_ID(), 'tour', true );
+	$iframe    = get_post_meta( $post_id, 'tour', true );
 	$embedlink = null;
 
 	if ( $iframe ) {
@@ -1038,7 +1253,7 @@ function rentfetch_get_property_tour() {
 		if ( isset( $youtube_matches[1] ) ) {
 			$video_id   = $youtube_matches[1];
 			$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
-			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s"></a></div>', get_the_ID(), $oembedlink );
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s"></a></div>', $post_id, $oembedlink );
 		}
 
 		$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
@@ -1047,13 +1262,13 @@ function rentfetch_get_property_tour() {
 		// if it's matterport and it's a full iframe.
 		if ( isset( $matterport_matches[1] ) ) {
 			$oembedlink = $matterport_matches[1];
-			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-matterport" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), $oembedlink );
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-matterport" data-gallery="post-%s" href="%s"></a></div>', $post_id, $oembedlink );
 		}
 
 		// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
 		if ( ! $embedlink ) {
 			$oembedlink = $iframe;
-			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link" target="_blank" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), $oembedlink );
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link" target="_blank" data-gallery="post-%s" href="%s"></a></div>', $post_id, $oembedlink );
 		}
 	}
 
@@ -1063,22 +1278,29 @@ function rentfetch_get_property_tour() {
 /**
  * Echoes the property fees embed code.
  *
- * @param int|null $post_id Post ID.
+ * @param string|int|null $property_id_or_post_id Property ID meta value or Post ID.
  * @return void
  */
-function rentfetch_property_fees_embed( $post_id = null ) {
-	echo rentfetch_get_property_fees_embed( $post_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+function rentfetch_property_fees_embed( $property_id_or_post_id = null ) {
+	echo rentfetch_get_property_fees_embed( $property_id_or_post_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**
  * Gets the property fees embed code.
  *
- * @param int|null $post_id Post ID.
+ * @param string|int|null $property_id_or_post_id Property ID meta value or Post ID.
  * @return string The property fees embed code.
  */
-function rentfetch_get_property_fees_embed( $post_id = null ) {
-	if ( ! $post_id ) {
+function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
+	if ( ! $property_id_or_post_id ) {
 		$post_id = get_the_ID();
+	} elseif ( is_numeric( $property_id_or_post_id ) ) {
+		$post_id = $property_id_or_post_id;
+	} else {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id_or_post_id );
+		if ( ! $post_id ) {
+			return '';
+		}
 	}
 
 	$property_fees_embed = get_post_meta( $post_id, 'property_fees_embed', true );
