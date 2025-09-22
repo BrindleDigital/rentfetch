@@ -37,16 +37,6 @@ function rentfetch_options_page() {
 		'rentfetch_options_page_html' // Callback function to render the page.
 	);
 
-	// Add Rent Fetch options sub-menu page to the admin menu.
-	add_submenu_page(
-		'rentfetch-options', // Parent menu slug.
-		'Shortcodes', // Page title.
-		'Shortcodes', // Menu title.
-		'manage_options', // Capability required to access the menu.
-		'rentfetch-shortcodes', // Menu slug.
-		'rentfetch_shortcodes_page_html' // Callback function to render the page.
-	);
-
 	// Add Documentation sub-menu page to the admin menu, linking to a third-party URL.
 	add_submenu_page(
 		'rentfetch-options', // Parent menu slug.
@@ -55,6 +45,26 @@ function rentfetch_options_page() {
 		'manage_options', // Capability required to access the menu.
 		'rentfetch-documentation', // Menu slug.
 		'rentfetch_documentation_page_html' // Callback function to render the page.
+	);
+
+	// Add Floorplans sub-menu page to the admin menu.
+	add_submenu_page(
+		'rentfetch-options', // Parent menu slug.
+		'Floorplan shortcodes', // Page title.
+		'Floorplan shortcodes', // Menu title.
+		'manage_options', // Capability required to access the menu.
+		'admin.php?page=rentfetch-options&tab=floorplans', // Menu slug with parameters.
+		'' // No callback since it's redirecting to the main options page.
+	);
+
+	// Add Properties Embed sub-menu page to the admin menu.
+	add_submenu_page(
+		'rentfetch-options', // Parent menu slug.
+		'Property shortcodes', // Page title.
+		'Property shortcodes', // Menu title.
+		'manage_options', // Capability required to access the menu.
+		'admin.php?page=rentfetch-options&tab=properties&section=property-settings-embed', // Menu slug with parameters.
+		'' // No callback since it's redirecting to the main options page.
 	);
 }
 add_action( 'admin_menu', 'rentfetch_options_page' );
