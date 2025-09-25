@@ -35,7 +35,7 @@ function rentfetch_search_filters_beds() {
 	// build the beds search.
 	echo '<fieldset class="beds">';
 		printf( '<legend>%s</legend>', esc_html( $label ) );
-		printf( '<button type="button" class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
+		printf( '<button type="button" class="toggle">%s</button>', esc_html( $label ) );
 		echo '<div class="input-wrap checkboxes inactive">';
 
 	foreach ( $beds as $bed ) {
