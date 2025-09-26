@@ -1,17 +1,6 @@
 <?php
 /**
- * This file set	<div class="row">
-		<div class="section">
-			<h2>Property Search</h2>
-			<?php rentfetch_property_search_shortcode_docs(); ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="section">
-			<h2>Properties Grid</h2>
-			<?php rentfetch_properties_grid_shortcode_docs(); ?>
-		</div>
-	</div>perties shortcodes sub-page in the admin area.
+ * This file sets up the properties shortcodes sub-page in the admin area.
  *
  * @package rentfetch
  */

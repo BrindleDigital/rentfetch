@@ -50,8 +50,8 @@ function rentfetch_options_page() {
 	// Add Floorplans sub-menu page to the admin menu.
 	add_submenu_page(
 		'rentfetch-options', // Parent menu slug.
-		'Floorplan shortcodes', // Page title.
-		'Floorplan shortcodes', // Menu title.
+		'Floor plan shortcodes', // Page title.
+		'Floor plan shortcodes', // Menu title.
 		'manage_options', // Capability required to access the menu.
 		'admin.php?page=rentfetch-options&tab=floorplans', // Menu slug with parameters.
 		'' // No callback since it's redirecting to the main options page.

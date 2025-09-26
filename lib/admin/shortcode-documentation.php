@@ -90,7 +90,7 @@ function rentfetch_property_components_shortcode_docs()
 		<li><code>specials_from_meta</code> - Specials from property meta</li>
 		<li><code>description</code> - Property description</li>
 		<li><code>tour</code> - Virtual tour embed</li>
-		<li><code>location_link</code> - Location link</li>
+		<li><code>google_link</code> - Google maps link</li>
 		<li><code>location_button</code> - Location button</li>
 		<li><code>fees_embed</code> - Fees and deposits embed</li>
 	</ul>

@@ -108,6 +108,14 @@ function rentfetch_property_shortcode( $atts ) {
 			$content = rentfetch_get_property_contact_button( $property_id );
 			break;
 
+		case 'email_link':
+			$content = rentfetch_get_property_email_link( $property_id );
+			break;
+
+		case 'email':
+			$content = rentfetch_get_property_email( $property_id );
+			break;
+
 		case 'tour_link':
 			$content = rentfetch_get_property_tour_button( $property_id );
 			break;
@@ -148,11 +156,7 @@ function rentfetch_property_shortcode( $atts ) {
 			$content = rentfetch_get_property_tour( $property_id );
 			break;
 
-		case 'location_link':
-			$content = rentfetch_get_property_location_link( $property_id );
-			break;
-
-		case 'location_link':
+		case 'google_link':
 			$content = rentfetch_get_property_location_button( $property_id );
 			break;
 

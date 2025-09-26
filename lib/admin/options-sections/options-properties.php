@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Set defaults on activation
  */
 function rentfetch_settings_set_defaults_properties() {
+
 	// Add option if it doesn't exist.
 	add_option( 'rentfetch_options_maximum_number_of_properties_to_show', -1 );
 	add_option( 'rentfetch_options_property_availability_display', 'all' );

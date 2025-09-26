@@ -112,19 +112,19 @@ function rentfetch_settings_properties() {
 				echo '<ul class="rent-fetch-options-submenu">';
 
 					$active = ( 'property-maps' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-maps" class="tab %s">Google Maps API</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-maps" class="tab %s">Google maps API</a></li>', esc_html( $active ) );
 
 					$active = ( 'property-search' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-search" class="tab %s">Property Search</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-search" class="tab %s">Property search</a></li>', esc_html( $active ) );
 
 					$active = ( 'property-archives' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab %s">Property Archives</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-archives" class="tab %s">Property archives</a></li>', esc_html( $active ) );
 
 					$active = ( 'property-single' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property Single</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property single</a></li>', esc_html( $active ) );
 
 					$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Property shortcodes</a></li>', esc_html( $active ) );
 
 				echo '</ul>';
 				
@@ -181,16 +181,16 @@ function rentfetch_settings_floorplans() {
 				echo '<ul class="rent-fetch-options-submenu">';
 
 					$active = ( 'floorplan-search' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floor Plan Search</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-search" class="tab %s">Floor plan search</a></li>', esc_html( $active ) );
 
 					$active = ( 'floorplan-display' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-display" class="tab %s">Floor Plan Display</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-display" class="tab %s">Floor plan display</a></li>', esc_html( $active ) );
 
 					$active = ( 'floorplan-buttons' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-buttons" class="tab %s">Floor Plan Buttons</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-buttons" class="tab %s">Floor plan buttons</a></li>', esc_html( $active ) );
 
 					$active = ( 'floorplan-embed' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Embed</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Floor plan shortcodes</a></li>', esc_html( $active ) );
 
 				echo '</ul>';
 			echo '</div>';

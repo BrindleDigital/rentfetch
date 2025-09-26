@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.26.1 =
+
+* Updating admin menu verbiage for consistency
+
 = 0.26 =
 
 * Adding parameters for the propertytypes and propertycategories to the [rentfetch_properties] shortcode.

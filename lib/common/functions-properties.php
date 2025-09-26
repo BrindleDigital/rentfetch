@@ -685,6 +685,69 @@ function rentfetch_property_contact_button( $property_id = null ) {
 	}
 }
 
+/**
+ * Get the property email address.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return string The property email address.
+ */
+function rentfetch_get_property_email( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+	$email = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( $post_id, 'email', true ) ) );
+	return $email;
+}
+
+/**
+ * Echo the property email address.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return void.
+ */
+function rentfetch_property_email( $property_id = null ) {
+	$email = rentfetch_get_property_email( $property_id );
+	if ( $email ) {
+		echo esc_html( $email );
+	}
+}
+
+/**
+ * Get the property email link.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return string The property email link.
+ */
+function rentfetch_get_property_email_link( $property_id = null ) {
+	$email = rentfetch_get_property_email( $property_id );
+	$email_link = 'mailto:' . $email;
+	$email_button = sprintf( '<a class="email-link property-link" href="%s">%s</a>', esc_html( $email_link ), esc_html( $email ) );
+
+	if ( $email ) {
+		return apply_filters( 'rentfetch_filter_property_email_link', $email_button );
+	} else {
+		return;
+	}
+}
+
+/**
+ * Echo the property email link.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return void.
+ */
+function rentfetch_property_email_link( $property_id = null ) {
+	$link = rentfetch_get_property_email_link( $property_id );
+	if ( $link ) {
+		echo wp_kses_post( $link );
+	}
+}
+
 // * PROPERTY TOUR BUTTON.
 
 /**
