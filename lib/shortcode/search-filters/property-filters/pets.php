@@ -48,7 +48,7 @@ function rentfetch_search_filters_pets() {
 	if ( ! empty( $pets ) ) {
 		echo '<fieldset ckass="pets">';
 			printf( '<legend>%s</legend>', esc_html( $label ) );
-			printf( '<button type="button" class="toggle">%s</button>', esc_html( esc_html( $label ) ) );
+			printf( '<button type="button" class="toggle">%s</button>', esc_html( $label ) );
 			echo '<div class="input-wrap checkboxes">';
 		foreach ( $pets as $pet ) {
 			printf( '<label><input type="radio" data-pets="%s" data-pets-name="%s" name="pets" value="%s" /><span>%s</span></label>', esc_html( $pet ), esc_html( $pets_choices[ $pet ] ), esc_html( $pet ), esc_html( $pets_choices[ $pet ] ) );
