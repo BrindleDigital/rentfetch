@@ -3410,6 +3410,9 @@ body.single-floorplans h2 {
 #details .property-details-body .property-links .property-link.tour-link:before {
   content: "\f236";
 }
+#details .property-details-body .property-links .property-link.tour-booking-link:before {
+  content: "\f488";
+}
 
 body.properties-template-default .site-content {
   display: block;

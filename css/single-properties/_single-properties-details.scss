@@ -103,6 +103,12 @@
 						content: '\f236';
 					}
 				}
+
+				&.tour-booking-link {
+					&:before {
+						content: '\f488';
+					}
+				}
 			}
 		}
 	}

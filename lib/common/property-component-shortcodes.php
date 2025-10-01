@@ -96,12 +96,20 @@ function rentfetch_property_shortcode( $atts ) {
 			$content = rentfetch_get_property_url( $property_id );
 			break;
 
+		case 'tour_booking_url':
+			$content = rentfetch_get_property_tour_booking_url( $property_id );
+			break;
+
 		case 'permalink':
 			$content = rentfetch_get_property_permalink( $property_id );
 			break;
 
 		case 'website_link':
 			$content = rentfetch_get_property_website_button( $property_id );
+			break;
+
+		case 'tour_booking_link':
+			$content = rentfetch_get_property_tour_booking_button( $property_id );
 			break;
 
 		case 'contact_link':
@@ -152,8 +160,8 @@ function rentfetch_property_shortcode( $atts ) {
 			$content = rentfetch_get_property_description( $property_id );
 			break;
 
-		case 'tour':
-			$content = rentfetch_get_property_tour( $property_id );
+		case 'tour_embed':
+			$content = rentfetch_get_property_tour( $property_id, true );
 			break;
 
 		case 'google_link':

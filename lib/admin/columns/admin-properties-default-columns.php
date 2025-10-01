@@ -33,6 +33,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 		'phone'                 => __( 'Phone', 'rentfetch' ),
 		'url'                   => __( 'URL', 'rentfetch' ),
 		'url_override'          => __( 'URL override', 'rentfetch' ),
+		'tour_booking_link'     => __( 'Tour Booking Link', 'rentfetch' ),
 		'images'                => __( 'Manual Images', 'rentfetch' ),
 		'synced_property_images' => __( 'Synced Images', 'rentfetch' ),
 		'description'           => __( 'Description', 'rentfetch' ),
@@ -106,6 +107,15 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	
 	if ( 'url_override' === $column ) {
 		printf( '<a target="_blank" href="%s">%s</a>', esc_url( get_post_meta( $post_id, 'url_override', true ) ), esc_attr( get_post_meta( $post_id, 'url_override', true ) ) );
+	}
+	
+	if ( 'tour_booking_link' === $column ) {
+		$tour_booking_link = get_post_meta( $post_id, 'tour_booking_link', true );
+		if ( $tour_booking_link ) {
+			printf( '<a target="_blank" href="%s">%s</a>', esc_url( $tour_booking_link ), esc_attr( $tour_booking_link ) );
+		} else {
+			echo '—';
+		}
 	}
 
 	if ( 'images' === $column ) {
