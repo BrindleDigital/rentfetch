@@ -197,3 +197,17 @@ function rentfetch_pretty_json( $value, &$repaired = null ) {
     // Nothing worked — return original raw input.
     return $raw;
 }
+
+/**
+ * Clean and pretty-print a JSON string, handling smart quotes and other common issues.
+ *
+ * @param string $json_string The raw JSON string from an API.
+ * @return string The cleaned and pretty-printed JSON string.
+ */
+function rentfetch_clean_json_string( $json_string ) {
+    // Replace smart quotes with regular quotes
+    $json_string = str_replace( ["'", "'", '"', '"'], ['"', '"', '"', '"'], $json_string );
+    
+    // Pretty-print and repair if possible
+    return rentfetch_pretty_json( $json_string );
+}

@@ -108,7 +108,7 @@ function rentfetch_get_property_images_yardi( $args ) {
 	}
 
 	$yardi_images = get_post_meta( get_the_ID(), 'synced_property_images', true );
-	
+		
 	// bail if there's no yardi images.
 	if ( !$yardi_images ) {
 		return;

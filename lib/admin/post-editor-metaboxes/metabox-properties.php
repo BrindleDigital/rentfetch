@@ -742,11 +742,14 @@ function rentfetch_properties_api_response_metabox_callback( $post ) {
 			foreach ( $value as $subkey => $subvalue ) {
 					if ( 'api_response' === $subkey ) {
 						// Use the shared JSON utility to pretty-print or lightly repair the value.
-						$formatted = rentfetch_pretty_json( $subvalue );
+						$formatted = rentfetch_pretty_json( $subvalue, $repaired );
 
 						echo '<div class="json-content">';
-						// Output as a readonly textarea so we can attach WP CodeMirror (with folding) to it.
-						printf( '<textarea class="rentfetch-api-response-json" readonly rows="10" style="width:100%%;">%s</textarea>', esc_textarea( $formatted ) );
+						// Always display in code editor for syntax highlighting
+						printf( '<textarea class="rentfetch-api-response-json" readonly rows="20" style="width:100%%; white-space: pre; word-wrap: normal; overflow-x: auto;">%s</textarea>', esc_textarea( $formatted ) );
+						if ( $repaired ) {
+							echo '<p style="color: #856404; background: #fff3cd; padding: 5px; border: 1px solid #ffeaa7; margin-top: 5px;">Note: This JSON was automatically repaired for display.</p>';
+						}
 						echo '</div>';
 					} else {
 						printf( '<p>%s</p>', esc_html( $subvalue ) );

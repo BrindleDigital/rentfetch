@@ -21,7 +21,9 @@
 			settings.codemirror = settings.codemirror || {};
 			settings.codemirror.mode = 'application/json';
 			settings.codemirror.lineNumbers = true;
+			settings.codemirror.lineWrapping = false; // Prevent line wrapping for long JSON lines
 			settings.codemirror.foldGutter = true;
+			settings.codemirror.lint = false; // Disable linting to avoid parse error messages
 			settings.codemirror.gutters = (
 				settings.codemirror.gutters || []
 			).concat(['CodeMirror-foldgutter']);
