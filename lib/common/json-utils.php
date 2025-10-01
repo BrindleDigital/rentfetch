@@ -160,7 +160,7 @@ function rentfetch_pretty_json( $value, &$repaired = null ) {
                 }
 
                 $next = $k < $len ? $repair[ $k ] : '';
-                if ( in_array( $next, array( ':', ',', '}', ']' ), true ) ) {
+                if ( in_array( $next, array( ':', ',', '}', ']', '' ), true ) ) {
                     // closing quote
                     $in_string = false;
                     $escaped_inner .= '"';
@@ -168,7 +168,7 @@ function rentfetch_pretty_json( $value, &$repaired = null ) {
                 }
 
                 // otherwise escape this inner quote
-                $escaped_inner .= '\\\"';
+                $escaped_inner .= '\\"';
                 continue;
             }
         }
