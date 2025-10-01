@@ -95,6 +95,8 @@ function rentfetch_property_components_shortcode_docs()
 	</ul>
 	<p>You can also use <code>before</code> and <code>after</code> parameters to wrap the output. This is useful for situations where a shortcode is being used inline with text but needs certain helper words if we have that information, but needs to be left out entirely if not.</p>
 	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_property_info info="phone" before=" call us at " after=" today!"]<!-- /wp:shortcode --></span></p>
+	<p>For link-type shortcodes (ending in "_link"), you can use the <code>class</code> parameter to add custom CSS classes to the link element.</p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_property_info info="phone_link" class="btn btn-primary"]<!-- /wp:shortcode --></span></p>
 	<p>If no <code>property_id</code> is specified, the shortcode will attempt to determine it from context (current property page or single-property site).</p>
 	<?php
 }

@@ -22,6 +22,7 @@ function rentfetch_property_shortcode( $atts ) {
 			'info'        => 'title',
 			'before'      => '',
 			'after'       => '',
+			'class'       => '',
 		),
 		$atts,
 		'rentfetch_property_info'
@@ -31,6 +32,7 @@ function rentfetch_property_shortcode( $atts ) {
 	$info        = $atts['info'];
 	$before      = $atts['before'];
 	$after       = $atts['after'];
+	$class       = $atts['class'];
 
 	// If no property_id is passed, try to get it from context
 	if ( ! $property_id ) {
@@ -89,7 +91,7 @@ function rentfetch_property_shortcode( $atts ) {
 			break;
 
 		case 'phone_link':
-			$content = rentfetch_get_property_phone_button( $property_id );
+			$content = rentfetch_get_property_phone_button( $property_id, $class );
 			break;
 
 		case 'url':
@@ -105,19 +107,19 @@ function rentfetch_property_shortcode( $atts ) {
 			break;
 
 		case 'website_link':
-			$content = rentfetch_get_property_website_button( $property_id );
+			$content = rentfetch_get_property_website_button( $property_id, $class );
 			break;
 
 		case 'tour_booking_link':
-			$content = rentfetch_get_property_tour_booking_button( $property_id );
+			$content = rentfetch_get_property_tour_booking_button( $property_id, $class );
 			break;
 
 		case 'contact_link':
-			$content = rentfetch_get_property_contact_button( $property_id );
+			$content = rentfetch_get_property_contact_button( $property_id, $class );
 			break;
 
 		case 'email_link':
-			$content = rentfetch_get_property_email_link( $property_id );
+			$content = rentfetch_get_property_email_link( $property_id, $class );
 			break;
 
 		case 'email':
@@ -125,7 +127,7 @@ function rentfetch_property_shortcode( $atts ) {
 			break;
 
 		case 'tour_link':
-			$content = rentfetch_get_property_tour_button( $property_id );
+			$content = rentfetch_get_property_tour_button( $property_id, $class );
 			break;
 
 		case 'bedrooms':
@@ -161,7 +163,7 @@ function rentfetch_property_shortcode( $atts ) {
 			break;
 
 		case 'google_link':
-			$content = rentfetch_get_property_location_button( $property_id );
+			$content = rentfetch_get_property_location_button( $property_id, $class );
 			break;
 
 		case 'fees_embed':

@@ -345,12 +345,17 @@ function rentfetch_get_property_location_link( $property_id = null ) {
  * Get the property location button
  *
  * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
  * @return string The property location button.
  */
-function rentfetch_get_property_location_button( $property_id = null ) {
+function rentfetch_get_property_location_button( $property_id = null, $class = '' ) {
 	$location_link   = rentfetch_get_property_location_link( $property_id );
-	$location_button = sprintf( '<a class="location-link property-link" href="%s" target="_blank">Get Directions</a>', esc_url( $location_link ) );
-	return apply_filters( 'rentfetch_filter_property_location_button', $location_button );
+	$classes         = 'location-link property-link';
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+	$location_button = sprintf( '<a class="%s" href="%s" target="_blank">Get Directions</a>', $classes, esc_url( $location_link ) );
+	return apply_filters( 'rentfetch_filter_property_location_button', $location_button, $property_id, $class );
 }
 
 /**
@@ -515,15 +520,20 @@ function rentfetch_property_phone( $property_id = null ) {
  * Get the property phone number
  *
  * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
  * @return string The property phone number.
  */
-function rentfetch_get_property_phone_button( $property_id = null ) {
+function rentfetch_get_property_phone_button( $property_id = null, $class = '' ) {
 	$phone        = rentfetch_get_property_phone( $property_id );
 	$phone_link   = rentfetch_format_phone_number_link( $phone );
-	$phone_button = sprintf( '<a class="phone-link property-link" href="tel:%s">%s</a>', esc_html( $phone_link ), esc_html( $phone ) );
+	$classes      = 'phone-link property-link';
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+	$phone_button = sprintf( '<a class="%s" href="tel:%s">%s</a>', $classes, esc_html( $phone_link ), esc_html( $phone ) );
 
 	if ( $phone ) {
-		return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button );
+		return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button, $property_id, $class );
 	} else {
 		return;
 	}
@@ -619,15 +629,20 @@ function rentfetch_property_url( $property_id = null ) {
  * Get the property website.
  *
  * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
  * @return string The property website.
  */
-function rentfetch_get_property_website_button( $property_id = null ) {
+function rentfetch_get_property_website_button( $property_id = null, $class = '' ) {
 	$url            = rentfetch_get_property_url( $property_id );
 	$target         = rentfetch_get_link_target( $url );
-	$website_button = sprintf( '<a class="url-link property-link" href="%s" target="%s">Visit Website</a>', esc_html( $url ), esc_attr( $target ) );
+	$classes        = 'url-link property-link';
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+	$website_button = sprintf( '<a class="%s" href="%s" target="%s">Visit Website</a>', $classes, esc_html( $url ), esc_attr( $target ) );
 
 	if ( $url ) {
-		return apply_filters( 'rentfetch_filter_property_website', $website_button );
+		return apply_filters( 'rentfetch_filter_property_website', $website_button, $property_id, $class );
 	} else {
 		return;
 	}
@@ -651,9 +666,10 @@ function rentfetch_property_website_button( $property_id = null ) {
  * Get the property email.
  *
  * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
  * @return string The property email.
  */
-function rentfetch_get_property_contact_button( $property_id = null ) {
+function rentfetch_get_property_contact_button( $property_id = null, $class = '' ) {
 	if ( $property_id ) {
 		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
 		if ( ! $post_id ) {
@@ -664,8 +680,12 @@ function rentfetch_get_property_contact_button( $property_id = null ) {
 	}
 	$email          = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( $post_id, 'email', true ) ) );
 	$email_link     = 'mailto:' . $email;
-	$contact_button = sprintf( '<a class="email-link property-link" href="%s">Reach Out</a>', esc_html( $email_link ) );
-	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button );
+	$classes        = 'email-link property-link';
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+	$contact_button = sprintf( '<a class="%s" href="%s">Reach Out</a>', $classes, esc_html( $email_link ) );
+	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button, $property_id, $class );
 
 	if ( $email ) {
 		return $email_button;
@@ -722,15 +742,20 @@ function rentfetch_property_email( $property_id = null ) {
  * Get the property email link.
  *
  * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
  * @return string The property email link.
  */
-function rentfetch_get_property_email_link( $property_id = null ) {
+function rentfetch_get_property_email_link( $property_id = null, $class = '' ) {
 	$email = rentfetch_get_property_email( $property_id );
 	$email_link = 'mailto:' . $email;
-	$email_button = sprintf( '<a class="email-link property-link" href="%s">%s</a>', esc_html( $email_link ), esc_html( $email ) );
+	$classes = 'email-link property-link';
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+	$email_button = sprintf( '<a class="%s" href="%s">%s</a>', $classes, esc_html( $email_link ), esc_html( $email ) );
 
 	if ( $email ) {
-		return apply_filters( 'rentfetch_filter_property_email_link', $email_button );
+		return apply_filters( 'rentfetch_filter_property_email_link', $email_button, $property_id, $class );
 	} else {
 		return;
 	}
@@ -755,9 +780,10 @@ function rentfetch_property_email_link( $property_id = null ) {
  * Get the property email.
  *
  * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
  * @return string The property email.
  */
-function rentfetch_get_property_tour_button( $property_id = null ) {
+function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) {
 	if ( $property_id ) {
 		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
 		if ( ! $post_id ) {
@@ -793,7 +819,11 @@ function rentfetch_get_property_tour_button( $property_id = null ) {
 	if ( isset( $youtube_matches[1] ) ) {
 		$video_id   = $youtube_matches[1];
 		$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
-		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s">%s</a>', $post_id, $oembedlink, $tour_link_text );
+		$classes    = 'tour-link property-link tour-link-youtube';
+		if ( ! empty( $class ) ) {
+			$classes .= ' ' . esc_attr( $class );
+		}
+		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" data-glightbox="type: video;" href="%s">%s</a>', $classes, $post_id, $oembedlink, $tour_link_text );
 	}
 
 	$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
@@ -807,16 +837,24 @@ function rentfetch_get_property_tour_button( $property_id = null ) {
 	// if it's matterport and it's a full iframe.
 	if ( isset( $matterport_matches[1] ) ) {
 		$oembedlink = $matterport_matches[1];
-		$embedlink  = sprintf( '<a class="tour-link property-link tour-link-matterport" data-gallery="post-%s" href="%s">%s</a>', $post_id, $oembedlink, $tour_link_text );
+		$classes    = 'tour-link property-link tour-link-matterport';
+		if ( ! empty( $class ) ) {
+			$classes .= ' ' . esc_attr( $class );
+		}
+		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" href="%s">%s</a>', $classes, $post_id, $oembedlink, $tour_link_text );
 	}
 
 	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
 	if ( ! $embedlink ) {
 		$oembedlink = $iframe;
-		$embedlink  = sprintf( '<a class="tour-link property-link" target="_blank" data-gallery="post-%s" href="%s">%s</a>', $post_id, $oembedlink, $tour_link_text );
+		$classes    = 'tour-link property-link';
+		if ( ! empty( $class ) ) {
+			$classes .= ' ' . esc_attr( $class );
+		}
+		$embedlink  = sprintf( '<a class="%s" target="_blank" data-gallery="post-%s" href="%s">%s</a>', $classes, $post_id, $oembedlink, $tour_link_text );
 	}
 	
-	return $embedlink;
+	return apply_filters( 'rentfetch_filter_property_tour_button', $embedlink, $property_id, $class );
 }
 
 /**
@@ -856,15 +894,20 @@ function rentfetch_get_property_tour_booking_url( $property_id = null ) {
  * Get the property tour booking button.
  *
  * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
  * @return string The property tour booking button.
  */
-function rentfetch_get_property_tour_booking_button( $property_id = null ) {
+function rentfetch_get_property_tour_booking_button( $property_id = null, $class = '' ) {
 	$url = rentfetch_get_property_tour_booking_url( $property_id );
 	$target = rentfetch_get_link_target( $url );
-	$tour_booking_button = sprintf( '<a class="tour-booking-link property-link" href="%s" target="%s">Book Tour</a>', esc_html( $url ), esc_attr( $target ) );
+	$classes = 'tour-booking-link property-link';
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+	$tour_booking_button = sprintf( '<a class="%s" href="%s" target="%s">Book Tour</a>', $classes, esc_html( $url ), esc_attr( $target ) );
 
 	if ( $url ) {
-		return apply_filters( 'rentfetch_filter_property_tour_booking', $tour_booking_button );
+		return apply_filters( 'rentfetch_filter_property_tour_booking', $tour_booking_button, $property_id, $class );
 	} else {
 		return;
 	}
