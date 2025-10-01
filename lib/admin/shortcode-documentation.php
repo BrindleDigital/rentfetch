@@ -87,7 +87,6 @@ function rentfetch_property_components_shortcode_docs()
 		<li><code>pricing</code> - Price range</li>
 		<li><code>availability</code> - Available units count</li>
 		<li><code>specials</code> - Current specials</li>
-		<li><code>specials_from_meta</code> - Specials from property meta</li>
 		<li><code>description</code> - Property description</li>
 		<li><code>tour_embed</code> - Virtual tour embed</li>
 		<li><code>google_link</code> - Google maps link</li>
