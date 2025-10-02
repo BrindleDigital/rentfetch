@@ -3402,7 +3402,7 @@ body.single-floorplans h2 {
   content: "\f103";
 }
 #details .property-details-body .property-links .property-link.phone-link:before {
-  content: "\f525";
+  content: "\f470";
 }
 #details .property-details-body .property-links .property-link.email-link:before {
   content: "\f466";
@@ -3411,7 +3411,7 @@ body.single-floorplans h2 {
   content: "\f236";
 }
 #details .property-details-body .property-links .property-link.tour-booking-link:before {
-  content: "\f488";
+  content: "\f145";
 }
 
 body.properties-template-default .site-content {
