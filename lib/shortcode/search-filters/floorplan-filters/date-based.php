@@ -10,6 +10,55 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Check if a date range has any availability
+ *
+ * @param string $start Start date in Ymd format
+ * @param string $end End date in Ymd format
+ * @return bool True if availability exists
+ */
+function rentfetch_date_option_has_availability( $start, $end ) {
+	$transient_key = 'rentfetch_date_availability_' . md5( $start . '_' . $end );
+	$has_availability = false;
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		$has_availability = get_transient( $transient_key );
+		if ( false !== $has_availability ) {
+			return (bool) $has_availability;
+		}
+	}
+
+	global $wpdb;
+	$start_date = date( 'Y-m-d', strtotime( $start ) );
+	$end_date = date( 'Y-m-d', strtotime( $end ) );
+
+	// Check floorplans
+	$floorplan_count = $wpdb->get_var( $wpdb->prepare(
+		"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'floorplans' AND ID IN (
+			SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'availability_date' AND CAST(meta_value AS UNSIGNED) BETWEEN %d AND %d
+		)",
+		$start,
+		$end
+	) );
+
+	// Check units
+	$unit_count = $wpdb->get_var( $wpdb->prepare(
+		"SELECT COUNT(*) FROM {$wpdb->postmeta} pm1 
+		JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id 
+		WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%m/%d/%Y')) BETWEEN DATE(%s) AND DATE(%s) 
+		AND pm2.meta_key = 'floorplan_id'",
+		$start_date,
+		$end_date
+	) );
+
+	$has_availability = ( $floorplan_count > 0 || $unit_count > 0 );
+
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		set_transient( $transient_key, $has_availability, 5 * MINUTE_IN_SECONDS );
+	}
+
+	return $has_availability;
+}
+
+/**
  * Output the form markup for the availability date
  *
  * @return void.
@@ -42,13 +91,41 @@ function rentfetch_search_filters_date() {
 		$spring_year = $current_year + 1;
 	}
 
-	$options = array(
-		'now-30' => 'Next 30 days',
-		'30-60' => '30-60 days',
-		'60-90' => '60-90 days',
-		'fall-' . $fall_year => 'Fall ' . $fall_year,
-		'spring-' . $spring_year => 'Spring ' . $spring_year,
+	$all_options = array(
+		'now-30' => array(
+			'label' => 'Next 30 days',
+			'start' => date( 'Ymd', strtotime( '-7 days' ) ),
+			'end' => date( 'Ymd', strtotime( '+30 days' ) ),
+		),
+		'30-60' => array(
+			'label' => '30-60 days',
+			'start' => date( 'Ymd', strtotime( '+30 days' ) ),
+			'end' => date( 'Ymd', strtotime( '+60 days' ) ),
+		),
+		'60-90' => array(
+			'label' => '60-90 days',
+			'start' => date( 'Ymd', strtotime( '+60 days' ) ),
+			'end' => date( 'Ymd', strtotime( '+90 days' ) ),
+		),
+		'fall-' . $fall_year => array(
+			'label' => 'Fall ' . $fall_year,
+			'start' => $fall_year . '0630',
+			'end' => $fall_year . '1001',
+		),
+		'spring-' . $spring_year => array(
+			'label' => 'Spring ' . $spring_year,
+			'start' => $spring_year . '0301',
+			'end' => $spring_year . '0531',
+		),
 	);
+
+	// Filter options to only show those with availability
+	$options = array();
+	foreach ( $all_options as $key => $option ) {
+		if ( rentfetch_date_option_has_availability( $option['start'], $option['end'] ) ) {
+			$options[ $key ] = $option['label'];
+		}
+	}
 
 	$label = apply_filters( 'rentfetch_search_filters_date_label', 'Date' );
 
