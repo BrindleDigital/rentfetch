@@ -47,6 +47,135 @@ function rentfetch_default_units_admin_columns( $columns ) {
 add_filter( 'manage_units_posts_columns', 'rentfetch_default_units_admin_columns' );
 
 /**
+ * Make availability_date column sortable
+ *
+ * @param array $columns Sortable columns.
+ * @return array
+ */
+function rentfetch_units_sortable_columns( $columns ) {
+	$columns['availability_date'] = 'availability_date';
+	return $columns;
+}
+add_filter( 'manage_edit-units_sortable_columns', 'rentfetch_units_sortable_columns' );
+
+/**
+ * Handle sorting by availability_date
+ *
+ * @param WP_Query $query The query object.
+ */
+function rentfetch_units_orderby_availability_date( $query ) {
+	if ( ! is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+
+	if ( 'availability_date' === $query->get( 'orderby' ) ) {
+		$query->set( 'meta_key', 'availability_date' );
+		$query->set( 'orderby', 'meta_value' );
+		
+		// For units, availability_date is stored as m/d/Y, so we need custom ordering
+		add_filter( 'posts_orderby', 'rentfetch_units_orderby_availability_date_custom' );
+	}
+}
+add_action( 'pre_get_posts', 'rentfetch_units_orderby_availability_date' );
+
+/**
+ * Custom orderby for availability_date to handle multiple date formats
+ *
+ * @param string $orderby The ORDER BY clause.
+ * @return string
+ */
+function rentfetch_units_orderby_availability_date_custom( $orderby ) {
+	global $wpdb;
+	
+	// Replace the standard meta_value ordering with date conversion that handles multiple formats
+	$orderby = str_replace(
+		"{$wpdb->postmeta}.meta_value",
+		"COALESCE(
+			STR_TO_DATE({$wpdb->postmeta}.meta_value, '%m/%d/%Y'),
+			STR_TO_DATE({$wpdb->postmeta}.meta_value, '%Y-%m-%d %H:%i:%s'),
+			STR_TO_DATE({$wpdb->postmeta}.meta_value, '%Y-%m-%d %H:%i'),
+			STR_TO_DATE({$wpdb->postmeta}.meta_value, '%Y-%m-%d'),
+			STR_TO_DATE({$wpdb->postmeta}.meta_value, '%Y%m%d'),
+			STR_TO_DATE({$wpdb->postmeta}.meta_value, '%m-%d-%Y'),
+			STR_TO_DATE({$wpdb->postmeta}.meta_value, '%d/%m/%Y')
+		)",
+		$orderby
+	);
+	
+	return $orderby;
+}
+
+/**
+ * Add filter dropdown for unit_source (Integration) in units admin
+ *
+ * @param string $post_type The post type.
+ */
+function rentfetch_units_filter_by_unit_source( $post_type ) {
+	if ( 'units' !== $post_type ) {
+		return;
+	}
+
+	global $wpdb;
+	$unit_sources = $wpdb->get_col( $wpdb->prepare( "
+		SELECT DISTINCT pm.meta_value
+		FROM {$wpdb->postmeta} pm
+		INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+		WHERE pm.meta_key = %s
+		AND pm.meta_value != ''
+		AND p.post_type = %s
+		ORDER BY pm.meta_value ASC
+	", 'unit_source', 'units' ) );
+
+	$current = isset( $_GET['unit_source_filter'] ) ? $_GET['unit_source_filter'] : '';
+
+	echo '<select name="unit_source_filter">';
+	echo '<option value="">' . __( 'All Integrations', 'rentfetch' ) . '</option>';
+	foreach ( $unit_sources as $source ) {
+		$selected = ( $source === $current ) ? ' selected="selected"' : '';
+		echo '<option value="' . esc_attr( $source ) . '"' . $selected . '>' . esc_html( $source ) . '</option>';
+	}
+	echo '</select>';
+}
+add_action( 'restrict_manage_posts', 'rentfetch_units_filter_by_unit_source' );
+
+/**
+ * Disable the default date filter for units
+ *
+ * @param bool   $disable Whether to disable the months dropdown.
+ * @param string $post_type The post type.
+ * @return bool
+ */
+function rentfetch_disable_months_dropdown_for_units( $disable, $post_type ) {
+	if ( 'units' === $post_type ) {
+		return true;
+	}
+	return $disable;
+}
+add_filter( 'disable_months_dropdown', 'rentfetch_disable_months_dropdown_for_units', 10, 2 );
+
+/**
+ * Modify the query to filter by unit_source
+ *
+ * @param WP_Query $query The query object.
+ */
+function rentfetch_units_filter_query( $query ) {
+	if ( ! is_admin() || ! $query->is_main_query() || 'units' !== $query->get( 'post_type' ) ) {
+		return;
+	}
+
+	if ( isset( $_GET['unit_source_filter'] ) && ! empty( $_GET['unit_source_filter'] ) ) {
+		$query->set( 'meta_query', array(
+			array(
+				'key'     => 'unit_source',
+				'value'   => sanitize_text_field( $_GET['unit_source_filter'] ),
+				'compare' => '=',
+			),
+		) );
+	}
+}
+add_action( 'pre_get_posts', 'rentfetch_units_filter_query' );
+
+/**
  * Set up the admin columns content.
  *
  * @param string $column  The name of the column.
@@ -149,7 +278,26 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'availability_date' === $column ) {
-		echo esc_attr( get_post_meta( $post_id, 'availability_date', true ) );
+		$date_string = get_post_meta( $post_id, 'availability_date', true );
+		if ( $date_string ) {
+			// Try different date formats that might exist in the data
+			$formats = array( 'm/d/Y', 'Y-m-d', 'Ymd', 'm-d-Y', 'd/m/Y', 'Y-m-d H:i:s', 'Y-m-d H:i', 'm/d/Y H:i:s', 'm/d/Y H:i' );
+			$date = false;
+			
+			foreach ( $formats as $format ) {
+				$date = DateTime::createFromFormat( $format, $date_string );
+				if ( $date !== false ) {
+					break;
+				}
+			}
+			
+			if ( $date ) {
+				echo esc_attr( $date->format( 'm/d/Y' ) );
+			} else {
+				// If no format works, show the raw value
+				echo esc_attr( $date_string );
+			}
+		}
 	}
 
 	if ( 'baths' === $column ) {

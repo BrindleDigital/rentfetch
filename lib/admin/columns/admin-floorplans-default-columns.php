@@ -50,6 +50,112 @@ function rentfetch_default_floorplans_admin_columns( $columns ) {
 add_filter( 'manage_floorplans_posts_columns', 'rentfetch_default_floorplans_admin_columns' );
 
 /**
+ * Make availability_date and available_units columns sortable
+ *
+ * @param array $columns Sortable columns.
+ * @return array
+ */
+function rentfetch_floorplans_sortable_columns( $columns ) {
+	$columns['availability_date'] = 'availability_date';
+	$columns['available_units'] = 'available_units';
+	return $columns;
+}
+add_filter( 'manage_edit-floorplans_sortable_columns', 'rentfetch_floorplans_sortable_columns' );
+
+/**
+ * Handle sorting by availability_date and available_units
+ *
+ * @param WP_Query $query The query object.
+ */
+function rentfetch_floorplans_orderby( $query ) {
+	if ( ! is_admin() || ! $query->is_main_query() || 'floorplans' !== $query->get( 'post_type' ) ) {
+		return;
+	}
+
+	if ( 'availability_date' === $query->get( 'orderby' ) ) {
+		$query->set( 'meta_key', 'availability_date' );
+		$query->set( 'orderby', 'meta_value' );
+		// For floorplans, availability_date is stored as Ymd, so string sorting works
+	}
+
+	if ( 'available_units' === $query->get( 'orderby' ) ) {
+		$query->set( 'meta_key', 'available_units' );
+		$query->set( 'orderby', 'meta_value_num' );
+	}
+}
+add_action( 'pre_get_posts', 'rentfetch_floorplans_orderby' );
+
+/**
+ * Add filter dropdown for floorplan_source (Integration) in floorplans admin
+ *
+ * @param string $post_type The post type.
+ */
+function rentfetch_floorplans_filter_by_floorplan_source( $post_type ) {
+	if ( 'floorplans' !== $post_type ) {
+		return;
+	}
+
+	global $wpdb;
+	$floorplan_sources = $wpdb->get_col( $wpdb->prepare( "
+		SELECT DISTINCT pm.meta_value
+		FROM {$wpdb->postmeta} pm
+		INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+		WHERE pm.meta_key = %s
+		AND pm.meta_value != ''
+		AND p.post_type = %s
+		ORDER BY pm.meta_value ASC
+	", 'floorplan_source', 'floorplans' ) );
+
+	$current = isset( $_GET['floorplan_source_filter'] ) ? $_GET['floorplan_source_filter'] : '';
+
+	echo '<select name="floorplan_source_filter">';
+	echo '<option value="">' . __( 'All Integrations', 'rentfetch' ) . '</option>';
+	foreach ( $floorplan_sources as $source ) {
+		$selected = ( $source === $current ) ? ' selected="selected"' : '';
+		echo '<option value="' . esc_attr( $source ) . '"' . $selected . '>' . esc_html( $source ) . '</option>';
+	}
+	echo '</select>';
+}
+add_action( 'restrict_manage_posts', 'rentfetch_floorplans_filter_by_floorplan_source' );
+
+/**
+ * Disable the default date filter for floorplans
+ *
+ * @param bool   $disable Whether to disable the months dropdown.
+ * @param string $post_type The post type.
+ * @return bool
+ */
+function rentfetch_disable_months_dropdown_for_floorplans( $disable, $post_type ) {
+	if ( 'floorplans' === $post_type ) {
+		return true;
+	}
+	return $disable;
+}
+add_filter( 'disable_months_dropdown', 'rentfetch_disable_months_dropdown_for_floorplans', 10, 2 );
+
+/**
+ * Modify the query to filter by floorplan_source
+ *
+ * @param WP_Query $query The query object.
+ */
+function rentfetch_floorplans_filter_query( $query ) {
+	if ( ! is_admin() || ! $query->is_main_query() || 'floorplans' !== $query->get( 'post_type' ) ) {
+		return;
+	}
+
+	if ( isset( $_GET['floorplan_source_filter'] ) && ! empty( $_GET['floorplan_source_filter'] ) ) {
+		$query->set( 'meta_query', array(
+			array(
+				'key'     => 'floorplan_source',
+				'value'   => sanitize_text_field( $_GET['floorplan_source_filter'] ),
+				'compare' => '=',
+			),
+		) );
+	}
+}
+add_action( 'pre_get_posts', 'rentfetch_floorplans_filter_query' );
+
+/**
  * Set up the content of the columns
  *
  * @param string $column the label for the column.
