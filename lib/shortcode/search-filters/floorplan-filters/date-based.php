@@ -108,12 +108,12 @@ function rentfetch_search_filters_date() {
 			'end' => date( 'Ymd', strtotime( '+90 days' ) ),
 		),
 		'fall-' . $fall_year => array(
-			'label' => 'Fall ' . $fall_year,
+			'label' => 'Fall ' . $fall_year . ' Semester',
 			'start' => $fall_year . '0630',
 			'end' => $fall_year . '1001',
 		),
 		'spring-' . $spring_year => array(
-			'label' => 'Spring ' . $spring_year,
+			'label' => 'Spring ' . $spring_year . ' Semester',
 			'start' => $spring_year . '0301',
 			'end' => $spring_year . '0531',
 		),
@@ -127,7 +127,7 @@ function rentfetch_search_filters_date() {
 		}
 	}
 
-	$label = apply_filters( 'rentfetch_search_filters_date_label', 'Date' );
+	$label = apply_filters( 'rentfetch_search_filters_date_label', 'Move-In' );
 
 	// build the date-based search.
 	echo '<fieldset class="move-in">';
