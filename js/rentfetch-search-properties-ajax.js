@@ -106,6 +106,68 @@ jQuery(function ($) {
 						buttonContent =
 							legend + ' (' + activeFields.length + ' selected)';
 						break;
+					case dataId === 'search-dates[]':
+						// Map selected values to display labels with date ranges
+						var selectedValues = dataValues.split(',');
+						var labels = [];
+						selectedValues.forEach(function (val) {
+							var label = '';
+							if (val === 'now-30') {
+								var start = new Date();
+								start.setDate(start.getDate() - 7);
+								var end = new Date();
+								end.setDate(end.getDate() + 30);
+								label =
+									'Next 30 days (' +
+									(start.getMonth() + 1) +
+									'/' +
+									start.getDate() +
+									'-' +
+									(end.getMonth() + 1) +
+									'/' +
+									end.getDate() +
+									')';
+							} else if (val === '30-60') {
+								var start = new Date();
+								start.setDate(start.getDate() + 30);
+								var end = new Date();
+								end.setDate(end.getDate() + 60);
+								label =
+									'30-60 days (' +
+									(start.getMonth() + 1) +
+									'/' +
+									start.getDate() +
+									'-' +
+									(end.getMonth() + 1) +
+									'/' +
+									end.getDate() +
+									')';
+							} else if (val === '60-90') {
+								var start = new Date();
+								start.setDate(start.getDate() + 60);
+								var end = new Date();
+								end.setDate(end.getDate() + 90);
+								label =
+									'60-90 days (' +
+									(start.getMonth() + 1) +
+									'/' +
+									start.getDate() +
+									'-' +
+									(end.getMonth() + 1) +
+									'/' +
+									end.getDate() +
+									')';
+							} else if (val.startsWith('fall-')) {
+								var year = val.split('-')[1];
+								label = 'Fall ' + year + ' (6/30-10/1)';
+							} else if (val.startsWith('spring-')) {
+								var year = val.split('-')[1];
+								label = 'Spring ' + year + ' (3/1-5/31)';
+							}
+							if (label) labels.push(label);
+						});
+						buttonContent = legend + ': ' + labels.join(', ');
+						break;
 					default:
 						// otherwise, just add the values (this handles checkboxes)
 						buttonContent += dataValues.replace(/,/g, ', ');
