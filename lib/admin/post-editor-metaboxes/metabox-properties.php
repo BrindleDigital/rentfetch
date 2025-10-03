@@ -42,7 +42,25 @@ function rentfetch_register_properties_details_metabox() {
 		'normal', // Priority of the metabox.
 		'default' // Context of the metabox.
 	);
+	
+	add_meta_box(
+		'rentfetch_properties_fees', // ID of the metabox.
+		'Property Fees', // Title of the metabox.
+		'rentfetch_properties_fees_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
+	);
 
+	add_meta_box(
+		'rentfetch_properties_images', // ID of the metabox.
+		'Property Images', // Title of the metabox.
+		'rentfetch_properties_images_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
+	);
+	
 	add_meta_box(
 		'rentfetch_properties_details', // ID of the metabox.
 		'Property Display Information', // Title of the metabox.
@@ -51,6 +69,8 @@ function rentfetch_register_properties_details_metabox() {
 		'normal', // Priority of the metabox.
 		'default' // Context of the metabox.
 	);
+
+	
 
 	// Conditionally add an API Response metabox when this post has an `api_response` meta value.
 	global $post;
@@ -356,12 +376,169 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
  */
 function rentfetch_properties_display_information_metabox_callback( $post ) {
 	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
-	wp_enqueue_media();
-	wp_enqueue_script( 'rentfetch-metabox-properties-images' );
 	wp_enqueue_script( 'rentfetch-metabox-properties-tour' );
 	wp_enqueue_script( 'rentfetch-metabox-properties-video' );
 	?>
 	<div class="rf-metabox rf-metabox-properties">
+		<?php
+		// * Property Description
+		$description = get_post_meta( $post->ID, 'description', true );
+		$disabled    = in_array( 'description', $array_disabled_fields, true ) ? 'disabled' : '';
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="description">Description</label>
+			</div>
+			<div class="column">                
+				<?php
+					wp_editor(
+						$description,
+						'description',
+						array(
+							'textarea_name' => 'description',
+							'textarea_rows' => 3,
+							'media_buttons' => false,
+						)
+					);
+				?>
+				<p class="description">The description is synced from most APIs, but if yours is not, this is the main place to put general information about this property.</p>
+			</div>
+		</div>
+
+		<?php
+		// * Tour
+		$tour = get_post_meta( $post->ID, 'tour', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="tour">Tour Link (Youtube or Matterport)</label>
+			</div>
+			<div class="column">
+				<input type="text" id="tour" name="tour" value="<?php echo esc_attr( $tour ); ?>">
+				<p class="description">Example: https://my.matterport.com/show/?m=sc3ykepsN4s</p>
+				<div id="tour-preview"></div>
+			</div>
+		</div>
+
+		<?php
+		// * Has Specials
+		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
+		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="has_specials">Has Specials</label>
+			</div>
+			<div class="column">
+				<input type="checkbox" <?php echo esc_attr( $disabled ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
+			</div>
+		</div>
+		
+		<?php
+		// * Specials override text
+		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="specials_override_text">Specials Override Text</label>
+				<p class="description">Manually customize the specials text displayed. This will not sync with any specials in your PMS and will override what's in the PMS.</p>
+			</div>
+			<div class="column">
+				<input type="text" id="specials_override_text" name="specials_override_text" maxlength="25" value="<?php echo esc_attr( $specials_override_text ); ?>">
+				<p class="description"><em>Maximum 25 characters</em></p>
+			</div>
+		</div>
+				
+		<?php
+		// * Property Pets
+		// $pets = get_post_meta( $post->ID, 'pets', true );
+		?>
+		<!-- <div class="field">
+			<div class="column">
+				<label for="pets">Pets</label>
+			</div>
+			<div class="column">
+				<input type="text" id="pets" name="pets" value="<?php // echo esc_attr( $pets ); ?>">
+			</div>
+		</div> -->
+		
+		<?php
+		// * Property Content Area
+		$content_area = get_post_meta( $post->ID, 'content_area', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="content_area">Content area</label>
+				<p class="description">The content area is always unsynced, so if you have more to say, you can say it here.</p>
+			</div>
+			<div class="column">
+				<?php
+				wp_editor(
+					$content_area,
+					'content_area',
+					array(
+						'textarea_name' => 'content_area',
+						'media_buttons' => false,
+						'textarea_rows' => 10,
+						'teeny'         => false,
+						'tinymce'       => true,
+					)
+				);
+				?>
+				<p class="description">It's always recommended to start this section with a heading level 2. If this is empty, the content area section of the single-properties template will not be displayed (there won't be a blank space). By default, if there's something to say here, this section will display below the amenities.</p>
+			</div>
+		</div>
+		
+	</div>
+	
+	<?php
+}
+
+/**
+ * Markup for the properties fees metabox
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
+function rentfetch_properties_fees_metabox_callback( $post ) {
+	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
+	?>
+	<div class="rf-metabox rf-metabox-properties">
+		
+		<?php
+		// * Property Fees Embed
+		$property_fees_embed = get_post_meta( $post->ID, 'property_fees_embed', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="property_fees_embed">Property Fees Embed Code</label>
+			</div>
+			<div class="column">
+				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>
+				<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
+			</div>
+		</div>
+		
+	</div>
+	
+	<?php
+}
+
+/**
+ * Markup for the properties images metabox
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
+function rentfetch_properties_images_metabox_callback( $post ) {
+	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
+	wp_enqueue_media();
+	wp_enqueue_script( 'rentfetch-metabox-properties-images' );
+	?>
+	<div class="rf-metabox rf-metabox-properties">
+		
 		<?php
 		// * Property Images.
 		?>
@@ -455,129 +632,6 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 			<?php
 		}
 		?>
-			 
-		<?php
-		// * Property Description
-		$description = get_post_meta( $post->ID, 'description', true );
-		$disabled    = in_array( 'description', $array_disabled_fields, true ) ? 'disabled' : '';
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="description">Description</label>
-			</div>
-			<div class="column">                
-				<?php
-					wp_editor(
-						$description,
-						'description',
-						array(
-							'textarea_name' => 'description',
-							'textarea_rows' => 3,
-							'media_buttons' => false,
-						)
-					);
-				?>
-				<p class="description">The description is synced from most APIs, but if yours is not, this is the main place to put general information about this property.</p>
-			</div>
-		</div>
-
-		<?php
-		// * Tour
-		$tour = get_post_meta( $post->ID, 'tour', true );
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="tour">Tour Link (Youtube or Matterport)</label>
-			</div>
-			<div class="column">
-				<input type="text" id="tour" name="tour" value="<?php echo esc_attr( $tour ); ?>">
-				<p class="description">Example: https://my.matterport.com/show/?m=sc3ykepsN4s</p>
-				<div id="tour-preview"></div>
-			</div>
-		</div>
-
-		<?php
-		// * Property Fees Embed
-		$property_fees_embed = get_post_meta( $post->ID, 'property_fees_embed', true );
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="property_fees_embed">Property Fees Embed Code</label>
-			</div>
-			<div class="column">
-				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>
-				<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
-			</div>
-		</div>
-
-		<?php
-		// * Has Specials
-		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
-		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="has_specials">Has Specials</label>
-			</div>
-			<div class="column">
-				<input type="checkbox" <?php echo esc_attr( $disabled ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
-			</div>
-		</div>
-		
-		<?php
-		// * Specials override text
-		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="specials_override_text">Specials Override Text</label>
-				<p class="description">Manually customize the specials text displayed. This will not sync with any specials in your PMS and will override what's in the PMS.</p>
-			</div>
-			<div class="column">
-				<input type="text" id="specials_override_text" name="specials_override_text" maxlength="25" value="<?php echo esc_attr( $specials_override_text ); ?>">
-				<p class="description"><em>Maximum 25 characters</em></p>
-			</div>
-		</div>
-				
-		<?php
-		// * Property Pets
-		// $pets = get_post_meta( $post->ID, 'pets', true );
-		?>
-		<!-- <div class="field">
-			<div class="column">
-				<label for="pets">Pets</label>
-			</div>
-			<div class="column">
-				<input type="text" id="pets" name="pets" value="<?php // echo esc_attr( $pets ); ?>">
-			</div>
-		</div> -->
-		
-		<?php
-		// * Property Content Area
-		$content_area = get_post_meta( $post->ID, 'content_area', true );
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="content_area">Content area</label>
-				<p class="description">The content area is always unsynced, so if you have more to say, you can say it here.</p>
-			</div>
-			<div class="column">
-				<?php
-				wp_editor(
-					$content_area,
-					'content_area',
-					array(
-						'textarea_name' => 'content_area',
-						'media_buttons' => false,
-						'textarea_rows' => 10,
-						'teeny'         => false,
-						'tinymce'       => true,
-					)
-				);
-				?>
-				<p class="description">It's always recommended to start this section with a heading level 2. If this is empty, the content area section of the single-properties template will not be displayed (there won't be a blank space). By default, if there's something to say here, this section will display below the amenities.</p>
-			</div>
-		</div>
 		
 	</div>
 	
