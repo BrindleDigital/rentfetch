@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.26
+Stable tag: 0.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,20 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.27 =
+
+* Itegrating changes from automatic github scanner highlighting places where we were double-escaping some values.
+* Substantial changes to our [rentfetch_property_info] shortcode, adding new values and parameters.
+* Updating shortcode documentation to match.
+* Updates to the nomenclature used in navigating to the shortcode pages, adding direct links to those on the backend.
+* Improvements to our json processing and display on the backend to try to show formatted json even when there are some common errors in the markup.
+* Adding new capability to properties for a tour booking link, integrating that into the shortcodes, adding admin columns, etc.
+* Updates to the admin columns for units and floorplans to allow filtering by integration and sorting to availability and availability date to allow for easier surfacing of data on larger sites.
+* New functionality replacing the dates field for both properties and shortcodes. The new functionality searches floorplans AND UNITS and allows for preset ranges. 
+* Adding transient-based psuedocache for these relatively complex queries for the updated date-based search.
+* Smart display of date-based availability options such that we don't display options that will return zero results.
+
 
 = 0.26.1 =
 
