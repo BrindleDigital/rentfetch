@@ -1,0 +1,93 @@
+/* ==========================================================================
+   Property Fees Table Styles
+   ========================================================================== */
+
+.property-fees-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 2rem;
+	font-size: var(--rentfetch-font-size-small);
+
+	// Remove all borders
+	border: none;
+
+	// Add subtle bottom border to table
+	// border-bottom: 1px solid var(--rentfetch-base-2);
+
+	// Table rows
+	tr {
+		border: none;
+
+		&:last-child {
+			td {
+				border: none;
+			}
+		}
+	}
+
+	// Table cells
+	td {
+		padding: 0.5rem 0;
+		border: none;
+		border-bottom: 1px solid var(--rentfetch-base-3);
+		vertical-align: middle;
+
+		// First column (description) - make it wider
+		&:first-child {
+			width: 40%;
+			font-weight: 500;
+		}
+
+		// Second column (price & frequency) - left align
+		&:nth-child(2) {
+			width: 30%;
+			text-align: left;
+		}
+
+		// Third column (notes) - make it wider
+		&:nth-child(3) {
+			width: 30%;
+			font-style: italic;
+			// color: var(--rentfetch-default);
+			text-align: right;
+		}
+	}
+
+	// Price and frequency spans
+	.fee-price {
+		display: inline;
+		font-weight: 600;
+		font-size: var(--rentfetch-font-size-medium);
+		color: var(--rentfetch-dark);
+		margin-bottom: 0.25rem;
+	}
+
+	.fee-frequency {
+		display: inline;
+		font-size: var(--rentfetch-font-size-smallest);
+		font-style: italic;
+		// color: var(--rentfetch-default);
+		text-transform: lowercase;
+	}
+
+	// Responsive design
+	@include tablet {
+		td {
+			vertical-align: top;
+		}
+	}
+
+	@include mobile {
+		font-size: var(--rentfetch-font-size-smallest);
+
+		td {
+			padding: 0.5rem 0;
+			line-height: 1;
+			vertical-align: top;
+
+			.fee-price {
+				font-size: var(--rentfetch-font-size-small);
+			}
+		}
+	}
+}

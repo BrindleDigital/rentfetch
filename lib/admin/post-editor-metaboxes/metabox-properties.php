@@ -511,20 +511,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
-		<?php
-		// * Property Fees Embed
-		$property_fees_embed = get_post_meta( $post->ID, 'property_fees_embed', true );
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="property_fees_embed">Property Fees Embed Code</label>
-			</div>
-			<div class="column">
-				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>
-				<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
-			</div>
-		</div>
-
+		
 		<?php
 		// * Property Fees CSV Upload
 		?>
@@ -555,6 +542,21 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 				<div class="json-content">
 					<textarea class="rentfetch-fees-json" name="property_fees_json" rows="10" style="width:100%; white-space: pre; word-wrap: normal; overflow-x: auto;"><?php echo esc_textarea( wp_json_encode( $property_fees_data, JSON_PRETTY_PRINT ) ); ?></textarea>
 				</div>
+			</div>
+		</div>
+		
+		<?php
+		// * Property Fees Embed
+		$property_fees_embed = get_post_meta( $post->ID, 'property_fees_embed', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="property_fees_embed">Property Fees Embed Code</label>
+				<p class="description">This approach allows you to add a canva embed or similar. The csv/json markup takes precedence (this is a fallback), and only one will ever output.</p>
+			</div>
+			<div class="column">
+				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>
+				<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
 			</div>
 		</div>
 		
@@ -807,7 +809,7 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 					if ( is_array( $fee ) ) {
 						$sanitized_fees[] = array(
 							'description' => sanitize_text_field( $fee['description'] ?? '' ),
-							'price'       => floatval( $fee['price'] ?? 0 ),
+							'price'       => sanitize_text_field( $fee['price'] ?? '' ),
 							'frequency'   => sanitize_text_field( $fee['frequency'] ?? '' ),
 							'notes'       => sanitize_text_field( $fee['notes'] ?? '' ),
 							'category'    => sanitize_text_field( $fee['category'] ?? '' ),
@@ -842,7 +844,7 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 						if ( count( $data ) === 5 ) {
 							$fees_data[] = array(
 								'description' => sanitize_text_field( $data[0] ),
-								'price'       => floatval( $data[1] ),
+								'price'       => sanitize_text_field( $data[1] ),
 								'frequency'   => sanitize_text_field( $data[2] ),
 								'notes'       => sanitize_text_field( $data[3] ),
 								'category'    => sanitize_text_field( $data[4] ),
@@ -1026,11 +1028,14 @@ function rentfetch_download_fees_csv_sample() {
 	
 	// Create sample CSV content
 	$csv_content = "description,price,frequency,notes,category\n";
-	$csv_content .= "Application Fee,50,one-time,Required for all applicants,Application\n";
-	$csv_content .= "Security Deposit,500,one-time,Refundable at move-out,Deposit\n";
-	$csv_content .= "\"Pet Deposit\",300,one-time,\"Per pet, required for pets\",Pets\n";
-	$csv_content .= "Monthly Rent,1200,monthly,Due on the 1st of each month,Rent\n";
-	$csv_content .= "Pet Rent,25,monthly,Per pet,Pets\n";
+	$csv_content .= "Application Fee,\$100,,Required,Move-In Basics\n";
+	$csv_content .= "Administration Fee,\$300,,Required,Move-In Basics\n";
+	$csv_content .= "\"One-Time Access Control Setup\",\$50,,Required,Move-In Basics\n";
+	$csv_content .= "\"One-Time Pet Fee\",\$350,\"Per \"\"pet\"\" (non-refundable)\",,Move-In Basics\n";
+	$csv_content .= "Trash Fee,\$25,,,Essentials\n";
+	$csv_content .= "Amenity Fee,\$25,,,Essentials\n";
+	$csv_content .= "Internet Access,\$85,,Required,Essentials\n";
+	$csv_content .= "Pest Control,\$5,,Required,Essentials\n";
 	
 	echo $csv_content;
 	exit;
@@ -1069,9 +1074,9 @@ function rentfetch_download_current_fees_csv() {
 	
 	foreach ( $fees_data as $fee ) {
 		$csv_content .= sprintf(
-			"\"%s\",%s,\"%s\",\"%s\",\"%s\"\n",
+			"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
 			str_replace( '"', '""', $fee['description'] ?? '' ),
-			$fee['price'] ?? 0,
+			str_replace( '"', '""', $fee['price'] ?? '' ),
 			str_replace( '"', '""', $fee['frequency'] ?? '' ),
 			str_replace( '"', '""', $fee['notes'] ?? '' ),
 			str_replace( '"', '""', $fee['category'] ?? '' )

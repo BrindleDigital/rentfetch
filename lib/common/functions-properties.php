@@ -1502,8 +1502,91 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 	}
 
 	$property_fees_embed = get_post_meta( $post_id, 'property_fees_embed', true );
+	$property_fees_data = get_post_meta( $post_id, 'property_fees_data', true );
+	
+	if ( $property_fees_data && is_array( $property_fees_data ) ) {
+		$property_fees_json = wp_json_encode( $property_fees_data );
+		$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
+	} elseif ( $property_fees_embed ) {
+		$property_fees_markup = $property_fees_embed;
+	} else {
+		return ''; // if we don't have either, we can't output anything.
+	}
 
-	return apply_filters( 'rentfetch_filter_property_fees_embed', $property_fees_embed, $post_id );
+	return apply_filters( 'rentfetch_filter_property_fees_embed', $property_fees_markup, $post_id );
+}
+
+function rentfetch_get_property_fees_markup( $property_fees_json ) {
+	
+	// Start output buffering
+	ob_start();
+	
+	// Decode the JSON
+	$fees_data = json_decode( $property_fees_json, true );
+	
+	// If JSON is invalid or empty, return empty string
+	if ( ! is_array( $fees_data ) || empty( $fees_data ) ) {
+		return '';
+	}
+	
+	// Extract unique categories
+	$categories = array();
+	foreach ( $fees_data as $fee ) {
+		if ( ! empty( $fee['category'] ) ) {
+			$categories[] = $fee['category'];
+		}
+	}
+	$categories = array_unique( $categories );
+	
+	// If we have categories, group by category
+	if ( ! empty( $categories ) ) {
+		foreach ( $categories as $category ) {
+			// Output category header
+			echo '<h3>' . esc_html( $category ) . '</h3>';
+			
+			// Start table
+			echo '<table class="property-fees-table">';
+			
+			// Get fees for this category
+			$category_fees = array_filter( $fees_data, function( $fee ) use ( $category ) {
+				return isset( $fee['category'] ) && $fee['category'] === $category;
+			} );
+			
+			// Output table rows
+			foreach ( $category_fees as $fee ) {
+				echo '<tr>';
+				echo '<td class="fee-description">' . esc_html( $fee['description'] ?? '' ) . '</td>';
+				echo '<td class="fee-price-frequency">';
+				echo '<span class="fee-price">' . esc_html( $fee['price'] ?? '' ) . '</span> ';
+				echo '<span class="fee-frequency">' . esc_html( $fee['frequency'] ?? '' ) . '</span>';
+				echo '</td>';
+				echo '<td class="fee-notes">' . esc_html( $fee['notes'] ?? '' ) . '</td>';
+				echo '</tr>';
+			}
+			
+			// End table
+			echo '</table>';
+		}
+	} else {
+		// No categories, output single table
+		echo '<table class="property-fees-table">';
+		
+		foreach ( $fees_data as $fee ) {
+			echo '<tr>';
+			echo '<td class="fee-description">' . esc_html( $fee['description'] ?? '' ) . '</td>';
+			echo '<td class="fee-price-frequency">';
+			echo '<span class="fee-price">' . esc_html( $fee['price'] ?? '' ) . '</span> ';
+			echo '<span class="fee-frequency">' . esc_html( $fee['frequency'] ?? '' ) . '</span>';
+			echo '</td>';
+			echo '<td class="fee-notes">' . esc_html( $fee['notes'] ?? '' ) . '</td>';
+			echo '</tr>';
+		}
+		
+		echo '</table>';
+	}
+	
+	// Return the buffered output
+	return ob_get_clean();
 }
 
 function rentfetch_website_single_property_site_get_property_id() {

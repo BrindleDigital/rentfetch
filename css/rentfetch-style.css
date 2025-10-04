@@ -3153,6 +3153,73 @@ footer.property-search-filters-footer button#show-properties {
   }
 }
 
+/* ==========================================================================
+   Property Fees Table Styles
+   ========================================================================== */
+.property-fees-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  font-size: var(--rentfetch-font-size-small);
+  border: none;
+}
+.property-fees-table tr {
+  border: none;
+}
+.property-fees-table tr:last-child td {
+  border: none;
+}
+.property-fees-table td {
+  padding: 0.5rem 0;
+  border: none;
+  border-bottom: 1px solid var(--rentfetch-base-3);
+  vertical-align: middle;
+}
+.property-fees-table td:first-child {
+  width: 40%;
+  font-weight: 500;
+}
+.property-fees-table td:nth-child(2) {
+  width: 30%;
+  text-align: left;
+}
+.property-fees-table td:nth-child(3) {
+  width: 30%;
+  font-style: italic;
+  text-align: right;
+}
+.property-fees-table .fee-price {
+  display: inline;
+  font-weight: 600;
+  font-size: var(--rentfetch-font-size-medium);
+  color: var(--rentfetch-dark);
+  margin-bottom: 0.25rem;
+}
+.property-fees-table .fee-frequency {
+  display: inline;
+  font-size: var(--rentfetch-font-size-smallest);
+  font-style: italic;
+  text-transform: lowercase;
+}
+@media (min-width: 600px) and (max-width: 960px) {
+  .property-fees-table td {
+    vertical-align: top;
+  }
+}
+@media (max-width: 600px) {
+  .property-fees-table {
+    font-size: var(--rentfetch-font-size-smallest);
+  }
+  .property-fees-table td {
+    padding: 0.5rem 0;
+    line-height: 1;
+    vertical-align: top;
+  }
+  .property-fees-table td .fee-price {
+    font-size: var(--rentfetch-font-size-small);
+  }
+}
+
 body.single-floorplans .site-content {
   display: block;
 }
