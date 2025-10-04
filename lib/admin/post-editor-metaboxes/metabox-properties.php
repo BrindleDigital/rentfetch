@@ -611,7 +611,7 @@ function rentfetch_properties_images_metabox_callback( $post ) {
 					echo '<div id="gallery-container">';
 					foreach ( $images_ids_array as $image_id ) {
 						$attachment_url = wp_get_attachment_image_src( $image_id, 'thumbnail' );
-						printf( '<div class="gallery-image" data-id="%s"><img loading="lazy" style="background-color: #f7f7f7;" width="150" height="82" src="%s"><button class="remove-image">Remove</button></div>', (int) $image_id, esc_url( $attachment_url[0] ) );
+						printf( '<div class="gallery-image" data-id="%s"><img loading="lazy" style="background-color: #f7f7f7; transform: translateZ(0); will-change: transform;" width="150" height="82" src="%s"><button class="remove-image">Remove</button></div>', (int) $image_id, esc_url( $attachment_url[0] ) );
 					}
 					echo '</div>';
 				}
