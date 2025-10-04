@@ -6,7 +6,7 @@
 	width: 100%;
 	border-collapse: collapse;
 	margin-bottom: 2rem;
-	font-size: var(--rentfetch-font-size-small);
+	font-size: var(--rentfetch-font-size-medium);
 
 	// Remove all borders
 	border: none;
@@ -48,7 +48,6 @@
 		&:nth-child(3) {
 			width: 30%;
 			font-style: italic;
-			// color: var(--rentfetch-default);
 			text-align: right;
 		}
 	}
@@ -57,8 +56,6 @@
 	.fee-price {
 		display: inline;
 		font-weight: 600;
-		font-size: var(--rentfetch-font-size-medium);
-		color: var(--rentfetch-dark);
 		margin-bottom: 0.25rem;
 	}
 
@@ -66,8 +63,11 @@
 		display: inline;
 		font-size: var(--rentfetch-font-size-smallest);
 		font-style: italic;
-		// color: var(--rentfetch-default);
 		text-transform: lowercase;
+	}
+
+	.fee-notes {
+		font-size: var(--rentfetch-font-size-smallest);
 	}
 
 	// Responsive design

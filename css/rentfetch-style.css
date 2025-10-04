@@ -3160,7 +3160,7 @@ footer.property-search-filters-footer button#show-properties {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2rem;
-  font-size: var(--rentfetch-font-size-small);
+  font-size: var(--rentfetch-font-size-medium);
   border: none;
 }
 .property-fees-table tr {
@@ -3191,8 +3191,6 @@ footer.property-search-filters-footer button#show-properties {
 .property-fees-table .fee-price {
   display: inline;
   font-weight: 600;
-  font-size: var(--rentfetch-font-size-medium);
-  color: var(--rentfetch-dark);
   margin-bottom: 0.25rem;
 }
 .property-fees-table .fee-frequency {
@@ -3200,6 +3198,9 @@ footer.property-search-filters-footer button#show-properties {
   font-size: var(--rentfetch-font-size-smallest);
   font-style: italic;
   text-transform: lowercase;
+}
+.property-fees-table .fee-notes {
+  font-size: var(--rentfetch-font-size-smallest);
 }
 @media (min-width: 600px) and (max-width: 960px) {
   .property-fees-table td {
