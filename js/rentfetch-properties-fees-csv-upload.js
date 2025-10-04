@@ -45,7 +45,6 @@
 })();
 
 jQuery(document).ready(function ($) {
-
 	// Handle CSV file upload
 	document.getElementById('property_fees_csv').addEventListener(
 		'change',

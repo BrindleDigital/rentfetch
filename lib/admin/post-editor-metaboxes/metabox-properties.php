@@ -657,7 +657,7 @@ function rentfetch_properties_images_metabox_callback( $post ) {
 								$property_image_url = $property_image['url'];
 							}
 
-							printf( '<div class="property-image"><img width="150" height="82" loading="lazy" src="%s"/><a href="%s" target="_blank" class="download" download>Download</a></div>', esc_url( $property_image_url ), esc_url( $property_image_url ) );
+							printf( '<div class="property-image"><img width="150" height="82" loading="lazy" style="transform: translateZ(0); will-change: transform;" src="%s"/><a href="%s" target="_blank" class="download" download>Download</a></div>', esc_url( $property_image_url ), esc_url( $property_image_url ) );
 						}
 						echo '</div>';
 					} else {

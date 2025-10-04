@@ -21,7 +21,11 @@ jQuery(document).ready(function ($) {
 			var originalText = button.textContent;
 			var textarea = document.querySelector('.rentfetch-fees-json');
 			if (!textarea) {
-				showTemporaryButtonText(button, 'Error: JSON not found', originalText);
+				showTemporaryButtonText(
+					button,
+					'Error: JSON not found',
+					originalText
+				);
 				return;
 			}
 
@@ -31,11 +35,19 @@ jQuery(document).ready(function ($) {
 			if (navigator.clipboard && window.isSecureContext) {
 				navigator.clipboard.writeText(textToCopy).then(
 					function () {
-						showTemporaryButtonText(button, 'Fees copied', originalText);
+						showTemporaryButtonText(
+							button,
+							'Fees copied',
+							originalText
+						);
 					},
 					function (err) {
 						console.error('Failed to copy: ', err);
-						fallbackCopyTextToClipboard(textToCopy, button, originalText);
+						fallbackCopyTextToClipboard(
+							textToCopy,
+							button,
+							originalText
+						);
 					}
 				);
 			} else {
