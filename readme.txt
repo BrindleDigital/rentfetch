@@ -105,6 +105,13 @@ Start from your WordPress dashboard.
 
 = 0.28 =
 
+* Feature: json/csv uploads for the fee structures for properties, adding appropriate meta and functionality to handle this
+* Frontend base styles and functionality for the new fee structures
+* Updating the grouping of properties metaboxes for readability
+* Loading photos asynchronously and forcing GPU support on the properties backend because in some cases those pages take a long time to load
+
+= 0.27 =
+
 * Itegrating changes from automatic github scanner highlighting places where we were double-escaping some values.
 * Substantial changes to our [rentfetch_property_info] shortcode, adding new values and parameters.
 * Updating shortcode documentation to match.
