@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.27
+Stable tag: 0.28
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,7 +103,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.27 =
+= 0.28 =
 
 * Itegrating changes from automatic github scanner highlighting places where we were double-escaping some values.
 * Substantial changes to our [rentfetch_property_info] shortcode, adding new values and parameters.
