@@ -48,6 +48,11 @@ function rentfetch_settings_set_defaults_properties() {
 	// Maps API default options.
 	add_option( 'rentfetch_options_google_maps_default_latitude', 39.7392 );
 	add_option( 'rentfetch_options_google_maps_default_longitude', 104.9903 );
+
+	// Global property fees defaults.
+	add_option( 'rentfetch_options_global_property_fees_data', array() );
+	add_option( 'rentfetch_options_global_property_fees_json_url', '' );
+	add_option( 'rentfetch_options_global_property_fees_embed', '' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties' );
 
@@ -598,3 +603,127 @@ function rentfetch_save_settings_maps() {
 	}
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_maps' );
+
+/**
+ * Adds the global property fees settings subsection to the Rent Fetch settings page
+ */
+function rentfetch_settings_properties_global_property_fees() {
+	?>
+	<div class="header">
+		<h2 class="title">Global Property Fees</h2>
+		<p class="description">Set global fallback fees that will be used when property-specific fees are not available.</p>
+	</div>
+	<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_global_property_fees_csv">Global Property Fees CSV Upload</label>
+			<p class="description">Upload a CSV file with global property fees data. This will replace any existing fees data. <a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_global_fees_csv_sample' ) ); ?>" download="global_property_fees_sample.csv">Download sample CSV</a> | <a href="#" id="download-global-current-fees">Download Current Data</a></p>
+			<input type="file" id="rentfetch_options_global_property_fees_csv" name="rentfetch_options_global_property_fees_csv" accept=".csv" style="margin-top: 10px; background-color: #f9f9f9; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+		</div>
+				
+		<div class="section">
+			<label for="rentfetch_options_global_property_fees_data">Global Property Fees JSON</label>
+			<p class="description">Current fees data in JSON format. You can edit this directly and save changes with the form. <a href="#" id="copy-fees-json">Copy Fees JSON</a></p>
+			<div class="json-content">
+				<textarea class="rentfetch-fees-json" name="rentfetch_options_global_property_fees_data" rows="10" style="width:100%; white-space: pre; word-wrap: normal; overflow-x: auto;"><?php 
+				$global_property_fees_data = get_option( 'rentfetch_options_global_property_fees_data' );
+				if ( ! is_array( $global_property_fees_data ) ) {
+					$global_property_fees_data = array();
+				}
+				echo esc_textarea( wp_json_encode( $global_property_fees_data, JSON_PRETTY_PRINT ) ); 
+				?></textarea>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_global_property_fees_json_url">Global Property Fees JSON URL</label>
+			<p class="description">Enter a URL to a JSON file containing global property fees. This will be used as a fallback if the JSON field above is empty.</p>
+			<input type="url" name="rentfetch_options_global_property_fees_json_url" id="rentfetch_options_global_property_fees_json_url" value="<?php echo esc_url( get_option( 'rentfetch_options_global_property_fees_json_url' ) ); ?>" style="width:100%;">
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_global_property_fees_embed">Global Property Fees Embed Code</label>
+			<p class="description">Paste embed code for global property fees. This is a fallback to the options above.</p>
+			<textarea name="rentfetch_options_global_property_fees_embed" id="rentfetch_options_global_property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( get_option( 'rentfetch_options_global_property_fees_embed' ) ); ?></textarea>
+			<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
+		</div>
+	</div>
+	
+	<?php
+}
+add_action( 'rentfetch_do_settings_properties_global_property_fees', 'rentfetch_settings_properties_global_property_fees' );
+
+/**
+ * Save the global property fees settings
+ */
+function rentfetch_save_settings_global_property_fees() {
+
+	// JSON data
+	if ( isset( $_POST['rentfetch_options_global_property_fees_data'] ) ) {
+		$json_data = sanitize_textarea_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_data'] ) );
+		$decoded = json_decode( $json_data, true );
+		if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+			update_option( 'rentfetch_options_global_property_fees_data', $decoded );
+		} else {
+			update_option( 'rentfetch_options_global_property_fees_data', array() );
+		}
+	}
+
+	// JSON URL
+	if ( isset( $_POST['rentfetch_options_global_property_fees_json_url'] ) ) {
+		$url = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_json_url'] ) );
+		update_option( 'rentfetch_options_global_property_fees_json_url', $url );
+	}
+
+	// Embed code
+	if ( isset( $_POST['rentfetch_options_global_property_fees_embed'] ) ) {
+		$embed = sanitize_textarea_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_embed'] ) );
+		update_option( 'rentfetch_options_global_property_fees_embed', $embed );
+	}
+}
+add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_global_property_fees' );
+
+/**
+ * Enqueue scripts for global property fees options page
+ */
+function rentfetch_enqueue_global_property_fees_scripts( $hook ) {
+	// Only load on admin.php page
+	if ( 'toplevel_page_rentfetch-options' !== $hook ) {
+		return;
+	}
+
+	// Check if we're on the properties tab and global-property-fees section
+	if ( isset( $_GET['tab'] ) && 'properties' === $_GET['tab'] && isset( $_GET['section'] ) && 'global-property-fees' === $_GET['section'] ) {
+		// Ensure wp.codeEditor is available and get settings so WP can enqueue required addons.
+		$settings = wp_enqueue_code_editor( array( 'type' => 'application/json' ) );
+
+		// Fallback settings if enqueue didn't return anything.
+		if ( false === $settings ) {
+			$settings = array(
+				'codemirror' => array(
+					'mode' => 'application/json',
+				),
+			);
+		}
+
+		// Enqueue the script handle registered in lib/initialization/enqueue.php and localize the settings.
+		wp_enqueue_script( 'rentfetch-api-response-editor' );
+
+		// Make the settings available to our script so it uses the same assets/addons WP enqueued.
+		wp_localize_script( 'rentfetch-api-response-editor', 'rentfetchCodeEditorSettings', $settings );
+		
+		// Enqueue JSON handling script
+		wp_enqueue_script( 'rentfetch-properties-fees-json-handling', plugins_url( 'js/rentfetch-properties-fees-json-handling.js', dirname( __FILE__, 3 ) ), array( 'rentfetch-api-response-editor' ), '1.0.0', true );
+		
+		// Localize settings for the JSON handling script as well
+		wp_localize_script( 'rentfetch-properties-fees-json-handling', 'rentfetchCodeEditorSettings', $settings );
+		
+		// Enqueue CSV upload script for global property fees
+		wp_enqueue_script( 'rentfetch-global-properties-fees-csv-upload', plugins_url( 'js/rentfetch-global-properties-fees-csv-upload.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'rentfetch-global-properties-fees-csv-download-current', plugins_url( 'js/rentfetch-global-properties-fees-csv-download-current.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
+	}
+}
+add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_global_property_fees_scripts' );

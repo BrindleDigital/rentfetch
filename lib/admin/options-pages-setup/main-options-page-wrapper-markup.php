@@ -123,6 +123,9 @@ function rentfetch_settings_properties() {
 					$active = ( 'property-single' === $section ) ? 'tab-active' : '';
 					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property single</a></li>', esc_html( $active ) );
 
+					$active = ( 'global-property-fees' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=global-property-fees" class="tab %s">Global property fees</a></li>', esc_html( $active ) );
+					
 					$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
 					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Property shortcodes</a></li>', esc_html( $active ) );
 
@@ -149,6 +152,8 @@ function rentfetch_settings_properties() {
 			do_action( 'rentfetch_do_settings_properties_property_single' );
 		} elseif ( 'property-settings-embed' === $section ) {
 			do_action( 'rentfetch_do_settings_properties_property_embed' );
+		} elseif ( 'global-property-fees' === $section ) {
+			do_action( 'rentfetch_do_settings_properties_global_property_fees' );
 		} else {
 			do_action( 'rentfetch_do_settings_properties_property_maps' );
 		}

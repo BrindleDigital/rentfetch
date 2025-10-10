@@ -1176,3 +1176,131 @@ function rentfetch_upload_fees_csv() {
 	) );
 }
 add_action( 'wp_ajax_rentfetch_upload_fees_csv', 'rentfetch_upload_fees_csv' );
+
+/**
+ * AJAX handler to download sample global fees CSV
+ */
+function rentfetch_download_global_fees_csv_sample() {
+	
+	// Set headers for CSV download
+	header( 'Content-Type: text/csv; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename=global_property_fees_sample.csv' );
+	
+	// Create sample CSV content
+	$csv_content = "description,price,frequency,notes,category\n";
+	$csv_content .= "Application Fee,\$100,,Required,Move-In Basics\n";
+	$csv_content .= "Administration Fee,\$300,,Required,Move-In Basics\n";
+	$csv_content .= "\"One-Time Access Control Setup\",\$50,,Required,Move-In Basics\n";
+	$csv_content .= "\"One-Time Pet Fee\",\$350,\"Per \"\"pet\"\" (non-refundable)\",,Move-In Basics\n";
+	$csv_content .= "Trash Fee,\$25,,,Essentials\n";
+	$csv_content .= "Amenity Fee,\$25,,,Essentials\n";
+	$csv_content .= "Internet Access,\$85,,Required,Essentials\n";
+	$csv_content .= "Pest Control,\$5,,Required,Essentials\n";
+	
+	echo $csv_content;
+	exit;
+}
+add_action( 'wp_ajax_rentfetch_download_global_fees_csv_sample', 'rentfetch_download_global_fees_csv_sample' );
+
+/**
+ * AJAX handler to download current global fees data as CSV
+ */
+function rentfetch_download_current_global_fees_csv() {
+	
+	// Verify nonce for security
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_main_options_nonce_action' ) ) {
+		wp_die( 'Security check failed' );
+	}
+
+	// Get current global fees data
+	$fees_data = get_option( 'rentfetch_options_global_property_fees_data' );
+	if ( ! is_array( $fees_data ) ) {
+		$fees_data = array();
+	}
+
+	// Set headers for CSV download
+	header( 'Content-Type: text/csv; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename=global_property_fees_current.csv' );
+	
+	// Create CSV content
+	$csv_content = "description,price,frequency,notes,category\n";
+	
+	foreach ( $fees_data as $fee ) {
+		$csv_content .= sprintf(
+			"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+			str_replace( '"', '""', $fee['description'] ?? '' ),
+			str_replace( '"', '""', $fee['price'] ?? '' ),
+			str_replace( '"', '""', $fee['frequency'] ?? '' ),
+			str_replace( '"', '""', $fee['notes'] ?? '' ),
+			str_replace( '"', '""', $fee['category'] ?? '' )
+		);
+	}
+	
+	echo $csv_content;
+	exit;
+}
+add_action( 'wp_ajax_rentfetch_download_current_global_fees_csv', 'rentfetch_download_current_global_fees_csv' );
+
+/**
+ * AJAX handler to upload and process global fees CSV
+ */
+function rentfetch_upload_global_fees_csv() {
+	
+	// Verify nonce for security
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_main_options_nonce_action' ) ) {
+		wp_send_json_error( array( 'message' => 'Security check failed' ) );
+	}
+
+	// Check if file was uploaded
+	if ( ! isset( $_FILES['csv_file'] ) || empty( $_FILES['csv_file']['tmp_name'] ) ) {
+		wp_send_json_error( array( 'message' => 'No file uploaded' ) );
+	}
+
+	$csv_file = $_FILES['csv_file'];
+	
+	// Check if it's a valid CSV file
+	$file_type = wp_check_filetype( $csv_file['name'] );
+	if ( 'csv' !== $file_type['ext'] ) {
+		wp_send_json_error( array( 'message' => 'Invalid file type. Please upload a CSV file.' ) );
+	}
+
+	// Process the CSV file
+	$fees_data = array();
+	
+	if ( ( $handle = fopen( $csv_file['tmp_name'], 'r' ) ) !== false ) {
+		$header = fgetcsv( $handle, 1000, ',' );
+		
+		// Validate header
+		$expected_header = array( 'description', 'price', 'frequency', 'notes', 'category' );
+		if ( $header !== $expected_header ) {
+			fclose( $handle );
+			wp_send_json_error( array( 'message' => 'Invalid CSV format. Expected columns: description, price, frequency, notes, category' ) );
+		}
+
+		while ( ( $data = fgetcsv( $handle, 1000, ',' ) ) !== false ) {
+			if ( count( $data ) === 5 ) {
+				$fees_data[] = array(
+					'description' => wp_kses_post( $data[0] ), // Allow basic HTML but sanitize
+					'price'       => (string) trim( $data[1] ), // Keep price as string to preserve formatting like $ signs, trim whitespace
+					'frequency'   => sanitize_text_field( $data[2] ),
+					'notes'       => wp_kses_post( $data[3] ), // Allow basic HTML but sanitize
+					'category'    => sanitize_text_field( $data[4] ),
+				);
+			}
+		}
+		
+		fclose( $handle );
+	} else {
+		wp_send_json_error( array( 'message' => 'Could not read CSV file' ) );
+	}
+	
+	// Save the processed fees data
+	update_option( 'rentfetch_options_global_property_fees_data', $fees_data );
+	
+	// Return the updated JSON
+	wp_send_json_success( array( 
+		'json' => wp_json_encode( $fees_data, JSON_PRETTY_PRINT ),
+		'count' => count( $fees_data )
+	) );
+}
+add_action( 'wp_ajax_rentfetch_upload_global_fees_csv', 'rentfetch_upload_global_fees_csv' );
