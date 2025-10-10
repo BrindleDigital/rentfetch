@@ -144,7 +144,7 @@ jQuery(function ($) {
 							var label = '';
 							if (val === 'now-30') {
 								var start = new Date();
-								start.setDate(start.getDate() - 7);
+								start.setDate(start.getDate() - 365);
 								var end = new Date();
 								end.setDate(end.getDate() + 30);
 								label =

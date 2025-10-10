@@ -94,7 +94,7 @@ function rentfetch_search_filters_date() {
 	$all_options = array(
 		'now-30' => array(
 			'label' => 'Next 30 days',
-			'start' => date( 'Ymd', strtotime( '-7 days' ) ),
+			'start' => date( 'Ymd', strtotime( '-1 year' ) ),
 			'end' => date( 'Ymd', strtotime( '+30 days' ) ),
 		),
 		'30-60' => array(
@@ -199,7 +199,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 
 	foreach ( $selected as $sel ) {
 		if ( $sel === 'now-30' ) {
-			$start = date( 'Ymd', strtotime( '-7 days' ) );
+			$start = date( 'Ymd', strtotime( '-1 year' ) );
 			$end   = date( 'Ymd', strtotime( '+30 days' ) );
 		} elseif ( $sel === '30-60' ) {
 			$start = date( 'Ymd', strtotime( '+30 days' ) );
