@@ -95,29 +95,32 @@ function rentfetch_search_filters_date() {
 		'now-30' => array(
 			'label' => 'Next 30 days',
 			'start' => date( 'Ymd', strtotime( '-1 year' ) ),
-			'end' => date( 'Ymd', strtotime( '+30 days' ) ),
+			'end'   => date( 'Ymd', strtotime( '+30 days' ) ),
 		),
-		'30-60' => array(
+		'30-60'  => array(
 			'label' => '30-60 days',
 			'start' => date( 'Ymd', strtotime( '+30 days' ) ),
-			'end' => date( 'Ymd', strtotime( '+60 days' ) ),
+			'end'   => date( 'Ymd', strtotime( '+60 days' ) ),
 		),
-		'60-90' => array(
+		'60-90'  => array(
 			'label' => '60-90 days',
 			'start' => date( 'Ymd', strtotime( '+60 days' ) ),
-			'end' => date( 'Ymd', strtotime( '+90 days' ) ),
-		),
-		'fall-' . $fall_year => array(
-			'label' => 'Fall ' . $fall_year . ' Semester',
-			'start' => $fall_year . '0630',
-			'end' => $fall_year . '1001',
-		),
-		'spring-' . $spring_year => array(
-			'label' => 'Spring ' . $spring_year . ' Semester',
-			'start' => $spring_year . '0301',
-			'end' => $spring_year . '0531',
+			'end'   => date( 'Ymd', strtotime( '+90 days' ) ),
 		),
 	);
+
+	if ( '1' !== get_option( 'rentfetch_options_disable_school_year_date_range' ) ) {
+		$all_options[ 'fall-' . $fall_year ]   = array(
+			'label' => 'Fall ' . $fall_year . ' Semester',
+			'start' => $fall_year . '0630',
+			'end'   => $fall_year . '1001',
+		);
+		$all_options[ 'spring-' . $spring_year ] = array(
+			'label' => 'Spring ' . $spring_year . ' Semester',
+			'start' => $spring_year . '0301',
+			'end'   => $spring_year . '0531',
+		);
+	}
 
 	// Filter options to only show those with availability
 	$options = array();

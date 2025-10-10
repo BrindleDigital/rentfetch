@@ -24,6 +24,8 @@ function rentfetch_settings_set_defaults_properties() {
 	);
 	add_option( 'rentfetch_options_featured_filters', $defaultarray );
 
+	add_option( 'rentfetch_options_disable_school_year_date_range', '0' );
+
 	$defaultarray = array(
 		'text_based_search',
 		'beds_search',
@@ -223,6 +225,17 @@ function rentfetch_settings_properties_property_search_settings() {
 					<label>
 						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="amenities_search" <?php checked( in_array( 'amenities_search', $options_featured_filters, true ) ); ?>>
 						Amenities search
+					</label>
+				</li>
+			</ul>
+		</div>
+		<div class="separator"></div>
+		<div class="section">
+			<ul class="checkboxes">
+				<li>
+					<label for="rentfetch_options_disable_school_year_date_range">
+						<input type="checkbox" name="rentfetch_options_disable_school_year_date_range" id="rentfetch_options_disable_school_year_date_range" value="1" <?php checked( '1', get_option( 'rentfetch_options_disable_school_year_date_range' ) ); ?>>
+						Disable school-year based date range searches
 					</label>
 				</li>
 			</ul>
@@ -466,6 +479,13 @@ function rentfetch_save_settings_property_search() {
 	// Ensure dialog filters include all featured filters.
 	$options_dialog_filters = array_unique( array_merge( $options_dialog_filters, $options_featured_filters ) );
 	update_option( 'rentfetch_options_dialog_filters', $options_dialog_filters );
+
+	// Checkbox field.
+	if ( isset( $_POST['rentfetch_options_disable_school_year_date_range'] ) ) {
+		update_option( 'rentfetch_options_disable_school_year_date_range', '1' );
+	} else {
+		update_option( 'rentfetch_options_disable_school_year_date_range', '0' );
+	}
 
 	// Number field.
 	if ( isset( $_POST['rentfetch_options_maximum_bedrooms_to_search'] ) ) {
