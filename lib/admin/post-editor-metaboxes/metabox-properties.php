@@ -544,6 +544,20 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 				</div>
 			</div>
 		</div>
+
+		<?php
+		// * Property Fees JSON URL
+		$property_fees_json_url = get_post_meta( $post->ID, 'property_fees_json_url', true );
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="property_fees_json_url">Property Fees JSON URL</label>
+				<p class="description">Enter a URL to a JSON file containing property fees. This will be used as a fallback if the JSON field above is empty.</p>
+			</div>
+			<div class="column">
+				<input type="url" id="property_fees_json_url" name="property_fees_json_url" value="<?php echo esc_url( $property_fees_json_url ); ?>" style="width:100%;">
+			</div>
+		</div>
 		
 		<?php
 		// * Property Fees Embed
@@ -552,7 +566,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		<div class="field">
 			<div class="column">
 				<label for="property_fees_embed">Property Fees Embed Code</label>
-				<p class="description">This approach allows you to add a canva embed or similar. The csv/json markup takes precedence (this is a fallback), and only one will ever output.</p>
+				<p class="description">This approach allows you to add a canva embed or similar. This is a fallback to either of the options above.</p>
 			</div>
 			<div class="column">
 				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>
@@ -791,6 +805,10 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 	if ( isset( $_POST['property_fees_embed'] ) ) {
 		update_post_meta( $post_id, 'property_fees_embed', wp_unslash( $_POST['property_fees_embed'] ) );
+	}
+
+	if ( isset( $_POST['property_fees_json_url'] ) ) {
+		update_post_meta( $post_id, 'property_fees_json_url', esc_url_raw( wp_unslash( $_POST['property_fees_json_url'] ) ) );
 	}
 
 	if ( isset( $_POST['property_fees_json'] ) ) {

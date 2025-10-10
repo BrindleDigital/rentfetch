@@ -1501,16 +1501,34 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 		}
 	}
 
-	$property_fees_embed = get_post_meta( $post_id, 'property_fees_embed', true );
-	$property_fees_data = get_post_meta( $post_id, 'property_fees_data', true );
-	
-	if ( $property_fees_data && is_array( $property_fees_data ) ) {
-		$property_fees_json = wp_json_encode( $property_fees_data );
+	$property_fees_data     = get_post_meta( $post_id, 'property_fees_data', true );
+	$property_fees_json_url = get_post_meta( $post_id, 'property_fees_json_url', true );
+	$property_fees_embed    = get_post_meta( $post_id, 'property_fees_embed', true );
+	$property_fees_markup   = '';
+
+	// Priority 1: Use property_fees_data if it's a non-empty array
+	if ( ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
+		$property_fees_json   = wp_json_encode( $property_fees_data );
 		$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
-	} elseif ( $property_fees_embed ) {
+	}
+	// Priority 2: Use property_fees_json_url if available
+	elseif ( ! empty( $property_fees_json_url ) ) {
+		$response = wp_remote_get( $property_fees_json_url );
+		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+			$json_body = wp_remote_retrieve_body( $response );
+			// Check if the body is valid JSON before passing it to the markup function
+			if ( is_string( $json_body ) && is_array( json_decode( $json_body, true ) ) && json_last_error() === JSON_ERROR_NONE ) {
+				$property_fees_markup = rentfetch_get_property_fees_markup( $json_body );
+			}
+		}
+	}
+	// Priority 3: Fallback to property_fees_embed
+	elseif ( ! empty( $property_fees_embed ) ) {
 		$property_fees_markup = $property_fees_embed;
-	} else {
-		return ''; // if we don't have either, we can't output anything.
+	}
+	// If none of the above, return empty
+	else {
+		return '';
 	}
 
 	return apply_filters( 'rentfetch_filter_property_fees_embed', $property_fees_markup, $post_id );
