@@ -260,17 +260,41 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 
 			// Get from units (availability_date stored as m/d/Y)
 			$unit_query = $wpdb->prepare(
-				"SELECT DISTINCT pm2.meta_value FROM {$wpdb->posts} p
+				"SELECT DISTINCT p.ID FROM {$wpdb->posts} p
 				JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id
-				JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id
 				WHERE p.post_type = 'units'
-				AND pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%%m/%%d/%%Y')) BETWEEN DATE(%s) AND DATE(%s) 
-				AND pm2.meta_key = 'floorplan_id'",
+				AND pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%%m/%%d/%%Y')) BETWEEN DATE(%s) AND DATE(%s)",
 				$start_date,
 				$end_date
 			);
 			$unit_ids_from_query = $wpdb->get_col( $unit_query );
-			$floorplan_ids            = array_merge( $floorplan_ids, $unit_ids_from_query );
+
+			if ( ! empty( $unit_ids_from_query ) ) {
+				$how_many_units = count( $unit_ids_from_query );
+				$unit_placeholders = array_fill( 0, $how_many_units, '%d' );
+				$unit_format = implode( ', ', $unit_placeholders );
+
+				// Get the YARDI IDs from the units
+				$yardi_ids_from_units_query = $wpdb->prepare(
+					"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'floorplan_id' AND post_id IN ( $unit_format )",
+					$unit_ids_from_query
+				);
+				$yardi_ids = $wpdb->get_col( $yardi_ids_from_units_query );
+
+				if ( ! empty( $yardi_ids ) ) {
+					$how_many_yardi = count( $yardi_ids );
+					$yardi_placeholders = array_fill( 0, $how_many_yardi, '%s' );
+					$yardi_format = implode( ', ', $yardi_placeholders );
+
+					// Get the WP post IDs for floorplans that have a matching YARDI ID
+					$floorplan_ids_from_units_query = $wpdb->prepare(
+						"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'floorplan_id' AND meta_value IN ( $yardi_format )",
+						$yardi_ids
+					);
+					$floorplan_ids_from_units = $wpdb->get_col( $floorplan_ids_from_units_query );
+					$floorplan_ids = array_merge( $floorplan_ids, $floorplan_ids_from_units );
+				}
+			}
 		}
 
 		$floorplan_ids = array_unique( array_map( 'intval', $floorplan_ids ) );
