@@ -43,8 +43,9 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 	$unit_count = $wpdb->get_var( $wpdb->prepare(
 		"SELECT COUNT(*) FROM {$wpdb->postmeta} pm1 
 		JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id 
+		JOIN {$wpdb->posts} p ON pm1.post_id = p.ID
 		WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%m/%d/%Y')) BETWEEN DATE(%s) AND DATE(%s) 
-		AND pm2.meta_key = 'floorplan_id'",
+		AND pm2.meta_key = 'floorplan_id' AND p.post_type = 'units'",
 		$start_date,
 		$end_date
 	) );
@@ -259,8 +260,9 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 			$unit_query = $wpdb->prepare(
 				"SELECT DISTINCT pm2.meta_value FROM {$wpdb->postmeta} pm1 
 				JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id 
+				JOIN {$wpdb->posts} p ON pm1.post_id = p.ID
 				WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%m/%d/%Y')) BETWEEN DATE(%s) AND DATE(%s) 
-				AND pm2.meta_key = 'floorplan_id'",
+				AND pm2.meta_key = 'floorplan_id' AND p.post_type = 'units'",
 				$start_date,
 				$end_date
 			);
