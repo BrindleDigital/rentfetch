@@ -247,9 +247,11 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 
 			// Get floorplans directly (availability_date stored as Ymd numeric)
 			$floorplan_query = $wpdb->prepare(
-				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'floorplans' AND ID IN (
-					SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'availability_date' AND CAST(meta_value AS UNSIGNED) BETWEEN %d AND %d
-				)",
+				"SELECT p.ID FROM {$wpdb->posts} p
+				JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+				WHERE p.post_type = 'floorplans'
+				AND pm.meta_key = 'availability_date'
+				AND CAST(pm.meta_value AS UNSIGNED) BETWEEN %d AND %d",
 				$start,
 				$end
 			);
@@ -258,16 +260,17 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 
 			// Get from units (availability_date stored as m/d/Y)
 			$unit_query = $wpdb->prepare(
-				"SELECT DISTINCT pm2.meta_value FROM {$wpdb->postmeta} pm1 
-				JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id 
-				JOIN {$wpdb->posts} p ON pm1.post_id = p.ID
-				WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%m/%d/%Y')) BETWEEN DATE(%s) AND DATE(%s) 
-				AND pm2.meta_key = 'floorplan_id' AND p.post_type = 'units'",
+				"SELECT DISTINCT pm2.meta_value FROM {$wpdb->posts} p
+				JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id
+				JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id
+				WHERE p.post_type = 'units'
+				AND pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%%m/%%d/%%Y')) BETWEEN DATE(%s) AND DATE(%s) 
+				AND pm2.meta_key = 'floorplan_id'",
 				$start_date,
 				$end_date
 			);
-			$floorplan_ids_from_units = $wpdb->get_col( $unit_query );
-			$floorplan_ids            = array_merge( $floorplan_ids, $floorplan_ids_from_units );
+			$unit_ids_from_query = $wpdb->get_col( $unit_query );
+			$floorplan_ids            = array_merge( $floorplan_ids, $unit_ids_from_query );
 		}
 
 		$floorplan_ids = array_unique( array_map( 'intval', $floorplan_ids ) );
