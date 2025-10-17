@@ -25,13 +25,10 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 	}
 	
 	$transient_key = 'rentfetch_date_availability_' . $cache_key;
-	$has_availability = false;
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$has_availability = get_transient( $transient_key );
-		if ( false !== $has_availability ) {
-			$cache[ $cache_key ] = (bool) $has_availability;
-			return $cache[ $cache_key ];
-		}
+	$has_availability = get_transient( $transient_key );
+	if ( false !== $has_availability ) {
+		$cache[ $cache_key ] = (bool) $has_availability;
+		return $cache[ $cache_key ];
 	}
 
 	global $wpdb;
@@ -60,9 +57,7 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 
 	$has_availability = ( $floorplan_count > 0 || $unit_count > 0 );
 
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $transient_key, $has_availability, 5 * MINUTE_IN_SECONDS );
-	}
+	set_transient( $transient_key, $has_availability, 30 * MINUTE_IN_SECONDS );
 
 	$cache[ $cache_key ] = $has_availability;
 	return $has_availability;
@@ -322,3 +317,18 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	return $floorplans_args;
 }
 add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorplans_args_date', 10, 1 );
+
+/**
+ * Clear date availability cache when query caching option is updated
+ *
+ * @param string $option    The option name.
+ * @param mixed  $old_value The old option value.
+ * @param mixed  $new_value The new option value.
+ */
+function rentfetch_clear_date_availability_cache_on_update( $option, $old_value, $new_value ) {
+	if ( $option === 'rentfetch_options_disable_query_caching' ) {
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'rentfetch_date_availability_%' ) );
+	}
+}
+add_action( 'update_option', 'rentfetch_clear_date_availability_cache_on_update', 10, 3 );
