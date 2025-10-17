@@ -189,6 +189,7 @@ jQuery(function ($) {
 
 	// Function to perform AJAX search
 	function performAJAXSearch(queryParams) {
+		console.log('Starting nonce request for property search');
 		// First, get a fresh nonce
 		$.ajax({
 			url: rentfetch_ajax.ajaxurl,
@@ -229,6 +230,7 @@ jQuery(function ($) {
 
 	// Function to perform the actual AJAX search (separated from nonce generation)
 	function performActualPropertySearch(queryParams) {
+		console.log('Starting actual property search');
 		var filter = $('#filter');
 		var toggleData = filter;
 
@@ -270,6 +272,9 @@ jQuery(function ($) {
 				var count = $('.properties-loop').children().length;
 				// update #properties-found with the count
 				$('#properties-found').text(count);
+
+				// Trigger custom event for map update
+				$(document).trigger('rentfetchPropertySearchComplete');
 			},
 		});
 	}

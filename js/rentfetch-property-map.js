@@ -70,7 +70,7 @@ jQuery(document).ready(function ($) {
 				// if there's a custom marker set, use that
 				marker = new google.maps.Marker({
 					position: theposition,
-					map: map,
+					map: null, // Don't add to map yet
 					title: title,
 					icon: markerImage,
 				});
@@ -78,7 +78,7 @@ jQuery(document).ready(function ($) {
 				// if there's no custom icon, just use the google default
 				marker = new google.maps.Marker({
 					position: theposition,
-					map: map,
+					map: null, // Don't add to map yet
 					title: title,
 				});
 			}
@@ -127,48 +127,67 @@ jQuery(document).ready(function ($) {
 			markers.push(marker);
 		}
 
-		// Fit bounds to show all markers (only if there are markers)
-		if (locationsArray.length > 0) {
-			map.fitBounds(bounds);
-		}
-
-		// At the end of the function:
-		if (typeof window.rentFetchMapHooks === 'undefined') {
-			window.rentFetchMapHooks = [];
-		}
-
-		// Run hooks only once per map update
-		if (!window.hooksRan) {
-			window.rentFetchMapHooks.forEach((hook) => {
-				if (typeof hook === 'function') {
-					hook(map, markers);
-				}
-			});
-			window.hooksRan = true;
-		}
+		// Return the bounds so resetMap can handle the transition
+		return bounds;
 	}
 	function resetMap() {
 		// At the start of resetMap, reset the hooks flag
 		window.hooksRan = false;
-
-		// Clear markers from the map
-		for (let i = 0; i < markers.length; i++) {
-			markers[i].setMap(null);
-		}
-
-		// Empty the markers array
-		markers = [];
 
 		// Only render a new map if one doesn't exist
 		if (!map) {
 			renderMap();
 		}
 
+		// Get new locations first
 		getLocations();
-		addMarkers();
 
-		// If no locations found, center on default location
-		if (locationsArray.length === 0) {
+		// Store reference to old markers
+		var oldMarkers = markers.slice(); // Create a copy of the current markers array
+
+		// Reset markers array for new markers
+		markers = [];
+
+		// Create new markers and get their bounds
+		var newBounds = addMarkers();
+
+		// If we have new locations, animate to new bounds smoothly
+		if (locationsArray.length > 0) {
+			// Show new markers before zoom animation
+			for (let i = 0; i < markers.length; i++) {
+				markers[i].setMap(map);
+			}
+
+			// Animate to new bounds
+			map.fitBounds(newBounds);
+
+			// Wait for animation to complete (fitBounds animation typically takes ~500-1000ms)
+			setTimeout(function () {
+				// Remove old markers after animation completes
+				for (let i = 0; i < oldMarkers.length; i++) {
+					oldMarkers[i].setMap(null);
+				}
+
+				// Run hooks after transition is complete
+				if (typeof window.rentFetchMapHooks === 'undefined') {
+					window.rentFetchMapHooks = [];
+				}
+
+				if (!window.hooksRan) {
+					window.rentFetchMapHooks.forEach((hook) => {
+						if (typeof hook === 'function') {
+							hook(map, markers);
+						}
+					});
+					window.hooksRan = true;
+				}
+			}, 600); // Wait 600ms for fitBounds animation to complete
+		} else {
+			// No locations found, just clear old markers and center on default
+			for (let i = 0; i < oldMarkers.length; i++) {
+				oldMarkers[i].setMap(null);
+			}
+
 			var myLatlng = new google.maps.LatLng(
 				google_maps_default_latitude,
 				google_maps_default_longitude
@@ -195,7 +214,9 @@ jQuery(document).ready(function ($) {
 
 	// $(document).on('click touchstart', '.type-properties', activeOnClick);
 
-	$(document).ajaxComplete(function () {
+	// Listen for property search completion
+	$(document).on('rentfetchPropertySearchComplete', function () {
+		console.log('Map updating after property search');
 		resetMap();
 	});
 
@@ -203,6 +224,14 @@ jQuery(document).ready(function ($) {
 	if ($('#map').length) {
 		renderMap();
 		getLocations();
-		addMarkers();
+		var initialBounds = addMarkers();
+
+		// Show initial markers immediately
+		if (locationsArray.length > 0) {
+			map.fitBounds(initialBounds);
+			for (let i = 0; i < markers.length; i++) {
+				markers[i].setMap(map);
+			}
+		}
 	}
 });
