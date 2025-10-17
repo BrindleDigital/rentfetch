@@ -47,7 +47,7 @@ function rentfetch_settings_set_defaults_properties() {
 
 	// Maps API default options.
 	add_option( 'rentfetch_options_google_maps_default_latitude', 39.7392 );
-	add_option( 'rentfetch_options_google_maps_default_longitude', 104.9903 );
+	add_option( 'rentfetch_options_google_maps_default_longitude', -104.9903 );
 
 	// Global property fees defaults.
 	add_option( 'rentfetch_options_global_property_fees_data', array() );

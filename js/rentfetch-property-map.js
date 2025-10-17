@@ -84,7 +84,6 @@ jQuery(document).ready(function ($) {
 			}
 
 			bounds.extend(theposition);
-			map.fitBounds(bounds);
 
 			marker['infowindow'] = new google.maps.InfoWindow({
 				content:
@@ -126,21 +125,26 @@ jQuery(document).ready(function ($) {
 			});
 
 			markers.push(marker);
+		}
 
-			// At the end of the function:
-			if (typeof window.rentFetchMapHooks === 'undefined') {
-				window.rentFetchMapHooks = [];
-			}
+		// Fit bounds to show all markers (only if there are markers)
+		if (locationsArray.length > 0) {
+			map.fitBounds(bounds);
+		}
 
-			// Run hooks only once per map update
-			if (!window.hooksRan) {
-				window.rentFetchMapHooks.forEach((hook) => {
-					if (typeof hook === 'function') {
-						hook(map, markers);
-					}
-				});
-				window.hooksRan = true;
-			}
+		// At the end of the function:
+		if (typeof window.rentFetchMapHooks === 'undefined') {
+			window.rentFetchMapHooks = [];
+		}
+
+		// Run hooks only once per map update
+		if (!window.hooksRan) {
+			window.rentFetchMapHooks.forEach((hook) => {
+				if (typeof hook === 'function') {
+					hook(map, markers);
+				}
+			});
+			window.hooksRan = true;
 		}
 	}
 	function resetMap() {
@@ -155,9 +159,23 @@ jQuery(document).ready(function ($) {
 		// Empty the markers array
 		markers = [];
 
-		renderMap();
+		// Only render a new map if one doesn't exist
+		if (!map) {
+			renderMap();
+		}
+
 		getLocations();
 		addMarkers();
+
+		// If no locations found, center on default location
+		if (locationsArray.length === 0) {
+			var myLatlng = new google.maps.LatLng(
+				google_maps_default_latitude,
+				google_maps_default_longitude
+			);
+			map.setCenter(myLatlng);
+			map.setZoom(8);
+		}
 	}
 
 	function openMarkerOnGridHover() {
@@ -180,4 +198,11 @@ jQuery(document).ready(function ($) {
 	$(document).ajaxComplete(function () {
 		resetMap();
 	});
+
+	// Initialize map on page load
+	if ($('#map').length) {
+		renderMap();
+		getLocations();
+		addMarkers();
+	}
 });
