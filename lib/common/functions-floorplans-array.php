@@ -494,3 +494,109 @@ function rentfetch_get_floorplans( $property_id = null ) {
 
 	return $rentfetch_floorplans;
 }
+
+/**
+ * Get property IDs that have available floorplans, optimized for performance.
+ * Returns an array of property IDs without full aggregation.
+ *
+ * @param array $args Optional. Query arguments, same as WP_Query. Default empty array.
+ * @return array Array of property IDs.
+ */
+function rentfetch_get_property_ids_with_available_floorplans( $args = array() ) {
+	global $wpdb;
+
+	// Set up default args to match rentfetch_get_floorplans_array
+	$default_args = array(
+		'post_type'      => 'floorplans',
+		'posts_per_page' => -1,
+		'orderby'        => 'date',
+		'order'          => 'ASC',
+		'no_found_rows'  => true,
+		'post_status'    => 'publish',
+	);
+	$args = wp_parse_args( $args, $default_args );
+	$args = apply_filters( 'rentfetch_search_floorplans_query_args', $args );
+
+	// Pseudocache: use a transient keyed by the query args
+	$cache_key = 'rentfetch_property_ids_available_' . md5( wp_json_encode( $args ) );
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		$cached = get_transient( $cache_key );
+		if ( false !== $cached && is_array( $cached ) ) {
+			return $cached;
+		}
+	}
+
+	// Step 1: Get filtered floorplan IDs (same as in rentfetch_get_floorplans_array_sql)
+	$where = [];
+	$where[] = $wpdb->prepare( 'post_type = %s', $args['post_type'] );
+	$where[] = $wpdb->prepare( 'post_status = %s', $args['post_status'] );
+	if ( ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
+		$post__in = implode( ',', array_map( 'intval', $args['post__in'] ) );
+		$where[] = "ID IN ($post__in)";
+	}
+	if ( ! empty( $args['post__not_in'] ) && is_array( $args['post__not_in'] ) ) {
+		$post__not_in = implode( ',', array_map( 'intval', $args['post__not_in'] ) );
+		$where[] = "ID NOT IN ($post__not_in)";
+	}
+
+	$meta_join_sql = '';
+	if ( ! empty( $args['meta_query'] ) && is_array( $args['meta_query'] ) ) {
+		$join_count = 0;
+		$meta_sql = rentfetch_build_meta_query_sql($args['meta_query'], $wpdb, 'posts', $join_count);
+		if ( $meta_sql['join'] ) {
+			$meta_join_sql = implode( ' ', $meta_sql['join'] );
+		}
+		if ( $meta_sql['where'] ) {
+			$where[] = $meta_sql['where'];
+		}
+	}
+
+	$where_sql = 'WHERE ' . implode( ' AND ', $where );
+
+	// Orderby
+	$orderby = 'ID ASC';
+	if ( isset( $args['orderby'] ) && 'date' === $args['orderby'] ) {
+		$orderby = 'post_date ' . ( isset( $args['order'] ) ? $args['order'] : 'ASC' );
+	}
+
+	// Limit
+	$limit = '';
+	if ( isset( $args['posts_per_page'] ) && intval( $args['posts_per_page'] ) > 0 ) {
+		$limit = 'LIMIT ' . intval( $args['posts_per_page'] );
+	}
+
+	// Query for IDs only
+	$ids_sql = "
+		SELECT ID
+		FROM {$wpdb->posts}
+		$meta_join_sql
+		$where_sql
+		ORDER BY $orderby
+		$limit
+	";
+	$ids = $wpdb->get_col( $ids_sql );
+
+	if ( empty( $ids ) ) {
+		// Cache empty results briefly
+		if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' && isset( $cache_key ) ) {
+			set_transient( $cache_key, array(), 5 * MINUTE_IN_SECONDS );
+		}
+		return array();
+	}
+
+	// Step 2: Get distinct property_ids from those floorplan IDs
+	$ids_in = implode( ',', array_map( 'intval', $ids ) );
+	$property_ids_sql = "
+		SELECT DISTINCT meta_value as property_id
+		FROM {$wpdb->postmeta}
+		WHERE post_id IN ($ids_in) AND meta_key = 'property_id' AND meta_value != ''
+	";
+	$property_ids = $wpdb->get_col( $property_ids_sql );
+
+	// Cache the results
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		set_transient( $cache_key, $property_ids, 5 * MINUTE_IN_SECONDS );
+	}
+
+	return $property_ids;
+}

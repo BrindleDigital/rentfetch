@@ -235,9 +235,7 @@ function rentfetch_render_property_query_results( $property_args ) {
  */
 function rentfetch_filter_properties() {
 
-	$floorplans = rentfetch_get_floorplans_array_sql();
-
-	$property_ids = array_keys( $floorplans );
+	$property_ids = rentfetch_get_property_ids_with_available_floorplans();
 	if ( empty( $property_ids ) ) {
 		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything – empty array will let us find everything, so let's pass nonsense to make the search find nothing.
 	}
