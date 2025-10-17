@@ -242,6 +242,9 @@ function rentfetch_get_floorplan_specials() {
 	$specials = get_post_meta( get_the_ID(), 'has_specials', true );
 	$specials_override_text = get_post_meta( get_the_ID(), 'specials_override_text', true );
 	
+	// Sanitize the override text to plain text to prevent HTML from being output
+	$specials_override_text = sanitize_text_field( $specials_override_text );
+	
 	if ( $specials && !$specials_override_text ) {
 		$specials_text = 'Specials available';
 	} elseif ( $specials_override_text ) {
@@ -296,7 +299,7 @@ function rentfetch_get_floorplan_tour() {
 		if ( isset( $youtube_matches[1] ) ) {
 			$video_id   = $youtube_matches[1];
 			$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
-			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s"></a></div>', get_the_ID(), $oembedlink );
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s"></a></div>', get_the_ID(), esc_attr( $oembedlink ) );
 		}
 
 		$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
@@ -305,13 +308,13 @@ function rentfetch_get_floorplan_tour() {
 		// if it's matterport and it's a full iframe.
 		if ( isset( $matterport_matches[1] ) ) {
 			$oembedlink = $matterport_matches[1];
-			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-matterport" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), $oembedlink );
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-matterport" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), esc_attr( $oembedlink ) );
 		}
 
 		// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
 		if ( ! $embedlink ) {
 			$oembedlink = $iframe;
-			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link" target="_blank" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), $oembedlink );
+			$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link" target="_blank" data-gallery="post-%s" href="%s"></a></div>', get_the_ID(), esc_attr( $oembedlink ) );
 		}
 	}
 

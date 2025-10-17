@@ -1278,6 +1278,9 @@ function rentfetch_get_property_specials_from_meta( $property_id = null ) {
 	$has_specials = get_post_meta( $post_id, 'has_specials', true );
 	$specials_override_text = get_post_meta( $post_id, 'specials_override_text', true );
 	
+	// Sanitize the override text to plain text to prevent HTML from being output
+	$specials_override_text = sanitize_text_field( $specials_override_text );
+	
 	if ( $has_specials && !$specials_override_text ) {
 		$specials_text = 'Specials available';
 	} elseif ( $specials_override_text ) {
