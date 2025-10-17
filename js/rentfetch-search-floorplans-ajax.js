@@ -237,6 +237,46 @@ jQuery(function ($) {
 
 	// Function to perform AJAX search
 	function performAJAXSearch(queryParams) {
+		var filter = $('#filter');
+
+		// First, get a fresh nonce
+		$.ajax({
+			url: filter.attr('action'),
+			data: {
+				action: 'rentfetch_get_search_nonce',
+			},
+			type: 'POST',
+			beforeSend: function () {
+				$('#reset').text('Searching...'); // changing the button label
+				$('#response').html(''); // clear response div
+			},
+			success: function (response) {
+				if (response.success && response.data.nonce) {
+					// Update the nonce field with fresh nonce
+					$('#nonce-field').val(response.data.nonce);
+
+					// Now perform the actual search
+					performActualSearch(queryParams);
+				} else {
+					console.error('Failed to get fresh nonce');
+					$('#reset').text('Clear All');
+					$('#response').html(
+						'<p>Error: Could not generate security token. Please refresh the page.</p>'
+					);
+				}
+			},
+			error: function () {
+				console.error('AJAX error getting nonce');
+				$('#reset').text('Clear All');
+				$('#response').html(
+					'<p>Error: Could not connect to server. Please try again.</p>'
+				);
+			},
+		});
+	}
+
+	// Function to perform the actual search with fresh nonce
+	function performActualSearch(queryParams) {
 		// get the data from the form
 		var filter = $('#filter');
 		var filterSerialized = filter.serialize();
@@ -254,12 +294,6 @@ jQuery(function ($) {
 			data: postData, // form data
 			// toggleData: filter.serialize(),
 			type: filter.attr('method'), // POST
-			beforeSend: function (xhr) {
-				// filter.find('#reset').text('Searching...'); // changing the button label
-				$('#reset').text('Searching...'); // changing the button label
-				// clear #response div
-				$('#response').html('');
-			},
 			success: function (data) {
 				$('#reset').text('Clear All'); // changing the button label
 				$('#response').html(data); // insert data
@@ -285,6 +319,10 @@ jQuery(function ($) {
 				var count = $('.floorplans-loop').children().length;
 				// update #properties-found with the count
 				$('#floorplans-found').text(count);
+			},
+			error: function () {
+				$('#reset').text('Clear All');
+				$('#response').html('<p>Search failed. Please try again.</p>');
 			},
 		});
 	}

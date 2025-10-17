@@ -48,9 +48,8 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 
 		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', esc_url( site_url() ) );
 
-			// Add a nonce field so we can check for it later.
-			$nonce = wp_create_nonce( 'rentfetch_frontend_nonce_action' );
-			printf( '<input type="hidden" name="rentfetch_frontend_nonce_field" value="%s">', esc_attr( $nonce ) );
+			// Add an empty nonce field that will be populated by JavaScript
+			echo '<input type="hidden" name="rentfetch_frontend_nonce_field" value="" id="nonce-field">';
 
 			echo '<input type="hidden" name="action" value="floorplansearch">';
 
@@ -209,3 +208,16 @@ function rentfetch_filter_floorplans() {
 }
 add_action( 'wp_ajax_floorplansearch', 'rentfetch_filter_floorplans' );
 add_action( 'wp_ajax_nopriv_floorplansearch', 'rentfetch_filter_floorplans' );
+
+/**
+ * AJAX endpoint to generate a fresh nonce for floorplan search
+ *
+ * @return void
+ */
+function rentfetch_get_search_nonce() {
+	wp_send_json_success( array(
+		'nonce' => wp_create_nonce( 'rentfetch_frontend_nonce_action' )
+	));
+}
+add_action( 'wp_ajax_rentfetch_get_search_nonce', 'rentfetch_get_search_nonce' );
+add_action( 'wp_ajax_nopriv_rentfetch_get_search_nonce', 'rentfetch_get_search_nonce' );

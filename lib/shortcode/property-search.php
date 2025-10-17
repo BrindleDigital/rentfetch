@@ -71,6 +71,11 @@ function rentfetch_propertysearchfilters() {
 
 	// enqueue the search properties ajax script.
 	wp_enqueue_script( 'rentfetch-search-properties-ajax' );
+	
+	// localize the script to provide ajaxurl for frontend AJAX requests.
+	wp_localize_script( 'rentfetch-search-properties-ajax', 'rentfetch_ajax', array(
+		'ajaxurl' => admin_url( 'admin-ajax.php' )
+	) );
 
 	// needed for toggling the featured filters on and off.
 	wp_enqueue_script( 'rentfetch-property-search-featured-filters-toggle' );
@@ -109,9 +114,8 @@ function rentfetch_propertysearch_filters_dialog() {
 			// Add the action to the form.
 			echo '<input type="hidden" name="action" value="propertysearch">';
 
-			// Add a nonce field so we can check for it later.
-			$nonce = wp_create_nonce( 'rentfetch_frontend_nonce_action' );
-			printf( '<input type="hidden" name="rentfetch_frontend_nonce_field" value="%s">', esc_attr( $nonce ) );
+			// Add an empty nonce field that will be populated by JavaScript
+			echo '<input type="hidden" name="rentfetch_frontend_nonce_field" value="" id="property-nonce-field">';
 
 			// This is the hook where we add all of our actions for the search filters.
 			do_action( 'rentfetch_do_search_properties_dialog_filters' );
@@ -311,3 +315,8 @@ function rentfetch_filter_properties() {
 }
 add_action( 'wp_ajax_propertysearch', 'rentfetch_filter_properties' ); // wp_ajax_{ACTION HERE}.
 add_action( 'wp_ajax_nopriv_propertysearch', 'rentfetch_filter_properties' );
+
+/**
+ * AJAX endpoint to generate a fresh nonce for property search (shared with floorplan search)
+ * Note: We can reuse the same endpoint since both use the same nonce action
+ */

@@ -189,6 +189,46 @@ jQuery(function ($) {
 
 	// Function to perform AJAX search
 	function performAJAXSearch(queryParams) {
+		// First, get a fresh nonce
+		$.ajax({
+			url: rentfetch_ajax.ajaxurl,
+			type: 'POST',
+			data: {
+				action: 'rentfetch_get_search_nonce',
+			},
+			beforeSend: function () {
+				$('#reset').text('Searching...'); // changing the button label
+				$('#response').html(''); // clear response div
+			},
+			success: function (response) {
+				if (response.success && response.data.nonce) {
+					// Update the nonce field with fresh nonce
+					$('#property-nonce-field').val(response.data.nonce);
+
+					// Now perform the actual search with the fresh nonce
+					performActualPropertySearch(queryParams);
+				} else {
+					console.error(
+						'Failed to get fresh nonce for property search'
+					);
+					$('#reset').text('Clear All');
+					$('#response').html(
+						'<p>Error: Could not generate security token. Please refresh the page.</p>'
+					);
+				}
+			},
+			error: function () {
+				console.error('Failed to get fresh nonce for property search');
+				$('#reset').text('Clear All');
+				$('#response').html(
+					'<p>Error: Could not generate security token. Please refresh the page.</p>'
+				);
+			},
+		});
+	}
+
+	// Function to perform the actual AJAX search (separated from nonce generation)
+	function performActualPropertySearch(queryParams) {
 		var filter = $('#filter');
 		var toggleData = filter;
 
