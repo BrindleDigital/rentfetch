@@ -95,13 +95,6 @@ function rentfetch_search_filters_floorplan_categories() {
  */
 function rentfetch_search_floorplans_args_categories( $property_args ) {
 
-	// $nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
-
-	// // * Verify the nonce
-	// if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_frontend_nonce_action' ) ) {
-	// 	die( 'Nonce verification failed' );
-	// }
-
 	// the slug for the taxonomy. If you're adding a new taxonomy,
 	// you'll need to change this to the slug of the new taxonomy.
 	$taxonomy_slug = 'floorplancategory';
@@ -110,6 +103,13 @@ function rentfetch_search_floorplans_args_categories( $property_args ) {
 	$search_parameter = 'search-' . $taxonomy_slug;
 
 	if ( isset( $_POST[ $search_parameter ] ) && is_array( $_POST[ $search_parameter ] ) ) {
+
+		$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
+
+		// * Verify the nonce
+		if ( ! wp_verify_nonce( $nonce, 'rentfetch_frontend_nonce_action' ) ) {
+			die( 'Nonce verification failed (floorplan categories)' );
+		}
 
 		// Get the values.
 		$terms = array_map( 'sanitize_text_field', wp_unslash( $_POST[ $search_parameter ] ) );
