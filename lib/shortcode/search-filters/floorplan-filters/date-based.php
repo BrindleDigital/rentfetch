@@ -17,12 +17,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return bool True if availability exists
  */
 function rentfetch_date_option_has_availability( $start, $end ) {
-	$transient_key = 'rentfetch_date_availability_' . md5( $start . '_' . $end );
+	static $cache = array();
+	$cache_key = md5( $start . '_' . $end );
+	
+	if ( isset( $cache[ $cache_key ] ) ) {
+		return $cache[ $cache_key ];
+	}
+	
+	$transient_key = 'rentfetch_date_availability_' . $cache_key;
 	$has_availability = false;
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$has_availability = get_transient( $transient_key );
 		if ( false !== $has_availability ) {
-			return (bool) $has_availability;
+			$cache[ $cache_key ] = (bool) $has_availability;
+			return $cache[ $cache_key ];
 		}
 	}
 
@@ -44,7 +52,7 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 		"SELECT COUNT(*) FROM {$wpdb->postmeta} pm1 
 		JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id 
 		JOIN {$wpdb->posts} p ON pm1.post_id = p.ID
-		WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%m/%d/%Y')) BETWEEN DATE(%s) AND DATE(%s) 
+		WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%%m/%%d/%%Y')) BETWEEN DATE(%s) AND DATE(%s) 
 		AND pm2.meta_key = 'floorplan_id' AND p.post_type = 'units'",
 		$start_date,
 		$end_date
@@ -56,6 +64,7 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 		set_transient( $transient_key, $has_availability, 5 * MINUTE_IN_SECONDS );
 	}
 
+	$cache[ $cache_key ] = $has_availability;
 	return $has_availability;
 }
 
@@ -277,7 +286,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 				// Get the YARDI IDs from the units
 				$yardi_ids_from_units_query = $wpdb->prepare(
 					"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'floorplan_id' AND post_id IN ( $unit_format )",
-					$unit_ids_from_query
+					...$unit_ids_from_query
 				);
 				$yardi_ids = $wpdb->get_col( $yardi_ids_from_units_query );
 
@@ -289,7 +298,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 					// Get the WP post IDs for floorplans that have a matching YARDI ID
 					$floorplan_ids_from_units_query = $wpdb->prepare(
 						"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'floorplan_id' AND meta_value IN ( $yardi_format )",
-						$yardi_ids
+						...$yardi_ids
 					);
 					$floorplan_ids_from_units = $wpdb->get_col( $floorplan_ids_from_units_query );
 					$floorplan_ids = array_merge( $floorplan_ids, $floorplan_ids_from_units );
