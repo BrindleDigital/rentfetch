@@ -166,7 +166,48 @@ add_shortcode( 'rentfetch_propertysearchresults', 'rentfetch_propertysearchresul
  * @return string HTML markup for the properties results.
  */
 function rentfetch_render_property_query_results( $property_args ) {
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'rentfetch_properties_search';
+
 	ob_start();
+
+	// Extract property_ids from meta_query and remove that part
+	$property_ids = array();
+	if ( isset( $property_args['meta_query'] ) && is_array( $property_args['meta_query'] ) ) {
+		foreach ( $property_args['meta_query'] as $key => $meta ) {
+			if ( is_array( $meta ) && isset( $meta['key'] ) && $meta['key'] === 'property_id' && isset( $meta['value'] ) ) {
+				$property_ids = (array) $meta['value'];
+				unset( $property_args['meta_query'][ $key ] );
+				break;
+			}
+		}
+		// Reindex the array
+		$property_args['meta_query'] = array_values( $property_args['meta_query'] );
+	}
+
+	if ( empty( $property_ids ) ) {
+		echo 'No properties found.';
+		return ob_get_clean();
+	}
+
+	// Prepare SQL to get post_ids
+	$placeholders = implode( ',', array_fill( 0, count( $property_ids ), '%s' ) );
+	$sql = $wpdb->prepare(
+		"SELECT post_id FROM $table_name WHERE property_id IN ($placeholders) AND latitude != '' AND longitude != '' ORDER BY post_id ASC",
+		$property_ids
+	);
+
+	$post_ids = $wpdb->get_col( $sql );
+
+	if ( empty( $post_ids ) ) {
+		echo 'No properties with availability were found matching the current search parameters.';
+		return ob_get_clean();
+	}
+
+	// Add post__in for fast query
+	$property_args['post__in'] = $post_ids;
+	$property_args['orderby'] = 'post__in';
+	$property_args['order'] = 'ASC';
 
 	$propertyquery = new WP_Query( $property_args );
 
