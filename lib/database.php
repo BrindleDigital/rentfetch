@@ -125,7 +125,9 @@ register_activation_hook( RENTFETCH_FILE, 'rentfetch_populate_properties_search_
 
 /**
  * Update the properties search table when a property or floorplan is saved
+ * Note: Disabled for periodic refresh to avoid performance issues with rapid syncs
  */
+/*
 function rentfetch_update_properties_search_table( $post_id ) {
 	if ( wp_is_post_revision( $post_id ) ) return;
 
@@ -144,6 +146,7 @@ function rentfetch_update_properties_search_table( $post_id ) {
 	}
 }
 add_action( 'save_post', 'rentfetch_update_properties_search_table' );
+*/
 
 /**
  * Update a specific property in the search table
@@ -235,3 +238,32 @@ function rentfetch_update_property_in_search_table_by_property_id( $property_id 
 		rentfetch_update_property_in_search_table( $post_id );
 	}
 }
+
+/**
+ * Schedule a recurring event to refresh the properties search table
+ */
+function rentfetch_schedule_properties_search_refresh() {
+	if ( ! wp_next_scheduled( 'rentfetch_refresh_properties_search_table' ) ) {
+		wp_schedule_event( time(), 'hourly', 'rentfetch_refresh_properties_search_table' );
+	}
+}
+register_activation_hook( RENTFETCH_FILE, 'rentfetch_schedule_properties_search_refresh' );
+
+/**
+ * Refresh the properties search table (runs hourly)
+ */
+function rentfetch_do_refresh_properties_search_table() {
+	rentfetch_populate_properties_search_table();
+}
+add_action( 'rentfetch_refresh_properties_search_table', 'rentfetch_do_refresh_properties_search_table' );
+
+/**
+ * Unschedule the periodic refresh on deactivation
+ */
+function rentfetch_unschedule_properties_search_refresh() {
+	$timestamp = wp_next_scheduled( 'rentfetch_refresh_properties_search_table' );
+	if ( $timestamp ) {
+		wp_unschedule_event( $timestamp, 'rentfetch_refresh_properties_search_table' );
+	}
+}
+register_deactivation_hook( RENTFETCH_FILE, 'rentfetch_unschedule_properties_search_refresh' );

@@ -167,6 +167,72 @@ add_shortcode( 'rentfetch_propertysearchresults', 'rentfetch_propertysearchresul
  */
 function rentfetch_render_property_query_results( $property_args ) {
 	global $wpdb;
+
+	// If experimental search is not enabled, use the old WP_Query method
+	if ( get_option( 'rentfetch_options_enable_experimental_search' ) !== '1' ) {
+		ob_start();
+
+		$propertyquery = new WP_Query( $property_args );
+
+		if ( $propertyquery->have_posts() ) {
+
+			$count = 0;
+
+			$numberofposts = $propertyquery->post_count;
+			printf( '<div class="results-count"><span id="properties-results-count-number">%s</span> results</div>', (int) $numberofposts );
+
+			echo '<div class="properties-loop">';
+
+			while ( $propertyquery->have_posts() ) {
+
+				$propertyquery->the_post();
+
+				$latitude  = get_post_meta( get_the_ID(), 'latitude', true );
+				$longitude = get_post_meta( get_the_ID(), 'longitude', true );
+
+				// skip if there's no latitude or longitude.
+				if ( ! $latitude || ! $longitude ) {
+					continue;
+				}
+
+				$classes_array = get_post_class();
+				$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
+				$class = implode( ' ', $classes_array );
+
+				printf(
+					'<div class="%s" data-latitude="%s" data-longitude="%s" data-id="%s" data-marker-id="%s">',
+					esc_attr( $class ),
+					esc_attr( $latitude ),
+					esc_attr( $longitude ),
+					(int) $count,
+					(int) get_the_ID(),
+				);
+
+					echo '<div class="property-in-list">';
+						do_action( 'rentfetch_do_properties_each_list' );
+					echo '</div>';
+					echo '<div class="property-in-map" style="display:none;">';
+						do_action( 'rentfetch_do_properties_each_map' );
+					echo '</div>';
+
+				echo '</div>'; // post_class.
+
+				++$count;
+
+			} // endwhile.
+
+			echo '</div>';
+
+			wp_reset_postdata();
+
+		} else {
+			echo 'No properties with availability were found matching the current search parameters.';
+		}
+
+		return ob_get_clean();
+	}
+
+	// Experimental search logic
 	$table_name = $wpdb->prefix . 'rentfetch_properties_search';
 
 	ob_start();
