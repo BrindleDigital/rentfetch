@@ -235,6 +235,70 @@ function rentfetch_render_property_query_results( $property_args ) {
 	// Experimental search logic
 	$table_name = $wpdb->prefix . 'rentfetch_properties_search';
 
+	// Check if table exists, if not, fall back to old method
+	if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
+		// Table doesn't exist, use old method
+		ob_start();
+		$propertyquery = new WP_Query( $property_args );
+
+		if ( $propertyquery->have_posts() ) {
+
+			$count = 0;
+
+			$numberofposts = $propertyquery->post_count;
+			printf( '<div class="results-count"><span id="properties-results-count-number">%s</span> results</div>', (int) $numberofposts );
+
+			echo '<div class="properties-loop">';
+
+			while ( $propertyquery->have_posts() ) {
+
+				$propertyquery->the_post();
+
+				$latitude  = get_post_meta( get_the_ID(), 'latitude', true );
+				$longitude = get_post_meta( get_the_ID(), 'longitude', true );
+
+				// skip if there's no latitude or longitude.
+				if ( ! $latitude || ! $longitude ) {
+					continue;
+				}
+
+				$classes_array = get_post_class();
+				$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
+				$class = implode( ' ', $classes_array );
+
+				printf(
+					'<div class="%s" data-latitude="%s" data-longitude="%s" data-id="%s" data-marker-id="%s">',
+					esc_attr( $class ),
+					esc_attr( $latitude ),
+					esc_attr( $longitude ),
+					(int) $count,
+					(int) get_the_ID(),
+				);
+
+					echo '<div class="property-in-list">';
+						do_action( 'rentfetch_do_properties_each_list' );
+					echo '</div>';
+					echo '<div class="property-in-map" style="display:none;">';
+						do_action( 'rentfetch_do_properties_each_map' );
+					echo '</div>';
+
+				echo '</div>'; // post_class.
+
+				++$count;
+
+			} // endwhile.
+
+			echo '</div>';
+
+			wp_reset_postdata();
+
+		} else {
+			echo 'No properties with availability were found matching the current search parameters.';
+		}
+
+		return ob_get_clean();
+	}
+
 	ob_start();
 
 	// Extract property_ids from meta_query and remove that part

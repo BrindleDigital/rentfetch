@@ -52,6 +52,12 @@ function rentfetch_populate_properties_search_table() {
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'rentfetch_properties_search';
 
+	// Check if table exists
+	if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
+		// Table doesn't exist, create it
+		rentfetch_create_properties_search_table();
+	}
+
 	// Clear existing data
 	$wpdb->query( "TRUNCATE TABLE $table_name" );
 
@@ -240,11 +246,20 @@ function rentfetch_update_property_in_search_table_by_property_id( $property_id 
 }
 
 /**
- * Schedule a recurring event to refresh the properties search table
+ * Schedule the periodic refresh of the properties search table
  */
 function rentfetch_schedule_properties_search_refresh() {
+	// Add custom cron interval for 15 minutes
+	add_filter( 'cron_schedules', function( $schedules ) {
+		$schedules['quarter_hour'] = array(
+			'interval' => 15 * 60,
+			'display'  => __( 'Every 15 Minutes' ),
+		);
+		return $schedules;
+	} );
+
 	if ( ! wp_next_scheduled( 'rentfetch_refresh_properties_search_table' ) ) {
-		wp_schedule_event( time(), 'hourly', 'rentfetch_refresh_properties_search_table' );
+		wp_schedule_event( time(), 'quarter_hour', 'rentfetch_refresh_properties_search_table' );
 	}
 }
 register_activation_hook( RENTFETCH_FILE, 'rentfetch_schedule_properties_search_refresh' );

@@ -77,30 +77,32 @@ function rentfetch_settings_shared_general() {
 	?>
 	<div class="row">
 		<div class="section">
-			<label class="label-large" for="rentfetch_options_disable_query_caching">Disable query caching</label>
-			<p class="description">Disable caching for database queries to ensure fresh data on each load. Note: Experimental search uses its own optimization and can work with or without caching.</p>
-			<ul class="checkboxes">
-				<li>
-					<label for="rentfetch_options_disable_query_caching">
-						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '1' ); ?>>
-						Disable query caching
-					</label>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<div class="row">
-		<div class="section">
-			<label class="label-large" for="rentfetch_options_enable_experimental_search">Enable experimental search</label>
-			<p class="description">Use optimized search with custom database tables for better performance. Can be used with or without query caching.</p>
-			<ul class="checkboxes">
-				<li>
-					<label for="rentfetch_options_enable_experimental_search">
-						<input type="checkbox" name="rentfetch_options_enable_experimental_search" id="rentfetch_options_enable_experimental_search" <?php checked( get_option( 'rentfetch_options_enable_experimental_search' ), '1' ); ?>>
-						Enable experimental search
-					</label>
-				</li>
-			</ul>
+			<h2 class="title">Performance settings</h2>
+			<p class="description">It's recommended that both be enabled for optimal performance.</p>
+			<div class="white-box">
+				<label class="label-large" for="rentfetch_options_disable_query_caching">Disable query caching</label>
+				<p class="description">Disable caching for database queries to ensure fresh data on each load. Note: Experimental search uses its own optimization and can work with or without caching.</p>
+				<ul class="checkboxes">
+					<li>
+						<label for="rentfetch_options_disable_query_caching">
+							<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '1' ); ?>>
+							Disable query caching
+						</label>
+					</li>
+				</ul>
+			</div>
+			<div class="white-box">
+				<label class="label-large" for="rentfetch_options_enable_experimental_search">Enable experimental search</label>
+				<p class="description">Use optimized search with custom database tables for better performance. Can be used with or without query caching.</p>
+				<ul class="checkboxes">
+					<li>
+						<label for="rentfetch_options_enable_experimental_search">
+							<input type="checkbox" name="rentfetch_options_enable_experimental_search" id="rentfetch_options_enable_experimental_search" <?php checked( get_option( 'rentfetch_options_enable_experimental_search' ), '1' ); ?>>
+							Enable experimental search
+						</label>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 	<?php
@@ -295,7 +297,15 @@ function rentfetch_save_settings_general() {
 
 	// Checkbox field - Enable experimental search
 	$enable_experimental_search = isset( $_POST['rentfetch_options_enable_experimental_search'] ) ? '1' : '0';
+	$previous_enable_experimental_search = get_option( 'rentfetch_options_enable_experimental_search' );
 	update_option( 'rentfetch_options_enable_experimental_search', $enable_experimental_search );
+
+	// If experimental search was just enabled, regenerate the table
+	if ( $enable_experimental_search === '1' && $previous_enable_experimental_search !== '1' ) {
+		if ( function_exists( 'rentfetch_populate_properties_search_table' ) ) {
+			rentfetch_populate_properties_search_table();
+		}
+	}
 
 	// If caching is disabled, clear existing transients
 	if ( $disable_query_caching === '1' ) {
