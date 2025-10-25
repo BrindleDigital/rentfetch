@@ -17,6 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_register_floorplans_details_metabox() {
 
 	add_meta_box(
+		'rentfetch_floorplans_hierarchy', // ID of the metabox.
+		'Property Hierarchy', // Title of the metabox.
+		'rentfetch_floorplans_hierarchy_metabox_callback', // Callback function to render the metabox.
+		'floorplans', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
+	);
+
+	add_meta_box(
 		'rentfetch_floorplans_identifiers', // ID of the metabox.
 		'Floor Plan Identifiers', // Title of the metabox.
 		'rentfetch_floorplans_identifiers_metabox_callback', // Callback function to render the metabox.
@@ -216,6 +225,17 @@ function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
 	</div>
 	
 	<?php
+}
+
+/**
+ * Floorplans hierarchy metabox callback
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
+function rentfetch_floorplans_hierarchy_metabox_callback( $post ) {
+	rentfetch_render_hierarchy( $post, 'floorplans' );
 }
 
 /**

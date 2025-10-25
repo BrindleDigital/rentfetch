@@ -22,6 +22,15 @@ function rentfetch_register_units_details_metabox() {
 	}
 
 	add_meta_box(
+		'rentfetch_units_hierarchy', // ID of the metabox.
+		'Property Hierarchy', // Title of the metabox.
+		'rentfetch_units_hierarchy_metabox_callback', // Callback function to render the metabox.
+		'units', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
+	);
+
+	add_meta_box(
 		'rentfetch_units_identifiers', // ID of the metabox.
 		'Unit Identifiers', // Title of the metabox.
 		'rentfetch_units_identifiers_metabox_callback', // Callback function to render the metabox.
@@ -214,6 +223,17 @@ function rentfetch_units_identifiers_metabox_callback( $post ) {
 	</div>
 	
 	<?php
+}
+
+/**
+ * Units hierarchy metabox callback
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
+function rentfetch_units_hierarchy_metabox_callback( $post ) {
+	rentfetch_render_hierarchy( $post, 'units' );
 }
 
 /**
