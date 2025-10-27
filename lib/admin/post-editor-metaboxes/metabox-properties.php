@@ -713,6 +713,21 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			
 			// Check if floorplan has available units
 			$floorplan_id = get_post_meta( $floorplan->ID, 'floorplan_id', true );
+			$api_response = get_post_meta( $floorplan->ID, 'api_response', true );
+			if ( ! is_array( $api_response ) ) {
+				$api_response = array();
+			}
+			$floorplan_source = get_post_meta( $floorplan->ID, 'floorplan_source', true );
+			$api_available_count = null;
+			if ( $floorplan_source === 'yardi' && isset( $api_response['floorplans_api']['api_response'] ) ) {
+				$floorplan_api_data = $api_response['floorplans_api']['api_response'];
+				if ( is_string( $floorplan_api_data ) ) {
+					$floorplan_api_data = json_decode( $floorplan_api_data, true );
+				}
+				if ( is_array( $floorplan_api_data ) && isset( $floorplan_api_data['availableUnitsCount'] ) ) {
+					$api_available_count = $floorplan_api_data['availableUnitsCount'];
+				}
+			}
 			$all_units = get_posts( array(
 				'post_type'      => 'units',
 				'meta_key'       => 'floorplan_id',
@@ -748,12 +763,16 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			$beds = get_post_meta( $floorplan->ID, 'beds', true );
 			$baths = get_post_meta( $floorplan->ID, 'baths', true );
 			echo '<div class="floorplan-details">' . esc_html( $beds ) . ' bed, ' . esc_html( $baths ) . ' bath | ID: ' . esc_html( $floorplan_id ) . '</div>';
-			$units = $all_units; // Show all units for debugging
-			$total_count = count( $all_units );
-			if ( $available_count === $total_count ) {
-				echo '<div class="floorplan-units-count">' . intval( $available_count ) . ' available</div>';
+			if ( $floorplan_source === 'yardi' && $api_available_count !== null ) {
+				// For Yardi floorplans, compare local count to API count
+				if ( $available_count === $api_available_count ) {
+					echo '<div class="floorplan-units-count">' . intval( $available_count ) . ' available</div>';
+				} else {
+					echo '<div class="floorplan-units-count partial-availability">' . intval( $available_count ) . ' available (API: ' . intval( $api_available_count ) . ')</div>';
+				}
 			} else {
-				echo '<div class="floorplan-units-count partial-availability">' . intval( $available_count ) . ' available (' . $total_count . ' total)</div>';
+				// For non-Yardi floorplans, just show local available count
+				echo '<div class="floorplan-units-count">' . intval( $available_count ) . ' available</div>';
 			}
 
 			// List units as cards
