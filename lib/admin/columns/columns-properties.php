@@ -21,6 +21,7 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 	$columns = array(
 		'cb'                    => '<input type="checkbox" />',
 		'title'                 => __( 'Title', 'rentfetch' ),
+		'sync_status'           => __( 'Syncing', 'rentfetch' ),
 		'property_source'       => __( 'Property Source', 'rentfetch' ),
 		'property_id'           => __( 'Property ID', 'rentfetch' ),
 		'address'               => __( 'Address', 'rentfetch' ),
@@ -48,6 +49,37 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 add_filter( 'manage_properties_posts_columns', 'rentfetch_default_properties_admin_columns' );
 
 /**
+ * Get the overall sync status from an array of individual statuses.
+ *
+ * @param array $statuses Array of sync status classes.
+ * @return string The worst sync status class.
+ */
+function rentfetch_get_overall_sync_status( $statuses ) {
+	if ( empty( $statuses ) ) {
+		return 'sync-gray';
+	}
+
+	$priorities = array(
+		'sync-red'    => 4,
+		'sync-yellow' => 3,
+		'sync-green'  => 2,
+		'sync-gray'   => 1,
+	);
+
+	$max_priority = 0;
+	$worst_status = 'sync-gray';
+
+	foreach ( $statuses as $status ) {
+		if ( isset( $priorities[ $status ] ) && $priorities[ $status ] > $max_priority ) {
+			$max_priority = $priorities[ $status ];
+			$worst_status = $status;
+		}
+	}
+
+	return $worst_status;
+}
+
+/**
  * Set up the content for the admin columns.
  *
  * @param string $column  The column name.
@@ -59,6 +91,75 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 	if ( 'title' === $column ) {
 		echo esc_attr( get_the_title( $post_id ) );
+	}
+	
+	if ( 'sync_status' === $column ) {
+		
+		$property_sync = rentfetch_get_sync_status_class( $post_id );
+		$property_id = get_post_meta( $post_id, 'property_id', true );
+		
+		// Floorplans
+		$floorplans = get_posts( array(
+			'post_type' => 'floorplans',
+			'meta_query' => array(
+				array(
+					'key' => 'property_id',
+					'value' => $property_id,
+					'compare' => '=',
+				),
+			),
+			'posts_per_page' => -1,
+		) );
+		
+		$floorplan_statuses = array();
+		foreach ( $floorplans as $floorplan ) {
+			$floorplan_statuses[] = rentfetch_get_sync_status_class( $floorplan->ID );
+		}
+		$floorplan_sync = rentfetch_get_overall_sync_status( $floorplan_statuses );
+		
+		// Units
+		$floorplan_ids = array();
+		foreach ( $floorplans as $floorplan ) {
+			$id = get_post_meta( $floorplan->ID, 'floorplan_id', true );
+			if ( ! empty( $id ) ) {
+				$floorplan_ids[] = $id;
+			}
+		}
+		
+		$units = array();
+		if ( ! empty( $floorplan_ids ) ) {
+			$units = get_posts( array(
+				'post_type' => 'units',
+				'meta_query' => array(
+					array(
+						'key' => 'floorplan_id',
+						'value' => $floorplan_ids,
+						'compare' => 'IN',
+					),
+				),
+				'posts_per_page' => -1,
+			) );
+		}
+		
+		$unit_statuses = array();
+		foreach ( $units as $unit ) {
+			$unit_statuses[] = rentfetch_get_sync_status_class( $unit->ID );
+		}
+		$unit_sync = rentfetch_get_overall_sync_status( $unit_statuses );
+		
+		// Colors
+		$sync_colors = array(
+			'sync-green'  => '#28a745',
+			'sync-yellow' => '#856404',
+			'sync-red'    => '#dc3545',
+			'sync-gray'   => '#6c757d',
+		);
+		
+		// Output
+		echo '<span style="color: ' . esc_attr( $sync_colors[ $property_sync ] ?? '#6c757d' ) . '; font-size: 16px;">●</span> ';
+		echo '<span style="color: ' . esc_attr( $sync_colors[ $floorplan_sync ] ?? '#6c757d' ) . '; font-size: 16px;">●</span> ';
+		echo '<span style="color: ' . esc_attr( $sync_colors[ $unit_sync ] ?? '#6c757d' ) . '; font-size: 16px;">●</span>';
+		
 	}
 
 	if ( 'property_id' === $column ) {
