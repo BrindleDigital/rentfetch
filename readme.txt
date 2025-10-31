@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.29
+Stable tag: 0.29.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,7 +103,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.29.1 =
+= 0.29.2 =
 
 * Bugfix: When cleaning json responses (Yardi sometimes sends us strings that include unescaped quotes), we were sometimes converting single quotes to double quotes.
 
@@ -114,7 +114,7 @@ Start from your WordPress dashboard.
 
 = 0.28.1 =
 
-* Fixing a bug related to the properties search and not finding every unit (resulting in properties not showing in the main search)
+* Fixing a bug related to the properties sea1rch and not finding every unit (resulting in properties not showing in the main search)
 
 = 0.28 =
 
