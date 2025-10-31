@@ -206,7 +206,7 @@ function rentfetch_pretty_json( $value, &$repaired = null ) {
  */
 function rentfetch_clean_json_string( $json_string ) {
     // Replace smart quotes with regular quotes
-    $json_string = str_replace( ["'", "'", '"', '"'], ['"', '"', '"', '"'], $json_string );
+    $json_string = str_replace( ["'", "'", '"', '"'], ["'", "'", '"', '"'], $json_string );
     
     // Pretty-print and repair if possible
     return rentfetch_pretty_json( $json_string );
