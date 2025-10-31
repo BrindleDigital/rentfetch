@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.29.1 =
+
+* Bugfix: When cleaning json responses (Yardi sometimes sends us strings that include unescaped quotes), we were sometimes converting single quotes to double quotes.
+
 = 0.29 =
 
 * Adding backend highlighting functionality in the propety columns view to see at a glance where likely problems are arising.
