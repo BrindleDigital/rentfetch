@@ -554,8 +554,28 @@ function rentfetch_units_api_response_metabox_callback( $post ) {
 					echo '<div class="json-content">';
 					printf( '<textarea class="rentfetch-api-response-json" readonly rows="10" style="width:100%%;">%s</textarea>', esc_textarea( $formatted ) );
 					echo '</div>';
+				} elseif ( is_array( $subvalue ) ) {
+					// Handle nested arrays (like 304 responses)
+					echo '<div class="nested-array" style="background-color: #f5f5f5; padding: 10px; margin: 5px 0; border-radius: 3px;">';
+					if ( ! is_numeric( $subkey ) ) {
+						printf( '<h4>%s</h4>', esc_html( $subkey ) );
+					}
+					echo '<ul style="margin: 0;">';
+					foreach ( $subvalue as $nested_key => $nested_value ) {
+						if ( is_array( $nested_value ) ) {
+							echo '<li style="margin-bottom: 5px;">';
+							foreach ( $nested_value as $k => $v ) {
+								printf( '<strong>%s:</strong> %s<br>', esc_html( $k ), esc_html( $v ) );
+							}
+							echo '</li>';
+						} else {
+							printf( '<li style="margin-bottom: 5px;"><strong>%s:</strong> %s</li>', esc_html( $nested_key ), esc_html( $nested_value ) );
+						}
+					}
+					echo '</ul>';
+					echo '</div>';
 				} else {
-					printf( '<p>%s</p>', esc_html( $subvalue ) );
+					printf( '<p><strong>%s:</strong> %s</p>', esc_html( $subkey ), esc_html( $subvalue ) );
 				}
 			}
 		} else {
