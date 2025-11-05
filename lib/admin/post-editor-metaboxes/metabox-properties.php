@@ -630,7 +630,7 @@ function rentfetch_get_sync_tooltip( $post_id ) {
 		return 'No API data found';
 	}
 
-	$result = implode( " | ", $tooltip_lines );
+	$result = implode( "<br>", $tooltip_lines );
 	// error_log('Tooltip result for post ' . $post_id . ': ' . $result);
 	return $result;
 }/**
@@ -969,7 +969,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			white-space: nowrap;
 			z-index: 9999;
 			pointer-events: none;
-			max-width: 200px;
+			max-width: 280px;
 			word-wrap: break-word;
 			white-space: normal;
 		}
@@ -1018,7 +1018,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 						// Create tooltip element
 						var tooltip = document.createElement('div');
 						tooltip.className = 'custom-tooltip';
-						tooltip.textContent = tooltipText;
+						tooltip.innerHTML = tooltipText;
 						document.body.appendChild(tooltip);
 						
 						// Position tooltip
