@@ -681,13 +681,18 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 
 	echo '<div class="rentfetch-hierarchy">';
 
-	// Property info (no box, just lines) - make clickable for edit
+	// Property info container
+	echo '<div class="property-container">';
+	// Property info content
 	$highlight_prop = ( $current_type === 'properties' ) ? ' highlighted' : '';
 	$sync_class_prop = rentfetch_get_sync_status_class( $property_post->ID );
 	$tooltip_prop = rentfetch_get_sync_tooltip( $property_post->ID );
-	echo '<div class="hierarchy-property-info' . esc_attr( $highlight_prop . ' ' . $sync_class_prop ) . '" data-tooltip="' . esc_attr( $tooltip_prop ) . '" data-edit-url="' . esc_url( get_edit_post_link( $property_post->ID ) ) . '">';
-	echo '<strong><a href="' . esc_url( get_permalink( $property_post->ID ) ) . '" target="_blank" onclick="event.stopPropagation()">' . esc_html( $property_post->post_title ) . '</a></strong> | ';
+	echo '<div class="property-info-content">';
+	echo '<a href="' . esc_url( $property_url ) . '" class="' . esc_attr( $sync_class_prop ) . '" target="_blank">' . esc_html( $property_post->post_title ) . '</a> · ';
 	echo 'Property ID: ' . esc_html( get_post_meta( $property_post->ID, 'property_id', true ) );
+	echo '</div>';
+	// Edit link overlay
+	echo '<a href="' . esc_url( get_edit_post_link( $property_post->ID ) ) . '" class="hierarchy-property-info' . esc_attr( $highlight_prop . ' ' . $sync_class_prop ) . '" data-tooltip="' . esc_attr( $tooltip_prop ) . '"></a>';
 	echo '</div>';
 
 	// Get floorplans
@@ -757,12 +762,19 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			$sync_class_floorplan = rentfetch_get_sync_status_class( $floorplan->ID );
 			$tooltip_floorplan = rentfetch_get_sync_tooltip( $floorplan->ID );
 			
-			echo '<div class="hierarchy-item floorplan' . esc_attr( $highlight . $faded_floorplan . ' ' . $sync_class_floorplan ) . '" data-tooltip="' . esc_attr( $tooltip_floorplan ) . '" data-edit-url="' . esc_url( get_edit_post_link( $floorplan->ID ) ) . '">';
-			echo '<div class="floorplan-title"><a href="' . esc_url( get_permalink( $floorplan->ID ) ) . '" target="_blank" onclick="event.stopPropagation()">' . esc_html( $floorplan->post_title ) . '</a></div>';
+			// Get floorplan frontend URL
+			$floorplan_url = get_permalink( $floorplan->ID );
+			
+			// Wrap each floorplan and its units in a container
+			echo '<div class="floorplan-container">';
+			
+			// Floorplan header content
+			echo '<div class="floorplan-header">';
+			echo '<div class="floorplan-title"><a href="' . esc_url( $floorplan_url ) . '" class="' . esc_attr( $sync_class_floorplan ) . '" target="_blank">' . esc_html( $floorplan->post_title ) . '</a></div>';
 			
 			$beds = get_post_meta( $floorplan->ID, 'beds', true );
 			$baths = get_post_meta( $floorplan->ID, 'baths', true );
-			echo '<div class="floorplan-details">' . esc_html( $beds ) . ' bed, ' . esc_html( $baths ) . ' bath | ID: ' . esc_html( $floorplan_id ) . '</div>';
+			echo '<div class="floorplan-details">' . esc_html( $beds ) . ' bed, ' . esc_html( $baths ) . ' bath · ID: ' . esc_html( $floorplan_id ) . '</div>';
 			if ( $floorplan_source === 'yardi' && $api_available_count !== null ) {
 				// For Yardi floorplans, compare local count to API count
 				if ( $available_count === $api_available_count ) {
@@ -774,6 +786,10 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 				// For non-Yardi floorplans, just show local available count
 				echo '<div class="floorplan-units-count">' . intval( $available_count ) . ' available</div>';
 			}
+			echo '</div>';
+			
+			// Edit link overlay for the entire floorplan area
+			echo '<a href="' . esc_url( get_edit_post_link( $floorplan->ID ) ) . '" class="hierarchy-item floorplan' . esc_attr( $highlight . $faded_floorplan . ' ' . $sync_class_floorplan ) . '" data-tooltip="' . esc_attr( $tooltip_floorplan ) . '"></a>';
 
 			// List units as cards
 			if ( ! empty( $available_units ) ) {
@@ -789,10 +805,34 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 					$faded_unit = empty( $availability ) ? ' faded' : '';
 					$sync_class_unit = rentfetch_get_sync_status_class( $unit->ID );
 					$tooltip_unit = rentfetch_get_sync_tooltip( $unit->ID );
+					$unit_id = get_post_meta( $unit->ID, 'unit_id', true );
+					
+					// Format availability date as M/D/YY
+					$formatted_availability = '';
+					if ( ! empty( $availability ) ) {
+						$date = DateTime::createFromFormat( 'Y-m-d', $availability );
+						if ( ! $date ) {
+							// Try other common formats
+							$date = DateTime::createFromFormat( 'm/d/Y', $availability );
+						}
+						if ( ! $date ) {
+							$date = DateTime::createFromFormat( 'm/d/y', $availability );
+						}
+						if ( $date ) {
+							$formatted_availability = $date->format( 'n/j/y' );
+						} else {
+							// Fallback: just show the raw date
+							$formatted_availability = $availability;
+						}
+					}
+					
 					echo '<a href="' . esc_url( get_edit_post_link( $unit->ID ) ) . '" class="hierarchy-item unit' . esc_attr( $highlight_unit . $faded_unit . ' ' . $sync_class_unit ) . '" data-tooltip="' . esc_attr( $tooltip_unit ) . '">';
 					echo '<div class="unit-title">' . esc_html( $unit->post_title );
-					if ( ! empty( $availability ) ) {
-						echo ' - ' . esc_html( $availability );
+					if ( ! empty( $unit_id ) ) {
+						echo '<span class="unit-id">' . esc_html( $unit_id ) . '</span>';
+					}
+					if ( ! empty( $formatted_availability ) ) {
+						echo '<span class="unit-availability"> - ' . esc_html( $formatted_availability ) . '</span>';
 					}
 					echo '</div>';
 					echo '</a>';
@@ -808,10 +848,34 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 						$faded_unit = empty( $availability ) ? ' faded' : '';
 						$sync_class_unit = rentfetch_get_sync_status_class( $unit->ID );
 						$tooltip_unit = rentfetch_get_sync_tooltip( $unit->ID );
+						$unit_id = get_post_meta( $unit->ID, 'unit_id', true );
+						
+						// Format availability date as M/D/YY
+						$formatted_availability = '';
+						if ( ! empty( $availability ) ) {
+							$date = DateTime::createFromFormat( 'Y-m-d', $availability );
+							if ( ! $date ) {
+								// Try other common formats
+								$date = DateTime::createFromFormat( 'm/d/Y', $availability );
+							}
+							if ( ! $date ) {
+								$date = DateTime::createFromFormat( 'm/d/y', $availability );
+							}
+							if ( $date ) {
+								$formatted_availability = $date->format( 'n/j/y' );
+							} else {
+								// Fallback: just show the raw date
+								$formatted_availability = $availability;
+							}
+						}
+						
 						echo '<a href="' . esc_url( get_edit_post_link( $unit->ID ) ) . '" class="hierarchy-item unit' . esc_attr( $highlight_unit . $faded_unit . ' ' . $sync_class_unit ) . '" data-tooltip="' . esc_attr( $tooltip_unit ) . '">';
 						echo '<div class="unit-title">' . esc_html( $unit->post_title );
-						if ( ! empty( $availability ) ) {
-							echo ' - ' . esc_html( $availability );
+						if ( ! empty( $unit_id ) ) {
+							echo '<span class="unit-id">' . esc_html( $unit_id ) . '</span>';
+						}
+						if ( ! empty( $formatted_availability ) ) {
+							echo '<span class="unit-availability"> - ' . esc_html( $formatted_availability ) . '</span>';
 						}
 						echo '</div>';
 						echo '</a>';
@@ -826,7 +890,8 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 				
 				echo '</div>';
 			}
-
+			
+			// Close the floorplan container
 			echo '</div>';
 		}
 		echo '</div>';
@@ -837,50 +902,56 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 	// Add compact CSS
 	echo "<style>
 		.rentfetch-hierarchy { margin: 10px 0; }
-		.hierarchy-property-info { margin-bottom: 15px; padding: 5px; background: #f9f9f9; border-radius: 3px; cursor: pointer; position: relative; }
-		.hierarchy-property-info.highlighted { background-color: #f5f5f5; border: 1px solid #999; }
-		.hierarchy-property-info a { text-decoration: none; color: #007cba; font-weight: bold; }
-		.hierarchy-property-info a:hover { text-decoration: underline; }
-		.floorplans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
-		.hierarchy-item.floorplan { border: 1px solid #ddd; padding: 8px; border-radius: 4px; background: #fafafa; cursor: pointer; position: relative; }
-		.hierarchy-item.floorplan:hover { background-color: #f0f0f0; border-color: #bbb; }
-		.hierarchy-item.floorplan.highlighted { background-color: #f5f5f5; border-color: #999; }
+		.property-container { border: 1px solid #e1e1e1; border-radius: 6px; background: #fafafa; padding: 10px; margin-bottom: 15px; position: relative; }
+		.property-info-content { position: relative; z-index: 2; pointer-events: none; }
+		.property-info-content a { pointer-events: auto; } /* Allow frontend links to be clickable */
+		.hierarchy-property-info { margin: 0; padding: 0; background: transparent; border-radius: 0; text-decoration: none; display: block; position: absolute; inset: 0; z-index: 1; transition: all 0.2s ease; }
+		.hierarchy-property-info:hover, .hierarchy-property-info.highlighted { background-color: #007cba; color: white; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4); }
+		.floorplans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 10px; }
+		.floorplan-container { border: 1px solid #e1e1e1; border-radius: 6px; background: #fafafa; padding: 10px; position: relative; }
+		.floorplan-header { position: relative; z-index: 10; margin-bottom: 10px; pointer-events: none;}
+		.floorplan-details, .floorplan-units-count { pointer-events: none; }
+		.floorplan-title a { position: relative; z-index: 15; pointer-events: all; } /* Allow frontend links to be clickable */
+		.hierarchy-item.floorplan { border: none; padding: 0; border-radius: 0; background: transparent; margin-bottom: 0; text-decoration: none; display: block; position: absolute; inset: 0; z-index: 3; transition: all 0.2s ease; }
+		.hierarchy-item.floorplan:hover, .hierarchy-item.floorplan.highlighted { background-color: #007cba; border-radius: 6px; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4); }
 		.hierarchy-item.floorplan.faded { opacity: 0.5; }
-		.floorplan-title { margin-bottom: 4px; }
-		.floorplan-title a { text-decoration: none; color: #007cba; font-weight: bold; }
-		.floorplan-title a:hover { text-decoration: underline; }
-		.floorplan-details { font-size: 12px; color: #666; margin-bottom: 2px; }
-		.floorplan-units-count { font-size: 11px; color: #888; margin-bottom: 5px; }
+		.floorplan-title { margin-bottom: 4px; position: relative; z-index: 2; }
+		.floorplan-details { font-size: 12px; color: #666; margin-bottom: 2px; position: relative; z-index: 2; }
+		.floorplan-units-count { font-size: 11px; color: #888; margin-bottom: 5px; position: relative; z-index: 2; }
 		.floorplan-units-count.partial-availability { color: #dc3545; font-weight: bold; }
-		.units-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; margin-top: 8px; }
-		.hierarchy-item.unit { border: 1px solid #ddd; padding: 6px; border-radius: 3px; background: #f9f9f9; cursor: pointer; display: block; text-decoration: none; color: inherit; position: relative; }
-		.hierarchy-item.unit:hover { background-color: #f0f0f0; border-color: #bbb; }
-		.hierarchy-item.unit.highlighted { background-color: #f5f5f5; border-color: #999; }
+		.units-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; margin-top: 8px; position: relative; z-index: 3; }
+		.hierarchy-item.unit { border: 1px solid #ddd; padding: 6px; border-radius: 3px; background: #f9f9f9; cursor: pointer; display: block; text-decoration: none; color: inherit; position: relative; transition: all 0.2s ease; }
+		.hierarchy-item.unit:hover, .hierarchy-item.unit.highlighted { background-color: #007cba; color: white; box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.4); }
 		.hierarchy-item.unit.faded { opacity: 0.5; }
 		.unit-title { font-weight: bold; font-size: 12px; color: #007cba; }
-		.units-show-more { margin-top: 8px; text-align: center; }
-		.units-show-more .show-more-link { font-size: 11px; color: #007cba; text-decoration: none; }
+		.unit-id { font-size: 11px; color: #666; margin-left: 4px; font-weight: normal; }
+		.units-show-more { margin-top: 8px; text-align: center; position: relative; z-index: 3; pointer-events: none; }
+		.units-show-more .show-more-link { font-size: 11px; color: #007cba; text-decoration: none; pointer-events: auto; position: relative; z-index: 5; }
 		.units-show-more .show-more-link:hover { text-decoration: underline; }
-		.unit-availability { font-size: 10px; color: #666; }
+		.unit-availability { font-size: 11px; color: #666; font-weight: normal; }
 		/* Sync status background tints */
-		.sync-green { background-color: rgba(40, 167, 69, 0.05) !important; }
+		.sync-green { background-color: #eff6f1 !important; }
 		.sync-yellow { background-color: rgba(255, 193, 7, 0.05) !important; }
-		.sync-red { background-color: rgba(220, 53, 69, 0.05) !important; }
+		.sync-red { background-color: #fff0f1 !important; }
 		.sync-gray { background-color: rgba(108, 117, 125, 0.05) !important; }
 		/* Sync status title colors */
 		.hierarchy-property-info.sync-green a,
-		.sync-green .floorplan-title a,
+		a.sync-green,
 		.sync-green .unit-title { color: #28a745 !important; }
 		.hierarchy-property-info.sync-yellow a,
-		.sync-yellow .floorplan-title a,
+		a.sync-yellow,
 		.sync-yellow .unit-title { color: #856404 !important; }
 		.hierarchy-property-info.sync-red a,
-		.sync-red .floorplan-title a,
+		a.sync-red,
 		.sync-red .unit-title { color: #dc3545 !important; }
 		.hierarchy-property-info.sync-gray a,
-		.sync-gray .floorplan-title a,
+		a.sync-gray,
 		.sync-gray .unit-title { color: #6c757d !important; }
-		/* Instant tooltips */
+		/* Frontend links in titles */
+		.floorplan-title a,
+		.hierarchy-property-info strong a { text-decoration: none; font-weight: inherit; }
+		.floorplan-title a:hover,
+		.hierarchy-property-info strong a:hover { text-decoration: underline; }
 		.hierarchy-property-info[data-tooltip],
 		.hierarchy-item[data-tooltip] { cursor: pointer; }
 		.custom-tooltip {
@@ -901,28 +972,6 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 	
 	echo "<script>
 		document.addEventListener('DOMContentLoaded', function() {
-			// Make property info clickable
-			var propertyInfo = document.querySelector('.hierarchy-property-info');
-			if (propertyInfo) {
-				propertyInfo.addEventListener('click', function() {
-					var editUrl = this.getAttribute('data-edit-url');
-					if (editUrl) {
-						window.location.href = editUrl;
-					}
-				});
-			}
-			
-			// Make floorplan cards clickable
-			var floorplanCards = document.querySelectorAll('.hierarchy-item.floorplan');
-			floorplanCards.forEach(function(card) {
-				card.addEventListener('click', function() {
-					var editUrl = this.getAttribute('data-edit-url');
-					if (editUrl) {
-						window.location.href = editUrl;
-					}
-				});
-			});
-			
 			// Handle show more/less for units
 			var showMoreLinks = document.querySelectorAll('.show-more-link');
 			showMoreLinks.forEach(function(link) {

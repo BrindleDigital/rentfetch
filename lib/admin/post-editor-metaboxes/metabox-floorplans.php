@@ -182,44 +182,6 @@ function rentfetch_floorplans_identifiers_metabox_callback( $post ) {
 				</div>
 			</div>
 								
-			<?php
-			$floorplan_id = get_post_meta( $post->ID, 'floorplan_id', true );
-			$args         = array(
-				'post_type'      => 'units',
-				'posts_per_page' => -1,
-				'post_status'    => 'publish',
-				'orderby'        => 'title',
-				'order'          => 'ASC',
-				'meta_query'     => array( // phpcs:ignore
-					array(
-						'key'     => 'floorplan_id',
-						'value'   => $floorplan_id,
-						'compare' => '=',
-					),
-				),
-			);
-
-			$query = new WP_Query( $args );
-
-			if ( $query->have_posts() ) {
-				echo '<div class="field">';
-					echo '<div class="column">';
-						echo '<label for="units">Units</label>';
-					echo '</div>';
-					echo '<div class="column">';
-						echo '<ul class="unit-list">';
-						printf( '<li><a href="/wp-admin/edit.php?s=%s&post_status=all&post_type=units" target="_blank">View related units</a></li>', esc_html( $floorplan_id ) );
-				while ( $query->have_posts() ) {
-					$query->the_post();
-					$unit_title = get_the_title();
-					$unit_id    = get_post_meta( get_the_ID(), 'unit_id', true );
-					printf( '<li>%s (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</li>', esc_html( $unit_title ), (int) get_the_ID() );
-				}
-						echo '</ul>';
-					echo '</div>'; // .column
-				echo '</div>'; // .field
-			}
-			?>
 						
 		</div>
 	</div>
