@@ -766,7 +766,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			$floorplan_url = get_permalink( $floorplan->ID );
 			
 			// Wrap each floorplan and its units in a container
-			echo '<div class="floorplan-container">';
+			echo '<div class="floorplan-container' . esc_attr( $faded_floorplan ) . '">';
 			
 			// Floorplan header content
 			echo '<div class="floorplan-header">';
@@ -789,7 +789,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			echo '</div>';
 			
 			// Edit link overlay for the entire floorplan area
-			echo '<a href="' . esc_url( get_edit_post_link( $floorplan->ID ) ) . '" class="hierarchy-item floorplan' . esc_attr( $highlight . $faded_floorplan . ' ' . $sync_class_floorplan ) . '" data-tooltip="' . esc_attr( $tooltip_floorplan ) . '"></a>';
+			echo '<a href="' . esc_url( get_edit_post_link( $floorplan->ID ) ) . '" class="hierarchy-item floorplan' . esc_attr( $highlight . ' ' . $sync_class_floorplan ) . '" data-tooltip="' . esc_attr( $tooltip_floorplan ) . '"></a>';
 
 			// List units as cards
 			if ( ! empty( $available_units ) ) {
@@ -914,7 +914,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 		.floorplan-title a { position: relative; z-index: 15; pointer-events: all; } /* Allow frontend links to be clickable */
 		.hierarchy-item.floorplan { border: none; padding: 0; border-radius: 0; background: transparent; margin-bottom: 0; text-decoration: none; display: block; position: absolute; inset: 0; z-index: 3; transition: all 0.2s ease; }
 		.hierarchy-item.floorplan:hover, .hierarchy-item.floorplan.highlighted { background-color: #007cba; border-radius: 6px; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4); }
-		.hierarchy-item.floorplan.faded { opacity: 0.5; }
+		.floorplan-container.faded { opacity: 0.5; }
 		.floorplan-title { margin-bottom: 4px; position: relative; z-index: 2; }
 		.floorplan-details { font-size: 12px; color: #666; margin-bottom: 2px; position: relative; z-index: 2; }
 		.floorplan-units-count { font-size: 11px; color: #888; margin-bottom: 5px; position: relative; z-index: 2; }
@@ -934,6 +934,11 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 		.sync-yellow { background-color: rgba(255, 193, 7, 0.05) !important; }
 		.sync-red { background-color: #fff0f1 !important; }
 		.sync-gray { background-color: rgba(108, 117, 125, 0.05) !important; }
+		/* Stronger sync colors for units */
+		.hierarchy-item.unit.sync-green { background-color: #d4edda !important; border-color: #c3e6cb !important; }
+		.hierarchy-item.unit.sync-yellow { background-color: rgba(255, 193, 7, 0.2) !important; border-color: rgba(255, 193, 7, 0.3) !important; }
+		.hierarchy-item.unit.sync-red { background-color: #f8d7da !important; border-color: #f5c6cb !important; }
+		.hierarchy-item.unit.sync-gray { background-color: rgba(108, 117, 125, 0.2) !important; border-color: rgba(108, 117, 125, 0.3) !important; }
 		/* Sync status title colors */
 		.hierarchy-property-info.sync-green a,
 		a.sync-green,
@@ -958,13 +963,13 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			position: fixed;
 			background: rgba(0, 0, 0, 0.8);
 			color: white;
-			padding: 5px 8px;
+			padding: 3px 6px;
 			border-radius: 4px;
-			font-size: 12px;
+			font-size: 11px;
 			white-space: nowrap;
 			z-index: 9999;
 			pointer-events: none;
-			max-width: 300px;
+			max-width: 200px;
 			word-wrap: break-word;
 			white-space: normal;
 		}
