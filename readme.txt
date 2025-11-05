@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.29.3
+Stable tag: 0.29.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,14 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.29.4 =
+
+* Heirarchy view: allowing for CMD/CTRL+click to open in a new tab.
+* Heirarchy view: adding the unit IDs into the unit information
+* Heirarchy view: more consistent styles and more obvious highlighting for where we are in the heirarchy.
+* Heirarchy view: general style updates, simplifying the structure of this for consistency
+* Heirarchy view: tooltips line-break and sizing when showing dates for multiple APIs (e.g. both Yardi and Entrata properties, since we call two APIs for each of these)
 
 = 0.29.3 =
 
