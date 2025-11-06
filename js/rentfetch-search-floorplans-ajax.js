@@ -244,6 +244,7 @@ jQuery(function ($) {
 			url: filter.attr('action'),
 			data: {
 				action: 'rentfetch_get_search_nonce',
+				_nocache: Date.now(),
 			},
 			type: 'POST',
 			beforeSend: function () {

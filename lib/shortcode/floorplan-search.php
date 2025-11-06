@@ -174,6 +174,10 @@ function rentfetch_render_floorplan_query_results( $floorplan_args ) {
  */
 function rentfetch_filter_floorplans() {
 
+	// Get a list of the possible properties to show from the shortcode attributes.
+	$referring_page_id = url_to_postid( wp_get_referer() );
+	$atts = rentfetch_get_shortcode_attributes( 'rentfetch_floorplansearch', $referring_page_id );
+
 	// * The base floorplan query
 	$floorplan_args = array(
 		'post_type'      => 'floorplans',
@@ -186,8 +190,8 @@ function rentfetch_filter_floorplans() {
 
 	$floorplan_args = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args );
 
-	// Build a cache key from the floorplan args so different filters cache separately.
-	$cache_key = 'rentfetch_floorplansearch_markup_' . md5( wp_json_encode( $floorplan_args ) );
+	// Build a cache key from the floorplan args and shortcode atts so different filters cache separately.
+	$cache_key = 'rentfetch_floorplansearch_markup_' . md5( wp_json_encode( array( 'args' => $floorplan_args, 'atts' => $atts ) ) );
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$cached_markup = get_transient( $cache_key );
 		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
@@ -199,7 +203,7 @@ function rentfetch_filter_floorplans() {
 	// Render and cache the results.
 	$markup = rentfetch_render_floorplan_query_results( $floorplan_args );
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $markup, 5 * MINUTE_IN_SECONDS );
+		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
 	}
 
 	echo $markup;
@@ -215,6 +219,12 @@ add_action( 'wp_ajax_nopriv_floorplansearch', 'rentfetch_filter_floorplans' );
  * @return void
  */
 function rentfetch_get_search_nonce() {
+	
+	// Prevent caching of the nonce response
+	header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+	header( 'Pragma: no-cache' );
+	header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
+	
 	wp_send_json_success( array(
 		'nonce' => wp_create_nonce( 'rentfetch_frontend_nonce_action' )
 	));

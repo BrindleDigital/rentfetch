@@ -196,6 +196,7 @@ jQuery(function ($) {
 			type: 'POST',
 			data: {
 				action: 'rentfetch_get_search_nonce',
+				_nocache: Date.now(),
 			},
 			beforeSend: function () {
 				$('#reset').text('Searching...'); // changing the button label

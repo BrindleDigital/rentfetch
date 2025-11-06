@@ -103,6 +103,10 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.29.5 =
+
+* Speculative fix for nonce issues on floorplans search (we can't directly test this across all hosts involved)
+
 = 0.29.4 =
 
 * Heirarchy view: allowing for CMD/CTRL+click to open in a new tab.

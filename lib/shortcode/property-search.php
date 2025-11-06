@@ -304,7 +304,7 @@ function rentfetch_filter_properties() {
 	// Render and cache the results.
 	$markup = rentfetch_render_property_query_results( $property_args );
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $markup, 5 * MINUTE_IN_SECONDS );
+		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
 	}
 
 	echo $markup;
@@ -313,8 +313,3 @@ function rentfetch_filter_properties() {
 }
 add_action( 'wp_ajax_propertysearch', 'rentfetch_filter_properties' ); // wp_ajax_{ACTION HERE}.
 add_action( 'wp_ajax_nopriv_propertysearch', 'rentfetch_filter_properties' );
-
-/**
- * AJAX endpoint to generate a fresh nonce for property search (shared with floorplan search)
- * Note: We can reuse the same endpoint since both use the same nonce action
- */
