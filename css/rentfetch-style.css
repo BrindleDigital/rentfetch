@@ -671,6 +671,39 @@ body.toplevel_page_rentfetch-options #wpcontent {
   background-color: #f7f7f7 !important;
 }
 
+.office-hours-grid {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 25px;
+}
+.office-hours-grid .office-hours-field {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border: none;
+  border-radius: 8px;
+}
+.office-hours-grid .office-hours-field .time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.office-hours-grid .office-hours-field .time-inputs input[type=text] {
+  width: 60px;
+  text-align: center;
+  padding: 5px 6px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 13px;
+}
+.office-hours-grid .office-hours-field .time-inputs span {
+  font-weight: 500;
+  color: #666;
+  font-size: 12px;
+}
+
 /* ==========================================================================
    Subnavigation
    ========================================================================== */
@@ -3411,6 +3444,30 @@ body.single-floorplans h2 {
 #details .description ul:last-child,
 #details .description ol:last-child {
   margin-bottom: 0;
+}
+#details .office-hours-section {
+  margin-top: 20px;
+}
+#details .office-hours-section h3 {
+  font-size: var(--rentfetch-font-size-large);
+  margin-bottom: 10px;
+  color: var(--rentfetch-dark);
+}
+#details .office-hours-section .rentfetch-property-office-hours .office-hours-day {
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+#details .office-hours-section .rentfetch-property-office-hours .office-hours-day:last-child {
+  border-bottom: none;
+}
+#details .office-hours-section .rentfetch-property-office-hours .office-hours-day .day-name {
+  font-weight: 600;
+  color: var(--rentfetch-dark);
+  min-width: 100px;
+}
+#details .office-hours-section .rentfetch-property-office-hours .office-hours-day .day-hours {
+  color: var(--rentfetch-text-color);
 }
 #details .property-details-body {
   display: grid;

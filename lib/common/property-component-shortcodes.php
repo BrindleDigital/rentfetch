@@ -170,6 +170,10 @@ function rentfetch_property_shortcode( $atts ) {
 			$content = rentfetch_get_property_fees_embed( $property_id );
 			break;
 
+		case 'office_hours':
+			$content = rentfetch_get_property_office_hours( $property_id );
+			break;
+
 		default:
 			return '<!-- Unknown output type: ' . esc_html( $info ) . ' -->';
 	}

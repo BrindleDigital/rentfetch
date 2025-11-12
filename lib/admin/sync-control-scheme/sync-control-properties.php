@@ -61,6 +61,7 @@ function rentfetch_property_syncing_fields_yardi( $array_fields, $post_id ) {
 		'latitude',
 		'longitude',
 		'synced_property_images',
+		'office_hours',
 	);
 }
 add_filter( 'rentfetch_filter_property_syncing_fields_yardi', 'rentfetch_property_syncing_fields_yardi', 10, 2 );

@@ -23,6 +23,40 @@
 		}
 	}
 
+	.office-hours-section {
+		margin-top: 20px;
+
+		h3 {
+			font-size: var(--rentfetch-font-size-large);
+			margin-bottom: 10px;
+			color: var(--rentfetch-dark);
+		}
+
+		.rentfetch-property-office-hours {
+			.office-hours-day {
+				// display: flex;
+				// justify-content: space-between;
+				align-items: center;
+				padding: 5px 0;
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+				&:last-child {
+					border-bottom: none;
+				}
+
+				.day-name {
+					font-weight: 600;
+					color: var(--rentfetch-dark);
+					min-width: 100px;
+				}
+
+				.day-hours {
+					color: var(--rentfetch-text-color);
+				}
+			}
+		}
+	}
+
 	.property-details-body {
 		display: grid;
 		grid-template-columns: 1fr 3fr;

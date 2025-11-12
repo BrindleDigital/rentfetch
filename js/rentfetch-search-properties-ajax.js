@@ -1,4 +1,102 @@
 jQuery(function ($) {
+	// Store the nonce for this page session
+	var currentNonce = null;
+
+	// Cache frequently used DOM elements
+	var $filter = $('#filter');
+	var $reset = $('#reset');
+	var $response = $('#response');
+	var $filterToggles = $('#filter-toggles');
+	var $propertiesFound = $('#properties-found');
+
+	// Pre-compute date ranges for performance
+	var dateRangeCache = {};
+	function getDateRangeLabel(val) {
+		if (dateRangeCache[val]) {
+			return dateRangeCache[val];
+		}
+
+		var label = '';
+		if (val === 'now-30') {
+			var start = new Date();
+			start.setFullYear(start.getFullYear() - 1);
+			var end = new Date();
+			end.setDate(end.getDate() + 30);
+			label =
+				'Next 30 days (' +
+				(start.getMonth() + 1) +
+				'/' +
+				start.getDate() +
+				'-' +
+				(end.getMonth() + 1) +
+				'/' +
+				end.getDate() +
+				')';
+		} else if (val === '30-60') {
+			var start = new Date();
+			start.setDate(start.getDate() + 30);
+			var end = new Date();
+			end.setDate(end.getDate() + 60);
+			label =
+				'30-60 days (' +
+				(start.getMonth() + 1) +
+				'/' +
+				start.getDate() +
+				'-' +
+				(end.getMonth() + 1) +
+				'/' +
+				end.getDate() +
+				')';
+		} else if (val === '60-90') {
+			var start = new Date();
+			start.setDate(start.getDate() + 60);
+			var end = new Date();
+			end.setDate(end.getDate() + 90);
+			label =
+				'60-90 days (' +
+				(start.getMonth() + 1) +
+				'/' +
+				start.getDate() +
+				'-' +
+				(end.getMonth() + 1) +
+				'/' +
+				end.getDate() +
+				')';
+		} else if (val.startsWith('fall-')) {
+			var year = val.split('-')[1];
+			label = 'Fall ' + year + ' (6/30-10/1)';
+		} else if (val.startsWith('spring-')) {
+			var year = val.split('-')[1];
+			label = 'Spring ' + year + ' (3/1-5/31)';
+		}
+
+		dateRangeCache[val] = label;
+		return label;
+	}
+
+	// Fetch nonce once on page load
+	function initializeNonce() {
+		$.ajax({
+			url: rentfetch_ajax.ajaxurl,
+			type: 'POST',
+			data: {
+				action: 'rentfetch_get_search_nonce',
+				_nocache: Date.now(),
+			},
+			success: function (response) {
+				if (response.success && response.data.nonce) {
+					currentNonce = response.data.nonce;
+					$('#property-nonce-field').val(currentNonce);
+				}
+			},
+			error: function () {
+				console.error('Failed to initialize nonce');
+			},
+		});
+	}
+
+	// Initialize nonce on page load
+	initializeNonce();
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
 		var baseUrl = window.location.href.split('?')[0];
@@ -11,27 +109,26 @@ jQuery(function ($) {
 	function getQueryParametersFromForm() {
 		var queryParams = {};
 
-		// Loop through all form inputs
-		$('#filter')
-			.find('input, select')
-			.each(function () {
-				var inputName = $(this).attr('name');
-				if (inputName) {
-					var inputValue = $(this).val();
+		// Use cached selector and more efficient iteration
+		$filter.find('input, select').each(function () {
+			var $this = $(this);
+			var inputName = $this.attr('name');
+			if (inputName) {
+				var inputValue = $this.val();
 
-					// Handle checkboxes and multiple values
-					if ($(this).is(':checkbox')) {
-						if (!queryParams[inputName]) {
-							queryParams[inputName] = [];
-						}
-						if ($(this).is(':checked')) {
-							queryParams[inputName].push(inputValue);
-						}
-					} else {
-						queryParams[inputName] = inputValue;
+				// Handle checkboxes and multiple values
+				if ($this.is(':checkbox')) {
+					if (!queryParams[inputName]) {
+						queryParams[inputName] = [];
 					}
+					if ($this.is(':checked')) {
+						queryParams[inputName].push(inputValue);
+					}
+				} else {
+					queryParams[inputName] = inputValue;
 				}
-			});
+			}
+		});
 
 		// Remove empty and unwanted parameters
 		$.each(queryParams, function (key, value) {
@@ -107,63 +204,11 @@ jQuery(function ($) {
 							legend + ' (' + activeFields.length + ' selected)';
 						break;
 					case dataId === 'search-dates[]':
-						// Map selected values to display labels with date ranges
+						// Map selected values to display labels with date ranges (using cache)
 						var selectedValues = dataValues.split(',');
 						var labels = [];
 						selectedValues.forEach(function (val) {
-							var label = '';
-							if (val === 'now-30') {
-								var start = new Date();
-								start.setFullYear(start.getFullYear() - 1);
-								var end = new Date();
-								end.setDate(end.getDate() + 30);
-								label =
-									'Next 30 days (' +
-									(start.getMonth() + 1) +
-									'/' +
-									start.getDate() +
-									'-' +
-									(end.getMonth() + 1) +
-									'/' +
-									end.getDate() +
-									')';
-							} else if (val === '30-60') {
-								var start = new Date();
-								start.setDate(start.getDate() + 30);
-								var end = new Date();
-								end.setDate(end.getDate() + 60);
-								label =
-									'30-60 days (' +
-									(start.getMonth() + 1) +
-									'/' +
-									start.getDate() +
-									'-' +
-									(end.getMonth() + 1) +
-									'/' +
-									end.getDate() +
-									')';
-							} else if (val === '60-90') {
-								var start = new Date();
-								start.setDate(start.getDate() + 60);
-								var end = new Date();
-								end.setDate(end.getDate() + 90);
-								label =
-									'60-90 days (' +
-									(start.getMonth() + 1) +
-									'/' +
-									start.getDate() +
-									'-' +
-									(end.getMonth() + 1) +
-									'/' +
-									end.getDate() +
-									')';
-							} else if (val.startsWith('fall-')) {
-								var year = val.split('-')[1];
-								label = 'Fall ' + year + ' (6/30-10/1)';
-							} else if (val.startsWith('spring-')) {
-								var year = val.split('-')[1];
-								label = 'Spring ' + year + ' (3/1-5/31)';
-							}
+							var label = getDateRangeLabel(val);
 							if (label) labels.push(label);
 						});
 						buttonContent = legend + ': ' + labels.join(', ');
@@ -189,47 +234,28 @@ jQuery(function ($) {
 
 	// Function to perform AJAX search
 	function performAJAXSearch(queryParams) {
-		console.log('Starting nonce request for property search');
-		// First, get a fresh nonce
-		$.ajax({
-			url: rentfetch_ajax.ajaxurl,
-			type: 'POST',
-			data: {
-				action: 'rentfetch_get_search_nonce',
-				_nocache: Date.now(),
-			},
-			beforeSend: function () {
-				$('#reset').text('Searching...'); // changing the button label
-				$('#response').html(''); // clear response div
-			},
-			success: function (response) {
-				if (response.success && response.data.nonce) {
-					// Update the nonce field with fresh nonce
-					$('#property-nonce-field').val(response.data.nonce);
-
-					// Now perform the actual search with the fresh nonce
+		console.log('Starting property search');
+		// Use the stored nonce
+		if (currentNonce) {
+			$('#property-nonce-field').val(currentNonce);
+			performActualPropertySearch(queryParams);
+		} else {
+			// Fallback: try to initialize nonce if not ready
+			initializeNonce();
+			setTimeout(function () {
+				if (currentNonce) {
+					$('#property-nonce-field').val(currentNonce);
 					performActualPropertySearch(queryParams);
 				} else {
-					console.error(
-						'Failed to get fresh nonce for property search'
-					);
+					console.error('Nonce not available');
 					$('#reset').text('Clear All');
 					$('#response').html(
 						'<p>Error: Could not generate security token. Please refresh the page.</p>'
 					);
 				}
-			},
-			error: function () {
-				console.error('Failed to get fresh nonce for property search');
-				$('#reset').text('Clear All');
-				$('#response').html(
-					'<p>Error: Could not generate security token. Please refresh the page.</p>'
-				);
-			},
-		});
-	}
-
-	// Function to perform the actual AJAX search (separated from nonce generation)
+			}, 500);
+		}
+	} // Function to perform the actual AJAX search (separated from nonce generation)
 	function performActualPropertySearch(queryParams) {
 		console.log('Starting actual property search');
 		var filter = $('#filter');
@@ -249,11 +275,11 @@ jQuery(function ($) {
 				$('#response').html('');
 			},
 			success: function (data) {
-				$('#reset').text('Clear All'); // changing the button label
-				$('#response').html(data); // insert data
+				$reset.text('Clear All'); // changing the button label
+				$response.html(data); // insert data
 
 				var toggles = outputToggles(toggleData);
-				$('#filter-toggles').html(toggles);
+				$filterToggles.html(toggles);
 
 				if ($('#map').length) {
 					var mapOffset = $('#map').offset().top;
@@ -272,7 +298,7 @@ jQuery(function ($) {
 				// look in data for .properties-loop, and count the number of children
 				var count = $('.properties-loop').children().length;
 				// update #properties-found with the count
-				$('#properties-found').text(count);
+				$propertiesFound.text(count);
 
 				// Trigger custom event for map update
 				$(document).trigger('rentfetchPropertySearchComplete');

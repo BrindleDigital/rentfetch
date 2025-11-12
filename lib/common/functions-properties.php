@@ -1718,4 +1718,75 @@ function rentfetch_property_fees_notes() {
 add_action( 'rentfetch_before_floorplans_simple_grid', 'rentfetch_property_fees_notes' );
 add_action( 'rentfetch_before_floorplans_search', 'rentfetch_property_fees_notes' );
 
-// * PROPERTY BUTTONS CONTINUED.
+// * OFFICE HOURS
+
+/**
+ * Get the property office hours array
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return array The property office hours array.
+ */
+function rentfetch_get_property_office_hours_array( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return array();
+		}
+		$office_hours = get_post_meta( $post_id, 'office_hours', true );
+	} else {
+		$office_hours = get_post_meta( get_the_ID(), 'office_hours', true );
+	}
+	
+	if ( ! is_array( $office_hours ) ) {
+		$office_hours = array();
+	}
+	
+	$office_hours = apply_filters( 'rentfetch_filter_property_office_hours_array', $office_hours, $property_id );
+	return $office_hours;
+}
+
+/**
+ * Get the property office hours
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return string The property office hours HTML markup.
+ */
+function rentfetch_get_property_office_hours( $property_id = null ) {
+	$office_hours = rentfetch_get_property_office_hours_array( $property_id );
+	
+	if ( empty( $office_hours ) ) {
+		return '';
+	}
+	
+	$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+	
+	$output = '<div class="rentfetch-property-office-hours">';
+	foreach ( $days as $day ) {
+		if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
+			$start_time = date( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
+			$end_time = date( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
+			
+			$output .= '<div class="office-hours-day">';
+				$output .= '<span class="day-name">' . esc_html( ucfirst( $day ) . 's:' ) . '</span> ';
+				$output .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
+			$output .= '</div>';
+		}
+	}
+	$output .= '</div>';
+	
+	return apply_filters( 'rentfetch_filter_property_office_hours', $output, $property_id );
+}
+
+/**
+ * Echo the property office hours.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return void.
+ */
+function rentfetch_property_office_hours( $property_id = null ) {
+	$office_hours = rentfetch_get_property_office_hours( $property_id );
+	
+	if ( $office_hours ) {
+		echo wp_kses_post( $office_hours );
+	}
+}

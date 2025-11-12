@@ -44,6 +44,15 @@ function rentfetch_register_properties_details_metabox() {
 	);
 
 	add_meta_box(
+		'rentfetch_properties_office_hours', // ID of the metabox.
+		'Office Hours', // Title of the metabox.
+		'rentfetch_properties_office_hours_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
+	);
+
+	add_meta_box(
 		'rentfetch_properties_location', // ID of the metabox.
 		'Property Location', // Title of the metabox.
 		'rentfetch_properties_location_metabox_callback', // Callback function to render the metabox.
@@ -105,6 +114,44 @@ function rentfetch_register_properties_details_metabox() {
 	}
 }
 add_action( 'add_meta_boxes', 'rentfetch_register_properties_details_metabox' );
+
+/**
+ * Normalize time input to 24-hour format (HH:MM)
+ *
+ * @param string $time_input The time input (e.g., '9', '9:30', '09:00').
+ * @return string Normalized time in HH:MM format, or empty string if invalid.
+ */
+function rentfetch_normalize_time_input( $time_input ) {
+	$time_input = trim( $time_input );
+	if ( empty( $time_input ) ) {
+		return '';
+	}
+	
+	// If it's already in HH:MM format, validate it
+	if ( preg_match( '/^(\d{1,2}):(\d{2})$/', $time_input, $matches ) ) {
+		$hour = (int) $matches[1];
+		$minute = (int) $matches[2];
+		if ( $hour >= 0 && $hour <= 23 && $minute >= 0 && $minute <= 59 ) {
+			return sprintf( '%02d:%02d', $hour, $minute );
+		}
+	}
+	
+	// If it's just a number (hour), assume :00
+	if ( is_numeric( $time_input ) ) {
+		$hour = (int) $time_input;
+		if ( $hour >= 0 && $hour <= 23 ) {
+			return sprintf( '%02d:00', $hour );
+		}
+	}
+	
+	// Try to parse with strtotime as fallback
+	$timestamp = strtotime( $time_input );
+	if ( $timestamp !== false ) {
+		return date( 'H:i', $timestamp );
+	}
+	
+	return '';
+}
 
 /**
  * Markup for the properties identifiers metabox
@@ -288,6 +335,7 @@ function rentfetch_properties_location_metabox_callback( $post ) {
  */
 function rentfetch_properties_contact_metabox_callback( $post ) {
 	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
+	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
 	?>
 	<div class="rf-metabox rf-metabox-properties">
 		
@@ -368,6 +416,57 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 				</div>
 			</div>
 			
+		</div>
+		
+	</div>
+	<?php
+}
+
+/**
+ * Properties office hours metabox callback
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
+function rentfetch_properties_office_hours_metabox_callback( $post ) {
+	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
+	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
+	?>
+	<div class="rf-metabox rf-metabox-properties">
+		
+		<p class="description">Enter times in 24-hour format (e.g., 09:00, 18:00). You can enter just the hour (e.g., 9) and it will be formatted as 09:00.</p>
+		
+		<?php
+		$office_hours = get_post_meta( $post->ID, 'office_hours', true );
+		if ( ! is_array( $office_hours ) ) {
+			$office_hours = array();
+		}
+		
+		$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+		?>
+		
+		<div class="office-hours-grid">
+			<?php foreach ( $days as $day ) : 
+				$disabled = in_array( 'office_hours', $array_disabled_fields, true ) ? 'disabled' : '';
+			?>
+				<div class="field office-hours-field">
+						<label for="<?php echo esc_attr( $day ); ?>_start"><?php echo esc_html( ucfirst( $day ) ); ?></label>
+					<div class="time-inputs">
+						<input type="text" 
+							   id="<?php echo esc_attr( $day ); ?>_start" 
+							   name="office_hours[<?php echo esc_attr( $day ); ?>][start]" 
+							   value="<?php echo esc_attr( $office_hours[ $day ]['start'] ?? '' ); ?>" 
+							   <?php echo esc_attr( $disabled ); ?>>
+						<span>to</span>
+						<input type="text" 
+							   id="<?php echo esc_attr( $day ); ?>_end" 
+							   name="office_hours[<?php echo esc_attr( $day ); ?>][end]" 
+							   value="<?php echo esc_attr( $office_hours[ $day ]['end'] ?? '' ); ?>" 
+							   <?php echo esc_attr( $disabled ); ?>>
+					</div>
+				</div>
+			<?php endforeach; ?>
 		</div>
 		
 	</div>
@@ -1325,6 +1424,35 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 	if ( isset( $_POST['tour_booking_link'] ) ) {
 		update_post_meta( $post_id, 'tour_booking_link', sanitize_text_field( wp_unslash( $_POST['tour_booking_link'] ) ) );
+	}
+
+	if ( isset( $_POST['office_hours'] ) && is_array( $_POST['office_hours'] ) ) {
+		$office_hours = array();
+		$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+		
+		foreach ( $days as $day ) {
+			if ( isset( $_POST['office_hours'][ $day ] ) && is_array( $_POST['office_hours'][ $day ] ) ) {
+				$start = sanitize_text_field( wp_unslash( $_POST['office_hours'][ $day ]['start'] ?? '' ) );
+				$end = sanitize_text_field( wp_unslash( $_POST['office_hours'][ $day ]['end'] ?? '' ) );
+				
+				// Normalize time format
+				$start = rentfetch_normalize_time_input( $start );
+				$end = rentfetch_normalize_time_input( $end );
+				
+				if ( ! empty( $start ) || ! empty( $end ) ) {
+					$office_hours[ $day ] = array(
+						'start' => $start,
+						'end' => $end,
+					);
+				}
+			}
+		}
+		
+		if ( ! empty( $office_hours ) ) {
+			update_post_meta( $post_id, 'office_hours', $office_hours );
+		} else {
+			delete_post_meta( $post_id, 'office_hours' );
+		}
 	}
 
 	if ( isset( $_POST['images'] ) ) {

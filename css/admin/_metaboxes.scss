@@ -208,3 +208,44 @@
 		background-color: #f7f7f7 !important;
 	}
 }
+
+// Office Hours Styles
+.office-hours-grid {
+	display: flex;
+	flex-flow: row wrap;
+	gap: 25px;
+
+	.office-hours-field {
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0;
+		border: none;
+		border-radius: 8px;
+
+		label {
+		}
+
+		.time-inputs {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+
+			input[type='text'] {
+				width: 60px;
+				text-align: center;
+				padding: 5px 6px;
+				border: 1px solid #ddd;
+				border-radius: 3px;
+				font-size: 13px;
+			}
+
+			span {
+				font-weight: 500;
+				color: #666;
+				font-size: 12px;
+			}
+		}
+	}
+}

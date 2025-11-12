@@ -92,6 +92,7 @@ function rentfetch_property_components_shortcode_docs()
 		<li><code>google_link</code> - Google maps link</li>
 		<li><code>location_button</code> - Location button</li>
 		<li><code>fees_embed</code> - Fees and deposits embed</li>
+		<li><code>office_hours</code> - Property office hours</li>
 	</ul>
 	<p>You can also use <code>before</code> and <code>after</code> parameters to wrap the output. This is useful for situations where a shortcode is being used inline with text but needs certain helper words if we have that information, but needs to be left out entirely if not.</p>
 	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_property_info info="phone" before=" call us at " after=" today!"]<!-- /wp:shortcode --></span></p>
