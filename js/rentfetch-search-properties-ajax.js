@@ -1,15 +1,11 @@
 jQuery(function ($) {
-	// Get nonce and ajaxurl from localized data (generated in PHP via wp_add_inline_script)
-	// Use window. to access the global variable set by inline script
+	// Get REST URL and shortcode attributes from localized data (generated in PHP via wp_add_inline_script)
 	var rentfetchData = window.rentfetchPropertySearch || {};
-	var currentNonce = rentfetchData.nonce || null;
-	var ajaxurl = rentfetchData.ajaxurl || null;
+	var restUrl = rentfetchData.restUrl || null;
+	var shortcodeAttributes = rentfetchData.shortcodeAttributes || {};
 
-	// Set the nonce in the hidden field
-	if (currentNonce) {
-		$('#property-nonce-field').val(currentNonce);
-	} else {
-		console.error('Nonce not available from server');
+	if (!restUrl) {
+		console.error('REST API URL not available from server');
 	}
 
 	// Cache frequently used DOM elements
@@ -219,38 +215,66 @@ jQuery(function ($) {
 		return toggleMarkup;
 	}
 
-	// Function to perform AJAX search
+	// Function to perform REST API search
 	function performAJAXSearch(queryParams) {
-		// Use the nonce from PHP
-		if (currentNonce) {
-			$('#property-nonce-field').val(currentNonce);
-			performActualPropertySearch(queryParams);
-		} else {
-			console.error('Nonce not available');
+		if (!restUrl) {
+			console.error('REST API URL not available');
 			$reset.text('Clear All');
 			$response.html(
-				'<p>Security verification failed. Please refresh the page and try again.</p>'
+				'<p>Search service unavailable. Please refresh the page and try again.</p>'
 			);
+			return;
 		}
+		performActualPropertySearch(queryParams);
 	}
 
-	// Function to perform the actual AJAX search (separated from nonce generation)
+	// Function to perform the actual REST API search
 	function performActualPropertySearch(queryParams) {
 		var filter = $('#filter');
 		var toggleData = filter;
+		
+		// Build query parameters from form and shortcode attributes
+		var formData = {};
+		filter.find('input, select').each(function() {
+			var name = $(this).attr('name');
+			var value = $(this).val();
+			
+			// Skip hidden fields like action and nonce
+			if (name === 'action' || name === 'rentfetch_frontend_nonce_field') {
+				return;
+			}
+			
+			if ($(this).is(':checkbox')) {
+				if ($(this).is(':checked')) {
+					if (!formData[name]) {
+						formData[name] = [];
+					}
+					formData[name].push(value);
+				}
+			} else if ($(this).is(':radio')) {
+				if ($(this).is(':checked')) {
+					formData[name] = value;
+				}
+			} else if (value !== '') {
+				formData[name] = value;
+			}
+		});
+		
+		// Merge with shortcode attributes
+		var queryData = $.extend({}, shortcodeAttributes, formData);
 
 		$.ajax({
-			url: ajaxurl || filter.attr('action'),
-			data: filter.serialize(), // form data
-			toggleData: filter.serialize(),
-			type: filter.attr('method'), // POST
+			url: restUrl,
+			data: queryData,
+			type: 'GET',
+			dataType: 'json',
 			beforeSend: function (xhr) {
 				$reset.text('Searching...'); // changing the button label
 				$response.html(''); // clear #response div
 			},
-			success: function (data) {
+			success: function (response) {
 				$reset.text('Clear All'); // changing the button label
-				$response.html(data); // insert data
+				$response.html(response.html); // insert HTML from REST response
 
 				var toggles = outputToggles(toggleData);
 				$filterToggles.html(toggles);
@@ -279,18 +303,7 @@ jQuery(function ($) {
 			},
 			error: function (jqXHR) {
 				$reset.text('Clear All');
-				// Check if it's a JSON response with an error message
-				if (
-					jqXHR.responseJSON &&
-					jqXHR.responseJSON.data &&
-					jqXHR.responseJSON.data.message
-				) {
-					$response.html(
-						'<p>' + jqXHR.responseJSON.data.message + '</p>'
-					);
-				} else {
-					$response.html('<p>Search failed. Please try again.</p>');
-				}
+				$response.html('<p>Search failed. Please try again.</p>');
 			},
 		});
 	}

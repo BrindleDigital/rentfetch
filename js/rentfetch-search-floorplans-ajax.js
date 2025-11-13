@@ -1,17 +1,13 @@
-// Nonce and config come from inline script in wp_add_inline_script (see floorplan-search.php or enqueue.php)
+// REST API configuration comes from inline script in wp_add_inline_script (see floorplan-search.php)
 jQuery(function ($) {
-	// Get nonce from PHP-generated inline script (use window. to access global scope)
+	// Get REST URL and shortcode attributes from PHP-generated inline script
 	var rentfetchData = window.rentfetchFloorplanSearch || {};
-	var currentNonce = rentfetchData.nonce || null;
-	var ajaxurl = rentfetchData.ajaxurl || null;
+	var restUrl = rentfetchData.restUrl || null;
 	var shortcodeAttributes = rentfetchData.shortcodeAttributes || {};
 
-	// Set the nonce in the hidden field
-	if (currentNonce) {
-		$('#nonce-field').val(currentNonce);
-	} else {
+	if (!restUrl) {
 		console.error(
-			'Nonce not available from server - rentfetchFloorplanSearch:',
+			'REST API URL not available from server - rentfetchFloorplanSearch:',
 			rentfetchData
 		);
 	}
@@ -249,46 +245,66 @@ jQuery(function ($) {
 		return toggleMarkup;
 	}
 
-	// Function to perform AJAX search
+	// Function to perform REST API search
 	function performAJAXSearch(queryParams) {
-		// Use the nonce from PHP
-		if (currentNonce) {
-			$('#nonce-field').val(currentNonce);
-			performActualSearch(queryParams);
-		} else {
-			console.error('Nonce not available');
+		if (!restUrl) {
+			console.error('REST API URL not available');
 			$('#reset').text('Clear All');
 			$('#response').html(
-				'<p>Security verification failed. Please refresh the page and try again.</p>'
+				'<p>Search service unavailable. Please refresh the page and try again.</p>'
 			);
+			return;
 		}
+		performActualSearch(queryParams);
 	}
 
-	// Function to perform the actual search
+	// Function to perform the actual REST API search
 	function performActualSearch(queryParams) {
-		// get the data from the form
 		var filter = $('#filter');
-		var filterSerialized = filter.serialize();
-
-		// shortcodeData should be the serialized version of the shortcode attributes
-		var shortcodeData = $.param(shortcodeAttributes);
-
-		// join the two together
-		var postData = filterSerialized + '&' + shortcodeData;
-
 		var toggleData = filter;
+		
+		// Build query parameters from form
+		var formData = {};
+		filter.find('input, select').each(function() {
+			var name = $(this).attr('name');
+			var value = $(this).val();
+			
+			// Skip hidden fields like action and nonce
+			if (name === 'action' || name === 'rentfetch_frontend_nonce_field') {
+				return;
+			}
+			
+			if ($(this).is(':checkbox')) {
+				if ($(this).is(':checked')) {
+					if (!formData[name]) {
+						formData[name] = [];
+					}
+					formData[name].push(value);
+				}
+			} else if ($(this).is(':radio')) {
+				if ($(this).is(':checked')) {
+					formData[name] = value;
+				}
+			} else if (value !== '') {
+				formData[name] = value;
+			}
+		});
+		
+		// Merge with shortcode attributes
+		var queryData = $.extend({}, shortcodeAttributes, formData);
 
 		$.ajax({
-			url: ajaxurl || filter.attr('action'),
-			data: postData, // form data
-			type: filter.attr('method'), // POST
+			url: restUrl,
+			data: queryData,
+			type: 'GET',
+			dataType: 'json',
 			beforeSend: function () {
 				$('#reset').text('Searching...'); // changing the button label
 				$('#response').html(''); // clear response div
 			},
-			success: function (data) {
+			success: function (response) {
 				$('#reset').text('Clear All'); // changing the button label
-				$('#response').html(data); // insert data
+				$('#response').html(response.html); // insert HTML from REST response
 
 				var toggles = outputToggles(toggleData);
 				$('#filter-toggles').html(toggles);
@@ -300,20 +316,9 @@ jQuery(function ($) {
 			},
 			error: function (jqXHR) {
 				$('#reset').text('Clear All');
-				// Check if it's a JSON response with an error message
-				if (
-					jqXHR.responseJSON &&
-					jqXHR.responseJSON.data &&
-					jqXHR.responseJSON.data.message
-				) {
-					$('#response').html(
-						'<p>' + jqXHR.responseJSON.data.message + '</p>'
-					);
-				} else {
-					$('#response').html(
-						'<p>Search failed. Please try again.</p>'
-					);
-				}
+				$('#response').html(
+					'<p>Search failed. Please try again.</p>'
+				);
 			},
 		});
 	}

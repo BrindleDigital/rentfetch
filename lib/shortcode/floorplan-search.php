@@ -46,12 +46,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		$floorplansearchresults_shortcode = sprintf( '[rentfetch_floorplansearchresults %s]', $string_atts );
 		echo do_shortcode( $floorplansearchresults_shortcode );
 
-		printf( '<form class="floorplan-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', esc_url( site_url() ) );
-
-			// Add an empty nonce field that will be populated by JavaScript
-			echo '<input type="hidden" name="rentfetch_frontend_nonce_field" value="" id="nonce-field">';
-
-			echo '<input type="hidden" name="action" value="floorplansearch">';
+		echo '<form class="floorplan-search-filters" id="filter">';
 
 			// This is the hook where we add all of our actions for the search filters.
 			do_action( 'rentfetch_do_search_floorplans_filters' );
@@ -79,13 +74,11 @@ function rentfetch_floorplansearchfilters( $atts ) {
 	// enqueue the search floorplans ajax script.
 	wp_enqueue_script( 'rentfetch-search-floorplans-ajax' );
 
-	// Add inline script with shortcode attributes
-	// Note: For floorplans we need to do this here (not in enqueue.php) because we need $atts
+	// Add inline script with REST API URL and shortcode attributes
 	if ( ! wp_script_is( 'rentfetch-search-floorplans-ajax', 'done' ) ) {
 		$inline_script = sprintf(
-			'var rentfetchFloorplanSearch = { ajaxurl: %s, nonce: %s, shortcodeAttributes: %s };',
-			wp_json_encode( admin_url( 'admin-ajax.php' ) ),
-			wp_json_encode( wp_create_nonce( 'rentfetch_frontend_nonce_action' ) ),
+			'var rentfetchFloorplanSearch = { restUrl: %s, shortcodeAttributes: %s };',
+			wp_json_encode( rest_url( 'rentfetch/v1/search/floorplans' ) ),
 			wp_json_encode( $atts ?: array() )
 		);
 		wp_add_inline_script( 'rentfetch-search-floorplans-ajax', $inline_script, 'before' );

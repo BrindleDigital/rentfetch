@@ -73,13 +73,11 @@ function rentfetch_propertysearchfilters( $atts ) {
 	// enqueue the search properties ajax script
 	wp_enqueue_script( 'rentfetch-search-properties-ajax' );
 
-	// Add inline script with shortcode attributes
-	// Note: Generate nonce here (not in enqueue.php) so we have access to shortcode $atts
+	// Add inline script with REST API URL and shortcode attributes
 	if ( ! wp_script_is( 'rentfetch-search-properties-ajax', 'done' ) ) {
 		$inline_script = sprintf(
-			'var rentfetchPropertySearch = { ajaxurl: %s, nonce: %s, shortcodeAttributes: %s };',
-			wp_json_encode( admin_url( 'admin-ajax.php' ) ),
-			wp_json_encode( wp_create_nonce( 'rentfetch_frontend_nonce_action' ) ),
+			'var rentfetchPropertySearch = { restUrl: %s, shortcodeAttributes: %s };',
+			wp_json_encode( rest_url( 'rentfetch/v1/search/properties' ) ),
 			wp_json_encode( $atts ?: array() )
 		);
 		wp_add_inline_script( 'rentfetch-search-properties-ajax', $inline_script, 'before' );
@@ -117,13 +115,7 @@ function rentfetch_propertysearch_filters_dialog() {
 		echo '<header class="property-search-filters-header">';
 			echo '<h2>Search Filters</h2>';
 		echo '</header>';
-		printf( '<form class="property-search-filters" action="%s/wp-admin/admin-ajax.php" method="POST" id="filter">', esc_url( site_url() ) );
-
-			// Add the action to the form.
-			echo '<input type="hidden" name="action" value="propertysearch">';
-
-			// Add an empty nonce field that will be populated by JavaScript
-			echo '<input type="hidden" name="rentfetch_frontend_nonce_field" value="" id="property-nonce-field">';
+		printf( '<form class="property-search-filters" id="filter">' );
 
 			// This is the hook where we add all of our actions for the search filters.
 			do_action( 'rentfetch_do_search_properties_dialog_filters' );
