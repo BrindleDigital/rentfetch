@@ -18,6 +18,8 @@ function rentfetch_settings_set_defaults_general() {
 	add_option( 'rentfetch_options_data_sync', 'nosync' );
 	add_option( 'rentfetch_options_disable_query_caching', '0' );
 	add_option( 'rentfetch_options_enable_search_indexes', '1' );
+	add_option( 'rentfetch_options_enable_cache_warming', '0' );
+	add_option( 'rentfetch_options_enable_search_tracking', '1' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_general' );
 
@@ -86,7 +88,161 @@ function rentfetch_settings_shared_general() {
 						Enable search result caching (recommended)
 					</label>
 				</li>
+				<li>
+					<label for="rentfetch_options_enable_cache_warming">
+						<input type="checkbox" name="rentfetch_options_enable_cache_warming" id="rentfetch_options_enable_cache_warming" <?php checked( get_option( 'rentfetch_options_enable_cache_warming', '0' ), '1' ); ?>>
+						Automatically pre-fetch popular searches every 25 minutes
+					</label>
+				</li>
 			</ul>
+
+			<p>
+				<button type="button" class="button" id="rentfetch-clear-cache">Clear Search Cache</button>
+				<button type="button" class="button" id="rentfetch-warm-cache">Pre-fetch Popular Searches</button>
+				<span id="rentfetch-cache-status" style="margin-left: 10px;"></span>
+			</p>
+
+			<p style="margin-top: 15px;">
+				<a href="#" id="rentfetch-toggle-popular-searches" style="color: #2271b1;">View Tracked Searches</a>
+			</p>
+			<div id="rentfetch-popular-searches-container" style="display: none; margin-top: 15px; background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
+				<p style="color: #646970; padding: 20px;"><em>Loading...</em></p>
+			</div>
+
+			<style>
+				#rentfetch-toggle-popular-searches:focus {
+					outline: none;
+					box-shadow: none;
+				}
+			</style>
+
+			<script>
+			jQuery(document).ready(function($) {
+				// Clear cache button
+				$('#rentfetch-clear-cache').on('click', function(e) {
+					e.preventDefault();
+					
+					var $button = $(this);
+					var $status = $('#rentfetch-cache-status');
+					
+					$button.prop('disabled', true).text('Clearing...');
+					$status.html('<span style="color: #f0b849;">⏳ Clearing cache...</span>');
+					
+					$.post(ajaxurl, {
+						action: 'rentfetch_clear_search_cache',
+						nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_clear_cache' ) ); ?>'
+					}, function(response) {
+						$button.prop('disabled', false).text('Clear Search Cache');
+						
+						if (response.success) {
+							$status.html('<span style="color: #46b450;">✓ ' + response.data.message + '</span>');
+							setTimeout(function() {
+								$status.html('');
+							}, 3000);
+						} else {
+							$status.html('<span style="color: #dc3232;">✗ ' + response.data.message + '</span>');
+						}
+					}).fail(function() {
+						$button.prop('disabled', false).text('Clear Search Cache');
+						$status.html('<span style="color: #dc3232;">✗ Error: Request failed. Please try again.</span>');
+					});
+				});
+
+				// Warm cache button
+				$('#rentfetch-warm-cache').on('click', function(e) {
+					e.preventDefault();
+					
+					var $button = $(this);
+					var $status = $('#rentfetch-cache-status');
+					
+					$button.prop('disabled', true).text('Pre-fetching...');
+					$status.html('<span style="color: #f0b849;">⏳ Pre-fetching popular searches... this may take a moment.</span>');
+					
+					$.post(ajaxurl, {
+						action: 'rentfetch_warm_cache',
+						nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_warm_cache' ) ); ?>'
+					}, function(response) {
+						$button.prop('disabled', false).text('Pre-fetch Popular Searches');
+						
+						if (response.success) {
+							$status.html('<span style="color: #46b450;">✓ ' + response.data.message + '</span>');
+							setTimeout(function() {
+								$status.html('');
+							}, 3000);
+						} else {
+							$status.html('<span style="color: #dc3232;">✗ ' + response.data.message + '</span>');
+						}
+					}).fail(function() {
+						$button.prop('disabled', false).text('Pre-fetch Popular Searches');
+						$status.html('<span style="color: #dc3232;">✗ Error: Request failed. Please try again.</span>');
+					});
+				});
+
+				// Toggle popular searches accordion
+				$('#rentfetch-toggle-popular-searches').on('click', function(e) {
+					e.preventDefault();
+					
+					var $link = $(this);
+					var $container = $('#rentfetch-popular-searches-container');
+					
+					if ($container.is(':visible')) {
+						$container.slideUp();
+						$link.text('View Tracked Searches');
+					} else {
+						$container.slideDown();
+						$link.text('Hide Tracked Searches');
+						
+						// Load popular searches if not already loaded
+						if ($container.find('table').length === 0) {
+							$container.html('<p style="color: #646970; padding: 20px;"><em>Loading...</em></p>');
+							
+							$.post(ajaxurl, {
+								action: 'rentfetch_get_popular_searches',
+								nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_popular_searches' ) ); ?>'
+							}, function(response) {
+								if (response.success && response.data.searches.length > 0) {
+									var html = '<table class="widefat striped" style="border: none;"><thead><tr>';
+									html += '<th style="width: 100px;">Type</th>';
+									html += '<th>Search Query</th>';
+									html += '<th style="width: 120px; text-align: center;">Times Hit</th>';
+									html += '<th style="width: 140px;">Last Executed</th>';
+									html += '</tr></thead><tbody>';
+									
+									$.each(response.data.searches, function(index, search) {
+										var decodedQuery = decodeURIComponent(search.query.replace(/\+/g, ' '));
+										var displayQuery = decodedQuery;
+										
+										// If query is empty or only has availability, show as "all available"
+										if (decodedQuery === '' || decodedQuery === 'availability=1') {
+											displayQuery = '(all available)';
+										} else {
+											// Remove availability parameter from other queries for cleaner display
+											displayQuery = displayQuery.replace(/&?availability=[^&]*/g, '').replace(/^&/, '');
+										}
+										
+										html += '<tr>';
+										html += '<td><span style="display: inline-block; padding: 3px 8px; background: #f0f0f1; border-radius: 3px; font-size: 11px; text-transform: uppercase; font-weight: 600; color: #2c3338;">' + search.type + '</span></td>';
+										html += '<td style="font-family: Consolas, Monaco, monospace; font-size: 12px; color: #50575e;">' + displayQuery + '</td>';
+										html += '<td style="text-align: center; font-weight: 600; color: #2271b1;">' + search.count + '</td>';
+										html += '<td style="color: #646970; font-size: 13px;">' + search.last_used + '</td>';
+										html += '</tr>';
+									});
+									
+									html += '</tbody></table>';
+									html += '<p style="padding: 15px; color: #646970; font-size: 13px;"><em>Showing searches that required database queries in the last 30 days. These are candidates for automatic cache warming. Note: Cached searches don\'t appear here until the cache expires and they need to be regenerated.</em></p>';
+									
+									$container.html(html);
+								} else {
+									$container.html('<p style="color: #646970; padding: 20px;"><em>No search data available yet. Searches will be tracked when they require database queries (not served from cache).</em></p>');
+								}
+							}).fail(function() {
+								$container.html('<p style="color: #d63638;"><em>Error loading popular searches.</em></p>');
+							});
+						}
+					}
+				});
+			});
+			</script>
 		</div>
 	</div>
 
@@ -335,6 +491,18 @@ function rentfetch_save_settings_general() {
 	// Checkbox field - Enable query caching (inverted: checked = '0' for disable, unchecked = '1' for disable)
 	$disable_query_caching = isset( $_POST['rentfetch_options_disable_query_caching'] ) ? '0' : '1';
 	update_option( 'rentfetch_options_disable_query_caching', $disable_query_caching );
+
+	// Checkbox field - Enable cache warming (checked = '1', unchecked = '0')
+	$enable_cache_warming = isset( $_POST['rentfetch_options_enable_cache_warming'] ) ? '1' : '0';
+	$previous_cache_warming = get_option( 'rentfetch_options_enable_cache_warming', '0' );
+	update_option( 'rentfetch_options_enable_cache_warming', $enable_cache_warming );
+
+	// Schedule or unschedule cache warming based on setting change
+	if ( $enable_cache_warming !== $previous_cache_warming ) {
+		if ( function_exists( 'rentfetch_schedule_cache_warming' ) ) {
+			rentfetch_schedule_cache_warming();
+		}
+	}
 
 	// If caching is disabled (value is '1'), clear existing transients
 	if ( $disable_query_caching === '1' ) {

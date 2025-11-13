@@ -45,6 +45,11 @@ add_action( 'rest_api_init', 'rentfetch_register_rest_routes' );
  */
 function rentfetch_rest_search_properties( $request ) {
 
+	// Track this search for analytics (before checking cache).
+	if ( function_exists( 'rentfetch_track_search' ) ) {
+		rentfetch_track_search( 'properties', $request->get_params() );
+	}
+
 	// Populate $_POST with request parameters so existing filter functions work
 	// This allows all the filter hooks that check $_POST to function correctly
 	$_POST = array_merge( $_POST, $request->get_params() );
@@ -172,6 +177,11 @@ function rentfetch_rest_search_properties( $request ) {
  * @return WP_REST_Response
  */
 function rentfetch_rest_search_floorplans( $request ) {
+
+	// Track this search for analytics (before checking cache).
+	if ( function_exists( 'rentfetch_track_search' ) ) {
+		rentfetch_track_search( 'floorplans', $request->get_params() );
+	}
 
 	// Populate $_POST with request parameters so existing filter functions work
 	// This allows all the filter hooks that check $_POST to function correctly
