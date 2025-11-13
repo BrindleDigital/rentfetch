@@ -121,13 +121,15 @@ function rentfetch_rest_search_properties( $request ) {
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$cached_markup = get_transient( $cache_key );
 		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
-			return rest_ensure_response(
+			$response = rest_ensure_response(
 				array(
 					'html'  => $cached_markup,
 					'count' => substr_count( $cached_markup, 'class="property' ),
 					'cached' => true,
 				)
 			);
+			$response->header( 'Cache-Control', 'public, max-age=1800' );
+			return $response;
 		}
 	}
 
@@ -139,13 +141,22 @@ function rentfetch_rest_search_properties( $request ) {
 		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
 	}
 
-	return rest_ensure_response(
+	$response = rest_ensure_response(
 		array(
 			'html'  => $markup,
 			'count' => substr_count( $markup, 'class="property' ),
 			'cached' => false,
 		)
 	);
+
+	// Set cache headers if caching is enabled
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		$response->header( 'Cache-Control', 'public, max-age=1800' );
+	} else {
+		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate' );
+	}
+
+	return $response;
 }
 
 /**
@@ -187,13 +198,15 @@ function rentfetch_rest_search_floorplans( $request ) {
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$cached_markup = get_transient( $cache_key );
 		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
-			return rest_ensure_response(
+			$response = rest_ensure_response(
 				array(
 					'html'  => $cached_markup,
 					'count' => substr_count( $cached_markup, 'class="floorplan' ),
 					'cached' => true,
 				)
 			);
+			$response->header( 'Cache-Control', 'public, max-age=1800' );
+			return $response;
 		}
 	}
 
@@ -205,11 +218,20 @@ function rentfetch_rest_search_floorplans( $request ) {
 		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
 	}
 
-	return rest_ensure_response(
+	$response = rest_ensure_response(
 		array(
 			'html'  => $markup,
 			'count' => substr_count( $markup, 'class="floorplan' ),
 			'cached' => false,
 		)
 	);
+
+	// Set cache headers if caching is enabled
+	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		$response->header( 'Cache-Control', 'public, max-age=1800' );
+	} else {
+		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate' );
+	}
+
+	return $response;
 }

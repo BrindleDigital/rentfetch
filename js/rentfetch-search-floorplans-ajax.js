@@ -20,10 +20,10 @@ jQuery(function ($) {
 		history.pushState(null, '', newUrl);
 	}
 
-	// Function to get query parameters from POST request
+	// Function to get query parameters from form for URL updates
 	function getQueryParametersFromForm() {
-		var queryParams = {}; // Initialize queryParams as an empty object
-		var $filter = $('#filter'); // Cache the jQuery selector
+		var queryParams = {};
+		var $filter = $('#filter');
 
 		$filter.find('input, select').each(function () {
 			var inputName = $(this).attr('name');
@@ -262,18 +262,21 @@ jQuery(function ($) {
 	function performActualSearch(queryParams) {
 		var filter = $('#filter');
 		var toggleData = filter;
-		
+
 		// Build query parameters from form
 		var formData = {};
-		filter.find('input, select').each(function() {
+		filter.find('input, select').each(function () {
 			var name = $(this).attr('name');
 			var value = $(this).val();
-			
+
 			// Skip hidden fields like action and nonce
-			if (name === 'action' || name === 'rentfetch_frontend_nonce_field') {
+			if (
+				name === 'action' ||
+				name === 'rentfetch_frontend_nonce_field'
+			) {
 				return;
 			}
-			
+
 			if ($(this).is(':checkbox')) {
 				if ($(this).is(':checked')) {
 					if (!formData[name]) {
@@ -289,7 +292,7 @@ jQuery(function ($) {
 				formData[name] = value;
 			}
 		});
-		
+
 		// Merge with shortcode attributes
 		var queryData = $.extend({}, shortcodeAttributes, formData);
 
@@ -316,9 +319,7 @@ jQuery(function ($) {
 			},
 			error: function (jqXHR) {
 				$('#reset').text('Clear All');
-				$('#response').html(
-					'<p>Search failed. Please try again.</p>'
-				);
+				$('#response').html('<p>Search failed. Please try again.</p>');
 			},
 		});
 	}
@@ -328,7 +329,7 @@ jQuery(function ($) {
 		var queryParams = getQueryParametersFromForm(); // Get parameters from form
 
 		updateURLWithQueryParameters(queryParams);
-		performAJAXSearch(queryParams); // Perform AJAX search
+		performAJAXSearch(); // Perform REST API search
 
 		return false;
 	}

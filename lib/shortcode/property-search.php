@@ -230,6 +230,10 @@ function rentfetch_render_property_query_results( $property_args ) {
 
 /**
  * AJAX handler for the property search
+ * 
+ * @deprecated This function is deprecated as of the REST API implementation.
+ *             Use the REST endpoint /wp-json/rentfetch/v1/search/properties instead.
+ *             Kept for backward compatibility only.
  *
  * @return void
  */

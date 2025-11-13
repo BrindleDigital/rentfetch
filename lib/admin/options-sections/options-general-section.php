@@ -76,13 +76,13 @@ function rentfetch_settings_shared_general() {
 	?>
 	<div class="row">
 		<div class="section">
-			<label class="label-large" for="rentfetch_options_disable_query_caching">Disable query caching</label>
-			<p class="description">Disable caching for database queries to ensure fresh data on each load.</p>
+			<label class="label-large" for="rentfetch_options_disable_query_caching">Disable search result caching</label>
+			<p class="description">Disable caching of search results and queries. When enabled (default), results are cached for 30 minutes in WordPress transients (Redis/Memcached if configured) and sent with cache headers for CDN/edge caching (Varnish, Fastly, Cloudflare, etc.). Only disable if you need real-time data updates or are troubleshooting cache issues. <em>Note: Disabling this setting can help prevent future caching but does not purge existing CDN/edge caches. You may need to manually purge your cache (typically through your host or CDN provider) to see immediate changes.</em></p>
 			<ul class="checkboxes">
 				<li>
 					<label for="rentfetch_options_disable_query_caching">
 						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '1' ); ?>>
-						Disable query caching
+						Disable all caching (WordPress, CDN, and browser)
 					</label>
 				</li>
 			</ul>

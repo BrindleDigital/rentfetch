@@ -170,6 +170,10 @@ function rentfetch_render_floorplan_query_results( $floorplan_args ) {
 
 /**
  * Filter the floorplans
+ * 
+ * @deprecated This function is deprecated as of the REST API implementation.
+ *             Use the REST endpoint /wp-json/rentfetch/v1/search/floorplans instead.
+ *             Kept for backward compatibility only.
  *
  * @return void
  */

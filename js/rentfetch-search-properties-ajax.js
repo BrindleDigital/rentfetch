@@ -88,7 +88,7 @@ jQuery(function ($) {
 		history.pushState(null, '', newUrl);
 	}
 
-	// Function to get query parameters from POST request
+	// Function to get query parameters from form for URL updates
 	function getQueryParametersFromForm() {
 		var queryParams = {};
 
@@ -216,7 +216,7 @@ jQuery(function ($) {
 	}
 
 	// Function to perform REST API search
-	function performAJAXSearch(queryParams) {
+	function performAJAXSearch() {
 		if (!restUrl) {
 			console.error('REST API URL not available');
 			$reset.text('Clear All');
@@ -225,25 +225,28 @@ jQuery(function ($) {
 			);
 			return;
 		}
-		performActualPropertySearch(queryParams);
+		performActualPropertySearch();
 	}
 
 	// Function to perform the actual REST API search
-	function performActualPropertySearch(queryParams) {
+	function performActualPropertySearch() {
 		var filter = $('#filter');
 		var toggleData = filter;
-		
+
 		// Build query parameters from form and shortcode attributes
 		var formData = {};
-		filter.find('input, select').each(function() {
+		filter.find('input, select').each(function () {
 			var name = $(this).attr('name');
 			var value = $(this).val();
-			
+
 			// Skip hidden fields like action and nonce
-			if (name === 'action' || name === 'rentfetch_frontend_nonce_field') {
+			if (
+				name === 'action' ||
+				name === 'rentfetch_frontend_nonce_field'
+			) {
 				return;
 			}
-			
+
 			if ($(this).is(':checkbox')) {
 				if ($(this).is(':checked')) {
 					if (!formData[name]) {
@@ -259,7 +262,7 @@ jQuery(function ($) {
 				formData[name] = value;
 			}
 		});
-		
+
 		// Merge with shortcode attributes
 		var queryData = $.extend({}, shortcodeAttributes, formData);
 
@@ -310,10 +313,9 @@ jQuery(function ($) {
 
 	// Our ajax query to get stuff and put it into the response div
 	function submitForm() {
-		var queryParams = getQueryParametersFromForm(); // Get parameters from form
-
+		var queryParams = getQueryParametersFromForm();
 		updateURLWithQueryParameters(queryParams);
-		performAJAXSearch(queryParams); // Perform AJAX search
+		performAJAXSearch(); // Perform REST API search
 
 		return false;
 	}
