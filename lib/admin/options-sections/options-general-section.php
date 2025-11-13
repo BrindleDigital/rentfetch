@@ -91,7 +91,7 @@ function rentfetch_settings_shared_general() {
 				<li>
 					<label for="rentfetch_options_enable_cache_warming">
 						<input type="checkbox" name="rentfetch_options_enable_cache_warming" id="rentfetch_options_enable_cache_warming" <?php checked( get_option( 'rentfetch_options_enable_cache_warming', '0' ), '1' ); ?>>
-						Automatically pre-fetch popular searches every 25 minutes
+						Automatically pre-fetch popular searches every 25 minutes (recommended)
 					</label>
 				</li>
 			</ul>
@@ -257,7 +257,7 @@ function rentfetch_settings_shared_general() {
 				<li>
 					<label for="rentfetch_options_enable_search_indexes">
 						<input type="checkbox" name="rentfetch_options_enable_search_indexes" id="rentfetch_options_enable_search_indexes" <?php checked( get_option( 'rentfetch_options_enable_search_indexes', '1' ), '1' ); ?>>
-						Enable database indexes for faster searches
+						Enable database indexes for faster searches (recommended)
 					</label>
 				</li>
 			</ul>

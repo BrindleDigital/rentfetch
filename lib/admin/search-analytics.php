@@ -14,10 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @param string $search_type Type of search (properties or floorplans).
  * @param array  $params      Search parameters.
+ * @param bool   $skip_tracking Whether to skip tracking (used for cache warming).
  */
-function rentfetch_track_search( $search_type, $params ) {
-	// Skip if tracking is disabled.
-	if ( get_option( 'rentfetch_options_enable_search_tracking', '1' ) !== '1' ) {
+function rentfetch_track_search( $search_type, $params, $skip_tracking = false ) {
+	// Skip if tracking is disabled or explicitly skipped.
+	if ( get_option( 'rentfetch_options_enable_search_tracking', '1' ) !== '1' || $skip_tracking ) {
 		return;
 	}
 
@@ -102,11 +103,12 @@ function rentfetch_warm_popular_searches( $limit = 50 ) {
 			$search_type = $search_data['type'];
 			$params      = $search_data['params'];
 
-			// Create REST request.
+			// Create REST request with skip_tracking flag.
 			$request = new WP_REST_Request( 'GET', "/rentfetch/v1/search/{$search_type}" );
 			foreach ( $params as $key => $value ) {
 				$request->set_param( $key, $value );
 			}
+			$request->set_param( 'skip_tracking', true );
 
 			// Execute the search to warm the cache.
 			if ( 'properties' === $search_type ) {

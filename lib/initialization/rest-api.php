@@ -45,9 +45,10 @@ add_action( 'rest_api_init', 'rentfetch_register_rest_routes' );
  */
 function rentfetch_rest_search_properties( $request ) {
 
-	// Track this search for analytics (before checking cache).
+	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
-		rentfetch_track_search( 'properties', $request->get_params() );
+		$skip_tracking = $request->get_param( 'skip_tracking' ) === true || $request->get_param( 'skip_tracking' ) === 'true';
+		rentfetch_track_search( 'properties', $request->get_params(), $skip_tracking );
 	}
 
 	// Populate $_POST with request parameters so existing filter functions work
@@ -178,9 +179,10 @@ function rentfetch_rest_search_properties( $request ) {
  */
 function rentfetch_rest_search_floorplans( $request ) {
 
-	// Track this search for analytics (before checking cache).
+	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
-		rentfetch_track_search( 'floorplans', $request->get_params() );
+		$skip_tracking = $request->get_param( 'skip_tracking' ) === true || $request->get_param( 'skip_tracking' ) === 'true';
+		rentfetch_track_search( 'floorplans', $request->get_params(), $skip_tracking );
 	}
 
 	// Populate $_POST with request parameters so existing filter functions work
