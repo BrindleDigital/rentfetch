@@ -17,6 +17,7 @@ function rentfetch_settings_set_defaults_general() {
 	// Add option if it doesn't exist.
 	add_option( 'rentfetch_options_data_sync', 'nosync' );
 	add_option( 'rentfetch_options_disable_query_caching', '0' );
+	add_option( 'rentfetch_options_enable_search_indexes', '1' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_general' );
 
@@ -76,16 +77,73 @@ function rentfetch_settings_shared_general() {
 	?>
 	<div class="row">
 		<div class="section">
-			<label class="label-large" for="rentfetch_options_disable_query_caching">Disable search result caching</label>
-			<p class="description">Disable caching of search results and queries. When enabled (default), results are cached for 30 minutes in WordPress transients (Redis/Memcached if configured) and sent with cache headers for CDN/edge caching (Varnish, Fastly, Cloudflare, etc.). Only disable if you need real-time data updates or are troubleshooting cache issues. <em>Note: Disabling this setting can help prevent future caching but does not purge existing CDN/edge caches. You may need to manually purge your cache (typically through your host or CDN provider) to see immediate changes.</em></p>
+			<label class="label-large">Search Result Caching</label>
+			<p class="description">Cache search results for 30 minutes to improve performance. Results are cached in WordPress transients (Redis/Memcached if configured) and sent with cache headers for CDN/edge caching (Varnish, Fastly, Cloudflare, etc.). Recommended for best performance. Only disable if you need real-time data updates or are troubleshooting cache issues. <em>Note: Disabling this setting prevents future caching but does not purge existing CDN/edge caches. You may need to manually purge your cache (typically through your host or CDN provider) to see immediate changes.</em></p>
 			<ul class="checkboxes">
 				<li>
 					<label for="rentfetch_options_disable_query_caching">
-						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '1' ); ?>>
-						Disable all caching (WordPress, CDN, and browser)
+						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '0' ); ?>>
+						Enable search result caching (recommended)
 					</label>
 				</li>
 			</ul>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="section">
+			<label class="label-large">Search Performance Optimization</label>
+			<p class="description">Adds database indexes to improve search query performance. Indexes optimize searches by price, square footage, bedrooms, bathrooms, availability, city, and other common filters. This is especially beneficial for sites with large numbers of properties or floorplans. <em>Note: For larger databases (10,000+ posts), index creation can take up to a minute. Your site will remain functional during this process.</em></p>
+			
+			<p><strong>Current Status:</strong> <?php echo rentfetch_get_index_status(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+			
+			<ul class="checkboxes">
+				<li>
+					<label for="rentfetch_options_enable_search_indexes">
+						<input type="checkbox" name="rentfetch_options_enable_search_indexes" id="rentfetch_options_enable_search_indexes" <?php checked( get_option( 'rentfetch_options_enable_search_indexes', '1' ), '1' ); ?>>
+						Enable database indexes for faster searches
+					</label>
+				</li>
+			</ul>
+
+			<p>
+				<button type="button" class="button" id="rentfetch-rebuild-indexes">Rebuild Search Indexes</button>
+				<span id="rentfetch-index-status" style="margin-left: 10px;"></span>
+			</p>
+
+			<script>
+			jQuery(document).ready(function($) {
+				$('#rentfetch-rebuild-indexes').on('click', function(e) {
+					e.preventDefault();
+					
+					var $button = $(this);
+					var $status = $('#rentfetch-index-status');
+					
+					$button.prop('disabled', true).text('Rebuilding...');
+					$status.html('<span style="color: #f0b849;">⏳ Processing... this may take up to a minute for large databases.</span>');
+					
+					$.post(ajaxurl, {
+						action: 'rentfetch_rebuild_indexes',
+						nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_rebuild_indexes' ) ); ?>'
+					}, function(response) {
+						$button.prop('disabled', false).text('Rebuild Search Indexes');
+						
+						if (response.success) {
+							$status.html('<span style="color: #46b450;">✓ ' + response.data.message + '</span>');
+							// Reload to update status display
+							setTimeout(function() {
+								location.reload();
+							}, 2000);
+						} else {
+							$status.html('<span style="color: #dc3232;">✗ ' + response.data.message + '</span>');
+						}
+					}).fail(function() {
+						$button.prop('disabled', false).text('Rebuild Search Indexes');
+						$status.html('<span style="color: #dc3232;">✗ Error: Request failed. Please try again.</span>');
+					});
+				});
+			});
+			</script>
 		</div>
 	</div>
 	<?php
@@ -274,17 +332,33 @@ function rentfetch_save_settings_general() {
 		update_option( 'rentfetch_options_appfolio_integration_creds_appfolio_property_ids', $options_appfolio_integration_creds_appfolio_property_ids );
 	}
 
-	// Checkbox field - Disable query caching
-	$disable_query_caching = isset( $_POST['rentfetch_options_disable_query_caching'] ) ? '1' : '0';
+	// Checkbox field - Enable query caching (inverted: checked = '0' for disable, unchecked = '1' for disable)
+	$disable_query_caching = isset( $_POST['rentfetch_options_disable_query_caching'] ) ? '0' : '1';
 	update_option( 'rentfetch_options_disable_query_caching', $disable_query_caching );
 
-	// If caching is disabled, clear existing transients
+	// If caching is disabled (value is '1'), clear existing transients
 	if ( $disable_query_caching === '1' ) {
 		global $wpdb;
 		$transients = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_rentfetch_%'" );
 		foreach ( $transients as $transient ) {
 			$key = str_replace( '_transient_', '', $transient );
 			delete_transient( $key );
+		}
+	}
+
+	// Checkbox field - Enable search indexes
+	$enable_search_indexes = isset( $_POST['rentfetch_options_enable_search_indexes'] ) ? '1' : '0';
+	$previous_value        = get_option( 'rentfetch_options_enable_search_indexes', '1' );
+	update_option( 'rentfetch_options_enable_search_indexes', $enable_search_indexes );
+
+	// If the setting changed, create or remove indexes accordingly
+	if ( $enable_search_indexes !== $previous_value ) {
+		if ( '1' === $enable_search_indexes ) {
+			// Create indexes
+			rentfetch_create_indexes();
+		} else {
+			// Remove indexes
+			rentfetch_remove_indexes();
 		}
 	}
 
