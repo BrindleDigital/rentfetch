@@ -151,9 +151,15 @@ function rentfetch_rest_search_properties( $request ) {
 
 	// Set cache headers if caching is enabled
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$response->header( 'Cache-Control', 'public, max-age=1800' );
+		$response->header( 'Cache-Control', 'public, max-age=1800, s-maxage=1800' );
+		$response->header( 'X-WP-Cacheable', 'yes' );
+		$response->header( 'Pragma', 'public' );
+		// Remove cache-busting headers that WordPress might add
+		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + 1800 ) . ' GMT' );
 	} else {
-		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate' );
+		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0' );
+		$response->header( 'Pragma', 'no-cache' );
+		$response->header( 'Expires', '0' );
 	}
 
 	return $response;
@@ -228,9 +234,15 @@ function rentfetch_rest_search_floorplans( $request ) {
 
 	// Set cache headers if caching is enabled
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$response->header( 'Cache-Control', 'public, max-age=1800' );
+		$response->header( 'Cache-Control', 'public, max-age=1800, s-maxage=1800' );
+		$response->header( 'X-WP-Cacheable', 'yes' );
+		$response->header( 'Pragma', 'public' );
+		// Remove cache-busting headers that WordPress might add
+		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + 1800 ) . ' GMT' );
 	} else {
-		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate' );
+		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0' );
+		$response->header( 'Pragma', 'no-cache' );
+		$response->header( 'Expires', '0' );
 	}
 
 	return $response;
