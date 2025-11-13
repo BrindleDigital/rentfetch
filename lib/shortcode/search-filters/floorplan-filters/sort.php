@@ -163,13 +163,6 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 	// get the sort value.
 	if ( isset( $_POST['sort'] ) ) {
 
-		$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
-
-		// * Verify the nonce
-		if ( ! wp_verify_nonce( $nonce, 'rentfetch_frontend_nonce_action' ) ) {
-			die( 'Nonce verification failed (sort)' );
-		}
-
 		$sort = sanitize_text_field( wp_unslash( $_POST['sort'] ) );
 
 	} else {

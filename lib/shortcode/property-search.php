@@ -63,19 +63,27 @@ add_shortcode( 'rentfetch_propertysearch', 'rentfetch_propertysearch_default_lay
 /**
  * Add the [propertysearchfilters] shortcode
  *
+ * @param  array $atts  the attributes passed to the shortcode.
  * @return string  the markup for the property search filters.
  */
-function rentfetch_propertysearchfilters() {
+function rentfetch_propertysearchfilters( $atts ) {
 
 	ob_start();
 
-	// enqueue the search properties ajax script.
+	// enqueue the search properties ajax script
 	wp_enqueue_script( 'rentfetch-search-properties-ajax' );
-	
-	// localize the script to provide ajaxurl for frontend AJAX requests.
-	wp_localize_script( 'rentfetch-search-properties-ajax', 'rentfetch_ajax', array(
-		'ajaxurl' => admin_url( 'admin-ajax.php' )
-	) );
+
+	// Add inline script with shortcode attributes
+	// Note: Generate nonce here (not in enqueue.php) so we have access to shortcode $atts
+	if ( ! wp_script_is( 'rentfetch-search-properties-ajax', 'done' ) ) {
+		$inline_script = sprintf(
+			'var rentfetchPropertySearch = { ajaxurl: %s, nonce: %s, shortcodeAttributes: %s };',
+			wp_json_encode( admin_url( 'admin-ajax.php' ) ),
+			wp_json_encode( wp_create_nonce( 'rentfetch_frontend_nonce_action' ) ),
+			wp_json_encode( $atts ?: array() )
+		);
+		wp_add_inline_script( 'rentfetch-search-properties-ajax', $inline_script, 'before' );
+	}
 
 	// needed for toggling the featured filters on and off.
 	wp_enqueue_script( 'rentfetch-property-search-featured-filters-toggle' );
@@ -234,6 +242,13 @@ function rentfetch_render_property_query_results( $property_args ) {
  * @return void
  */
 function rentfetch_filter_properties() {
+
+	// Verify nonce for security
+	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'rentfetch_frontend_nonce_action' ) ) {
+		wp_send_json_error( array( 'message' => 'Security verification failed. Please refresh the page and try again.' ) );
+		wp_die();
+	}
 
 	$property_ids = rentfetch_get_property_ids_with_available_floorplans();
 	if ( empty( $property_ids ) ) {

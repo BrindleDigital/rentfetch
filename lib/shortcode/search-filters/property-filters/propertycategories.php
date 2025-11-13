@@ -95,13 +95,6 @@ function rentfetch_search_filters_property_categories() {
  */
 function rentfetch_search_properties_args_categories( $property_args ) {
 
-	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
-
-	// * Verify the nonce
-	if ( ! wp_verify_nonce( $nonce, 'rentfetch_frontend_nonce_action' ) ) {
-		die( 'Nonce verification failed (propertycategories)' );
-	}
-
 	// the slug for the taxonomy. If you're adding a new taxonomy,
 	// you'll need to change this to the slug of the new taxonomy.
 	$taxonomy_slug = 'propertycategories';

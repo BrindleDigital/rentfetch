@@ -79,8 +79,16 @@ function rentfetch_floorplansearchfilters( $atts ) {
 	// enqueue the search floorplans ajax script.
 	wp_enqueue_script( 'rentfetch-search-floorplans-ajax' );
 
-	if ( $atts ) {
-		wp_localize_script( 'rentfetch-search-floorplans-ajax', 'shortcodeAttributes', $atts );
+	// Add inline script with shortcode attributes
+	// Note: For floorplans we need to do this here (not in enqueue.php) because we need $atts
+	if ( ! wp_script_is( 'rentfetch-search-floorplans-ajax', 'done' ) ) {
+		$inline_script = sprintf(
+			'var rentfetchFloorplanSearch = { ajaxurl: %s, nonce: %s, shortcodeAttributes: %s };',
+			wp_json_encode( admin_url( 'admin-ajax.php' ) ),
+			wp_json_encode( wp_create_nonce( 'rentfetch_frontend_nonce_action' ) ),
+			wp_json_encode( $atts ?: array() )
+		);
+		wp_add_inline_script( 'rentfetch-search-floorplans-ajax', $inline_script, 'before' );
 	}
 	
 	// remove the taxonomy filter if there's a shortcode attribute for it (which hard-sets it and should disable selection).
@@ -174,6 +182,13 @@ function rentfetch_render_floorplan_query_results( $floorplan_args ) {
  */
 function rentfetch_filter_floorplans() {
 
+	// Verify nonce for security
+	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'rentfetch_frontend_nonce_action' ) ) {
+		wp_send_json_error( array( 'message' => 'Security verification failed. Please refresh the page and try again.' ) );
+		wp_die();
+	}
+
 	// Get a list of the possible properties to show from the shortcode attributes.
 	$referring_page_id = url_to_postid( wp_get_referer() );
 	$atts = rentfetch_get_shortcode_attributes( 'rentfetch_floorplansearch', $referring_page_id );
@@ -212,22 +227,3 @@ function rentfetch_filter_floorplans() {
 }
 add_action( 'wp_ajax_floorplansearch', 'rentfetch_filter_floorplans' );
 add_action( 'wp_ajax_nopriv_floorplansearch', 'rentfetch_filter_floorplans' );
-
-/**
- * AJAX endpoint to generate a fresh nonce for floorplan search
- *
- * @return void
- */
-function rentfetch_get_search_nonce() {
-	
-	// Prevent caching of the nonce response
-	header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
-	header( 'Pragma: no-cache' );
-	header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
-	
-	wp_send_json_success( array(
-		'nonce' => wp_create_nonce( 'rentfetch_frontend_nonce_action' )
-	));
-}
-add_action( 'wp_ajax_rentfetch_get_search_nonce', 'rentfetch_get_search_nonce' );
-add_action( 'wp_ajax_nopriv_rentfetch_get_search_nonce', 'rentfetch_get_search_nonce' );

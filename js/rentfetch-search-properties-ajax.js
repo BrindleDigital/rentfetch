@@ -1,6 +1,16 @@
 jQuery(function ($) {
-	// Store the nonce for this page session
-	var currentNonce = null;
+	// Get nonce and ajaxurl from localized data (generated in PHP via wp_add_inline_script)
+	// Use window. to access the global variable set by inline script
+	var rentfetchData = window.rentfetchPropertySearch || {};
+	var currentNonce = rentfetchData.nonce || null;
+	var ajaxurl = rentfetchData.ajaxurl || null;
+
+	// Set the nonce in the hidden field
+	if (currentNonce) {
+		$('#property-nonce-field').val(currentNonce);
+	} else {
+		console.error('Nonce not available from server');
+	}
 
 	// Cache frequently used DOM elements
 	var $filter = $('#filter');
@@ -74,29 +84,6 @@ jQuery(function ($) {
 		return label;
 	}
 
-	// Fetch nonce once on page load
-	function initializeNonce() {
-		$.ajax({
-			url: rentfetch_ajax.ajaxurl,
-			type: 'POST',
-			data: {
-				action: 'rentfetch_get_search_nonce',
-				_nocache: Date.now(),
-			},
-			success: function (response) {
-				if (response.success && response.data.nonce) {
-					currentNonce = response.data.nonce;
-					$('#property-nonce-field').val(currentNonce);
-				}
-			},
-			error: function () {
-				console.error('Failed to initialize nonce');
-			},
-		});
-	}
-
-	// Initialize nonce on page load
-	initializeNonce();
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
 		var baseUrl = window.location.href.split('?')[0];
@@ -234,45 +221,32 @@ jQuery(function ($) {
 
 	// Function to perform AJAX search
 	function performAJAXSearch(queryParams) {
-		console.log('Starting property search');
-		// Use the stored nonce
+		// Use the nonce from PHP
 		if (currentNonce) {
 			$('#property-nonce-field').val(currentNonce);
 			performActualPropertySearch(queryParams);
 		} else {
-			// Fallback: try to initialize nonce if not ready
-			initializeNonce();
-			setTimeout(function () {
-				if (currentNonce) {
-					$('#property-nonce-field').val(currentNonce);
-					performActualPropertySearch(queryParams);
-				} else {
-					console.error('Nonce not available');
-					$('#reset').text('Clear All');
-					$('#response').html(
-						'<p>Error: Could not generate security token. Please refresh the page.</p>'
-					);
-				}
-			}, 500);
+			console.error('Nonce not available');
+			$reset.text('Clear All');
+			$response.html(
+				'<p>Security verification failed. Please refresh the page and try again.</p>'
+			);
 		}
-	} // Function to perform the actual AJAX search (separated from nonce generation)
+	}
+
+	// Function to perform the actual AJAX search (separated from nonce generation)
 	function performActualPropertySearch(queryParams) {
-		console.log('Starting actual property search');
 		var filter = $('#filter');
 		var toggleData = filter;
 
-		// console.log(filter);
-
 		$.ajax({
-			url: filter.attr('action'),
+			url: ajaxurl || filter.attr('action'),
 			data: filter.serialize(), // form data
 			toggleData: filter.serialize(),
 			type: filter.attr('method'), // POST
 			beforeSend: function (xhr) {
-				// filter.find('#reset').text('Searching...'); // changing the button label
-				$('#reset').text('Searching...'); // changing the button label
-				// clear #response div
-				$('#response').html('');
+				$reset.text('Searching...'); // changing the button label
+				$response.html(''); // clear #response div
 			},
 			success: function (data) {
 				$reset.text('Clear All'); // changing the button label
@@ -303,6 +277,21 @@ jQuery(function ($) {
 				// Trigger custom event for map update
 				$(document).trigger('rentfetchPropertySearchComplete');
 			},
+			error: function (jqXHR) {
+				$reset.text('Clear All');
+				// Check if it's a JSON response with an error message
+				if (
+					jqXHR.responseJSON &&
+					jqXHR.responseJSON.data &&
+					jqXHR.responseJSON.data.message
+				) {
+					$response.html(
+						'<p>' + jqXHR.responseJSON.data.message + '</p>'
+					);
+				} else {
+					$response.html('<p>Search failed. Please try again.</p>');
+				}
+			},
 		});
 	}
 
@@ -318,14 +307,6 @@ jQuery(function ($) {
 
 	// submit on page load
 	submitForm();
-
-	// // Handle query parameters when the page loads
-	// var queryParameters = getQueryParametersFromForm();
-	// updateURLWithQueryParameters(queryParameters);
-	// performAJAXSearch(queryParameters); // Perform AJAX search
-
-	// on page load, submit the form
-	// $('#filter').submit();
 
 	//! WHEN CHANGES ARE MADE, SUBMIT THE FORM
 
@@ -418,8 +399,8 @@ jQuery(function ($) {
 						// $(this).on('change input', changeInputHandler); // Reattach the event handler
 					}
 				}
-			});
+			}); // end .each()
 
 		submitFormAfterInactivity();
-	});
-});
+	}); // end $inputs.on()
+}); // end jQuery

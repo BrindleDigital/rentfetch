@@ -1,7 +1,21 @@
-// these come from the shortcode
-var shortcodeAttributes;
-
+// Nonce and config come from inline script in wp_add_inline_script (see floorplan-search.php or enqueue.php)
 jQuery(function ($) {
+	// Get nonce from PHP-generated inline script (use window. to access global scope)
+	var rentfetchData = window.rentfetchFloorplanSearch || {};
+	var currentNonce = rentfetchData.nonce || null;
+	var ajaxurl = rentfetchData.ajaxurl || null;
+	var shortcodeAttributes = rentfetchData.shortcodeAttributes || {};
+
+	// Set the nonce in the hidden field
+	if (currentNonce) {
+		$('#nonce-field').val(currentNonce);
+	} else {
+		console.error(
+			'Nonce not available from server - rentfetchFloorplanSearch:',
+			rentfetchData
+		);
+	}
+
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
 		var baseUrl = window.location.href.split('?')[0];
@@ -237,46 +251,20 @@ jQuery(function ($) {
 
 	// Function to perform AJAX search
 	function performAJAXSearch(queryParams) {
-		var filter = $('#filter');
-
-		// First, get a fresh nonce
-		$.ajax({
-			url: filter.attr('action'),
-			data: {
-				action: 'rentfetch_get_search_nonce',
-				_nocache: Date.now(),
-			},
-			type: 'POST',
-			beforeSend: function () {
-				$('#reset').text('Searching...'); // changing the button label
-				$('#response').html(''); // clear response div
-			},
-			success: function (response) {
-				if (response.success && response.data.nonce) {
-					// Update the nonce field with fresh nonce
-					$('#nonce-field').val(response.data.nonce);
-
-					// Now perform the actual search
-					performActualSearch(queryParams);
-				} else {
-					console.error('Failed to get fresh nonce');
-					$('#reset').text('Clear All');
-					$('#response').html(
-						'<p>Error: Could not generate security token. Please refresh the page.</p>'
-					);
-				}
-			},
-			error: function () {
-				console.error('AJAX error getting nonce');
-				$('#reset').text('Clear All');
-				$('#response').html(
-					'<p>Error: Could not connect to server. Please try again.</p>'
-				);
-			},
-		});
+		// Use the nonce from PHP
+		if (currentNonce) {
+			$('#nonce-field').val(currentNonce);
+			performActualSearch(queryParams);
+		} else {
+			console.error('Nonce not available');
+			$('#reset').text('Clear All');
+			$('#response').html(
+				'<p>Security verification failed. Please refresh the page and try again.</p>'
+			);
+		}
 	}
 
-	// Function to perform the actual search with fresh nonce
+	// Function to perform the actual search
 	function performActualSearch(queryParams) {
 		// get the data from the form
 		var filter = $('#filter');
@@ -291,39 +279,41 @@ jQuery(function ($) {
 		var toggleData = filter;
 
 		$.ajax({
-			url: filter.attr('action'),
+			url: ajaxurl || filter.attr('action'),
 			data: postData, // form data
-			// toggleData: filter.serialize(),
 			type: filter.attr('method'), // POST
+			beforeSend: function () {
+				$('#reset').text('Searching...'); // changing the button label
+				$('#response').html(''); // clear response div
+			},
 			success: function (data) {
 				$('#reset').text('Clear All'); // changing the button label
 				$('#response').html(data); // insert data
-				// $('#response').html('hello world!'); // insert data
 
 				var toggles = outputToggles(toggleData);
 				$('#filter-toggles').html(toggles);
-
-				// if ($('#map').length) {
-				//     var mapOffset = $('#map').offset().top;
-				//     var viewportTop = $(window).scrollTop();
-				//     if (mapOffset - viewportTop > 200) {
-				//         $('html, body').animate(
-				//             {
-				//                 scrollTop: mapOffset,
-				//             },
-				//             1000
-				//         );
-				//     }
-				// }
 
 				// look in data for .properties-loop, and count the number of children
 				var count = $('.floorplans-loop').children().length;
 				// update #properties-found with the count
 				$('#floorplans-found').text(count);
 			},
-			error: function () {
+			error: function (jqXHR) {
 				$('#reset').text('Clear All');
-				$('#response').html('<p>Search failed. Please try again.</p>');
+				// Check if it's a JSON response with an error message
+				if (
+					jqXHR.responseJSON &&
+					jqXHR.responseJSON.data &&
+					jqXHR.responseJSON.data.message
+				) {
+					$('#response').html(
+						'<p>' + jqXHR.responseJSON.data.message + '</p>'
+					);
+				} else {
+					$('#response').html(
+						'<p>Search failed. Please try again.</p>'
+					);
+				}
 			},
 		});
 	}
@@ -340,14 +330,6 @@ jQuery(function ($) {
 
 	// submit on page load
 	submitForm();
-
-	// // Handle query parameters when the page loads
-	// var queryParameters = getQueryParametersFromForm();
-	// updateURLWithQueryParameters(queryParameters);
-	// performAJAXSearch(queryParameters); // Perform AJAX search
-
-	// on page load, submit the form
-	// $('#filter').submit();
 
 	//! WHEN CHANGES ARE MADE, SUBMIT THE FORM
 
