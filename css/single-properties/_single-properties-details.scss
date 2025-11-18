@@ -87,30 +87,38 @@
 
 		.property-links {
 			.property-link {
-				color: var(--rentfetch-dark);
-				display: block;
-				position: static;
-				padding: 15px 15px;
-				line-height: 1;
-				margin-bottom: 10px;
-				text-decoration: none;
-				background-color: var(--rentfetch-white, #ffffff);
-				border: 1px solid
-					var(--rentfetch-black-10-percent, rgba(0, 0, 0, 0.1));
-				border-radius: 4px;
-
-				@include mobile {
-					margin-bottom: 0;
-				}
-
-				svg {
-					width: 1.2em;
-					height: 1.2em;
-					margin-right: 0.5em;
-					vertical-align: middle;
-				}
 			}
 		}
+	}
+}
+
+.property-links {
+	.property-link {
+		display: block;
+	}
+}
+
+.property-link {
+	color: var(--rentfetch-dark);
+	display: inline-block;
+	position: static;
+	padding: 15px 15px;
+	line-height: 1;
+	margin-bottom: 10px;
+	text-decoration: none;
+	background-color: var(--rentfetch-white, #ffffff);
+	border: 1px solid var(--rentfetch-black-10-percent, rgba(0, 0, 0, 0.1));
+	border-radius: 4px;
+
+	@include mobile {
+		margin-bottom: 0;
+	}
+
+	svg {
+		width: 1.2em;
+		height: 1.2em;
+		margin-right: 0.5em;
+		vertical-align: middle;
 	}
 }
 

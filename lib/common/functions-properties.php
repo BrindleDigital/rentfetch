@@ -813,7 +813,7 @@ function rentfetch_property_email( $property_id = null ) {
 function rentfetch_get_property_email_link( $property_id = null, $class = '' ) {
 	$email = rentfetch_get_property_email( $property_id );
 	$email_link = 'mailto:' . $email;
-	$classes = 'email-link property-link';
+	$classes = 'email-link';
 	if ( ! empty( $class ) ) {
 		$classes .= ' ' . esc_attr( $class );
 	}
@@ -1938,9 +1938,10 @@ function rentfetch_get_property_office_hours_array( $property_id = null ) {
  * Get the property office hours
  *
  * @param string $property_id Optional property_id meta value.
+ * @param bool   $include_heading Whether to include the heading. Default true.
  * @return string The property office hours HTML markup.
  */
-function rentfetch_get_property_office_hours( $property_id = null ) {
+function rentfetch_get_property_office_hours( $property_id = null, $include_heading = true ) {
 	$office_hours = rentfetch_get_property_office_hours_array( $property_id );
 	
 	if ( empty( $office_hours ) ) {
@@ -1949,7 +1950,10 @@ function rentfetch_get_property_office_hours( $property_id = null ) {
 	
 	$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
 	
-	$output = '<h3>Office Hours</h3>';
+	$output = '';
+	if ( $include_heading ) {
+		$output .= '<h3>Office Hours</h3>';
+	}
 	$output .= '<div class="rentfetch-property-office-hours">';
 	foreach ( $days as $day ) {
 		$output .= '<div class="office-hours-day">';

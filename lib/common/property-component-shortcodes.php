@@ -171,7 +171,7 @@ function rentfetch_property_shortcode( $atts ) {
 			break;
 
 		case 'office_hours':
-			$content = rentfetch_get_property_office_hours( $property_id );
+			$content = rentfetch_get_property_office_hours( $property_id, false );
 			break;
 
 		default:
