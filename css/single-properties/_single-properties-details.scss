@@ -88,62 +88,135 @@
 		.property-links {
 			.property-link {
 				color: var(--rentfetch-dark);
-				display: inline-block;
-				padding: 15px 25px 15px 40px;
+				display: block;
+				position: static;
+				padding: 15px 15px;
 				line-height: 1;
 				margin-bottom: 10px;
 				text-decoration: none;
-				position: relative;
+				background-color: var(--rentfetch-white, #ffffff);
+				border: 1px solid
+					var(--rentfetch-black-10-percent, rgba(0, 0, 0, 0.1));
+				border-radius: 4px;
 
 				@include mobile {
 					margin-bottom: 0;
 				}
 
-				&:before {
-					font-family: dashicons;
-					font-size: var(--rentfetch-font-size-larger);
-					position: absolute;
-					top: 50%;
-					left: 0;
-					transform: translateY(-50%);
-				}
-
-				&.location-link {
-					&:before {
-						content: '\f230';
-					}
-				}
-
-				&.url-link {
-					&:before {
-						content: '\f103';
-					}
-				}
-
-				&.phone-link {
-					&:before {
-						content: '\f470';
-					}
-				}
-
-				&.email-link {
-					&:before {
-						content: '\f466';
-					}
-				}
-
-				&.tour-link {
-					&:before {
-						content: '\f236';
-					}
-				}
-
-				&.tour-booking-link {
-					&:before {
-						content: '\f145';
-					}
+				svg {
+					width: 1.2em;
+					height: 1.2em;
+					margin-right: 0.5em;
+					vertical-align: middle;
 				}
 			}
 		}
+	}
+}
+
+.office-hours-section {
+	margin-top: 20px;
+
+	h3 {
+		font-size: var(--rentfetch-font-size-large);
+		margin-bottom: 10px;
+		color: var(--rentfetch-dark);
+	}
+
+	.rentfetch-property-office-hours {
+		.office-hours-day {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 5px 0;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+			&:last-child {
+				border-bottom: none;
+			}
+
+			.day-name {
+				font-weight: 600;
+				color: var(--rentfetch-dark);
+				min-width: 100px;
+			}
+
+			.day-hours {
+				color: var(--rentfetch-text-color);
+			}
+		}
+	}
+}
+
+.office-hours-content {
+	display: none;
+	margin-top: 0.5rem;
+	font-size: 0.875rem;
+	line-height: 1.5;
+
+	.office-hours-day {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 5px 0;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+		&:first-child {
+			padding-top: 0.75rem;
+		}
+
+		&:last-child {
+			border-bottom: none;
+			padding-bottom: 0;
+		}
+
+		.day-name {
+			font-weight: 600;
+			color: var(--rentfetch-dark);
+			min-width: 100px;
+		}
+
+		.day-hours {
+			color: var(--rentfetch-text-color);
+		}
+	}
+}
+
+.office-hours-content:target {
+	display: block;
+}
+
+// Style the details/summary for office hours toggle
+.office-hours-details {
+	summary {
+		cursor: pointer;
+		list-style: none;
+		display: block;
+		position: static;
+		padding: 15px 15px;
+		line-height: 1;
+		margin-bottom: 10px;
+		text-decoration: none;
+		color: var(--rentfetch-dark);
+		border: 1px solid var(--rentfetch-black-10-percent, rgba(0, 0, 0, 0.1));
+		border-radius: 4px;
+		background-color: var(--rentfetch-white, #ffffff);
+		font-family: inherit;
+		font-size: inherit;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+
+		svg {
+			width: 1.2em;
+			height: 1.2em;
+			margin-right: 0.5em;
+			vertical-align: middle;
+		}
+	}
+
+	&[open] .office-hours-content {
+		display: block;
 	}
 }

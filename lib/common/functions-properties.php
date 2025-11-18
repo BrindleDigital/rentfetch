@@ -323,6 +323,7 @@ add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_phone_butt
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_contact_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_tour_booking_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_tour_button' );
+add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_office_hours_button' );
 
 /**
  * Get the property location link
@@ -354,7 +355,8 @@ function rentfetch_get_property_location_button( $property_id = null, $class = '
 	if ( ! empty( $class ) ) {
 		$classes .= ' ' . esc_attr( $class );
 	}
-	$location_button = sprintf( '<a class="%s" href="%s" target="_blank">Get Directions</a>', $classes, esc_url( $location_link ) );
+	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 location-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>';
+	$location_button = sprintf( '<a class="%s" href="%s" target="_blank">%sGet Directions</a>', $classes, esc_url( $location_link ), $svg );
 	return apply_filters( 'rentfetch_filter_property_location_button', $location_button, $property_id, $class );
 }
 
@@ -365,7 +367,22 @@ function rentfetch_get_property_location_button( $property_id = null, $class = '
  * @return void.
  */
 function rentfetch_property_location_button( $property_id = null ) {
-	echo wp_kses_post( rentfetch_get_property_location_button( $property_id ) );
+	$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
+		'svg' => array(
+			'xmlns' => true,
+			'fill' => true,
+			'viewbox' => true,
+			'stroke-width' => true,
+			'stroke' => true,
+			'class' => true,
+		),
+		'path' => array(
+			'stroke-linecap' => true,
+			'stroke-linejoin' => true,
+			'd' => true,
+		),
+	) );
+	echo wp_kses( rentfetch_get_property_location_button( $property_id ), $allowed_html );
 }
 
 /**
@@ -530,7 +547,8 @@ function rentfetch_get_property_phone_button( $property_id = null, $class = '' )
 	if ( ! empty( $class ) ) {
 		$classes .= ' ' . esc_attr( $class );
 	}
-	$phone_button = sprintf( '<a class="%s" href="tel:%s">%s</a>', $classes, esc_html( $phone_link ), esc_html( $phone ) );
+	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 phone-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>';
+	$phone_button = sprintf( '<a class="%s" href="tel:%s">%s%s</a>', $classes, esc_html( $phone_link ), $svg, esc_html( $phone ) );
 
 	if ( $phone ) {
 		return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button, $property_id, $class );
@@ -549,7 +567,22 @@ function rentfetch_property_phone_button( $property_id = null ) {
 	$button = rentfetch_get_property_phone_button( $property_id );
 	
 	if ( $button ) {
-		echo wp_kses_post( $button );
+		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
+			'svg' => array(
+				'xmlns' => true,
+				'fill' => true,
+				'viewbox' => true,
+				'stroke-width' => true,
+				'stroke' => true,
+				'class' => true,
+			),
+			'path' => array(
+				'stroke-linecap' => true,
+				'stroke-linejoin' => true,
+				'd' => true,
+			),
+		) );
+		echo wp_kses( $button, $allowed_html );
 	}
 }
 
@@ -639,7 +672,8 @@ function rentfetch_get_property_website_button( $property_id = null, $class = ''
 	if ( ! empty( $class ) ) {
 		$classes .= ' ' . esc_attr( $class );
 	}
-	$website_button = sprintf( '<a class="%s" href="%s" target="%s">Visit Website</a>', $classes, esc_html( $url ), esc_attr( $target ) );
+	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 website-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>';
+	$website_button = sprintf( '<a class="%s" href="%s" target="%s">%sVisit Website</a>', $classes, esc_html( $url ), esc_attr( $target ), $svg );
 
 	if ( $url ) {
 		return apply_filters( 'rentfetch_filter_property_website', $website_button, $property_id, $class );
@@ -656,7 +690,22 @@ function rentfetch_get_property_website_button( $property_id = null, $class = ''
  */
 function rentfetch_property_website_button( $property_id = null ) {
 	if ( rentfetch_get_property_url( $property_id ) ) {
-		echo wp_kses_post( rentfetch_get_property_website_button( $property_id ) );
+		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
+			'svg' => array(
+				'xmlns' => true,
+				'fill' => true,
+				'viewbox' => true,
+				'stroke-width' => true,
+				'stroke' => true,
+				'class' => true,
+			),
+			'path' => array(
+				'stroke-linecap' => true,
+				'stroke-linejoin' => true,
+				'd' => true,
+			),
+		) );
+		echo wp_kses( rentfetch_get_property_website_button( $property_id ), $allowed_html );
 	}
 }
 
@@ -684,7 +733,8 @@ function rentfetch_get_property_contact_button( $property_id = null, $class = ''
 	if ( ! empty( $class ) ) {
 		$classes .= ' ' . esc_attr( $class );
 	}
-	$contact_button = sprintf( '<a class="%s" href="%s">Reach Out</a>', $classes, esc_html( $email_link ) );
+	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 email-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>';
+	$contact_button = sprintf( '<a class="%s" href="%s">%sReach Out</a>', $classes, esc_html( $email_link ), $svg );
 	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button, $property_id, $class );
 
 	if ( $email ) {
@@ -702,7 +752,22 @@ function rentfetch_get_property_contact_button( $property_id = null, $class = ''
  */
 function rentfetch_property_contact_button( $property_id = null ) {
 	if ( rentfetch_get_property_contact_button( $property_id ) ) {
-		echo wp_kses_post( rentfetch_get_property_contact_button( $property_id ) );
+		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
+			'svg' => array(
+				'xmlns' => true,
+				'fill' => true,
+				'viewbox' => true,
+				'stroke-width' => true,
+				'stroke' => true,
+				'class' => true,
+			),
+			'path' => array(
+				'stroke-linecap' => true,
+				'stroke-linejoin' => true,
+				'd' => true,
+			),
+		) );
+		echo wp_kses( rentfetch_get_property_contact_button( $property_id ), $allowed_html );
 	}
 }
 
@@ -796,6 +861,7 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
 	$iframe    = get_post_meta( $post_id, 'tour', true );
 	$embedlink = null;
 	$tour_link_text = 'Video Tour';
+	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 tour-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>';
 	
 	// bail if we don't have anything to show.
 	if ( ! $iframe ) {
@@ -823,7 +889,7 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
 		if ( ! empty( $class ) ) {
 			$classes .= ' ' . esc_attr( $class );
 		}
-		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" data-glightbox="type: video;" href="%s">%s</a>', $classes, $post_id, $oembedlink, $tour_link_text );
+		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" data-glightbox="type: video;" href="%s">%s%s</a>', $classes, $post_id, $oembedlink, $svg, $tour_link_text );
 	}
 
 	$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
@@ -841,7 +907,7 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
 		if ( ! empty( $class ) ) {
 			$classes .= ' ' . esc_attr( $class );
 		}
-		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" href="%s">%s</a>', $classes, $post_id, $oembedlink, $tour_link_text );
+		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" href="%s">%s%s</a>', $classes, $post_id, $oembedlink, $svg, $tour_link_text );
 	}
 
 	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
@@ -851,7 +917,7 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
 		if ( ! empty( $class ) ) {
 			$classes .= ' ' . esc_attr( $class );
 		}
-		$embedlink  = sprintf( '<a class="%s" target="_blank" data-gallery="post-%s" href="%s">%s</a>', $classes, $post_id, $oembedlink, $tour_link_text );
+		$embedlink  = sprintf( '<a class="%s" target="_blank" data-gallery="post-%s" href="%s">%s%s</a>', $classes, $post_id, $oembedlink, $svg, $tour_link_text );
 	}
 	
 	return apply_filters( 'rentfetch_filter_property_tour_button', $embedlink, $property_id, $class );
@@ -865,7 +931,22 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
  */
 function rentfetch_property_tour_button( $property_id = null ) {
 	if ( rentfetch_get_property_tour_button( $property_id ) ) {
-		echo wp_kses_post( rentfetch_get_property_tour_button( $property_id ) );
+		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
+			'svg' => array(
+				'xmlns' => true,
+				'fill' => true,
+				'viewbox' => true,
+				'stroke-width' => true,
+				'stroke' => true,
+				'class' => true,
+			),
+			'path' => array(
+				'stroke-linecap' => true,
+				'stroke-linejoin' => true,
+				'd' => true,
+			),
+		) );
+		echo wp_kses( rentfetch_get_property_tour_button( $property_id ), $allowed_html );
 	}
 }
 
@@ -904,7 +985,8 @@ function rentfetch_get_property_tour_booking_button( $property_id = null, $class
 	if ( ! empty( $class ) ) {
 		$classes .= ' ' . esc_attr( $class );
 	}
-	$tour_booking_button = sprintf( '<a class="%s" href="%s" target="%s">Book Tour</a>', $classes, esc_html( $url ), esc_attr( $target ) );
+	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 tour-booking-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>';
+	$tour_booking_button = sprintf( '<a class="%s" href="%s" target="%s">%sBook Tour</a>', $classes, esc_html( $url ), esc_attr( $target ), $svg );
 
 	if ( $url ) {
 		return apply_filters( 'rentfetch_filter_property_tour_booking', $tour_booking_button, $property_id, $class );
@@ -921,7 +1003,114 @@ function rentfetch_get_property_tour_booking_button( $property_id = null, $class
  */
 function rentfetch_property_tour_booking_button( $property_id = null ) {
 	if ( rentfetch_get_property_tour_booking_url( $property_id ) ) {
-		echo wp_kses_post( rentfetch_get_property_tour_booking_button( $property_id ) );
+		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
+			'svg' => array(
+				'xmlns' => true,
+				'fill' => true,
+				'viewbox' => true,
+				'stroke-width' => true,
+				'stroke' => true,
+				'class' => true,
+			),
+			'path' => array(
+				'stroke-linecap' => true,
+				'stroke-linejoin' => true,
+				'd' => true,
+			),
+		) );
+		echo wp_kses( rentfetch_get_property_tour_booking_button( $property_id ), $allowed_html );
+	}
+}
+
+// * PROPERTY OFFICE HOURS BUTTON.
+
+/**
+ * Get the property office hours button.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
+ * @return string The property office hours button.
+ */
+function rentfetch_get_property_office_hours_button( $property_id = null, $class = '' ) {
+	$office_hours = rentfetch_get_property_office_hours_array( $property_id );
+
+	if ( empty( $office_hours ) ) {
+		return '';
+	}
+
+	$classes = 'office-hours-link property-link';
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 office-hours-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>';
+
+	// Get office hours markup without heading and wrapper
+	$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+	$office_hours_content = '';
+	foreach ( $days as $day ) {
+		$office_hours_content .= '<div class="office-hours-day">';
+			$office_hours_content .= '<span class="day-name">' . esc_html( ucfirst( $day ) . ':' ) . '</span> ';
+			if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
+				$start_time = date( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
+				$end_time = date( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
+				$office_hours_content .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
+			} else {
+				$office_hours_content .= '<span class="day-hours">Closed</span>';
+			}
+		$office_hours_content .= '</div>';
+	}
+
+	$office_hours_button = sprintf(
+		'<details class="office-hours-details">
+			<summary class="%s">%sOffice Hours</summary>
+			<div class="office-hours-content">%s</div>
+		</details>',
+		$classes,
+		$svg,
+		$office_hours_content
+	);
+
+	return apply_filters( 'rentfetch_filter_property_office_hours_button', $office_hours_button, $property_id, $class );
+}/**
+ * Echo the property office hours button.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return void.
+ */
+function rentfetch_property_office_hours_button( $property_id = null ) {
+	$button = rentfetch_get_property_office_hours_button( $property_id );
+	
+	if ( $button ) {
+		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
+			'svg' => array(
+				'xmlns' => true,
+				'fill' => true,
+				'viewbox' => true,
+				'stroke-width' => true,
+				'stroke' => true,
+				'class' => true,
+			),
+			'path' => array(
+				'stroke-linecap' => true,
+				'stroke-linejoin' => true,
+				'd' => true,
+			),
+			'details' => array(
+				'class' => true,
+				'open' => true,
+			),
+			'summary' => array(
+				'class' => true,
+			),
+			'div' => array(
+				'class' => true,
+				'style' => true,
+			),
+			'span' => array(
+				'class' => true,
+			),
+		) );
+		echo wp_kses( $button, $allowed_html );
 	}
 }
 
@@ -1760,17 +1949,19 @@ function rentfetch_get_property_office_hours( $property_id = null ) {
 	
 	$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
 	
-	$output = '<div class="rentfetch-property-office-hours">';
+	$output = '<h3>Office Hours</h3>';
+	$output .= '<div class="rentfetch-property-office-hours">';
 	foreach ( $days as $day ) {
-		if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
-			$start_time = date( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
-			$end_time = date( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
-			
-			$output .= '<div class="office-hours-day">';
-				$output .= '<span class="day-name">' . esc_html( ucfirst( $day ) . 's:' ) . '</span> ';
+		$output .= '<div class="office-hours-day">';
+			$output .= '<span class="day-name">' . esc_html( ucfirst( $day ) . ':' ) . '</span> ';
+			if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
+				$start_time = date( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
+				$end_time = date( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
 				$output .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
-			$output .= '</div>';
-		}
+			} else {
+				$output .= '<span class="day-hours">Closed</span>';
+			}
+		$output .= '</div>';
 	}
 	$output .= '</div>';
 	

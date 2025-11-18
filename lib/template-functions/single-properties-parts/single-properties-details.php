@@ -75,15 +75,6 @@ function rentfetch_single_properties_parts_details() {
 						printf( '<div class="description">%s</div>', wp_kses_post( $property_description ) );
 					}
 
-					// // Display office hours if available
-					// $office_hours = rentfetch_get_property_office_hours();
-					// if ( ! empty( $office_hours ) ) {
-					// 	echo '<div class="office-hours-section">';
-					// 		echo '<h3>Office Hours</h3>';
-					// 		echo wp_kses_post( $office_hours );
-					// 	echo '</div>';
-					// }
-
 				echo '</div>'; // .property-basic-info.
 			echo '</div>'; // .property-details-body.
 
