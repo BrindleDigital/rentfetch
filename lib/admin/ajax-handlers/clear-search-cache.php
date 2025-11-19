@@ -27,12 +27,15 @@ function rentfetch_ajax_clear_search_cache() {
 
 	global $wpdb;
 
-	// Get only search-specific transients (propertysearch and floorplansearch).
+	// Get search-specific transients (propertysearch, floorplansearch, floorplans array, and property floorplans).
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$all_transients = $wpdb->get_col(
 		"SELECT option_name FROM {$wpdb->options} 
 		WHERE (option_name LIKE '_transient_rentfetch_propertysearch_%' 
-		OR option_name LIKE '_transient_rentfetch_floorplansearch_%')
+		OR option_name LIKE '_transient_rentfetch_floorplansearch_%'
+		OR option_name LIKE '_transient_rentfetch_floorplans_array_sql_%'
+		OR option_name LIKE '_transient_rentfetch_property_ids_available_%'
+		OR option_name LIKE '_transient_rentfetch_property_floorplans_%')
 		AND option_name NOT LIKE '_transient_timeout_%'"
 	);
 
@@ -46,7 +49,13 @@ function rentfetch_ajax_clear_search_cache() {
 			WHERE option_name LIKE '_transient_rentfetch_propertysearch_%' 
 			OR option_name LIKE '_transient_timeout_rentfetch_propertysearch_%'
 			OR option_name LIKE '_transient_rentfetch_floorplansearch_%' 
-			OR option_name LIKE '_transient_timeout_rentfetch_floorplansearch_%'"
+			OR option_name LIKE '_transient_timeout_rentfetch_floorplansearch_%'
+			OR option_name LIKE '_transient_rentfetch_floorplans_array_sql_%' 
+			OR option_name LIKE '_transient_timeout_rentfetch_floorplans_array_sql_%'
+			OR option_name LIKE '_transient_rentfetch_property_ids_available_%' 
+			OR option_name LIKE '_transient_timeout_rentfetch_property_ids_available_%'
+			OR option_name LIKE '_transient_rentfetch_property_floorplans_%' 
+			OR option_name LIKE '_transient_timeout_rentfetch_property_floorplans_%'"
 		);
 
 		wp_send_json_success(
