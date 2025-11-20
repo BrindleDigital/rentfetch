@@ -103,6 +103,17 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.31.1 =
+
+* Moving the entire search (for both properties and floorplans) to use REST instead of admin-ajax.
+* Adding transient-based cache setting for preloading
+* Adding UI to show recent uncached searches.
+* Adding UI to clear the transient cache
+* Adding database indexing and associated UI
+* New icons for single-properties buttons
+* New single-properties button to show office hours, if synced.
+* Updating shortcodes with new button and icons
+
 = 0.30.0 =
 
 * Add new metabox for properties to show office hours.
