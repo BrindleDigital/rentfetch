@@ -53,7 +53,7 @@ function rentfetch_options_page() {
 		'Floor plan shortcodes', // Page title.
 		'Floor plan shortcodes', // Menu title.
 		'manage_options', // Capability required to access the menu.
-		'admin.php?page=rentfetch-options&tab=floorplans', // Menu slug with parameters.
+		'admin.php?page=rentfetch-options&tab=floorplans&section=floorplan-embed', // Menu slug with parameters.
 		'' // No callback since it's redirecting to the main options page.
 	);
 
