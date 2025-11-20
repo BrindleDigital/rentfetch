@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.30.0
+Stable tag: 0.31.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,8 @@ Start from your WordPress dashboard.
 * New icons for single-properties buttons
 * New single-properties button to show office hours, if synced.
 * Updating shortcodes with new button and icons
+* Restoring capability to click on shortcodes on the site backend to copy them to the clipboard.
+* Fixing link to the floorplan shortcodes page that wasn't going to the specific shortcodes page of the floorplan settings.
 
 = 0.30.0 =
 
