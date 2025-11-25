@@ -3500,11 +3500,7 @@ body.single-floorplans h2 {
 }
 .property-links .property-link {
   display: block;
-}
-
-.property-link {
   color: var(--rentfetch-dark);
-  display: inline-block;
   position: static;
   padding: 15px 15px;
   line-height: 1;
@@ -3515,15 +3511,20 @@ body.single-floorplans h2 {
   border-radius: 4px;
 }
 @media (max-width: 600px) {
-  .property-link {
+  .property-links .property-link {
     margin-bottom: 0;
   }
 }
-.property-link svg {
+.property-links .property-link svg {
   width: 1.2em;
   height: 1.2em;
   margin-right: 0.5em;
   vertical-align: middle;
+  display: inline-block;
+}
+
+.property-link svg {
+  display: none;
 }
 
 .office-hours-section {

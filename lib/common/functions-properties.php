@@ -734,7 +734,7 @@ function rentfetch_get_property_contact_button( $property_id = null, $class = ''
 		$classes .= ' ' . esc_attr( $class );
 	}
 	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 email-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>';
-	$contact_button = sprintf( '<a class="%s" href="%s">%sReach Out</a>', $classes, esc_html( $email_link ), $svg );
+	$contact_button = sprintf( '<a class="%s" href="%s">%sEmail Us</a>', $classes, esc_html( $email_link ), $svg );
 	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button, $property_id, $class );
 
 	if ( $email ) {
