@@ -84,7 +84,7 @@ jQuery(function ($) {
 	function updateURLWithQueryParameters(params) {
 		var url = new URL(window.location.href);
 		var existingParams = {};
-		url.searchParams.forEach(function(value, key) {
+		url.searchParams.forEach(function (value, key) {
 			existingParams[key] = value;
 		});
 		var mergedParams = $.extend({}, existingParams, params);
