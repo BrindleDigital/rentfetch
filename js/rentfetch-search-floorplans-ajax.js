@@ -14,8 +14,14 @@ jQuery(function ($) {
 
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
-		var baseUrl = window.location.href.split('?')[0];
-		var queryString = $.param(params); // Serialize the parameters
+		var url = new URL(window.location.href);
+		var existingParams = {};
+		url.searchParams.forEach(function(value, key) {
+			existingParams[key] = value;
+		});
+		var mergedParams = $.extend({}, existingParams, params);
+		var baseUrl = url.origin + url.pathname;
+		var queryString = $.param(mergedParams);
 		var newUrl = baseUrl + (queryString ? '?' + queryString : '');
 		history.pushState(null, '', newUrl);
 	}
