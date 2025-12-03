@@ -204,18 +204,6 @@ function rentfetch_settings_properties_property_search_settings() {
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="floorplan_category_search" <?php checked( in_array( 'floorplan_category_search', $options_featured_filters, true ) ); ?>>
-						Floorplan category search
-					</label>
-				</li>
-				<li>
-					<label>
-						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="floorplan_type_search" <?php checked( in_array( 'floorplan_type_search', $options_featured_filters, true ) ); ?>>
-						Floorplan type search
-					</label>
-				</li>
-				<li>
-					<label>
 						<input type="checkbox" name="rentfetch_options_featured_filters[]" value="date_search" <?php checked( in_array( 'date_search', $options_featured_filters, true ) ); ?>>
 						Date search
 					</label>
@@ -301,18 +289,6 @@ function rentfetch_settings_properties_property_search_settings() {
 					<label>
 						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="city_search" <?php checked( in_array( 'city_search', $options_dialog_filters, true ) ); ?>>
 						City search
-					</label>
-				</li>
-				<li>
-					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="floorplan_category_search" <?php checked( in_array( 'floorplan_category_search', $options_dialog_filters, true ) ); ?>>
-						Floorplan category search
-					</label>
-				</li>
-				<li>
-					<label>
-						<input type="checkbox" name="rentfetch_options_dialog_filters[]" value="floorplan_type_search" <?php checked( in_array( 'floorplan_type_search', $options_dialog_filters, true ) ); ?>>
-						Floorplan type search
 					</label>
 				</li>
 				<li>
