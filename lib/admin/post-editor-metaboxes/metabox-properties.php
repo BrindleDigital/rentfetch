@@ -1227,7 +1227,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 			<?php
 			// * Property Fees JSON
 			$csv_url = get_post_meta( $post->ID, 'property_fees_csv_url', true );
-			if ( empty( $csv_url ) ) :
+			if ( empty( $csv_url ) && ! empty( $property_fees_data ) ) :
 			?>
 			<div class="field">
 				<div class="column">
