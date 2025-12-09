@@ -1074,6 +1074,9 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 		}
 	</style>";
 	
+	$upload_nonce = wp_create_nonce( "upload_property_fees_csv" );
+	$ajax_url = admin_url( 'admin-ajax.php' );
+	
 	echo "<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			// Handle show more/less for units
@@ -1149,6 +1152,32 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 					currentTooltip = null;
 				}
 			});
+			
+			// Handle CSV file upload
+			document.getElementById('property_fees_csv').addEventListener('change', function() {
+				var file = this.files[0];
+				if (file) {
+					var formData = new FormData();
+					formData.append('file', file);
+					formData.append('action', 'upload_property_fees_csv');
+					formData.append('_wpnonce', '" . $upload_nonce . "');
+					fetch('" . $ajax_url . "', {
+						method: 'POST',
+						body: formData
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success) {
+							document.getElementById('property_fees_csv_url').value = data.data.url;
+						} else {
+							alert('Upload failed: ' + data.data.message);
+						}
+					})
+					.catch(error => {
+						alert('Upload failed');
+					});
+				}
+			});
 		});
 	</script>";
 }
@@ -1178,46 +1207,43 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="property_fees_csv">Property Fees CSV Upload</label>
-				<p class="description">Upload a CSV file with property fees data. This will replace any existing fees data. <a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_fees_csv_sample' ) ); ?>" download="property_fees_sample.csv">Download sample CSV</a></p>
-				<p class="description">
-					<button type="button" id="download-current-fees" class="button button-secondary" data-property-title="<?php echo esc_attr( get_the_title( $post->ID ) ); ?>" data-property-id="<?php echo esc_attr( get_post_meta( $post->ID, 'property_id', true ) ); ?>">Download Current Data</button>
-				</p>
+				<label for="property_fees_csv">OPTION 1: Property Fees CSV Upload</label>
+				<p class="description">Upload or link to a CSV file with property fees data. </p>
 			</div>
 			<div class="column">
-				<input type="file" id="property_fees_csv" name="property_fees_csv" accept=".csv" data-post-id="<?php echo intval( $post->ID ); ?>" />
-				<p class="description">CSV columns: description, price, frequency, notes, category</p>
+				<div class="csv-input-group" style="display: flex; align-items: center; gap: 0; margin-bottom: 10px;">
+					<input type="file" id="property_fees_csv" name="property_fees_csv" accept=".csv" data-post-id="<?php echo intval( $post->ID ); ?>" style="display: none;" />
+					<label for="property_fees_csv" style="display: inline-block; padding: 5px 8px; background: #f7f7f7; border: 1px solid #8c8f94; border-radius: 4px 0 0 4px; cursor: pointer; font-size: 13px; margin: 0; white-space: nowrap; min-width: 0; width: auto;">Choose File</label>
+					<input type="url" id="property_fees_csv_url" name="property_fees_csv_url" value="<?php echo esc_attr( get_post_meta( $post->ID, 'property_fees_csv_url', true ) ); ?>" placeholder="Paste CSV URL or upload file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
+				</div>
+				<p class="description"><a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_fees_csv_sample' ) ); ?>" download="property_fees_sample.csv">Download sample CSV</a>
+					<?php $csv_url = get_post_meta( $post->ID, 'property_fees_csv_url', true ); ?>
+					<?php if ( ! empty( $csv_url ) ) : ?>
+						or <a href="<?php echo esc_url( $csv_url ); ?>" download="<?php echo esc_attr( get_the_title( $post->ID ) ); ?>-fees.csv">Download Current Data</a>
+					<?php endif; ?>
+				</p>
 			</div>
 			
 			<?php
 			// * Property Fees JSON
+			$csv_url = get_post_meta( $post->ID, 'property_fees_csv_url', true );
+			if ( empty( $csv_url ) ) :
 			?>
-			<div class="column">
-				<label for="property_fees_json">Property Fees JSON</label>
-				<p class="description">Current fees data in JSON format. You can edit this directly and save changes with the post.</p>
-				<p class="description">
-					<button type="button" id="copy-fees-json" class="button button-secondary">Copy Fees JSON</button>
-				</p>
-			</div>
-			<div class="column">
-				<div class="json-content">
-					<textarea class="rentfetch-fees-json" name="property_fees_json" rows="10" style="width:100%; white-space: pre; word-wrap: normal; overflow-x: auto;"><?php echo esc_textarea( wp_json_encode( $property_fees_data, JSON_PRETTY_PRINT ) ); ?></textarea>
+			<div class="field">
+				<div class="column">
+					<label for="property_fees_json">Property Fees JSON</label>
+					<p class="description">Current fees data in JSON format. You can edit this directly and save changes with the post.</p>
+					<p class="description">
+						<button type="button" id="copy-fees-json" class="button button-secondary">Copy Fees JSON</button>
+					</p>
+				</div>
+				<div class="column">
+					<div class="json-content">
+						<textarea class="rentfetch-fees-json" name="property_fees_json" rows="10" style="width:100%; white-space: pre; word-wrap: normal; overflow-x: auto;"><?php echo esc_textarea( wp_json_encode( $property_fees_data, JSON_PRETTY_PRINT ) ); ?></textarea>
+					</div>
 				</div>
 			</div>
-		</div>
-
-		<?php
-		// * Property Fees JSON URL
-		$property_fees_json_url = get_post_meta( $post->ID, 'property_fees_json_url', true );
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="property_fees_json_url">Property Fees JSON URL</label>
-				<p class="description">Enter a URL to a JSON file containing property fees. This will be used as a fallback if the JSON field above is empty.</p>
-			</div>
-			<div class="column">
-				<input type="url" id="property_fees_json_url" name="property_fees_json_url" value="<?php echo esc_url( $property_fees_json_url ); ?>" style="width:100%;">
-			</div>
+			<?php endif; ?>
 		</div>
 		
 		<?php
@@ -1226,8 +1252,8 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="property_fees_embed">Property Fees Embed Code</label>
-				<p class="description">This approach allows you to add a canva embed or similar. This is a fallback to either of the options above.</p>
+				<label for="property_fees_embed">OPTION 2: Property Fees Embed Code</label>
+				<p class="description">This option allows you to add a canva embed or similar.</p>
 			</div>
 			<div class="column">
 				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>
@@ -1236,7 +1262,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		</div>
 		
 	</div>
-	
+
 	<?php
 }
 
@@ -1497,75 +1523,46 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'property_fees_embed', wp_unslash( $_POST['property_fees_embed'] ) );
 	}
 
-	if ( isset( $_POST['property_fees_json_url'] ) ) {
-		update_post_meta( $post_id, 'property_fees_json_url', esc_url_raw( wp_unslash( $_POST['property_fees_json_url'] ) ) );
-	}
-
 	if ( isset( $_POST['property_fees_json'] ) ) {
 		$json_data = wp_unslash( $_POST['property_fees_json'] );
 		$json_data = trim( $json_data ); // Trim whitespace
 		
-		// If JSON field is empty, save empty array
-		if ( empty( $json_data ) ) {
-			update_post_meta( $post_id, 'property_fees_data', array() );
+		// If CSV URL is set, clear the JSON data
+		if ( isset( $_POST['property_fees_csv_url'] ) && ! empty( $_POST['property_fees_csv_url'] ) ) {
+			delete_post_meta( $post_id, 'property_fees_data' );
 		} else {
-			$fees_data = json_decode( $json_data, true );
-			if ( json_last_error() === JSON_ERROR_NONE && is_array( $fees_data ) ) {
-				// Sanitize each fee item
-				$sanitized_fees = array();
-				foreach ( $fees_data as $fee ) {
-					if ( is_array( $fee ) ) {
-						$sanitized_fees[] = array(
-							'description' => sanitize_text_field( $fee['description'] ?? '' ),
-							'price'       => sanitize_text_field( $fee['price'] ?? '' ),
-							'frequency'   => sanitize_text_field( $fee['frequency'] ?? '' ),
-							'notes'       => sanitize_text_field( $fee['notes'] ?? '' ),
-							'category'    => sanitize_text_field( $fee['category'] ?? '' ),
-						);
+			// If JSON field is empty, save empty array
+			if ( empty( $json_data ) ) {
+				update_post_meta( $post_id, 'property_fees_data', array() );
+			} else {
+				$fees_data = json_decode( $json_data, true );
+				if ( json_last_error() === JSON_ERROR_NONE && is_array( $fees_data ) ) {
+					// Sanitize each fee item
+					$sanitized_fees = array();
+					foreach ( $fees_data as $fee ) {
+						if ( is_array( $fee ) ) {
+							$sanitized_fees[] = array(
+								'description' => sanitize_text_field( $fee['description'] ?? '' ),
+								'price'       => sanitize_text_field( $fee['price'] ?? '' ),
+								'frequency'   => sanitize_text_field( $fee['frequency'] ?? '' ),
+								'notes'       => sanitize_text_field( $fee['notes'] ?? '' ),
+								'category'    => sanitize_text_field( $fee['category'] ?? '' ),
+							);
+						}
 					}
+					update_post_meta( $post_id, 'property_fees_data', $sanitized_fees );
 				}
-				update_post_meta( $post_id, 'property_fees_data', $sanitized_fees );
 			}
 		}
 	}
 
-	// Handle CSV upload for property fees
-	if ( isset( $_FILES['property_fees_csv'] ) && ! empty( $_FILES['property_fees_csv']['tmp_name'] ) ) {
-		$csv_file = $_FILES['property_fees_csv'];
-		
-		// Check if it's a valid CSV file
-		$file_type = wp_check_filetype( $csv_file['name'] );
-		if ( 'csv' !== $file_type['ext'] ) {
-			// Not a CSV file, skip processing
-			error_log( 'Invalid file type for property fees CSV upload' );
-		} else {
-			// Process the CSV file
-			$fees_data = array();
-			
-			if ( ( $handle = fopen( $csv_file['tmp_name'], 'r' ) ) !== false ) {
-				$header = fgetcsv( $handle, 1000, ',' );
-				
-				// Validate header
-				$expected_header = array( 'description', 'price', 'frequency', 'notes', 'category' );
-				if ( $header === $expected_header ) {
-					while ( ( $data = fgetcsv( $handle, 1000, ',' ) ) !== false ) {
-						if ( count( $data ) === 5 ) {
-							$fees_data[] = array(
-								'description' => sanitize_text_field( $data[0] ),
-								'price'       => sanitize_text_field( $data[1] ),
-								'frequency'   => sanitize_text_field( $data[2] ),
-								'notes'       => sanitize_text_field( $data[3] ),
-								'category'    => sanitize_text_field( $data[4] ),
-							);
-						}
-					}
-				}
-				
-				fclose( $handle );
-			}
-			
-			// Save the processed fees data
-			update_post_meta( $post_id, 'property_fees_data', $fees_data );
+	// Handle CSV upload or URL for property fees
+	if ( isset( $_POST['property_fees_csv_url'] ) ) {
+		$url = esc_url_raw( $_POST['property_fees_csv_url'] );
+		update_post_meta( $post_id, 'property_fees_csv_url', $url );
+		if ( ! empty( $url ) ) {
+			// Clear the JSON data when CSV URL is set
+			delete_post_meta( $post_id, 'property_fees_data' );
 		}
 	}
 
@@ -1932,9 +1929,9 @@ function rentfetch_download_current_global_fees_csv() {
 add_action( 'wp_ajax_rentfetch_download_current_global_fees_csv', 'rentfetch_download_current_global_fees_csv' );
 
 /**
- * AJAX handler to upload and process global fees CSV
+ * AJAX handler to process global fees CSV from URL
  */
-function rentfetch_upload_global_fees_csv() {
+function rentfetch_process_global_fees_csv() {
 	
 	// Verify nonce for security
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_main_options_nonce_action' ) ) {
@@ -1993,4 +1990,82 @@ function rentfetch_upload_global_fees_csv() {
 		'count' => count( $fees_data )
 	) );
 }
-add_action( 'wp_ajax_rentfetch_upload_global_fees_csv', 'rentfetch_upload_global_fees_csv' );
+add_action( 'wp_ajax_rentfetch_process_global_fees_csv', 'rentfetch_process_global_fees_csv' );
+
+add_action( 'wp_ajax_upload_global_property_fees_csv', 'upload_global_property_fees_csv' );
+function upload_global_property_fees_csv() {
+	if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'rentfetch_main_options_nonce_action' ) ) {
+		wp_send_json_error( 'Security check failed.' );
+	}
+	if ( ! current_user_can( 'upload_files' ) ) {
+		wp_send_json_error( 'You do not have permission to upload files.' );
+	}
+	
+	// Allow CSV uploads
+	add_filter( 'upload_mimes', function( $mimes ) {
+		$mimes['csv'] = 'text/csv';
+		return $mimes;
+	} );
+	
+	if ( empty( $_FILES['file'] ) ) {
+		wp_send_json_error( 'No file uploaded.' );
+	}
+	$file = $_FILES['file'];
+	$upload_overrides = array( 'test_form' => false );
+	$movefile = wp_handle_upload( $file, $upload_overrides );
+	if ( $movefile && ! isset( $movefile['error'] ) ) {
+		$attachment = array(
+			'guid'           => $movefile['url'],
+			'post_mime_type' => $movefile['type'],
+			'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $movefile['file'] ) ),
+			'post_content'   => '',
+			'post_status'    => 'inherit'
+		);
+		$attach_id = wp_insert_attachment( $attachment, $movefile['file'] );
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+		$attach_data = wp_generate_attachment_metadata( $attach_id, $movefile['file'] );
+		wp_update_attachment_metadata( $attach_id, $attach_data );
+		wp_send_json_success( array( 'url' => wp_get_attachment_url( $attach_id ) ) );
+	} else {
+		wp_send_json_error( array( 'message' => $movefile['error'] ) );
+	}
+}
+
+add_action( 'wp_ajax_upload_property_fees_csv', 'upload_property_fees_csv' );
+function upload_property_fees_csv() {
+	if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'upload_property_fees_csv' ) ) {
+		wp_send_json_error( 'Security check failed.' );
+	}
+	if ( ! current_user_can( 'upload_files' ) ) {
+		wp_send_json_error( 'You do not have permission to upload files.' );
+	}
+	
+	// Allow CSV uploads
+	add_filter( 'upload_mimes', function( $mimes ) {
+		$mimes['csv'] = 'text/csv';
+		return $mimes;
+	} );
+	
+	if ( empty( $_FILES['file'] ) ) {
+		wp_send_json_error( 'No file uploaded.' );
+	}
+	$file = $_FILES['file'];
+	$upload_overrides = array( 'test_form' => false );
+	$movefile = wp_handle_upload( $file, $upload_overrides );
+	if ( $movefile && ! isset( $movefile['error'] ) ) {
+		$attachment = array(
+			'guid'           => $movefile['url'],
+			'post_mime_type' => $movefile['type'],
+			'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $movefile['file'] ) ),
+			'post_content'   => '',
+			'post_status'    => 'inherit'
+		);
+		$attach_id = wp_insert_attachment( $attachment, $movefile['file'] );
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+		$attach_data = wp_generate_attachment_metadata( $attach_id, $movefile['file'] );
+		wp_update_attachment_metadata( $attach_id, $attach_data );
+		wp_send_json_success( array( 'url' => wp_get_attachment_url( $attach_id ) ) );
+	} else {
+		wp_send_json_error( array( 'message' => $movefile['error'] ) );
+	}
+}

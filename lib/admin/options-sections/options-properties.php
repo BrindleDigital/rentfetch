@@ -586,43 +586,49 @@ add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_maps' );
 function rentfetch_settings_properties_global_property_fees() {
 	?>
 	<div class="header">
-		<h2 class="title">Global Property Fees</h2>
-		<p class="description">Set global fallback fees that will be used when property-specific fees are not available.</p>
+		<h2 class="title">Property Fee Fallbacks</h2>
+		<p class="description">Set global fallback fees that will be used when property-specific fees are not available (you can set individual fees when editing each property as well).</p>
 	</div>
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_global_property_fees_csv">Global Property Fees CSV Upload</label>
-			<p class="description">Upload a CSV file with global property fees data. This will replace any existing fees data. <a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_global_fees_csv_sample' ) ); ?>" download="global_property_fees_sample.csv">Download sample CSV</a> | <a href="#" id="download-global-current-fees">Download Current Data</a></p>
-			<input type="file" id="rentfetch_options_global_property_fees_csv" name="rentfetch_options_global_property_fees_csv" accept=".csv" style="margin-top: 10px; background-color: #f9f9f9; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+			<label for="rentfetch_options_global_property_fees_csv">OPTION 1: Global Property Fees CSV Upload</label>
+			<p class="description">Upload or link to a CSV file with global property fees data.</p>
+			<div class="csv-input-group" style="display: flex; align-items: center; gap: 0; margin-bottom: 10px;">
+				<input type="file" id="rentfetch_options_global_property_fees_csv" name="rentfetch_options_global_property_fees_csv" accept=".csv" style="display: none;" />
+				<label for="rentfetch_options_global_property_fees_csv" style="display: inline-block; padding: 14px 14px; background: #f7f7f7; border: 1px solid #8c8f94; border-radius: 4px 0 0 4px; cursor: pointer; font-size: 13px; margin: 0; white-space: nowrap; min-width: 0; width: auto;">Choose File</label>
+				<input type="url" id="rentfetch_options_global_property_fees_csv_url" name="rentfetch_options_global_property_fees_csv_url" value="<?php echo esc_attr( get_option( 'rentfetch_options_global_property_fees_csv_url' ) ); ?>" placeholder="Paste CSV URL or upload file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
+			</div>
+			<p class="description"><a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_global_fees_csv_sample' ) ); ?>" download="global_property_fees_sample.csv">Download sample CSV</a>
+				<?php $csv_url = get_option( 'rentfetch_options_global_property_fees_csv_url' ); ?>
+				<?php if ( ! empty( $csv_url ) ) : ?>
+					or <a href="#" id="download-global-current-fees">download current data</a>
+				<?php endif; ?>
+			</p>
 		</div>
 				
+		<?php
+		$global_property_fees_data = get_option( 'rentfetch_options_global_property_fees_data' );
+		if ( ! is_array( $global_property_fees_data ) ) {
+			$global_property_fees_data = array();
+		}
+		if ( ! empty( $global_property_fees_data ) ) :
+		?>
 		<div class="section">
 			<label for="rentfetch_options_global_property_fees_data">Global Property Fees JSON</label>
 			<p class="description">Current fees data in JSON format. You can edit this directly and save changes with the form. <a href="#" id="copy-fees-json">Copy Fees JSON</a></p>
 			<div class="json-content">
 				<textarea class="rentfetch-fees-json" name="rentfetch_options_global_property_fees_data" rows="10" style="width:100%; white-space: pre; word-wrap: normal; overflow-x: auto;"><?php 
-				$global_property_fees_data = get_option( 'rentfetch_options_global_property_fees_data' );
-				if ( ! is_array( $global_property_fees_data ) ) {
-					$global_property_fees_data = array();
-				}
 				echo esc_textarea( wp_json_encode( $global_property_fees_data, JSON_PRETTY_PRINT ) ); 
 				?></textarea>
 			</div>
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="section">
-			<label for="rentfetch_options_global_property_fees_json_url">Global Property Fees JSON URL</label>
-			<p class="description">Enter a URL to a JSON file containing global property fees. This will be used as a fallback if the JSON field above is empty.</p>
-			<input type="url" name="rentfetch_options_global_property_fees_json_url" id="rentfetch_options_global_property_fees_json_url" value="<?php echo esc_url( get_option( 'rentfetch_options_global_property_fees_json_url' ) ); ?>" style="width:100%;">
-		</div>
+		<?php endif; ?>
 	</div>
 	
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_global_property_fees_embed">Global Property Fees Embed Code</label>
-			<p class="description">Paste embed code for global property fees. This is a fallback to the options above.</p>
+			<label for="rentfetch_options_global_property_fees_embed">OPTION 2: Global Property Fees Embed Code</label>
+			<p class="description">This option allows you to add a canva embed or similar.</p>
 			<textarea name="rentfetch_options_global_property_fees_embed" id="rentfetch_options_global_property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( get_option( 'rentfetch_options_global_property_fees_embed' ) ); ?></textarea>
 			<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
 		</div>
@@ -648,10 +654,10 @@ function rentfetch_save_settings_global_property_fees() {
 		}
 	}
 
-	// JSON URL
-	if ( isset( $_POST['rentfetch_options_global_property_fees_json_url'] ) ) {
-		$url = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_json_url'] ) );
-		update_option( 'rentfetch_options_global_property_fees_json_url', $url );
+	// CSV URL
+	if ( isset( $_POST['rentfetch_options_global_property_fees_csv_url'] ) ) {
+		$url = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_csv_url'] ) );
+		update_option( 'rentfetch_options_global_property_fees_csv_url', $url );
 	}
 
 	// Embed code

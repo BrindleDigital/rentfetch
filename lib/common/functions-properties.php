@@ -1685,6 +1685,8 @@ function rentfetch_property_fees_embed( $property_id_or_post_id = null ) {
  * @return string The property fees embed code.
  */
 function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
+	
+	// Figure out the post ID to use for getting the fees.
 	$post_id = null;
 	
 	if ( $property_id_or_post_id ) {
@@ -1701,26 +1703,29 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 
 	// If we have a valid post_id, try property-specific fees first
 	if ( $post_id ) {
-		$property_fees_data     = get_post_meta( $post_id, 'property_fees_data', true );
-		$property_fees_json_url = get_post_meta( $post_id, 'property_fees_json_url', true );
-		$property_fees_embed    = get_post_meta( $post_id, 'property_fees_embed', true );
+		$property_fees_data    = get_post_meta( $post_id, 'property_fees_data', true );
+		$property_fees_csv_url = get_post_meta( $post_id, 'property_fees_csv_url', true );
+		$property_fees_embed   = get_post_meta( $post_id, 'property_fees_embed', true );
 
-		// Priority 1: Use property_fees_data if it's a non-empty array
-		if ( ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
-			$property_fees_json   = wp_json_encode( $property_fees_data );
-			$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
-		}
-		// Priority 2: Use property_fees_json_url if available
-		elseif ( ! empty( $property_fees_json_url ) ) {
-			$response = wp_remote_get( $property_fees_json_url );
+		// Priority 1: Use property_fees_csv_url if available
+		if ( ! empty( $property_fees_csv_url ) ) {
+			$response = wp_remote_get( $property_fees_csv_url );
 			if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$json_body = wp_remote_retrieve_body( $response );
-				// Check if the body is valid JSON before passing it to the markup function
-				if ( is_string( $json_body ) && is_array( json_decode( $json_body, true ) ) && json_last_error() === JSON_ERROR_NONE ) {
-					$property_fees_markup = rentfetch_get_property_fees_markup( $json_body );
+				$csv_content = wp_remote_retrieve_body( $response );
+				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
+				if ( ! empty( $fees_data ) ) {
+					$property_fees_json   = wp_json_encode( $fees_data );
+					$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
 				}
 			}
 		}
+
+		// Priority 2: Use property_fees_data (this is the json) if it's a non-empty array
+		elseif ( ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
+			$property_fees_json   = wp_json_encode( $property_fees_data );
+			$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
+		}
+
 		// Priority 3: Fallback to property_fees_embed
 		elseif ( ! empty( $property_fees_embed ) ) {
 			$property_fees_markup = $property_fees_embed;
@@ -1729,26 +1734,29 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 
 	// If no property-specific fees or no post_id, try global fallbacks
 	if ( empty( $property_fees_markup ) ) {
+		$global_fees_csv_url  = get_option( 'rentfetch_options_global_property_fees_csv_url' );
 		$global_fees_data     = get_option( 'rentfetch_options_global_property_fees_data' );
-		$global_fees_json_url = get_option( 'rentfetch_options_global_property_fees_json_url' );
 		$global_fees_embed    = get_option( 'rentfetch_options_global_property_fees_embed' );
 
-		// Priority 1: Use global_fees_data if it's a non-empty array
-		if ( ! empty( $global_fees_data ) && is_array( $global_fees_data ) ) {
-			$global_fees_json     = wp_json_encode( $global_fees_data );
-			$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json );
-		}
-		// Priority 2: Use global_fees_json_url if available
-		elseif ( ! empty( $global_fees_json_url ) ) {
-			$response = wp_remote_get( $global_fees_json_url );
+		// Priority 1: Use global_fees_csv_url if available
+		if ( ! empty( $global_fees_csv_url ) ) {
+			$response = wp_remote_get( $global_fees_csv_url );
 			if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$json_body = wp_remote_retrieve_body( $response );
-				// Check if the body is valid JSON before passing it to the markup function
-				if ( is_string( $json_body ) && is_array( json_decode( $json_body, true ) ) && json_last_error() === JSON_ERROR_NONE ) {
-					$property_fees_markup = rentfetch_get_property_fees_markup( $json_body );
+				$csv_content = wp_remote_retrieve_body( $response );
+				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
+				if ( ! empty( $fees_data ) ) {
+					$global_fees_json     = wp_json_encode( $fees_data );
+					$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json );
 				}
 			}
 		}
+
+		// Priority 2: Use global_fees_data if it's a non-empty array
+		elseif ( ! empty( $global_fees_data ) && is_array( $global_fees_data ) ) {
+			$global_fees_json     = wp_json_encode( $global_fees_data );
+			$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json );
+		}
+
 		// Priority 3: Fallback to global_fees_embed
 		elseif ( ! empty( $global_fees_embed ) ) {
 			$property_fees_markup = $global_fees_embed;
@@ -1973,6 +1981,33 @@ function rentfetch_get_property_office_hours( $property_id = null, $include_head
 	$output .= '</div>';
 	
 	return apply_filters( 'rentfetch_filter_property_office_hours', $output, $property_id );
+}
+
+function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
+	$fees_data = array();
+	$lines = explode( "\n", $csv_content );
+	if ( empty( $lines ) ) {
+		return $fees_data;
+	}
+	$header = str_getcsv( array_shift( $lines ), ',', '"', '\\' );
+	$expected_header = array( 'description', 'price', 'frequency', 'notes', 'category' );
+	if ( $header !== $expected_header ) {
+		return $fees_data;
+	}
+	foreach ( $lines as $line ) {
+		if ( empty( trim( $line ) ) ) continue;
+		$data = str_getcsv( $line, ',', '"', '\\' );
+		if ( count( $data ) === 5 ) {
+			$fees_data[] = array(
+				'description' => sanitize_text_field( $data[0] ),
+				'price'       => sanitize_text_field( $data[1] ),
+				'frequency'   => sanitize_text_field( $data[2] ),
+				'notes'       => sanitize_text_field( $data[3] ),
+				'category'    => sanitize_text_field( $data[4] ),
+			);
+		}
+	}
+	return $fees_data;
 }
 
 /**

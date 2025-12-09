@@ -124,7 +124,7 @@ function rentfetch_settings_properties() {
 					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-single" class="tab %s">Property single</a></li>', esc_html( $active ) );
 
 					$active = ( 'global-property-fees' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=global-property-fees" class="tab %s">Global property fees</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=global-property-fees" class="tab %s">Property fees</a></li>', esc_html( $active ) );
 					
 					$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
 					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Property shortcodes</a></li>', esc_html( $active ) );
