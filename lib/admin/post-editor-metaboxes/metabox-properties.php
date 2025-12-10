@@ -1207,14 +1207,14 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="property_fees_csv">OPTION 1: Property Fees CSV Upload</label>
+				<label for="property_fees_csv">OPTION 1: CSV Upload or Link</label>
 				<p class="description">Upload or link to a CSV file with property fees data. </p>
 			</div>
 			<div class="column">
 				<div class="csv-input-group" style="display: flex; align-items: center; gap: 0; margin-bottom: 10px;">
 					<input type="file" id="property_fees_csv" name="property_fees_csv" accept=".csv" data-post-id="<?php echo intval( $post->ID ); ?>" style="display: none;" />
 					<label for="property_fees_csv" style="display: inline-block; padding: 5px 8px; background: #f7f7f7; border: 1px solid #8c8f94; border-radius: 4px 0 0 4px; cursor: pointer; font-size: 13px; margin: 0; white-space: nowrap; min-width: 0; width: auto;">Choose File</label>
-					<input type="url" id="property_fees_csv_url" name="property_fees_csv_url" value="<?php echo esc_attr( get_post_meta( $post->ID, 'property_fees_csv_url', true ) ); ?>" placeholder="Paste CSV URL or upload file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
+					<input type="url" id="property_fees_csv_url" name="property_fees_csv_url" value="<?php echo esc_attr( get_post_meta( $post->ID, 'property_fees_csv_url', true ) ); ?>" placeholder="or paste in a link to a .csv file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
 				</div>
 				<p class="description"><a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_fees_csv_sample' ) ); ?>" download="property_fees_sample.csv">Download sample CSV</a>
 					<?php $csv_url = get_post_meta( $post->ID, 'property_fees_csv_url', true ); ?>
@@ -1223,27 +1223,6 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 					<?php endif; ?>
 				</p>
 			</div>
-			
-			<?php
-			// * Property Fees JSON
-			$csv_url = get_post_meta( $post->ID, 'property_fees_csv_url', true );
-			if ( empty( $csv_url ) && ! empty( $property_fees_data ) ) :
-			?>
-			<div class="field">
-				<div class="column">
-					<label for="property_fees_json">Property Fees JSON</label>
-					<p class="description">Current fees data in JSON format. You can edit this directly and save changes with the post.</p>
-					<p class="description">
-						<button type="button" id="copy-fees-json" class="button button-secondary">Copy Fees JSON</button>
-					</p>
-				</div>
-				<div class="column">
-					<div class="json-content">
-						<textarea class="rentfetch-fees-json" name="property_fees_json" rows="10" style="width:100%; white-space: pre; word-wrap: normal; overflow-x: auto;"><?php echo esc_textarea( wp_json_encode( $property_fees_data, JSON_PRETTY_PRINT ) ); ?></textarea>
-					</div>
-				</div>
-			</div>
-			<?php endif; ?>
 		</div>
 		
 		<?php
@@ -1252,8 +1231,8 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="property_fees_embed">OPTION 2: Property Fees Embed Code</label>
-				<p class="description">This option allows you to add a canva embed or similar.</p>
+				<label for="property_fees_embed">OPTION 2: Embed Code</label>
+				<p class="description">This option allows you to add a PDF embed via Canva or similar.</p>
 			</div>
 			<div class="column">
 				<textarea id="property_fees_embed" name="property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( $property_fees_embed ); ?></textarea>

@@ -586,17 +586,17 @@ add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_maps' );
 function rentfetch_settings_properties_global_property_fees() {
 	?>
 	<div class="header">
-		<h2 class="title">Property Fee Fallbacks</h2>
+		<h2 class="title">Property Fees</h2>
 		<p class="description">Set global fallback fees that will be used when property-specific fees are not available (you can set individual fees when editing each property as well).</p>
 	</div>
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_global_property_fees_csv">OPTION 1: Global Property Fees CSV Upload</label>
+			<label for="rentfetch_options_global_property_fees_csv">OPTION 1: CSV Upload or Link</label>
 			<p class="description">Upload or link to a CSV file with global property fees data.</p>
 			<div class="csv-input-group" style="display: flex; align-items: center; gap: 0; margin-bottom: 10px;">
 				<input type="file" id="rentfetch_options_global_property_fees_csv" name="rentfetch_options_global_property_fees_csv" accept=".csv" style="display: none;" />
 				<label for="rentfetch_options_global_property_fees_csv" style="display: inline-block; padding: 14px 14px; background: #f7f7f7; border: 1px solid #8c8f94; border-radius: 4px 0 0 4px; cursor: pointer; font-size: 13px; margin: 0; white-space: nowrap; min-width: 0; width: auto;">Choose File</label>
-				<input type="url" id="rentfetch_options_global_property_fees_csv_url" name="rentfetch_options_global_property_fees_csv_url" value="<?php echo esc_attr( get_option( 'rentfetch_options_global_property_fees_csv_url' ) ); ?>" placeholder="Paste CSV URL or upload file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
+				<input type="url" id="rentfetch_options_global_property_fees_csv_url" name="rentfetch_options_global_property_fees_csv_url" value="<?php echo esc_attr( get_option( 'rentfetch_options_global_property_fees_csv_url' ) ); ?>" placeholder="or paste in a link to a .csv file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
 			</div>
 			<p class="description"><a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_global_fees_csv_sample' ) ); ?>" download="global_property_fees_sample.csv">Download sample CSV</a>
 				<?php $csv_url = get_option( 'rentfetch_options_global_property_fees_csv_url' ); ?>
@@ -605,30 +605,12 @@ function rentfetch_settings_properties_global_property_fees() {
 				<?php endif; ?>
 			</p>
 		</div>
-				
-		<?php
-		$global_property_fees_data = get_option( 'rentfetch_options_global_property_fees_data' );
-		if ( ! is_array( $global_property_fees_data ) ) {
-			$global_property_fees_data = array();
-		}
-		if ( ! empty( $global_property_fees_data ) ) :
-		?>
-		<div class="section">
-			<label for="rentfetch_options_global_property_fees_data">Global Property Fees JSON</label>
-			<p class="description">Current fees data in JSON format. You can edit this directly and save changes with the form. <a href="#" id="copy-fees-json">Copy Fees JSON</a></p>
-			<div class="json-content">
-				<textarea class="rentfetch-fees-json" name="rentfetch_options_global_property_fees_data" rows="10" style="width:100%; white-space: pre; word-wrap: normal; overflow-x: auto;"><?php 
-				echo esc_textarea( wp_json_encode( $global_property_fees_data, JSON_PRETTY_PRINT ) ); 
-				?></textarea>
-			</div>
-		</div>
-		<?php endif; ?>
 	</div>
 	
 	<div class="row">
 		<div class="section">
-			<label for="rentfetch_options_global_property_fees_embed">OPTION 2: Global Property Fees Embed Code</label>
-			<p class="description">This option allows you to add a canva embed or similar.</p>
+			<label for="rentfetch_options_global_property_fees_embed">OPTION 2: Embed Code</label>
+			<p class="description">This option allows you to add a PDF embed via Canva or similar.</p>
 			<textarea name="rentfetch_options_global_property_fees_embed" id="rentfetch_options_global_property_fees_embed" rows="5" style="width:100%;"><?php echo esc_textarea( get_option( 'rentfetch_options_global_property_fees_embed' ) ); ?></textarea>
 			<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
 		</div>
