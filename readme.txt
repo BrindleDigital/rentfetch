@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.32
+Stable tag: 0.32.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,7 +103,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.32 =
+= 0.32.1 =
 
 * Reworking property fees to make them less confusing to users. This is NOT a breaking change. Data already loaded into sites will be preserved (but when you update it you'll need to use the new format)
 * Updating some verbiage around property fees
