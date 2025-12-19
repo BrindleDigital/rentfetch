@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.32.1
+Stable tag: 0.32.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.32.2 =
+
+* Adding validation to property fees csv uploads so that what outputs on the frontend is more predictable and so that users are given information about what's wrong.
+* Adding similar validation to the global settings.
+* Minor refactor to move shared files to shared spaces, rather than putting validation code in the properties metaboxes.
 
 = 0.32.1 =
 
