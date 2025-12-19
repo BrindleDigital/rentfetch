@@ -1989,23 +1989,55 @@ function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 	if ( empty( $lines ) ) {
 		return $fees_data;
 	}
+	
 	$header = str_getcsv( array_shift( $lines ), ',', '"', '\\' );
-	$expected_header = array( 'description', 'price', 'frequency', 'notes', 'category' );
-	if ( $header !== $expected_header ) {
+	// Normalize header: trim and lowercase
+	$header = array_map( function( $col ) {
+		return strtolower( trim( $col ) );
+	}, $header );
+	
+	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category' );
+	
+	// Find column indices - only require 'description' to be present
+	$column_indices = array();
+	foreach ( $expected_columns as $col ) {
+		$index = array_search( $col, $header, true );
+		$column_indices[ $col ] = ( $index !== false ) ? $index : -1;
+	}
+	
+	// Must have at least 'description' column
+	if ( $column_indices['description'] === -1 ) {
 		return $fees_data;
 	}
+	
 	foreach ( $lines as $line ) {
-		if ( empty( trim( $line ) ) ) continue;
-		$data = str_getcsv( $line, ',', '"', '\\' );
-		if ( count( $data ) === 5 ) {
-			$fees_data[] = array(
-				'description' => sanitize_text_field( $data[0] ),
-				'price'       => sanitize_text_field( $data[1] ),
-				'frequency'   => sanitize_text_field( $data[2] ),
-				'notes'       => sanitize_text_field( $data[3] ),
-				'category'    => sanitize_text_field( $data[4] ),
-			);
+		if ( empty( trim( $line ) ) ) {
+			continue;
 		}
+		$data = str_getcsv( $line, ',', '"', '\\' );
+		
+		// Get value from column index, or empty string if column doesn't exist
+		$get_value = function( $col ) use ( $column_indices, $data ) {
+			$index = $column_indices[ $col ];
+			if ( $index === -1 || ! isset( $data[ $index ] ) ) {
+				return '';
+			}
+			return sanitize_text_field( $data[ $index ] );
+		};
+		
+		// Skip rows where description is empty
+		$description = $get_value( 'description' );
+		if ( empty( $description ) ) {
+			continue;
+		}
+		
+		$fees_data[] = array(
+			'description' => $description,
+			'price'       => $get_value( 'price' ),
+			'frequency'   => $get_value( 'frequency' ),
+			'notes'       => $get_value( 'notes' ),
+			'category'    => $get_value( 'category' ),
+		);
 	}
 	return $fees_data;
 }

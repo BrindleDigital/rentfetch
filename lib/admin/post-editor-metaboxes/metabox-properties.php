@@ -1074,9 +1074,6 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 		}
 	</style>";
 	
-	$upload_nonce = wp_create_nonce( "upload_property_fees_csv" );
-	$ajax_url = admin_url( 'admin-ajax.php' );
-	
 	echo "<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			// Handle show more/less for units
@@ -1153,30 +1150,46 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 				}
 			});
 			
-			// Handle CSV file upload
-			document.getElementById('property_fees_csv').addEventListener('change', function() {
-				var file = this.files[0];
-				if (file) {
-					var formData = new FormData();
-					formData.append('file', file);
-					formData.append('action', 'upload_property_fees_csv');
-					formData.append('_wpnonce', '" . $upload_nonce . "');
-					fetch('" . $ajax_url . "', {
-						method: 'POST',
-						body: formData
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.success) {
-							document.getElementById('property_fees_csv_url').value = data.data.url;
-						} else {
-							alert('Upload failed: ' + data.data.message);
-						}
-					})
-					.catch(error => {
-						alert('Upload failed');
-					});
+			// Handle CSV file upload via Media Library
+			var csvMediaFrame;
+			document.getElementById('property_fees_csv_upload_btn').addEventListener('click', function(e) {
+				e.preventDefault();
+				
+				// If the frame already exists, reopen it
+				if (csvMediaFrame) {
+					csvMediaFrame.open();
+					return;
 				}
+				
+				// Create a new media frame
+				csvMediaFrame = wp.media({
+					title: 'Select or Upload CSV File',
+					button: {
+						text: 'Use this CSV'
+					},
+					multiple: false,
+					library: {
+						type: ['text/csv', 'application/vnd.ms-excel', 'text/plain']
+					}
+				});
+				
+				// Open to upload tab by default
+				csvMediaFrame.on('open', function() {
+					// Switch to upload tab if no file is preselected
+					if (csvMediaFrame.uploader && csvMediaFrame.uploader.uploader) {
+						csvMediaFrame.content.mode('upload');
+					}
+				});
+				
+				// When a file is selected
+				csvMediaFrame.on('select', function() {
+					var attachment = csvMediaFrame.state().get('selection').first().toJSON();
+					document.getElementById('property_fees_csv_url').value = attachment.url;
+					// Trigger validation of the new URL
+					jQuery('#property_fees_csv_url').trigger('change');
+				});
+				
+				csvMediaFrame.open();
 			});
 		});
 	</script>";
@@ -1207,15 +1220,15 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="property_fees_csv">OPTION 1: CSV Upload or Link</label>
+				<label for="property_fees_csv_url">OPTION 1: CSV Upload or Link</label>
 				<p class="description">Upload or link to a CSV file with property fees data. </p>
 			</div>
 			<div class="column">
 				<div class="csv-input-group" style="display: flex; align-items: center; gap: 0; margin-bottom: 10px;">
-					<input type="file" id="property_fees_csv" name="property_fees_csv" accept=".csv" data-post-id="<?php echo intval( $post->ID ); ?>" style="display: none;" />
-					<label for="property_fees_csv" style="display: inline-block; padding: 5px 8px; background: #f7f7f7; border: 1px solid #8c8f94; border-radius: 4px 0 0 4px; cursor: pointer; font-size: 13px; margin: 0; white-space: nowrap; min-width: 0; width: auto;">Choose File</label>
+					<button type="button" id="property_fees_csv_upload_btn" class="button" style="border-radius: 4px 0 0 4px; margin: 0;">Choose File</button>
 					<input type="url" id="property_fees_csv_url" name="property_fees_csv_url" value="<?php echo esc_attr( get_post_meta( $post->ID, 'property_fees_csv_url', true ) ); ?>" placeholder="or paste in a link to a .csv file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
 				</div>
+				<div id="csv-url-validation-status" style="margin-bottom: 10px;"></div>
 				<p class="description"><a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_fees_csv_sample' ) ); ?>" download="property_fees_sample.csv">Download sample CSV</a>
 					<?php $csv_url = get_post_meta( $post->ID, 'property_fees_csv_url', true ); ?>
 					<?php if ( ! empty( $csv_url ) ) : ?>
@@ -1698,6 +1711,11 @@ function rentfetch_enqueue_csv_upload_script( $hook ) {
 
 	wp_enqueue_script( 'rentfetch-properties-fees-csv-upload', plugins_url( 'js/rentfetch-properties-fees-csv-upload.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
 	wp_enqueue_script( 'rentfetch-properties-fees-csv-download-current', plugins_url( 'js/rentfetch-properties-fees-csv-download-current.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
+	wp_enqueue_script( 'rentfetch-properties-fees-csv-url-validation', plugins_url( 'js/rentfetch-properties-fees-csv-url-validation.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
+	wp_localize_script( 'rentfetch-properties-fees-csv-url-validation', 'rentfetchCsvValidation', array(
+		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+		'nonce'   => wp_create_nonce( 'rentfetch_validate_csv_url' ),
+	) );
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_csv_upload_script' );
 
@@ -1771,6 +1789,149 @@ function rentfetch_download_current_fees_csv() {
 	exit;
 }
 add_action( 'wp_ajax_rentfetch_download_current_fees_csv', 'rentfetch_download_current_fees_csv' );
+
+/**
+ * AJAX handler to validate a CSV URL for property fees
+ */
+function rentfetch_validate_fees_csv_url() {
+	
+	// Verify nonce for security
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_validate_csv_url' ) ) {
+		wp_send_json_error( array( 'message' => 'Security check failed' ) );
+	}
+
+	// Get the URL
+	$url = isset( $_POST['url'] ) ? esc_url_raw( wp_unslash( $_POST['url'] ) ) : '';
+	
+	if ( empty( $url ) ) {
+		wp_send_json_error( array( 'message' => 'No URL provided' ) );
+	}
+
+	// Expected columns for property fees CSV
+	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category' );
+	$required_columns = array( 'description' ); // Only description is truly required
+
+	// Fetch the CSV file
+	$response = wp_remote_get( $url, array(
+		'timeout' => 15,
+		'sslverify' => false, // Allow self-signed certs for local development
+	) );
+
+	if ( is_wp_error( $response ) ) {
+		wp_send_json_error( array( 
+			'message' => 'Could not fetch CSV file: ' . $response->get_error_message(),
+			'type' => 'fetch_error'
+		) );
+	}
+
+	$response_code = wp_remote_retrieve_response_code( $response );
+	if ( $response_code !== 200 ) {
+		wp_send_json_error( array( 
+			'message' => 'CSV file returned HTTP ' . $response_code . ' error',
+			'type' => 'http_error'
+		) );
+	}
+
+	$body = wp_remote_retrieve_body( $response );
+	
+	if ( empty( $body ) ) {
+		wp_send_json_error( array( 
+			'message' => 'CSV file is empty',
+			'type' => 'empty_file'
+		) );
+	}
+
+	// Parse the CSV header
+	$lines = preg_split( '/\r\n|\r|\n/', $body );
+	
+	if ( empty( $lines ) || empty( $lines[0] ) ) {
+		wp_send_json_error( array( 
+			'message' => 'Could not read CSV header row',
+			'type' => 'parse_error'
+		) );
+	}
+
+	// Parse the header row
+	$header_row = str_getcsv( $lines[0] );
+	$header_row = array_map( 'trim', $header_row );
+	$header_row_lower = array_map( 'strtolower', $header_row );
+
+	// Count empty columns
+	$empty_column_count = 0;
+	$non_empty_columns = array();
+	foreach ( $header_row_lower as $col ) {
+		if ( $col === '' ) {
+			$empty_column_count++;
+		} else {
+			$non_empty_columns[] = $col;
+		}
+	}
+
+	// Find missing required columns (check against non-empty columns only)
+	$missing_required = array_diff( $required_columns, $non_empty_columns );
+	
+	// Find missing optional columns
+	$missing_optional = array_diff( $expected_columns, $non_empty_columns );
+	$missing_optional = array_diff( $missing_optional, $required_columns ); // Remove required from optional
+	
+	// Find extra columns (not in expected list, and not empty)
+	$extra_columns = array_diff( $non_empty_columns, $expected_columns );
+
+	// Count data rows (excluding header)
+	$data_row_count = 0;
+	for ( $i = 1; $i < count( $lines ); $i++ ) {
+		if ( ! empty( trim( $lines[ $i ] ) ) ) {
+			$data_row_count++;
+		}
+	}
+
+	// Build validation result
+	$validation_result = array(
+		'valid' => empty( $missing_required ),
+		'found_columns' => $non_empty_columns,
+		'empty_column_count' => $empty_column_count,
+		'expected_columns' => $expected_columns,
+		'missing_required' => array_values( $missing_required ),
+		'missing_optional' => array_values( $missing_optional ),
+		'extra_columns' => array_values( $extra_columns ),
+		'row_count' => $data_row_count,
+	);
+
+	// Generate human-readable messages
+	$messages = array();
+	$warnings = array();
+
+	if ( ! empty( $missing_required ) ) {
+		$messages[] = 'Missing required column(s): ' . implode( ', ', $missing_required );
+	}
+
+	if ( ! empty( $missing_optional ) ) {
+		$warnings[] = 'Missing optional column(s): ' . implode( ', ', $missing_optional ) . ' (these will be empty)';
+	}
+
+	if ( ! empty( $extra_columns ) ) {
+		$warnings[] = 'Extra column(s) found: ' . implode( ', ', $extra_columns ) . ' (these will be ignored)';
+	}
+
+	if ( $data_row_count === 0 ) {
+		$messages[] = 'CSV file contains no data rows';
+		$validation_result['valid'] = false;
+	}
+
+	$validation_result['messages'] = $messages;
+	$validation_result['warnings'] = $warnings;
+
+	if ( $validation_result['valid'] ) {
+		$success_msg = 'CSV is valid with ' . $data_row_count . ' fee row(s)';
+		if ( ! empty( $warnings ) ) {
+			$success_msg .= ' (with warnings)';
+		}
+		$validation_result['success_message'] = $success_msg;
+	}
+
+	wp_send_json_success( $validation_result );
+}
+add_action( 'wp_ajax_rentfetch_validate_fees_csv_url', 'rentfetch_validate_fees_csv_url' );
 
 /**
  * AJAX handler to upload and process fees CSV
