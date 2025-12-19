@@ -23,19 +23,19 @@ jQuery(document).ready(function ($) {
 				icon = '✓';
 				bgColor = '#d4edda';
 				borderColor = '#c3e6cb';
-				textColor = '#155724';
+				textColor = '#28a745';
 				break;
 			case 'warning':
 				icon = '⚠';
-				bgColor = '#fff3cd';
-				borderColor = '#ffeeba';
+				bgColor = 'rgba(255, 193, 7, 0.2)';
+				borderColor = 'rgba(255, 193, 7, 0.3)';
 				textColor = '#856404';
 				break;
 			case 'error':
 				icon = '✕';
 				bgColor = '#f8d7da';
 				borderColor = '#f5c6cb';
-				textColor = '#721c24';
+				textColor = '#dc3545';
 				break;
 			case 'loading':
 				icon = '⟳';
