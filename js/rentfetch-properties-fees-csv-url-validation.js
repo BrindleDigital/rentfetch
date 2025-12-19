@@ -122,8 +122,16 @@ jQuery(document).ready(function ($) {
 
 						// Add success info - format found columns with empty column note
 						var columnsDisplay = data.found_columns.join(', ');
-						if (data.empty_column_count && data.empty_column_count > 0) {
-							columnsDisplay += ' (and ' + data.empty_column_count + ' empty column' + (data.empty_column_count > 1 ? 's' : '') + ')';
+						if (
+							data.empty_column_count &&
+							data.empty_column_count > 0
+						) {
+							columnsDisplay +=
+								' (and ' +
+								data.empty_column_count +
+								' empty column' +
+								(data.empty_column_count > 1 ? 's' : '') +
+								')';
 						}
 						allDetails.push('Found columns: ' + columnsDisplay);
 						allDetails.push('Data rows: ' + data.row_count);
@@ -135,10 +143,7 @@ jQuery(document).ready(function ($) {
 							}
 						}
 
-						if (
-							data.warnings &&
-							data.warnings.length > 0
-						) {
+						if (data.warnings && data.warnings.length > 0) {
 							showStatus(
 								'warning',
 								data.success_message,
@@ -168,10 +173,20 @@ jQuery(document).ready(function ($) {
 							data.found_columns.length > 0
 						) {
 							var columnsDisplay = data.found_columns.join(', ');
-							if (data.empty_column_count && data.empty_column_count > 0) {
-								columnsDisplay += ' (and ' + data.empty_column_count + ' empty column' + (data.empty_column_count > 1 ? 's' : '') + ')';
+							if (
+								data.empty_column_count &&
+								data.empty_column_count > 0
+							) {
+								columnsDisplay +=
+									' (and ' +
+									data.empty_column_count +
+									' empty column' +
+									(data.empty_column_count > 1 ? 's' : '') +
+									')';
 							}
-							errorDetails.push('Found columns: ' + columnsDisplay);
+							errorDetails.push(
+								'Found columns: ' + columnsDisplay
+							);
 						}
 
 						// Show expected format
@@ -180,13 +195,16 @@ jQuery(document).ready(function ($) {
 								data.expected_columns.join(', ')
 						);
 
-						showStatus('error', 'CSV validation failed', errorDetails);
+						showStatus(
+							'error',
+							'CSV validation failed',
+							errorDetails
+						);
 					}
 				} else {
 					// Error response
 					showStatus('error', 'Validation error', [
-						response.data.message ||
-							'Could not validate CSV file',
+						response.data.message || 'Could not validate CSV file',
 					]);
 				}
 			},
