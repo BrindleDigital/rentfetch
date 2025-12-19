@@ -594,10 +594,10 @@ function rentfetch_settings_properties_global_property_fees() {
 			<label for="rentfetch_options_global_property_fees_csv">OPTION 1: CSV Upload or Link</label>
 			<p class="description">Upload or link to a CSV file with global property fees data.</p>
 			<div class="csv-input-group" style="display: flex; align-items: center; gap: 0; margin-bottom: 10px;">
-				<input type="file" id="rentfetch_options_global_property_fees_csv" name="rentfetch_options_global_property_fees_csv" accept=".csv" style="display: none;" />
-				<label for="rentfetch_options_global_property_fees_csv" style="display: inline-block; padding: 14px 14px; background: #f7f7f7; border: 1px solid #8c8f94; border-radius: 4px 0 0 4px; cursor: pointer; font-size: 13px; margin: 0; white-space: nowrap; min-width: 0; width: auto;">Choose File</label>
+				<button type="button" id="global-fees-choose-file-btn" class="button" style="border-radius: 4px 0 0 4px; margin: 0; height: auto; padding: 6px 14px;">Choose File</button>
 				<input type="url" id="rentfetch_options_global_property_fees_csv_url" name="rentfetch_options_global_property_fees_csv_url" value="<?php echo esc_attr( get_option( 'rentfetch_options_global_property_fees_csv_url' ) ); ?>" placeholder="or paste in a link to a .csv file" style="flex: 1; border-left: none; border-radius: 0 4px 4px 0;" />
 			</div>
+			<div id="global-csv-url-validation-status" style="margin-bottom: 10px;"></div>
 			<p class="description"><a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=rentfetch_download_global_fees_csv_sample' ) ); ?>" download="global_property_fees_sample.csv">Download sample CSV</a>
 				<?php $csv_url = get_option( 'rentfetch_options_global_property_fees_csv_url' ); ?>
 				<?php if ( ! empty( $csv_url ) ) : ?>
@@ -606,6 +606,45 @@ function rentfetch_settings_properties_global_property_fees() {
 			</p>
 		</div>
 	</div>
+	
+	<script type="text/javascript">
+	jQuery(document).ready(function($) {
+		// Media Library for global fees CSV
+		$('#global-fees-choose-file-btn').on('click', function(e) {
+			e.preventDefault();
+			
+			var mediaFrame = wp.media({
+				title: 'Select or Upload CSV File',
+				button: {
+					text: 'Use this file'
+				},
+				multiple: false,
+				library: {
+					type: 'text/csv'
+				}
+			});
+			
+			mediaFrame.on('select', function() {
+				var attachment = mediaFrame.state().get('selection').first().toJSON();
+				$('#rentfetch_options_global_property_fees_csv_url').val(attachment.url).trigger('change');
+			});
+			
+			mediaFrame.on('open', function() {
+				// Switch to Upload Files tab
+				if (mediaFrame.uploader && mediaFrame.uploader.uploader && mediaFrame.uploader.uploader.uploader) {
+					// Reset uploader
+				}
+				// Try to switch to upload tab
+				var uploaderMenu = mediaFrame.$el.find('.media-menu-item:contains("Upload files")');
+				if (uploaderMenu.length) {
+					uploaderMenu.trigger('click');
+				}
+			});
+			
+			mediaFrame.open();
+		});
+	});
+	</script>
 	
 	<div class="row">
 		<div class="section">
@@ -675,6 +714,9 @@ function rentfetch_enqueue_global_property_fees_scripts( $hook ) {
 
 	// Check if we're on the properties tab and global-property-fees section
 	if ( isset( $_GET['tab'] ) && 'properties' === $_GET['tab'] && isset( $_GET['section'] ) && 'global-property-fees' === $_GET['section'] ) {
+		// Enqueue WordPress Media Library
+		wp_enqueue_media();
+		
 		// Ensure wp.codeEditor is available and get settings so WP can enqueue required addons.
 		$settings = wp_enqueue_code_editor( array( 'type' => 'application/json' ) );
 
@@ -702,6 +744,13 @@ function rentfetch_enqueue_global_property_fees_scripts( $hook ) {
 		// Enqueue CSV upload script for global property fees
 		wp_enqueue_script( 'rentfetch-global-properties-fees-csv-upload', plugins_url( 'js/rentfetch-global-properties-fees-csv-upload.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
 		wp_enqueue_script( 'rentfetch-global-properties-fees-csv-download-current', plugins_url( 'js/rentfetch-global-properties-fees-csv-download-current.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
+		
+		// Enqueue CSV URL validation script
+		wp_enqueue_script( 'rentfetch-global-fees-csv-url-validation', plugins_url( 'js/rentfetch-global-fees-csv-url-validation.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
+		wp_localize_script( 'rentfetch-global-fees-csv-url-validation', 'rentfetchGlobalCsvValidation', array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'rentfetch_validate_csv_url' ),
+		) );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_global_property_fees_scripts' );
