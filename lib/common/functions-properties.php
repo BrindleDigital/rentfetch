@@ -1835,12 +1835,12 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 			
 			// Output table rows
 			foreach ( $category_fees as $fee ) {
-				$has_longnotes = ! empty( $fee['longnotes'] );
+			$has_longnotes = ! empty( $fee['longnotes'] );
 				echo '<tr>';
 				echo '<td class="fee-description">';
 				if ( $has_longnotes ) {
-					// Apply the_content filter for consistent HTML output
-					$longnotes_html = apply_filters( 'the_content', $fee['longnotes'] );
+					// Apply the_content filter for consistent HTML output, then sanitize
+					$longnotes_html = wp_kses_post( apply_filters( 'the_content', $fee['longnotes'] ) );
 					echo '<span class="fee-description-with-tooltip" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
 					echo esc_html( $fee['description'] ?? '' );
 					echo '<span class="fee-info-icon" aria-label="More information">?</span>';
@@ -1869,8 +1869,8 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 			echo '<tr>';
 			echo '<td class="fee-description">';
 			if ( $has_longnotes ) {
-				// Apply the_content filter for consistent HTML output
-				$longnotes_html = apply_filters( 'the_content', $fee['longnotes'] );
+				// Apply the_content filter for consistent HTML output, then sanitize
+				$longnotes_html = wp_kses_post( apply_filters( 'the_content', $fee['longnotes'] ) );
 				echo '<span class="fee-description-with-tooltip" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
 				echo esc_html( $fee['description'] ?? '' );
 				echo '<span class="fee-info-icon" aria-label="More information">?</span>';
