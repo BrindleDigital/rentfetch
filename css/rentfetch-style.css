@@ -3187,6 +3187,13 @@ footer.property-search-filters-footer button#show-properties {
 }
 
 /* ==========================================================================
+   Property Fees Description Styles
+   ========================================================================== */
+.property-fees-description {
+  margin-bottom: 1.5em;
+}
+
+/* ==========================================================================
    Property Fees Table Styles
    ========================================================================== */
 .property-fees-table {
@@ -3194,6 +3201,7 @@ footer.property-search-filters-footer button#show-properties {
   border-collapse: collapse;
   margin-bottom: 2rem;
   font-size: var(--rentfetch-font-size-medium);
+  line-height: 1.4;
   border: none;
 }
 .property-fees-table tr {
@@ -3203,23 +3211,29 @@ footer.property-search-filters-footer button#show-properties {
   border: none;
 }
 .property-fees-table td {
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.5rem;
   border: none;
   border-bottom: 1px solid var(--rentfetch-base-3);
   vertical-align: middle;
+  text-wrap: balance;
 }
 .property-fees-table td:first-child {
   width: 40%;
+  min-width: 120px;
   font-weight: 500;
+  padding-left: 0;
 }
 .property-fees-table td:nth-child(2) {
   width: 30%;
+  min-width: 80px;
   text-align: left;
 }
 .property-fees-table td:nth-child(3) {
   width: 30%;
+  min-width: 60px;
   font-style: italic;
   text-align: right;
+  padding-right: 0;
 }
 .property-fees-table .fee-price {
   display: inline;
@@ -3245,12 +3259,233 @@ footer.property-search-filters-footer button#show-properties {
     font-size: var(--rentfetch-font-size-smallest);
   }
   .property-fees-table td {
-    padding: 0.5rem 0;
-    line-height: 1;
     vertical-align: top;
   }
   .property-fees-table td .fee-price {
     font-size: var(--rentfetch-font-size-small);
+  }
+}
+
+/* ==========================================================================
+   Fee Description Tooltip Trigger Styles
+   ========================================================================== */
+.fee-description-with-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: help;
+}
+.fee-description-with-tooltip .fee-info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2em;
+  height: 1.2em;
+  font-size: 0.7em;
+  font-weight: 600;
+  line-height: 1;
+  padding-top: 0.1em;
+  color: var(--rentfetch-dark);
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.fee-description-with-tooltip .fee-info-icon:hover {
+  opacity: 1;
+}
+@media (max-width: 600px) {
+  .fee-description-with-tooltip .fee-info-icon {
+    width: 1.4em;
+    height: 1.4em;
+    font-size: 0.8em;
+  }
+}
+.fee-description-with-tooltip:hover .fee-info-icon, .fee-description-with-tooltip:focus .fee-info-icon {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Property Fees Tooltip Styles
+   ========================================================================== */
+.rentfetch-fee-tooltip {
+  position: absolute;
+  z-index: 99999;
+  max-width: 700px;
+  min-width: 200px;
+  padding: 1rem 1.25rem;
+  background: var(--rentfetch-base-1, #fff);
+  border: 1px solid var(--rentfetch-base-3, #ddd);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--rentfetch-base-text, #333);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(5px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.rentfetch-fee-tooltip.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.rentfetch-fee-tooltip.is-above {
+  transform: translateY(-5px);
+}
+.rentfetch-fee-tooltip.is-above.is-visible {
+  transform: translateY(0);
+}
+.rentfetch-fee-tooltip::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: var(--caret-left, 50%);
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top: none;
+  border-bottom-color: var(--rentfetch-base-3, #ddd);
+}
+.rentfetch-fee-tooltip::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: var(--caret-left, 50%);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top: none;
+  border-bottom-color: var(--rentfetch-base-1, #fff);
+}
+.rentfetch-fee-tooltip.is-above::before {
+  top: auto;
+  bottom: -8px;
+  left: var(--caret-left, 50%);
+  border: 8px solid transparent;
+  border-bottom: none;
+  border-top-color: var(--rentfetch-base-3, #ddd);
+}
+.rentfetch-fee-tooltip.is-above::after {
+  top: auto;
+  bottom: -6px;
+  left: var(--caret-left, 50%);
+  border: 6px solid transparent;
+  border-bottom: none;
+  border-top-color: var(--rentfetch-base-1, #fff);
+}
+.rentfetch-fee-tooltip h1,
+.rentfetch-fee-tooltip h2,
+.rentfetch-fee-tooltip h3,
+.rentfetch-fee-tooltip h4,
+.rentfetch-fee-tooltip h5 {
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.rentfetch-fee-tooltip h1:not(:first-child),
+.rentfetch-fee-tooltip h2:not(:first-child),
+.rentfetch-fee-tooltip h3:not(:first-child),
+.rentfetch-fee-tooltip h4:not(:first-child),
+.rentfetch-fee-tooltip h5:not(:first-child) {
+  margin-top: 0.75rem;
+}
+.rentfetch-fee-tooltip h1 {
+  font-size: 1.1rem;
+}
+.rentfetch-fee-tooltip h2 {
+  font-size: 1rem;
+}
+.rentfetch-fee-tooltip h3 {
+  font-size: 0.95rem;
+}
+.rentfetch-fee-tooltip h4 {
+  font-size: 0.9rem;
+}
+.rentfetch-fee-tooltip h5 {
+  font-size: 0.85rem;
+}
+.rentfetch-fee-tooltip p {
+  margin: 0 0 0.6rem 0;
+}
+.rentfetch-fee-tooltip p:last-child {
+  margin-bottom: 0;
+}
+.rentfetch-fee-tooltip ul,
+.rentfetch-fee-tooltip ol {
+  margin: 0.4rem 0 0.6rem 0;
+  padding-left: 1.25rem;
+}
+.rentfetch-fee-tooltip ul:last-child,
+.rentfetch-fee-tooltip ol:last-child {
+  margin-bottom: 0;
+}
+.rentfetch-fee-tooltip ul li,
+.rentfetch-fee-tooltip ol li {
+  margin-bottom: 0.2rem;
+  padding-left: 0.15rem;
+}
+.rentfetch-fee-tooltip ul li:last-child,
+.rentfetch-fee-tooltip ol li:last-child {
+  margin-bottom: 0;
+}
+.rentfetch-fee-tooltip ul {
+  list-style-type: disc;
+}
+.rentfetch-fee-tooltip ul ul {
+  list-style-type: circle;
+}
+.rentfetch-fee-tooltip ol {
+  list-style-type: decimal;
+}
+.rentfetch-fee-tooltip ol ol {
+  list-style-type: lower-alpha;
+}
+.rentfetch-fee-tooltip strong,
+.rentfetch-fee-tooltip b {
+  font-weight: 600;
+}
+.rentfetch-fee-tooltip em,
+.rentfetch-fee-tooltip i {
+  font-style: italic;
+}
+.rentfetch-fee-tooltip a {
+  color: var(--rentfetch-accent-1, #0066cc);
+  text-decoration: underline;
+}
+.rentfetch-fee-tooltip a:hover {
+  text-decoration: none;
+}
+@media (max-width: 600px) {
+  .rentfetch-fee-tooltip {
+    max-width: calc(100vw - 40px);
+    max-height: 60vh;
+    overflow-y: auto;
+    min-width: 150px;
+    padding: 0.875rem 1rem;
+    font-size: 0.75rem;
+  }
+  .rentfetch-fee-tooltip::before, .rentfetch-fee-tooltip::after {
+    display: none;
+  }
+  .rentfetch-fee-tooltip h1 {
+    font-size: 1rem;
+  }
+  .rentfetch-fee-tooltip h2 {
+    font-size: 0.95rem;
+  }
+  .rentfetch-fee-tooltip h3 {
+    font-size: 0.9rem;
+  }
+  .rentfetch-fee-tooltip h4 {
+    font-size: 0.85rem;
+  }
+  .rentfetch-fee-tooltip h5 {
+    font-size: 0.8rem;
   }
 }
 

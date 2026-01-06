@@ -77,6 +77,9 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_script( 'blaze-script', RENTFETCH_PATH . 'vendor/blaze-slider/blaze-slider.min.js', array(), RENTFETCH_VERSION, true );
 	wp_register_script( 'blaze-more-properties-init', RENTFETCH_PATH . 'js/rentfetch-blaze-more-properties-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-floorplan-images-slider-init', RENTFETCH_PATH . 'js/rentfetch-blaze-floorplan-images-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
+
+	// Property fees tooltip.
+	wp_register_script( 'rentfetch-property-fees-tooltip', RENTFETCH_PATH . 'js/rentfetch-property-fees-tooltip.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
 

@@ -1,4 +1,12 @@
 /* ==========================================================================
+   Property Fees Description Styles
+   ========================================================================== */
+
+.property-fees-description {
+	margin-bottom: 1.5em;
+}
+
+/* ==========================================================================
    Property Fees Table Styles
    ========================================================================== */
 
@@ -7,6 +15,7 @@
 	border-collapse: collapse;
 	margin-bottom: 2rem;
 	font-size: var(--rentfetch-font-size-medium);
+	line-height: 1.4;
 
 	// Remove all borders
 	border: none;
@@ -27,28 +36,34 @@
 
 	// Table cells
 	td {
-		padding: 0.5rem 0;
+		padding: 0.5rem 0.5rem;
 		border: none;
 		border-bottom: 1px solid var(--rentfetch-base-3);
 		vertical-align: middle;
+		text-wrap: balance;
 
-		// First column (description) - make it wider
+		// First column (description) - make it wider, no left padding
 		&:first-child {
 			width: 40%;
+			min-width: 120px;
 			font-weight: 500;
+			padding-left: 0;
 		}
 
 		// Second column (price & frequency) - left align
 		&:nth-child(2) {
 			width: 30%;
+			min-width: 80px;
 			text-align: left;
 		}
 
-		// Third column (notes) - make it wider
+		// Third column (notes) - make it wider, no right padding
 		&:nth-child(3) {
 			width: 30%;
+			min-width: 60px;
 			font-style: italic;
 			text-align: right;
+			padding-right: 0;
 		}
 	}
 
@@ -81,13 +96,276 @@
 		font-size: var(--rentfetch-font-size-smallest);
 
 		td {
-			padding: 0.5rem 0;
-			line-height: 1;
 			vertical-align: top;
 
 			.fee-price {
 				font-size: var(--rentfetch-font-size-small);
 			}
+		}
+	}
+}
+
+/* ==========================================================================
+   Fee Description Tooltip Trigger Styles
+   ========================================================================== */
+
+.fee-description-with-tooltip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	cursor: help;
+
+	// Info icon (question mark with circle)
+	.fee-info-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.2em;
+		height: 1.2em;
+		font-size: 0.7em;
+		font-weight: 600;
+		line-height: 1;
+		padding-top: 0.1em;
+		color: var(--rentfetch-dark);
+		border: 1.5px solid currentColor;
+		border-radius: 50%;
+		opacity: 0.7;
+		transition: opacity 0.2s ease;
+		cursor: pointer;
+		flex-shrink: 0; // Prevent icon from shrinking
+
+		&:hover {
+			opacity: 1;
+		}
+
+		// Maintain proportions on smaller screens
+		@include mobile {
+			width: 1.4em;
+			height: 1.4em;
+			font-size: 0.8em;
+		}
+	}
+
+	&:hover .fee-info-icon,
+	&:focus .fee-info-icon {
+		opacity: 1;
+	}
+}
+
+/* ==========================================================================
+   Property Fees Tooltip Styles
+   ========================================================================== */
+
+.rentfetch-fee-tooltip {
+	position: absolute;
+	z-index: 99999;
+	max-width: 700px;
+	min-width: 200px;
+	padding: 1rem 1.25rem;
+	background: var(--rentfetch-base-1, #fff);
+	border: 1px solid var(--rentfetch-base-3, #ddd);
+	border-radius: 6px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	font-size: 0.8rem;
+	line-height: 1.5;
+	color: var(--rentfetch-base-text, #333);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(5px);
+	transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+	pointer-events: none;
+
+	// Visible state
+	&.is-visible {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+		pointer-events: auto;
+	}
+
+	// When positioned above the trigger
+	&.is-above {
+		transform: translateY(-5px);
+
+		&.is-visible {
+			transform: translateY(0);
+		}
+	}
+
+	// Arrow indicator (pseudo-element)
+	// Position is controlled via --caret-left CSS variable set by JS
+	&::before {
+		content: '';
+		position: absolute;
+		top: -8px;
+		left: var(--caret-left, 50%);
+		transform: translateX(-50%);
+		border: 8px solid transparent;
+		border-top: none;
+		border-bottom-color: var(--rentfetch-base-3, #ddd);
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: -6px;
+		left: var(--caret-left, 50%);
+		transform: translateX(-50%);
+		border: 6px solid transparent;
+		border-top: none;
+		border-bottom-color: var(--rentfetch-base-1, #fff);
+	}
+
+	// When above, flip the arrow
+	&.is-above {
+		&::before {
+			top: auto;
+			bottom: -8px;
+			left: var(--caret-left, 50%);
+			border: 8px solid transparent;
+			border-bottom: none;
+			border-top-color: var(--rentfetch-base-3, #ddd);
+		}
+
+		&::after {
+			top: auto;
+			bottom: -6px;
+			left: var(--caret-left, 50%);
+			border: 6px solid transparent;
+			border-bottom: none;
+			border-top-color: var(--rentfetch-base-1, #fff);
+		}
+	}
+
+	// Heading styles
+	h1,
+	h2,
+	h3,
+	h4,
+	h5 {
+		margin: 0 0 0.5rem 0;
+		padding: 0;
+		font-weight: 600;
+		line-height: 1.3;
+
+		&:not(:first-child) {
+			margin-top: 0.75rem;
+		}
+	}
+
+	h1 {
+		font-size: 1.1rem;
+	}
+
+	h2 {
+		font-size: 1rem;
+	}
+
+	h3 {
+		font-size: 0.95rem;
+	}
+
+	h4 {
+		font-size: 0.9rem;
+	}
+
+	h5 {
+		font-size: 0.85rem;
+	}
+
+	// Paragraph styles
+	p {
+		margin: 0 0 0.6rem 0;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	// List styles
+	ul,
+	ol {
+		margin: 0.4rem 0 0.6rem 0;
+		padding-left: 1.25rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		li {
+			margin-bottom: 0.2rem;
+			padding-left: 0.15rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	ul {
+		list-style-type: disc;
+
+		ul {
+			list-style-type: circle;
+		}
+	}
+
+	ol {
+		list-style-type: decimal;
+
+		ol {
+			list-style-type: lower-alpha;
+		}
+	}
+
+	strong,
+	b {
+		font-weight: 600;
+	}
+
+	em,
+	i {
+		font-style: italic;
+	}
+
+	a {
+		color: var(--rentfetch-accent-1, #0066cc);
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
+	// Responsive
+	@media (max-width: 600px) {
+		max-width: calc(100vw - 40px);
+		max-height: 60vh;
+		overflow-y: auto;
+		min-width: 150px;
+		padding: 0.875rem 1rem;
+		font-size: 0.75rem;
+
+		// Hide the arrow/caret on mobile
+		&::before,
+		&::after {
+			display: none;
+		}
+
+		h1 {
+			font-size: 1rem;
+		}
+		h2 {
+			font-size: 0.95rem;
+		}
+		h3 {
+			font-size: 0.9rem;
+		}
+		h4 {
+			font-size: 0.85rem;
+		}
+		h5 {
+			font-size: 0.8rem;
 		}
 	}
 }

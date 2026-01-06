@@ -1767,6 +1767,20 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 		}
 	}
 
+	// Add description text before the fees markup (filterable, accepts HTML)
+	// The filtered text is run through the_content to auto-add paragraphs
+	$fees_description = apply_filters(
+		'rentfetch_property_fees_description',
+		'Please note that prices shown are base rent. To help budget your monthly costs and make it easy to understand what your rent includes and what may be additional, we\'ve included the list of potential fees below.',
+		$post_id
+	);
+
+	// Prepend description to markup if not empty, wrapped in a styled container
+	if ( ! empty( $fees_description ) ) {
+		$fees_description_html = apply_filters( 'the_content', $fees_description );
+		$property_fees_markup  = '<div class="property-fees-description">' . $fees_description_html . '</div>' . $property_fees_markup;
+	}
+
 	return apply_filters( 'rentfetch_filter_property_fees_embed', $property_fees_markup, $post_id );
 }
 
@@ -1782,7 +1796,20 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 	if ( ! is_array( $fees_data ) || empty( $fees_data ) ) {
 		return '';
 	}
+
+	// Check if any fee has longnotes (for tooltip functionality)
+	$has_tooltip_content = false;
+	foreach ( $fees_data as $fee ) {
+		if ( ! empty( $fee['longnotes'] ) ) {
+			$has_tooltip_content = true;
+			break;
+		}
+	}
 	
+	// Enqueue tooltip script if we have content to display
+	if ( $has_tooltip_content ) {
+		wp_enqueue_script( 'rentfetch-property-fees-tooltip' );
+	}
 	// Extract unique categories
 	$categories = array();
 	foreach ( $fees_data as $fee ) {
@@ -1808,8 +1835,20 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 			
 			// Output table rows
 			foreach ( $category_fees as $fee ) {
+				$has_longnotes = ! empty( $fee['longnotes'] );
 				echo '<tr>';
-				echo '<td class="fee-description">' . esc_html( $fee['description'] ?? '' ) . '</td>';
+				echo '<td class="fee-description">';
+				if ( $has_longnotes ) {
+					// Apply the_content filter for consistent HTML output
+					$longnotes_html = apply_filters( 'the_content', $fee['longnotes'] );
+					echo '<span class="fee-description-with-tooltip" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
+					echo esc_html( $fee['description'] ?? '' );
+					echo '<span class="fee-info-icon" aria-label="More information">?</span>';
+					echo '</span>';
+				} else {
+					echo esc_html( $fee['description'] ?? '' );
+				}
+				echo '</td>';
 				echo '<td class="fee-price-frequency">';
 				echo '<span class="fee-price">' . esc_html( $fee['price'] ?? '' ) . '</span> ';
 				echo '<span class="fee-frequency">' . esc_html( $fee['frequency'] ?? '' ) . '</span>';
@@ -1826,8 +1865,20 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 		echo '<table class="property-fees-table">';
 		
 		foreach ( $fees_data as $fee ) {
+			$has_longnotes = ! empty( $fee['longnotes'] );
 			echo '<tr>';
-			echo '<td class="fee-description">' . esc_html( $fee['description'] ?? '' ) . '</td>';
+			echo '<td class="fee-description">';
+			if ( $has_longnotes ) {
+				// Apply the_content filter for consistent HTML output
+				$longnotes_html = apply_filters( 'the_content', $fee['longnotes'] );
+				echo '<span class="fee-description-with-tooltip" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
+				echo esc_html( $fee['description'] ?? '' );
+				echo '<span class="fee-info-icon" aria-label="More information">?</span>';
+				echo '</span>';
+			} else {
+				echo esc_html( $fee['description'] ?? '' );
+			}
+			echo '</td>';
 			echo '<td class="fee-price-frequency">';
 			echo '<span class="fee-price">' . esc_html( $fee['price'] ?? '' ) . '</span> ';
 			echo '<span class="fee-frequency">' . esc_html( $fee['frequency'] ?? '' ) . '</span>';
@@ -1996,7 +2047,7 @@ function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 		return strtolower( trim( $col ) );
 	}, $header );
 	
-	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category' );
+	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
 	
 	// Find column indices - only require 'description' to be present
 	$column_indices = array();
@@ -2031,12 +2082,20 @@ function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 			continue;
 		}
 		
+		// Get longnotes value - allow HTML so use wp_kses_post instead of sanitize_text_field
+		$longnotes_index = $column_indices['longnotes'];
+		$longnotes_value = '';
+		if ( $longnotes_index !== -1 && isset( $data[ $longnotes_index ] ) ) {
+			$longnotes_value = wp_kses_post( $data[ $longnotes_index ] );
+		}
+		
 		$fees_data[] = array(
 			'description' => $description,
 			'price'       => $get_value( 'price' ),
 			'frequency'   => $get_value( 'frequency' ),
 			'notes'       => $get_value( 'notes' ),
 			'category'    => $get_value( 'category' ),
+			'longnotes'   => $longnotes_value,
 		);
 	}
 	return $fees_data;

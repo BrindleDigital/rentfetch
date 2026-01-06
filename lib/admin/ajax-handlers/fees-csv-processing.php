@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_validate_fees_csv_url_internal( $url ) {
 	// Expected columns for property fees CSV
-	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category' );
+	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
 	$required_columns = array( 'description' ); // Only description is truly required
 
 	// Fetch the CSV file
@@ -191,15 +191,15 @@ function rentfetch_download_fees_csv_sample() {
 	header( 'Content-Disposition: attachment; filename=property_fees_sample.csv' );
 
 	// Create sample CSV content
-	$csv_content  = "description,price,frequency,notes,category\n";
-	$csv_content .= "Application Fee,\$100,,Required,Move-In Basics\n";
-	$csv_content .= "Administration Fee,\$300,,Required,Move-In Basics\n";
-	$csv_content .= "\"One-Time Access Control Setup\",\$50,,Required,Move-In Basics\n";
-	$csv_content .= "\"One-Time Pet Fee\",\$350,\"Per \"\"pet\"\" (non-refundable)\",,Move-In Basics\n";
-	$csv_content .= "Trash Fee,\$25,,,Essentials\n";
-	$csv_content .= "Amenity Fee,\$25,,,Essentials\n";
-	$csv_content .= "Internet Access,\$85,,Required,Essentials\n";
-	$csv_content .= "Pest Control,\$5,,Required,Essentials\n";
+	$csv_content  = "description,price,frequency,notes,category,longnotes\n";
+	$csv_content .= "Application Fee,\$100,,Required,Move-In Basics,\"<h4>Application Fee Details</h4><p>A non-refundable fee required for each applicant over the age of 18. This fee covers the cost of background checks and credit verification.</p><h5>What's Included</h5><ul><li>Criminal background check</li><li>Credit history review</li><li>Employment verification</li><li>Rental history verification</li></ul><p>Please allow 2-3 business days for processing.</p>\"\n";
+	$csv_content .= "Administration Fee,\$300,,Required,Move-In Basics,\n";
+	$csv_content .= "\"One-Time Access Control Setup\",\$50,,Required,Move-In Basics,\"<p>Includes key fobs and access cards for the building.</p>\"\n";
+	$csv_content .= "\"One-Time Pet Fee\",\$350,\"Per \"\"pet\"\" (non-refundable)\",,Move-In Basics,\"<h4>Pet Policy Information</h4><p>This one-time, non-refundable fee is required for each approved pet. Maximum of 2 pets allowed per unit.</p><h5>Approved Pet Types</h5><ul><li>Dogs under 50 lbs (breed restrictions may apply)</li><li>Cats (indoor only)</li><li>Small caged animals (hamsters, guinea pigs, etc.)</li></ul><h5>Required Documentation</h5><ol><li>Current vaccination records</li><li>Pet photo for our records</li><li>Signed pet addendum</li></ol><p><strong>Note:</strong> Emotional support animals and service animals are exempt from pet fees with proper documentation.</p>\"\n";
+	$csv_content .= "Trash Fee,\$25,,,Essentials,\n";
+	$csv_content .= "Amenity Fee,\$25,,,Essentials,\"<p>Covers access to fitness center, pool, and clubhouse.</p>\"\n";
+	$csv_content .= "Internet Access,\$85,,Required,Essentials,\"<h4>High-Speed Internet Package</h4><p>Our community offers premium fiber internet service included in your monthly fees.</p><h5>Service Details</h5><ul><li>Speeds up to 1 Gbps download</li><li>Speeds up to 500 Mbps upload</li><li>No data caps</li><li>Professional installation included</li></ul><p>Service is provided by our partner ISP and is available within 48 hours of move-in.</p>\"\n";
+	$csv_content .= "Pest Control,\$5,,Required,Essentials,\n";
 
 	echo $csv_content;
 	exit;
@@ -271,16 +271,17 @@ function rentfetch_output_fees_csv( $fees_data, $filename ) {
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 
 	// Create CSV content
-	$csv_content = "description,price,frequency,notes,category\n";
+	$csv_content = "description,price,frequency,notes,category,longnotes\n";
 
 	foreach ( $fees_data as $fee ) {
 		$csv_content .= sprintf(
-			"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+			"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
 			str_replace( '"', '""', $fee['description'] ?? '' ),
 			str_replace( '"', '""', $fee['price'] ?? '' ),
 			str_replace( '"', '""', $fee['frequency'] ?? '' ),
 			str_replace( '"', '""', $fee['notes'] ?? '' ),
-			str_replace( '"', '""', $fee['category'] ?? '' )
+			str_replace( '"', '""', $fee['category'] ?? '' ),
+			str_replace( '"', '""', $fee['longnotes'] ?? '' )
 		);
 	}
 
@@ -384,7 +385,7 @@ function rentfetch_process_uploaded_csv_file( $csv_file ) {
 			return strtolower( trim( $col ) );
 		}, $header );
 
-		$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category' );
+		$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
 
 		// Find column indices
 		$column_indices = array();
@@ -418,12 +419,20 @@ function rentfetch_process_uploaded_csv_file( $csv_file ) {
 				continue;
 			}
 
+			// Get longnotes value - allow HTML so use wp_kses_post instead of sanitize_text_field
+			$longnotes_index = $column_indices['longnotes'];
+			$longnotes_value = '';
+			if ( $longnotes_index !== -1 && isset( $data[ $longnotes_index ] ) ) {
+				$longnotes_value = wp_kses_post( $data[ $longnotes_index ] );
+			}
+
 			$fees_data[] = array(
 				'description' => $description,
 				'price'       => $get_value( 'price' ),
 				'frequency'   => $get_value( 'frequency' ),
 				'notes'       => $get_value( 'notes' ),
 				'category'    => $get_value( 'category' ),
+				'longnotes'   => $longnotes_value,
 			);
 		}
 
