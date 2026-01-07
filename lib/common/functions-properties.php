@@ -1941,34 +1941,6 @@ function rentfetch_property_fees_embed_and_wrap() {
 add_action( 'rentfetch_after_floorplans_simple_grid', 'rentfetch_property_fees_embed_and_wrap' );
 add_action( 'rentfetch_after_floorplans_search', 'rentfetch_property_fees_embed_and_wrap' );
 
-
-function rentfetch_property_fees_notes() {
-	
-	// check to see if this is a single-property website. If it is, the property post_id will be returned.
-	$post_id = rentfetch_website_single_property_site_get_property_id();
-	
-	if ( ! $post_id ) {
-		return; // if we don't have a post ID, we can't output the fees notes.
-	}
-	
-	$embed = rentfetch_get_property_fees_embed( $post_id );
-	if ( ! $embed ) {
-		return; // if we don't have an embed, we aren't going to output the notes about it.
-	}
-
-	// get the property fees notes with default text that can be filtered.
-	$default_fees_notes = "Please note that prices shown are base rent. To help budget your monthly costs and make it easy to understand what your rent includes and what may be additional, we've included the list of potential fees below the floor plans, found at the bottom of the page.";
-	$property_fees_notes = apply_filters( 'rentfetch_filter_property_fees_notes', $default_fees_notes, $post_id );
-
-	if ( $property_fees_notes ) {
-		echo '<div class="rentfetch-before-floorplans-grid-search-property-fees-notes">';
-			echo wp_kses_post( wpautop( $property_fees_notes ) );
-		echo '</div>';
-	}
-}
-add_action( 'rentfetch_before_floorplans_simple_grid', 'rentfetch_property_fees_notes' );
-add_action( 'rentfetch_before_floorplans_search', 'rentfetch_property_fees_notes' );
-
 // * OFFICE HOURS
 
 /**

@@ -3196,73 +3196,74 @@ footer.property-search-filters-footer button#show-properties {
 /* ==========================================================================
    Property Fees Table Styles
    ========================================================================== */
-.property-fees-table {
+table.property-fees-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2rem;
   font-size: var(--rentfetch-font-size-medium);
   line-height: 1.4;
+  word-wrap: break-word;
   border: none;
 }
-.property-fees-table tr {
+table.property-fees-table tr {
   border: none;
 }
-.property-fees-table tr:last-child td {
+table.property-fees-table tr:last-child td {
   border: none;
 }
-.property-fees-table td {
+table.property-fees-table td {
   padding: 0.5rem 0.5rem;
   border: none;
   border-bottom: 1px solid var(--rentfetch-base-3);
   vertical-align: middle;
   text-wrap: balance;
 }
-.property-fees-table td:first-child {
+table.property-fees-table td:first-child {
   width: 40%;
   min-width: 120px;
   font-weight: 500;
   padding-left: 0;
 }
-.property-fees-table td:nth-child(2) {
+table.property-fees-table td:nth-child(2) {
   width: 30%;
   min-width: 80px;
   text-align: left;
 }
-.property-fees-table td:nth-child(3) {
+table.property-fees-table td:nth-child(3) {
   width: 30%;
   min-width: 60px;
   font-style: italic;
   text-align: right;
   padding-right: 0;
 }
-.property-fees-table .fee-price {
+table.property-fees-table .fee-price {
   display: inline;
   font-weight: 600;
   margin-bottom: 0.25rem;
 }
-.property-fees-table .fee-frequency {
+table.property-fees-table .fee-frequency {
   display: inline;
   font-size: var(--rentfetch-font-size-smallest);
   font-style: italic;
   text-transform: lowercase;
 }
-.property-fees-table .fee-notes {
+table.property-fees-table .fee-notes {
   font-size: var(--rentfetch-font-size-smallest);
 }
 @media (min-width: 600px) and (max-width: 960px) {
-  .property-fees-table td {
+  table.property-fees-table td {
     vertical-align: top;
   }
 }
 @media (max-width: 600px) {
-  .property-fees-table {
+  table.property-fees-table {
     font-size: var(--rentfetch-font-size-smallest);
   }
-  .property-fees-table td {
+  table.property-fees-table td {
     vertical-align: top;
   }
-  .property-fees-table td .fee-price {
-    font-size: var(--rentfetch-font-size-small);
+  table.property-fees-table td .fee-price {
+    font-size: var(--rentfetch-font-size-smallest);
   }
 }
 

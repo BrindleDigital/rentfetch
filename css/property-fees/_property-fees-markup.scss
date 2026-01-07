@@ -10,12 +10,13 @@
    Property Fees Table Styles
    ========================================================================== */
 
-.property-fees-table {
+table.property-fees-table {
 	width: 100%;
 	border-collapse: collapse;
 	margin-bottom: 2rem;
 	font-size: var(--rentfetch-font-size-medium);
 	line-height: 1.4;
+	word-wrap: break-word;
 
 	// Remove all borders
 	border: none;
@@ -99,7 +100,7 @@
 			vertical-align: top;
 
 			.fee-price {
-				font-size: var(--rentfetch-font-size-small);
+				font-size: var(--rentfetch-font-size-smallest);
 			}
 		}
 	}
