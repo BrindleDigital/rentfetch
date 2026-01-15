@@ -1125,10 +1125,12 @@ form.rent-fetch-options h3,
   box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.07);
   cursor: pointer;
   display: inline-block;
+  font-size: 13px;
   margin: 0 5px 10px 0;
   padding: 8px 15px;
   position: relative;
   transition: 0.3s all ease;
+  z-index: 0;
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode:hover,
 .container.shortcodes span.shortcode:hover {
@@ -1136,11 +1138,12 @@ form.rent-fetch-options h3,
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode:before,
 .container.shortcodes span.shortcode:before {
-  transition: 0.3 sll all ease;
+  transition: 0.3s all ease;
   opacity: 0;
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode.copied:before,
 .container.shortcodes span.shortcode.copied:before {
+  content: "✓ Shortcode copied!";
   position: absolute;
   inset: 0;
   background-color: white;
@@ -1149,6 +1152,9 @@ form.rent-fetch-options h3,
   justify-content: center;
   opacity: 1;
   padding-top: 3px;
+  z-index: 1;
+  color: inherit;
+  font-weight: inherit;
 }
 
 #rent-fetch-shortcodes-page .separator {

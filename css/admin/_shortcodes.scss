@@ -16,14 +16,14 @@
 		}
 
 		&:before {
-			transition: 0.3 sll all ease;
+			transition: 0.3s all ease;
 			opacity: 0;
 		}
 	}
 
 	span.shortcode.copied {
 		&:before {
-			// content: url('../images/copied.svg');
+			content: "Copied";
 			position: absolute;
 			inset: 0;
 			background-color: white;
