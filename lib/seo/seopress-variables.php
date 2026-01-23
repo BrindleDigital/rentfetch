@@ -118,6 +118,91 @@ function rentfetch_seopress_get_floorplan_square_footage( $post ) {
 }
 
 /**
+ * Get the SEOPress-friendly floorplan bed label.
+ *
+ * @param WP_Post $post Floorplan post.
+ * @return string
+ */
+function rentfetch_seopress_get_floorplan_beds_label( $post ) {
+	if ( ! $post || 'floorplans' !== $post->post_type ) {
+		return '';
+	}
+
+	$beds = get_post_meta( $post->ID, 'beds', true );
+	if ( null === $beds || '' === $beds ) {
+		return '';
+	}
+
+	if ( is_numeric( $beds ) ) {
+		$number = (float) $beds;
+		if ( $number <= 0 ) {
+			return 'Studio';
+		}
+
+		return rentfetch_seopress_format_number( $number ) . ' Bed';
+	}
+
+	return sanitize_text_field( (string) $beds );
+}
+
+/**
+ * Get a floorplan pricing label for SEOPress variables.
+ *
+ * @param WP_Post $post Floorplan post.
+ * @return string
+ */
+function rentfetch_seopress_get_floorplan_pricing( $post ) {
+	if ( ! $post || 'floorplans' !== $post->post_type ) {
+		return '';
+	}
+
+	$minimum_rent = intval( get_post_meta( $post->ID, 'minimum_rent', true ) );
+	$maximum_rent = intval( get_post_meta( $post->ID, 'maximum_rent', true ) );
+
+	// bail if there's no rent value over $50 (this is junk data).
+	if ( max( $minimum_rent, $maximum_rent ) < 50 ) {
+		return apply_filters( 'rentfetch_filter_floorplan_pricing', null, $minimum_rent, $maximum_rent );
+	}
+
+	$price_display = get_option( 'rentfetch_options_floorplan_pricing_display', 'range' );
+	$rent_range = null;
+
+	if ( 'range' === $price_display ) {
+		if ( $minimum_rent && $maximum_rent && $minimum_rent > 0 && $maximum_rent > 0 ) {
+			if ( $minimum_rent === $maximum_rent ) {
+				$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
+			} elseif ( $minimum_rent < $maximum_rent ) {
+				$rent_range = sprintf( '$%s-$%s', number_format( $minimum_rent ), number_format( $maximum_rent ) );
+			} elseif ( $minimum_rent > $maximum_rent ) {
+				$rent_range = sprintf( '$%s-$%s', number_format( $maximum_rent ), number_format( $minimum_rent ) );
+			}
+		} elseif ( $minimum_rent && ! $maximum_rent ) {
+			$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
+		} elseif ( ! $minimum_rent && $maximum_rent ) {
+			$rent_range = sprintf( '$%s', number_format( $maximum_rent ) );
+		}
+	} elseif ( 'minimum' === $price_display ) {
+		if ( $minimum_rent && $maximum_rent && $minimum_rent > 0 && $maximum_rent > 0 ) {
+			if ( $minimum_rent === $maximum_rent ) {
+				$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
+			} elseif ( $minimum_rent < $maximum_rent ) {
+				$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
+			} elseif ( $minimum_rent > $maximum_rent ) {
+				$rent_range = sprintf( 'From $%s', number_format( $maximum_rent ) );
+			}
+		} elseif ( $minimum_rent && ! $maximum_rent ) {
+			$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
+		} elseif ( ! $minimum_rent && $maximum_rent ) {
+			$rent_range = sprintf( 'From $%s', number_format( $maximum_rent ) );
+		}
+	}
+
+	$rent_range = apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_range, $minimum_rent, $maximum_rent );
+
+	return $rent_range ? sanitize_text_field( $rent_range ) : '';
+}
+
+/**
  * Register Rent Fetch variables with SEOPress.
  *
  * @param array $variables Template variables.
@@ -127,6 +212,7 @@ function rentfetch_seopress_add_template_variables( $variables ) {
 	$variables[] = '%%rentfetch_floorplan_beds%%';
 	$variables[] = '%%rentfetch_floorplan_baths%%';
 	$variables[] = '%%rentfetch_floorplan_sqft%%';
+	$variables[] = '%%rentfetch_floorplan_pricing%%';
 	$variables[] = '%%rentfetch_city%%';
 	$variables[] = '%%rentfetch_state%%';
 	$variables[] = '%%rentfetch_zip%%';
@@ -148,14 +234,16 @@ function rentfetch_seopress_add_template_replacements( $replacements ) {
 	$floorplan_beds = '';
 	$floorplan_baths = '';
 	$floorplan_sqft = '';
+	$floorplan_pricing = '';
 	$location_city = '';
 	$location_state = '';
 	$location_zip = '';
 
 	if ( 'floorplans' === $post_type ) {
-		$floorplan_beds = esc_attr( rentfetch_seopress_format_number( get_post_meta( $post->ID, 'beds', true ) ) );
+		$floorplan_beds = esc_attr( rentfetch_seopress_get_floorplan_beds_label( $post ) );
 		$floorplan_baths = esc_attr( rentfetch_seopress_format_number( get_post_meta( $post->ID, 'baths', true ) ) );
 		$floorplan_sqft = esc_attr( rentfetch_seopress_get_floorplan_square_footage( $post ) );
+		$floorplan_pricing = esc_attr( rentfetch_seopress_get_floorplan_pricing( $post ) );
 	}
 
 	if ( 'floorplans' === $post_type || 'properties' === $post_type ) {
@@ -170,6 +258,7 @@ function rentfetch_seopress_add_template_replacements( $replacements ) {
 			$floorplan_beds,
 			$floorplan_baths,
 			$floorplan_sqft,
+			$floorplan_pricing,
 			$location_city,
 			$location_state,
 			$location_zip,
@@ -188,6 +277,7 @@ function rentfetch_seopress_register_dynamic_variables( $variables ) {
 	$variables['%%rentfetch_floorplan_beds%%'] = __( 'Rent Fetch Floorplan Beds', 'rentfetch' );
 	$variables['%%rentfetch_floorplan_baths%%'] = __( 'Rent Fetch Floorplan Baths', 'rentfetch' );
 	$variables['%%rentfetch_floorplan_sqft%%'] = __( 'Rent Fetch Floorplan Square Footage', 'rentfetch' );
+	$variables['%%rentfetch_floorplan_pricing%%'] = __( 'Rent Fetch Floorplan Pricing', 'rentfetch' );
 	$variables['%%rentfetch_city%%'] = __( 'Rent Fetch City', 'rentfetch' );
 	$variables['%%rentfetch_state%%'] = __( 'Rent Fetch State', 'rentfetch' );
 	$variables['%%rentfetch_zip%%'] = __( 'Rent Fetch Zip', 'rentfetch' );
@@ -230,7 +320,7 @@ if ( interface_exists( 'SEOPress\\Models\\GetTagValue' ) ) {
 				return '';
 			}
 
-			return esc_attr( rentfetch_seopress_format_number( get_post_meta( $post->ID, 'beds', true ) ) );
+			return esc_attr( rentfetch_seopress_get_floorplan_beds_label( $post ) );
 		}
 	}
 
@@ -265,6 +355,23 @@ if ( interface_exists( 'SEOPress\\Models\\GetTagValue' ) ) {
 			}
 
 			return esc_attr( rentfetch_seopress_get_floorplan_square_footage( $post ) );
+		}
+	}
+
+	class Rentfetch_SEOPress_Tag_Floorplan_Pricing extends Rentfetch_SEOPress_Tag_Base {
+		const NAME = 'rentfetch_floorplan_pricing';
+
+		public static function getDescription() {
+			return __( 'Floorplan Pricing', 'rentfetch' );
+		}
+
+		public function getValue( $args = null ) {
+			$post = $this->get_post_from_context( $args );
+			if ( ! $post || 'floorplans' !== $post->post_type ) {
+				return '';
+			}
+
+			return esc_attr( rentfetch_seopress_get_floorplan_pricing( $post ) );
 		}
 	}
 
@@ -353,6 +460,15 @@ if ( interface_exists( 'SEOPress\\Models\\GetTagValue' ) ) {
 				'custom' => null,
 				'input' => '%%rentfetch_floorplan_sqft%%',
 				'description' => __( 'Rent Fetch Floorplan Square Footage', 'rentfetch' ),
+			),
+			'rentfetch_floorplan_pricing' => array(
+				'class' => Rentfetch_SEOPress_Tag_Floorplan_Pricing::class,
+				'name' => __( 'Rent Fetch Floorplan Pricing', 'rentfetch' ),
+				'schema' => false,
+				'alias' => array(),
+				'custom' => null,
+				'input' => '%%rentfetch_floorplan_pricing%%',
+				'description' => __( 'Rent Fetch Floorplan Pricing', 'rentfetch' ),
 			),
 			'rentfetch_city' => array(
 				'class' => Rentfetch_SEOPress_Tag_City::class,
