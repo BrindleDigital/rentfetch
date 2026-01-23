@@ -57,6 +57,12 @@ jQuery(document).ready(function ($) {
 
     function handleGoogleMapsReady() {
         initMap();
+        if (!window.rentfetchAdvancedMarkerNoticeShown) {
+            window.rentfetchAdvancedMarkerNoticeShown = true;
+            console.warn(
+                '[rentfetch] google.maps.Marker is deprecated. Google Maps Advanced Markers require a Map ID. Switching would be a breaking change for existing sites because each site would need to update its API setup and provide a map_id, which is not currently feasible. Google\'s warning below in the console should therefore be ignored until we\'re willing to make such a breaking change.'
+            );
+        }
     }
 
     window.rentfetchGoogleMapsLoaded = window.rentfetchGoogleMapsLoaded || function () {

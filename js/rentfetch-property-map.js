@@ -62,7 +62,6 @@ jQuery(document).ready(function ($) {
 			var title = locationsArray[i][2];
 			var content = locationsArray[i][3];
 			var id = locationsArray[i][4];
-			var label = title;
 			var theposition = new google.maps.LatLng(latitude, longitude);
 
 			var marker;
@@ -185,7 +184,7 @@ jQuery(document).ready(function ($) {
 		} else {
 			// No locations found, just clear old markers and center on default
 			for (let i = 0; i < oldMarkers.length; i++) {
-				oldMarkers[i].setMap(null);
+			oldMarkers[i].setMap(null);
 			}
 
 			var myLatlng = new google.maps.LatLng(
@@ -239,6 +238,12 @@ jQuery(document).ready(function ($) {
 
 	function handleGoogleMapsReady() {
 		initMapFlow();
+		if (!window.rentfetchAdvancedMarkerNoticeShown) {
+			window.rentfetchAdvancedMarkerNoticeShown = true;
+			console.warn(
+				'[rentfetch] google.maps.Marker is deprecated. Google Maps Advanced Markers require a Map ID. Switching would be a breaking change for existing sites because each site would need to update its API setup and provide a map_id, which is not currently feasible. Google\'s warning below in the console should therefore be ignored until we\'re willing to make such a breaking change.'
+			);
+		}
 	}
 
 	window.rentfetchGoogleMapsLoaded = window.rentfetchGoogleMapsLoaded || function () {
