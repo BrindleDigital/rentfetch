@@ -70,6 +70,9 @@ jQuery(document).ready(function ($) {
     };
 
     $(document).on('rentfetchGoogleMapsReady', handleGoogleMapsReady);
+    if (window.rentfetchGoogleMapsReadyFired) {
+        $(document).trigger('rentfetchGoogleMapsReady');
+    }
 
     if (window.google && window.google.maps && typeof window.google.maps.LatLng === 'function') {
         handleGoogleMapsReady();

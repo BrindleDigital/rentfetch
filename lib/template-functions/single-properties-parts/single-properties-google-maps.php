@@ -44,6 +44,12 @@ function rentfetch_single_properties_parts_map() {
 			// the map itself.
 			$key = apply_filters( 'rentfetch_get_google_maps_api_key', null );
 			wp_enqueue_script( 'rentfetch-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $key . '&loading=async&callback=rentfetchGoogleMapsLoaded', array(), RENTFETCH_VERSION, true );
+			wp_script_add_data( 'rentfetch-google-maps', 'strategy', 'async' );
+			wp_add_inline_script(
+				'rentfetch-google-maps',
+				'window.rentfetchGoogleMapsLoaded = window.rentfetchGoogleMapsLoaded || function () { window.rentfetchGoogleMapsReadyFired = true; if (window.jQuery) { jQuery(document).trigger("rentfetchGoogleMapsReady"); } };',
+				'before'
+			);
 
 			// Localize the google maps script, then enqueue that.
 			$maps_options = array(

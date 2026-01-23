@@ -251,6 +251,9 @@ jQuery(document).ready(function ($) {
 	};
 
 	$(document).on('rentfetchGoogleMapsReady', handleGoogleMapsReady);
+	if (window.rentfetchGoogleMapsReadyFired) {
+		$(document).trigger('rentfetchGoogleMapsReady');
+	}
 
 	// Initialize map on page load if the API is already available
 	if (window.google && window.google.maps && typeof window.google.maps.LatLng === 'function') {
