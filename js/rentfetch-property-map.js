@@ -216,12 +216,14 @@ jQuery(document).ready(function ($) {
 
 	// Listen for property search completion
 	$(document).on('rentfetchPropertySearchComplete', function () {
-		console.log('Map updating after property search');
 		resetMap();
 	});
 
-	// Initialize map on page load
-	if ($('#map').length) {
+	function initMapFlow() {
+		if (!$('#map').length) {
+			return;
+		}
+
 		renderMap();
 		getLocations();
 		var initialBounds = addMarkers();
@@ -233,5 +235,20 @@ jQuery(document).ready(function ($) {
 				markers[i].setMap(map);
 			}
 		}
+	}
+
+	function handleGoogleMapsReady() {
+		initMapFlow();
+	}
+
+	window.rentfetchGoogleMapsLoaded = window.rentfetchGoogleMapsLoaded || function () {
+		$(document).trigger('rentfetchGoogleMapsReady');
+	};
+
+	$(document).on('rentfetchGoogleMapsReady', handleGoogleMapsReady);
+
+	// Initialize map on page load if the API is already available
+	if (window.google && window.google.maps && typeof window.google.maps.LatLng === 'function') {
+		handleGoogleMapsReady();
 	}
 });

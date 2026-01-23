@@ -55,5 +55,17 @@ jQuery(document).ready(function ($) {
         });
     }
 
-    initMap();
+    function handleGoogleMapsReady() {
+        initMap();
+    }
+
+    window.rentfetchGoogleMapsLoaded = window.rentfetchGoogleMapsLoaded || function () {
+        $(document).trigger('rentfetchGoogleMapsReady');
+    };
+
+    $(document).on('rentfetchGoogleMapsReady', handleGoogleMapsReady);
+
+    if (window.google && window.google.maps && typeof window.google.maps.LatLng === 'function') {
+        handleGoogleMapsReady();
+    }
 });
