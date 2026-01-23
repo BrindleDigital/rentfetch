@@ -36,6 +36,37 @@
 			gtmContainers: []
 		};
 
+		function collectIdsFromValue( value, seen, depth ) {
+			if ( ! value || depth > 6 ) {
+				return;
+			}
+			if ( typeof value === 'string' ) {
+				if ( /^G-[A-Z0-9]+$/i.test( value ) ) {
+					info.measurementIds.push( value );
+				}
+				if ( /^GTM-[A-Z0-9]+$/i.test( value ) ) {
+					info.gtmContainers.push( value );
+				}
+				return;
+			}
+			if ( typeof value !== 'object' ) {
+				return;
+			}
+			if ( seen.has( value ) ) {
+				return;
+			}
+			seen.add( value );
+			if ( Array.isArray( value ) ) {
+				value.forEach( function ( entry ) {
+					collectIdsFromValue( entry, seen, depth + 1 );
+				} );
+				return;
+			}
+			Object.keys( value ).forEach( function ( key ) {
+				collectIdsFromValue( value[ key ], seen, depth + 1 );
+			} );
+		}
+
 		if ( hasDataLayer ) {
 			window.dataLayer.forEach( function ( entry ) {
 				if ( Array.isArray( entry ) ) {
@@ -57,6 +88,10 @@
 					}
 				}
 			} );
+		}
+
+		if ( window.google_tag_data ) {
+			collectIdsFromValue( window.google_tag_data, new Set(), 0 );
 		}
 
 		info.measurementIds = Array.from( new Set( info.measurementIds.filter( Boolean ) ) );
