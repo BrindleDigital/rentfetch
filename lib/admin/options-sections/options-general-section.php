@@ -20,6 +20,8 @@ function rentfetch_settings_set_defaults_general() {
 	add_option( 'rentfetch_options_enable_search_indexes', '1' );
 	add_option( 'rentfetch_options_enable_cache_warming', '0' );
 	add_option( 'rentfetch_options_enable_search_tracking', '1' );
+	add_option( 'rentfetch_options_enable_analytics', '1' );
+	add_option( 'rentfetch_options_enable_analytics_debug', '0' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_general' );
 
@@ -302,6 +304,28 @@ function rentfetch_settings_shared_general() {
 			</script>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="section">
+			<label class="label-large">Analytics</label>
+			<p class="description">Enable or disable analytics event tracking for Rent Fetch templates. When enabled, events are sent to any existing Google Analytics or Tag Manager setup found on the site.</p>
+
+			<ul class="checkboxes">
+				<li>
+					<label for="rentfetch_options_enable_analytics">
+						<input type="checkbox" name="rentfetch_options_enable_analytics" id="rentfetch_options_enable_analytics" <?php checked( get_option( 'rentfetch_options_enable_analytics', '1' ), '1' ); ?>>
+						Enable analytics tracking (recommended)
+					</label>
+				</li>
+				<li>
+					<label for="rentfetch_options_enable_analytics_debug">
+						<input type="checkbox" name="rentfetch_options_enable_analytics_debug" id="rentfetch_options_enable_analytics_debug" <?php checked( get_option( 'rentfetch_options_enable_analytics_debug', '0' ), '1' ); ?>>
+						Enable analytics debug overlay on click
+					</label>
+				</li>
+			</ul>
+		</div>
+	</div>
 	<?php
 }
 add_action( 'rentfetch_do_settings_general_shared', 'rentfetch_settings_shared_general' );
@@ -529,6 +553,14 @@ function rentfetch_save_settings_general() {
 			rentfetch_remove_indexes();
 		}
 	}
+
+	// Checkbox field - Enable analytics
+	$enable_analytics = isset( $_POST['rentfetch_options_enable_analytics'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_enable_analytics', $enable_analytics );
+
+	// Checkbox field - Enable analytics debug overlay
+	$enable_analytics_debug = isset( $_POST['rentfetch_options_enable_analytics_debug'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_enable_analytics_debug', $enable_analytics_debug );
 
 	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
 	delete_transient( 'rentfetch_api_info' );

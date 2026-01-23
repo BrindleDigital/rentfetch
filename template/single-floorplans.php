@@ -30,8 +30,10 @@ if ( have_posts() ) {
 		$pricing         = rentfetch_get_floorplan_pricing();
 		$units_count     = rentfetch_get_floorplan_units_count_from_cpt();
 		$description     = rentfetch_get_floorplan_description();
+		$tracking_context = rentfetch_get_floorplan_tracking_context( get_the_ID() );
+		$tracking_context_attrs = rentfetch_get_tracking_context_attributes( $tracking_context );
 
-		echo '<div class="single-floorplans-container-outer container-current-floorplan-info">';
+		printf( '<div class="single-floorplans-container-outer container-current-floorplan-info"%s>', $tracking_context_attrs );
 			echo '<div class="single-floorplans-container-inner">';
 				echo '<div class="current-floorplan-info">';
 

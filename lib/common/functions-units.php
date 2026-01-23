@@ -240,7 +240,8 @@ function rentfetch_unit_button() {
 	$apply_online_url = get_post_meta( get_the_ID(), 'apply_online_url', true );
 
 	if ( $apply_online_url ) {
-		$markup = sprintf( '<a href="%s" class="rentfetch-button rentfetch-button-small" target="_blank">Apply Online</a>', $apply_online_url );
+		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_applyonline_click', rentfetch_get_floorplan_tracking_context() );
+		$markup = sprintf( '<a href="%s" class="rentfetch-button rentfetch-button-small" target="_blank"%s>Apply Online</a>', $apply_online_url, $tracking_attrs );
 		echo wp_kses_post( apply_filters( 'rentfetch_filter_unit_apply_button_markup', $markup ) );
 	} else {
 		rentfetch_unit_default_contact_button();
