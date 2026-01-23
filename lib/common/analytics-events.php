@@ -196,7 +196,6 @@ function rentfetch_enqueue_analytics_events_script() {
 				'enabled' => ( '1' === $enabled ),
 				'debug'   => $debug_enabled,
 				'debugAllowed' => $debug_allowed,
-				'debugOptionRaw' => $debug_option,
 			)
 		);
 	}

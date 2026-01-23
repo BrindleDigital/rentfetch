@@ -33,7 +33,9 @@
 			hasDataLayer: hasDataLayer,
 			dataLayerLength: hasDataLayer ? window.dataLayer.length : 0,
 			measurementIds: [],
-			gtmContainers: []
+			gtmContainers: [],
+			googleTagIds: [],
+			consent: {}
 		};
 
 		function collectIdsFromValue( value, seen, depth ) {
@@ -43,6 +45,9 @@
 			if ( typeof value === 'string' ) {
 				if ( /^G-[A-Z0-9]+$/i.test( value ) ) {
 					info.measurementIds.push( value );
+				}
+				if ( /^GT-[A-Z0-9]+$/i.test( value ) ) {
+					info.googleTagIds.push( value );
 				}
 				if ( /^GTM-[A-Z0-9]+$/i.test( value ) ) {
 					info.gtmContainers.push( value );
@@ -64,6 +69,33 @@
 			}
 			Object.keys( value ).forEach( function ( key ) {
 				collectIdsFromValue( value[ key ], seen, depth + 1 );
+			} );
+		}
+
+		function collectConsentFromValue( value, seen, depth ) {
+			if ( ! value || depth > 6 ) {
+				return;
+			}
+			if ( typeof value !== 'object' ) {
+				return;
+			}
+			if ( seen.has( value ) ) {
+				return;
+			}
+			seen.add( value );
+			if ( Array.isArray( value ) ) {
+				value.forEach( function ( entry ) {
+					collectConsentFromValue( entry, seen, depth + 1 );
+				} );
+				return;
+			}
+			Object.keys( value ).forEach( function ( key ) {
+				var val = value[ key ];
+				if ( typeof val === 'string' && /_storage$/i.test( key ) ) {
+					info.consent[ key ] = val;
+				} else {
+					collectConsentFromValue( val, seen, depth + 1 );
+				}
 			} );
 		}
 
@@ -92,10 +124,12 @@
 
 		if ( window.google_tag_data ) {
 			collectIdsFromValue( window.google_tag_data, new Set(), 0 );
+			collectConsentFromValue( window.google_tag_data, new Set(), 0 );
 		}
 
 		info.measurementIds = Array.from( new Set( info.measurementIds.filter( Boolean ) ) );
 		info.gtmContainers = Array.from( new Set( info.gtmContainers.filter( Boolean ) ) );
+		info.googleTagIds = Array.from( new Set( info.googleTagIds.filter( Boolean ) ) );
 
 		return info;
 	}
@@ -111,12 +145,19 @@
 		analyticsInfo: analyticsInfo
 	};
 
-	if ( window.console && typeof window.console.log === 'function' ) {
-		window.console.log( '[rentfetch] analytics events script loaded', window.rentfetchAnalyticsStatus, {
-			settings: settings,
-			debugOverride: debugOverride
+	if ( debugEnabled && hasGtag ) {
+		var debugTargets = [];
+		if ( analyticsInfo && Array.isArray( analyticsInfo.googleTagIds ) && analyticsInfo.googleTagIds.length ) {
+			debugTargets = analyticsInfo.googleTagIds;
+		} else if ( analyticsInfo && Array.isArray( analyticsInfo.measurementIds ) && analyticsInfo.measurementIds.length ) {
+			debugTargets = analyticsInfo.measurementIds;
+		}
+		debugTargets.forEach( function ( id ) {
+			window.gtag( 'config', id, { debug_mode: true } );
 		} );
 	}
+
+	// Intentionally no console logging in production.
 
 	function getContextFromElement( element ) {
 		var context = {};
@@ -154,8 +195,16 @@
 		params = params || {};
 
 		if ( hasGtag ) {
-			if ( analyticsInfo && Array.isArray( analyticsInfo.measurementIds ) && analyticsInfo.measurementIds.length ) {
-				params = Object.assign( { send_to: analyticsInfo.measurementIds }, params );
+			if ( analyticsInfo ) {
+				var sendTo = null;
+				if ( Array.isArray( analyticsInfo.googleTagIds ) && analyticsInfo.googleTagIds.length ) {
+					sendTo = analyticsInfo.googleTagIds.length === 1 ? analyticsInfo.googleTagIds[ 0 ] : analyticsInfo.googleTagIds;
+				} else if ( Array.isArray( analyticsInfo.measurementIds ) && analyticsInfo.measurementIds.length ) {
+					sendTo = analyticsInfo.measurementIds.length === 1 ? analyticsInfo.measurementIds[ 0 ] : analyticsInfo.measurementIds;
+				}
+				if ( sendTo ) {
+					params = Object.assign( { send_to: sendTo }, params );
+				}
 			}
 			window.gtag( 'event', eventName, params );
 			return { sent: true, method: 'gtag' };
@@ -182,8 +231,8 @@
 			panel.style.right = '16px';
 			panel.style.bottom = '16px';
 			panel.style.zIndex = '999999';
-			panel.style.width = '360px';
-			panel.style.maxHeight = '70vh';
+			panel.style.width = '480px';
+			panel.style.maxHeight = '85vh';
 			panel.style.overflow = 'auto';
 			panel.style.background = '#1d2327';
 			panel.style.color = '#f0f0f1';
@@ -200,11 +249,6 @@
 			header.style.fontWeight = '600';
 			header.style.marginBottom = '8px';
 
-			var note = document.createElement( 'div' );
-			note.textContent = 'Verify in GA4 DebugView or Tag Assistant.';
-			note.style.color = '#c3c4c7';
-			note.style.marginBottom = '8px';
-
 			var list = document.createElement( 'div' );
 			list.id = 'rentfetch-analytics-debug-list';
 			list.textContent = 'Click a tracked link or control to see the event payload sent to Google Analytics.';
@@ -212,8 +256,31 @@
 			list.style.fontStyle = 'italic';
 
 			panel.appendChild( header );
-			panel.appendChild( note );
 			panel.appendChild( list );
+			
+			var footer = document.createElement( 'div' );
+			footer.style.color = '#c3c4c7';
+			footer.style.marginTop = '10px';
+
+			var footerText = document.createElement( 'span' );
+			footerText.textContent = 'GA does not return an "accepted" receipt. Use GA4 DebugView or Tag Assistant for confirmation. You can also install the ';
+
+			var debuggerLink = document.createElement( 'a' );
+			debuggerLink.href = 'https://chromewebstore.google.com/detail/google-analytics-debugger/jnkmfdileelhofjcijamephohjechhna';
+			debuggerLink.textContent = 'Google Analytics Debugger';
+			debuggerLink.target = '_blank';
+			debuggerLink.rel = 'noopener noreferrer';
+			debuggerLink.style.color = '#4ea1ff';
+			debuggerLink.style.textDecoration = 'none';
+
+			var footerPeriod = document.createElement( 'span' );
+			footerPeriod.textContent = '.';
+
+			footer.appendChild( footerText );
+			footer.appendChild( debuggerLink );
+			footer.appendChild( footerPeriod );
+
+			panel.appendChild( footer );
 			document.body.appendChild( panel );
 		}
 
@@ -223,12 +290,48 @@
 		}
 
 		var entry = document.createElement( 'div' );
-		entry.textContent =
-			'Event: ' + eventName +
-			'\nSent: ' + ( result && result.sent ? 'yes' : 'no' ) +
-			'\nMethod: ' + ( result && result.method ? result.method : 'none' ) +
-			'\nData: ' + JSON.stringify( params, null, 2 ) +
-			'\nAnalytics detected: ' + JSON.stringify( info || {}, null, 2 );
+		var sentOk = result && result.sent;
+		var sentLine = document.createElement( 'div' );
+		sentLine.textContent = 'Sent: ' + ( sentOk ? 'yes' : 'no' );
+		sentLine.style.color = sentOk ? '#5fd38d' : '#f28b82';
+
+		var methodLine = document.createElement( 'div' );
+		methodLine.textContent = 'Method: ' + ( result && result.method ? result.method : 'none' );
+		methodLine.style.color = sentOk ? '#5fd38d' : '#f28b82';
+
+		var eventLine = document.createElement( 'div' );
+		eventLine.textContent = 'Event: ' + eventName;
+		eventLine.style.color = '#f0f0f1';
+
+		var dataLine = document.createElement( 'div' );
+		dataLine.textContent = 'Data: ' + JSON.stringify( params, null, 2 );
+
+		var analyticsLine = document.createElement( 'div' );
+		analyticsLine.textContent = 'Analytics detected: ' + JSON.stringify( info || {}, null, 2 );
+		analyticsLine.style.color = ( info && ( info.hasGtag || info.hasDataLayer ) ) ? '#5fd38d' : '#f28b82';
+
+		var warningsLine = document.createElement( 'div' );
+		var warnings = [];
+		if ( info && Array.isArray( info.measurementIds ) && info.measurementIds.length === 0 ) {
+			warnings.push( 'No GA4 Measurement ID detected (events may be dropped).' );
+		}
+		if ( info && info.consent && info.consent.analytics_storage === 'denied' ) {
+			warnings.push( 'analytics_storage consent denied (events will be blocked).' );
+		}
+		if ( warnings.length ) {
+			warningsLine.textContent = 'Warnings: ' + warnings.join( ' ' );
+			warningsLine.style.color = '#f28b82';
+		} else {
+			warningsLine.textContent = 'Warnings: none detected';
+			warningsLine.style.color = '#5fd38d';
+		}
+
+		entry.appendChild( eventLine );
+		entry.appendChild( sentLine );
+		entry.appendChild( methodLine );
+		entry.appendChild( dataLine );
+		entry.appendChild( analyticsLine );
+		entry.appendChild( warningsLine );
 
 		listContainer.innerHTML = '';
 		listContainer.appendChild( entry );
