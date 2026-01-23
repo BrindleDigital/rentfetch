@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.32.5
+Stable tag: 0.32.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,13 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.32.6 =
+
+* Improved the loading of the RentFetch property map and RentFetch single property map to eliminate a console warning about the maps JavaScript library loading the wrong way.
+* Added a console notice explaining Google's deprecated map markers warning and why we cannot switch to the new implementation without requiring per-site Map ID updates.
+* Reduced console noise by removing unnecessary debug output and cleaning up minor warnings.
+* SEO Press updates: added new variables (including pricing), improved existing ones, and updated floorplan bed labels to output "Studio" instead of "0". Hat tip to Ryan for spotting the issues.
 
 = 0.32.5 =
 
@@ -779,4 +786,3 @@ Start from your WordPress dashboard.
 = 0.1 =
 
 * Initial version
-
