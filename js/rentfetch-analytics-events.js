@@ -119,6 +119,9 @@
 		params = params || {};
 
 		if ( hasGtag ) {
+			if ( analyticsInfo && Array.isArray( analyticsInfo.measurementIds ) && analyticsInfo.measurementIds.length ) {
+				params = Object.assign( { send_to: analyticsInfo.measurementIds }, params );
+			}
 			window.gtag( 'event', eventName, params );
 			return { sent: true, method: 'gtag' };
 		}
