@@ -116,6 +116,28 @@ function rentfetch_settings_shared_general() {
 					outline: none;
 					box-shadow: none;
 				}
+				#rentfetch-popular-searches-container {
+					overflow-x: auto;
+					max-width: 100%;
+				}
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table {
+					width: 100%;
+					table-layout: fixed;
+					margin: 0;
+				}
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table th,
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table td {
+					padding: 8px 10px;
+					vertical-align: top;
+				}
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table th {
+					white-space: nowrap;
+				}
+				#rentfetch-popular-searches-container .rentfetch-search-query {
+					white-space: normal;
+					overflow-wrap: anywhere;
+					word-break: break-word;
+				}
 			</style>
 
 			<script>
@@ -203,28 +225,19 @@ function rentfetch_settings_shared_general() {
 								nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_popular_searches' ) ); ?>'
 							}, function(response) {
 								if (response.success && response.data.searches.length > 0) {
-									var html = '<table class="widefat striped" style="border: none;"><thead><tr>';
-									html += '<th style="width: 100px;">Type</th>';
+									var html = '<table class="widefat striped rentfetch-popular-searches-table" style="border: none;"><thead><tr>';
+									html += '<th style="width: 90px;">Type</th>';
 									html += '<th>Search Query</th>';
-									html += '<th style="width: 120px; text-align: center;">Times Hit</th>';
-									html += '<th style="width: 140px;">Last Executed</th>';
+									html += '<th style="width: 110px; text-align: center;">Times Hit</th>';
+									html += '<th style="width: 130px;">Last Executed</th>';
 									html += '</tr></thead><tbody>';
 									
 									$.each(response.data.searches, function(index, search) {
-										var decodedQuery = decodeURIComponent(search.query.replace(/\+/g, ' '));
-										var displayQuery = decodedQuery;
-										
-										// If query is empty or only has availability, show as "all available"
-										if (decodedQuery === '' || decodedQuery === 'availability=1') {
-											displayQuery = '(all available)';
-										} else {
-											// Remove availability parameter from other queries for cleaner display
-											displayQuery = displayQuery.replace(/&?availability=[^&]*/g, '').replace(/^&/, '');
-										}
-										
+										var displayQuery = search.display_query || '';
+
 										html += '<tr>';
 										html += '<td><span style="display: inline-block; padding: 3px 8px; background: #f0f0f1; border-radius: 3px; font-size: 11px; text-transform: uppercase; font-weight: 600; color: #2c3338;">' + search.type + '</span></td>';
-										html += '<td style="font-family: Consolas, Monaco, monospace; font-size: 12px; color: #50575e;">' + displayQuery + '</td>';
+										html += '<td class="rentfetch-search-query" style="font-family: Consolas, Monaco, monospace; font-size: 12px; color: #50575e;">' + displayQuery + '</td>';
 										html += '<td style="text-align: center; font-weight: 600; color: #2271b1;">' + search.count + '</td>';
 										html += '<td style="color: #646970; font-size: 13px;">' + search.last_used + '</td>';
 										html += '</tr>';
