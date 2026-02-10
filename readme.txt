@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.32.6
+Stable tag: 0.32.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,13 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.32.7 =
+
+* Security: sanitize tracked search params and escape tracked search output in the admin UI to prevent stored XSS. (NOTE: This should close a vulnerability disclosed to us by WordFence, which could allow an attacker to store a payload in a transient.)
+* Security: sanitize cached meta values before storing transients.
+* Security: correct attribute escaping in search filters (baths/pets).
+* Verification: confirmed tracked search counts increment and beds/baths filters render correctly.
 
 = 0.32.6 =
 
