@@ -106,6 +106,8 @@ Start from your WordPress dashboard.
 = 0.32.6 =
 
 * Security: sanitize tracked search params and escape tracked search output in the admin UI to prevent stored XSS. (NOTE: This should close a vulnerability disclosed to us by WordFence, which could allow an attacker to store a payload in a transient.)
+* Security: sanitize cached meta values before storing transients.
+* Security: correct attribute escaping in search filters (baths/pets).
 
 = 0.32.5 =
 

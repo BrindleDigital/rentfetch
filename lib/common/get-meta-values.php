@@ -50,6 +50,14 @@ function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publis
 		)
 	);
 
+	// Sanitize meta values before caching.
+	$r = array_map(
+		function( $value ) {
+			return sanitize_text_field( wp_unslash( $value ) );
+		},
+		(array) $r
+	);
+
 	// Cache the result briefly to avoid repeated expensive queries.
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		set_transient( $cache_key, $r, 5 * MINUTE_IN_SECONDS );
