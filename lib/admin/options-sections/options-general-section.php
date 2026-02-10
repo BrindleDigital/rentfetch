@@ -26,59 +26,94 @@ function rentfetch_settings_set_defaults_general() {
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_general' );
 
 /**
+ * Get the general settings section from the query string.
+ *
+ * @return string
+ */
+function rentfetch_settings_get_general_section() {
+	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : '';
+
+	if ( '' === $section ) {
+		return 'data-sync';
+	}
+
+	return $section;
+}
+
+/**
  * Adds the general settings section to the Rent Fetch settings page.
  */
 function rentfetch_settings_general() {
+	$section = rentfetch_settings_get_general_section();
 
-	// Silence is golden.
+	echo '<section id="rent-fetch-general-page" class="options-container">';
+		echo '<div class="rent-fetch-options-nav-wrap">';
+			echo '<div class="rent-fetch-options-sticky-wrap">';
+				submit_button();
+
+				echo '<ul class="rent-fetch-options-submenu">';
+
+					$active = ( 'data-sync' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=general&section=data-sync" class="tab %s">Data Sync</a></li>', esc_html( $active ) );
+
+					$active = ( 'performance' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=general&section=performance" class="tab %s">Performance</a></li>', esc_html( $active ) );
+
+					$active = ( 'analytics' === $section ) ? 'tab-active' : '';
+					printf( '<li><a href="?page=rentfetch-options&tab=general&section=analytics" class="tab %s">Analytics</a></li>', esc_html( $active ) );
+
+				echo '</ul>';
+			echo '</div>';
+		echo '</div>';
+
+		echo '<div class="container">';
+			if ( 'performance' === $section ) {
+				do_action( 'rentfetch_do_settings_general_performance' );
+			} elseif ( 'analytics' === $section ) {
+				do_action( 'rentfetch_do_settings_general_analytics' );
+			} else {
+				do_action( 'rentfetch_do_settings_general_data_sync' );
+			}
+		echo '</div><!-- .container -->';
+	echo '</section><!-- #rent-fetch-general-page -->';
 }
 add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_general' );
 
 /**
- * Add the notice about the sync functionality (this will be removed by the sync plugin if it's installed)
+ * Add the notice about the sync functionality (this will be removed by the sync plugin if it's installed).
  *
  * @return void
  */
 function rentfetch_settings_sync_functionality_notice() {
-	echo '<section id="rent-fetch-general-page" class="options-container">';
-	
-		echo '<div class="rent-fetch-options-nav-wrap">';
-			echo '<div class="rent-fetch-options-sticky-wrap">';
-				// add a wordpress save button here
-				submit_button();
-			echo '</div>';
-		echo '</div>';
-		
-		echo '<div class="container">';
-		?>
-		<div class="header">
-			<h2 class="title">Rent Fetch General Settings</h2>
-			<p class="description">Let’s get started. Select from the options below to configure Rent Fetch and any integrations.</p>
-		</div>
+	?>
+	<div class="header">
+		<h2 class="title">Data Sync</h2>
+		<p class="description">Set up data sync settings and integrations for Rent Fetch.</p>
+	</div>
 
-		<div class="row">
-			<div class="section">
-				<!-- <div class="white-box"> -->
-					<h2 class="title">Our premium availability syncing addon</h2>
-					<p class="description">You can already manually enter data for as many properties, floorplans, and units as you'd like, and all layouts are enabled for this information.</p><p>However, if you'd like to automate the addition of properties and sync availability information hourly, we offer the <strong>Rent Fetch Sync</strong> addon to sync data with the Yardi/RentCafe, Realpage, Appfolio, and Entrata platforms. More information at <a href="https://rentfetch.io" target="_blank">rentfetch.io</a></p>
-				<!-- </div> -->
-			</div>
+	<div class="row">
+		<div class="section">
+			<h2 class="title">Automated Availability Sync Add-On</h2>
+			<p class="description">Rent Fetch already supports unlimited manual entry for properties, floor plans, and units, and all layouts work with manually entered data.</p>
+			<p>Need automation? <strong>Rent Fetch Sync</strong> can import properties and sync availability hourly with Yardi/RentCafe, RealPage, AppFolio, and Entrata. Learn more at <a href="https://rentfetch.io" target="_blank">rentfetch.io</a>.</p>
 		</div>
-		<?php
-		do_action( 'rentfetch_do_settings_general_shared' );
-
-		echo '</div>';
-	echo '</section><!-- #rent-fetch-general-page -->';
+	</div>
+	<?php
 }
-add_action( 'rentfetch_do_settings_general', 'rentfetch_settings_sync_functionality_notice', 25 );
+add_action( 'rentfetch_do_settings_general_data_sync', 'rentfetch_settings_sync_functionality_notice', 25 );
 
 /**
- * Add shared general settings
+ * Output the performance section of general settings.
  *
  * @return void
  */
-function rentfetch_settings_shared_general() {
+function rentfetch_settings_general_performance() {
 	?>
+	<div class="header">
+		<h2 class="title">Performance</h2>
+		<p class="description">Configure search result caching and search performance optimization settings.</p>
+	</div>
+
 	<div class="row">
 		<div class="section">
 			<label class="label-large">Search Result Caching</label>
@@ -317,6 +352,21 @@ function rentfetch_settings_shared_general() {
 			</script>
 		</div>
 	</div>
+	<?php
+}
+add_action( 'rentfetch_do_settings_general_performance', 'rentfetch_settings_general_performance' );
+
+/**
+ * Output the analytics section of general settings.
+ *
+ * @return void
+ */
+function rentfetch_settings_general_analytics() {
+	?>
+	<div class="header">
+		<h2 class="title">Analytics</h2>
+		<p class="description">Enable or disable analytics event tracking for Rent Fetch templates.</p>
+	</div>
 
 	<div class="row">
 		<div class="section">
@@ -341,33 +391,18 @@ function rentfetch_settings_shared_general() {
 	</div>
 	<?php
 }
-add_action( 'rentfetch_do_settings_general_shared', 'rentfetch_settings_shared_general' );
+add_action( 'rentfetch_do_settings_general_analytics', 'rentfetch_settings_general_analytics' );
 
 /**
- * Save the general settings
+ * Save general data sync settings.
+ *
+ * @return void
  */
-function rentfetch_save_settings_general() {
-
-	// Get the tab and section.
-	$tab     = rentfetch_settings_get_tab();
-	$section = rentfetch_settings_get_section();
-
-	// this particular settings page has no tab or section, and it's the only one that doesn't.
-	if ( $tab || $section ) {
-		return;
-	}
-
-	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
-
-	// * Verify the nonce
-	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
-		die( 'Security check failed' );
-	}
-
-	// * When we save this particular batch of settings, we want to re-check the license
+function rentfetch_save_settings_general_data_sync() {
+	// * When we save this particular batch of settings, we want to re-check the license.
 	delete_transient( 'rentfetchsync_properties_limit' );
 
-	// * When we save this particular batch of settings, we might be changing the sync settings, so we need to unschedule all the sync actions
+	// * When we save this particular batch of settings, we might be changing the sync settings, so we need to unschedule all the sync actions.
 	if ( function_exists( 'as_unschedule_all_actions' ) ) {
 		as_unschedule_all_actions( 'rfs_do_sync' );
 		as_unschedule_all_actions( 'rfs_yardi_do_delete_orphans' );
@@ -474,7 +509,6 @@ function rentfetch_save_settings_general() {
 		update_option( 'rentfetch_options_entrata_integration_creds_entrata_property_ids', $options_entrata_integration_creds_entrata_property_ids );
 	}
 
-
 	// Text field.
 	if ( isset( $_POST['rentfetch_options_rentmanager_integration_creds_rentmanager_companycode'] ) ) {
 		// Remove ".api.rentmanager.com" and anything that follows it.
@@ -485,8 +519,7 @@ function rentfetch_save_settings_general() {
 	}
 
 	if ( function_exists( 'rfs_get_rentmanager_properties_from_setting' ) ) {
-		// this function is defined in the rentfetch-sync plugin, and allows for prefilling the properties for Rent Manager, where there are multiple locations possible.
-		// and it's not feasible to have the user enter them all manually.
+		// This function is defined in the rentfetch-sync plugin, and allows for prefilling the properties for Rent Manager.
 		rfs_get_rentmanager_properties_from_setting();
 	}
 
@@ -525,24 +558,34 @@ function rentfetch_save_settings_general() {
 		update_option( 'rentfetch_options_appfolio_integration_creds_appfolio_property_ids', $options_appfolio_integration_creds_appfolio_property_ids );
 	}
 
-	// Checkbox field - Enable query caching (inverted: checked = '0' for disable, unchecked = '1' for disable)
+	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
+	delete_transient( 'rentfetch_api_info' );
+}
+
+/**
+ * Save general performance settings.
+ *
+ * @return void
+ */
+function rentfetch_save_settings_general_performance() {
+	// Checkbox field - Enable query caching (inverted: checked = '0' for disable, unchecked = '1' for disable).
 	$disable_query_caching = isset( $_POST['rentfetch_options_disable_query_caching'] ) ? '0' : '1';
 	update_option( 'rentfetch_options_disable_query_caching', $disable_query_caching );
 
-	// Checkbox field - Enable cache warming (checked = '1', unchecked = '0')
-	$enable_cache_warming = isset( $_POST['rentfetch_options_enable_cache_warming'] ) ? '1' : '0';
+	// Checkbox field - Enable cache warming (checked = '1', unchecked = '0').
+	$enable_cache_warming   = isset( $_POST['rentfetch_options_enable_cache_warming'] ) ? '1' : '0';
 	$previous_cache_warming = get_option( 'rentfetch_options_enable_cache_warming', '0' );
 	update_option( 'rentfetch_options_enable_cache_warming', $enable_cache_warming );
 
-	// Schedule or unschedule cache warming based on setting change
+	// Schedule or unschedule cache warming based on setting change.
 	if ( $enable_cache_warming !== $previous_cache_warming ) {
 		if ( function_exists( 'rentfetch_schedule_cache_warming' ) ) {
 			rentfetch_schedule_cache_warming();
 		}
 	}
 
-	// If caching is disabled (value is '1'), clear existing transients
-	if ( $disable_query_caching === '1' ) {
+	// If caching is disabled (value is '1'), clear existing transients.
+	if ( '1' === $disable_query_caching ) {
 		global $wpdb;
 		$transients = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_rentfetch_%'" );
 		foreach ( $transients as $transient ) {
@@ -551,31 +594,70 @@ function rentfetch_save_settings_general() {
 		}
 	}
 
-	// Checkbox field - Enable search indexes
+	// Checkbox field - Enable search indexes.
 	$enable_search_indexes = isset( $_POST['rentfetch_options_enable_search_indexes'] ) ? '1' : '0';
 	$previous_value        = get_option( 'rentfetch_options_enable_search_indexes', '1' );
 	update_option( 'rentfetch_options_enable_search_indexes', $enable_search_indexes );
 
-	// If the setting changed, create or remove indexes accordingly
+	// If the setting changed, create or remove indexes accordingly.
 	if ( $enable_search_indexes !== $previous_value ) {
 		if ( '1' === $enable_search_indexes ) {
-			// Create indexes
 			rentfetch_create_indexes();
 		} else {
-			// Remove indexes
 			rentfetch_remove_indexes();
 		}
 	}
+}
 
-	// Checkbox field - Enable analytics
+/**
+ * Save general analytics settings.
+ *
+ * @return void
+ */
+function rentfetch_save_settings_general_analytics() {
+	// Checkbox field - Enable analytics.
 	$enable_analytics = isset( $_POST['rentfetch_options_enable_analytics'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_enable_analytics', $enable_analytics );
 
-	// Checkbox field - Enable analytics debug overlay
+	// Checkbox field - Enable analytics debug overlay.
 	$enable_analytics_debug = isset( $_POST['rentfetch_options_enable_analytics_debug'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_enable_analytics_debug', $enable_analytics_debug );
+}
 
-	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
-	delete_transient( 'rentfetch_api_info' );
+/**
+ * Save the general settings.
+ *
+ * @return void
+ */
+function rentfetch_save_settings_general() {
+	$tab     = rentfetch_settings_get_tab();
+	$section = rentfetch_settings_get_section();
+
+	if ( $tab && 'general' !== $tab ) {
+		return;
+	}
+
+	if ( ! $section ) {
+		$section = 'data-sync';
+	}
+
+	if ( ! in_array( $section, array( 'data-sync', 'performance', 'analytics' ), true ) ) {
+		return;
+	}
+
+	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
+
+	// * Verify the nonce.
+	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
+		die( 'Security check failed' );
+	}
+
+	if ( 'performance' === $section ) {
+		rentfetch_save_settings_general_performance();
+	} elseif ( 'analytics' === $section ) {
+		rentfetch_save_settings_general_analytics();
+	} else {
+		rentfetch_save_settings_general_data_sync();
+	}
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_general' );

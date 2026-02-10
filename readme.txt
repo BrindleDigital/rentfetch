@@ -109,6 +109,7 @@ Start from your WordPress dashboard.
 * Security: sanitize cached meta values before storing transients.
 * Security: correct attribute escaping in search filters (baths/pets).
 * Verification: confirmed tracked search counts increment and beds/baths filters render correctly.
+* Splitting the General settings page into subpages, as our options there have nothing to do with each other and are getting lengthy.
 
 = 0.32.6 =
 
@@ -116,6 +117,7 @@ Start from your WordPress dashboard.
 * Added a console notice explaining Google's deprecated map markers warning and why we cannot switch to the new implementation without requiring per-site Map ID updates.
 * Reduced console noise by removing unnecessary debug output and cleaning up minor warnings.
 * SEO Press updates: added new variables (including pricing), improved existing ones, and updated floorplan bed labels to output "Studio" instead of "0". Hat tip to Ryan for spotting the issues.
+* Feature: Adding Google Analytics integration
 
 = 0.32.5 =
 

@@ -37,7 +37,7 @@ function rentfetch_options_page_html() {
 				echo '<nav class="nav-tab-wrapper">';
 
 					$active = ( 'general' === $tab ) ? 'nav-tab-active' : '';
-					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options' ) ), esc_html( $active ), esc_html( 'General' ) );
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=general&section=data-sync' ) ), esc_html( $active ), esc_html( 'General' ) );
 
 					$active = ( 'floorplans' === $tab ) ? 'nav-tab-active' : '';
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
