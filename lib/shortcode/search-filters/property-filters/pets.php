@@ -51,7 +51,7 @@ function rentfetch_search_filters_pets() {
 			printf( '<button type="button" class="toggle">%s</button>', esc_html( $label ) );
 			echo '<div class="input-wrap checkboxes">';
 		foreach ( $pets as $pet ) {
-			printf( '<label><input type="radio" data-pets="%s" data-pets-name="%s" name="pets" value="%s" /><span>%s</span></label>', esc_html( $pet ), esc_html( $pets_choices[ $pet ] ), esc_html( $pet ), esc_html( $pets_choices[ $pet ] ) );
+			printf( '<label><input type="radio" data-pets="%s" data-pets-name="%s" name="pets" value="%s" /><span>%s</span></label>', esc_attr( $pet ), esc_attr( $pets_choices[ $pet ] ), esc_attr( $pet ), esc_html( $pets_choices[ $pet ] ) );
 		}
 			echo '</div>'; // .checkboxes.
 		echo '</fieldset>';

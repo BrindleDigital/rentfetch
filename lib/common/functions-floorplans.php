@@ -488,13 +488,14 @@ function rentfetch_floorplan_default_availability_button_markup() {
 
 	$link   = get_post_meta( get_the_ID(), 'availability_url', true );
 	$target = rentfetch_get_link_target( $link );
+	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_applynow_click', rentfetch_get_floorplan_tracking_context() );
 
 	// bail if no link is set.
 	if ( false === $link || empty( $link ) ) {
 		return false;
 	}
 
-	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-availability-button">%s</a>', $link, $target, $button_label );
+	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-availability-button"%s>%s</a>', $link, $target, $tracking_attrs, $button_label );
 }
 add_filter( 'rentfetch_floorplan_default_availability_button_markup', 'rentfetch_floorplan_default_availability_button_markup' );
 
@@ -535,13 +536,14 @@ function rentfetch_floorplan_default_unavailability_button_markup() {
 
 	$link   = get_option( 'rentfetch_options_unavailability_button_link' );
 	$target = rentfetch_get_link_target( $link );
+	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_unavailability_click', rentfetch_get_floorplan_tracking_context() );
 
 	// bail if no link is set.
 	if ( false === $link || empty( $link ) ) {
 		return false;
 	}
 
-	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-unavailability-button">%s</a>', $link, $target, $button_label );
+	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-unavailability-button"%s>%s</a>', $link, $target, $tracking_attrs, $button_label );
 }
 add_filter( 'rentfetch_floorplan_default_unavailability_button_markup', 'rentfetch_floorplan_default_unavailability_button_markup' );
 
@@ -573,8 +575,9 @@ function rentfetch_floorplan_default_contact_button_markup() {
 	$button_label = get_option( 'rentfetch_options_contact_button_button_label', 'Contact' );
 	$link         = get_option( 'rentfetch_options_contact_button_link', false );
 	$target       = rentfetch_get_link_target( $link );
+	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_contact_click', rentfetch_get_floorplan_tracking_context() );
 
-	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-contact-button">%s</a>', $link, $target, $button_label );
+	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-contact-button"%s>%s</a>', $link, $target, $tracking_attrs, $button_label );
 }
 add_filter( 'rentfetch_filter_floorplan_default_contact_button_markup', 'rentfetch_floorplan_default_contact_button_markup' );
 
@@ -595,7 +598,8 @@ function rentfetch_floorplan_default_tour_button() {
 		return;
 	}
 
-	$button = sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-tour-button">%s</a>', $fallback_link, $target, $label );
+	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_scheduletour_click', rentfetch_get_floorplan_tracking_context() );
+	$button = sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-tour-button"%s>%s</a>', $fallback_link, $target, $tracking_attrs, $label );
 
 	echo wp_kses_post( apply_filters( 'rentfetch_floorplan_default_tour_button', $button ) );
 }

@@ -95,14 +95,28 @@ function rentfetch_ajax_get_popular_searches() {
 
 	$formatted = array();
 	foreach ( $popular as $search_key => $search_data ) {
-		$query_string = http_build_query( $search_data['params'] );
+		$sanitized_params = rentfetch_sanitize_search_params( $search_data['params'] );
+		$query_string     = http_build_query( $sanitized_params );
+		$display_params   = $sanitized_params;
+
+		if ( empty( $display_params ) || ( 1 === count( $display_params ) && isset( $display_params['availability'] ) && '1' === (string) $display_params['availability'] ) ) {
+			$display_query = '(all available)';
+		} else {
+			unset( $display_params['availability'] );
+			$display_query = urldecode( http_build_query( $display_params ) );
+			if ( '' === $display_query ) {
+				$display_query = '(all available)';
+			}
+		}
+
 		$percentage   = $total_searches > 0 ? round( ( $search_data['count'] / $total_searches ) * 100, 1 ) : 0;
 		$formatted[]  = array(
-			'type'       => $search_data['type'],
-			'query'      => empty( $query_string ) ? '(no filters)' : $query_string,
-			'count'      => $search_data['count'],
-			'percentage' => $percentage,
-			'last_used'  => human_time_diff( $search_data['last_used'] ) . ' ago',
+			'type'       => esc_html( sanitize_text_field( $search_data['type'] ) ),
+			'query'      => esc_html( $query_string ),
+			'display_query' => esc_html( $display_query ),
+			'count'      => esc_html( (string) absint( $search_data['count'] ) ),
+			'percentage' => esc_html( (string) $percentage ),
+			'last_used'  => esc_html( human_time_diff( absint( $search_data['last_used'] ) ) . ' ago' ),
 		);
 	}
 

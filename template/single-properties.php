@@ -12,7 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_header();
 
 // * Markup.
-echo '<div class="single-properties-wrap">';
+$tracking_context = rentfetch_get_property_tracking_context( null, get_queried_object_id() );
+$tracking_context_attrs = rentfetch_get_tracking_context_attributes( $tracking_context );
+printf( '<div class="single-properties-wrap"%s>', $tracking_context_attrs );
 
 	do_action( 'rentfetch_do_single_properties_parts' );
 

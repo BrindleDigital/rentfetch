@@ -20,6 +20,8 @@ function rentfetch_settings_set_defaults_general() {
 	add_option( 'rentfetch_options_enable_search_indexes', '1' );
 	add_option( 'rentfetch_options_enable_cache_warming', '0' );
 	add_option( 'rentfetch_options_enable_search_tracking', '1' );
+	add_option( 'rentfetch_options_enable_analytics', '1' );
+	add_option( 'rentfetch_options_enable_analytics_debug', '0' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_general' );
 
@@ -114,6 +116,28 @@ function rentfetch_settings_shared_general() {
 					outline: none;
 					box-shadow: none;
 				}
+				#rentfetch-popular-searches-container {
+					overflow-x: auto;
+					max-width: 100%;
+				}
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table {
+					width: 100%;
+					table-layout: fixed;
+					margin: 0;
+				}
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table th,
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table td {
+					padding: 8px 10px;
+					vertical-align: top;
+				}
+				#rentfetch-popular-searches-container table.rentfetch-popular-searches-table th {
+					white-space: nowrap;
+				}
+				#rentfetch-popular-searches-container .rentfetch-search-query {
+					white-space: normal;
+					overflow-wrap: anywhere;
+					word-break: break-word;
+				}
 			</style>
 
 			<script>
@@ -201,28 +225,19 @@ function rentfetch_settings_shared_general() {
 								nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_popular_searches' ) ); ?>'
 							}, function(response) {
 								if (response.success && response.data.searches.length > 0) {
-									var html = '<table class="widefat striped" style="border: none;"><thead><tr>';
-									html += '<th style="width: 100px;">Type</th>';
+									var html = '<table class="widefat striped rentfetch-popular-searches-table" style="border: none;"><thead><tr>';
+									html += '<th style="width: 90px;">Type</th>';
 									html += '<th>Search Query</th>';
-									html += '<th style="width: 120px; text-align: center;">Times Hit</th>';
-									html += '<th style="width: 140px;">Last Executed</th>';
+									html += '<th style="width: 110px; text-align: center;">Times Hit</th>';
+									html += '<th style="width: 130px;">Last Executed</th>';
 									html += '</tr></thead><tbody>';
 									
 									$.each(response.data.searches, function(index, search) {
-										var decodedQuery = decodeURIComponent(search.query.replace(/\+/g, ' '));
-										var displayQuery = decodedQuery;
-										
-										// If query is empty or only has availability, show as "all available"
-										if (decodedQuery === '' || decodedQuery === 'availability=1') {
-											displayQuery = '(all available)';
-										} else {
-											// Remove availability parameter from other queries for cleaner display
-											displayQuery = displayQuery.replace(/&?availability=[^&]*/g, '').replace(/^&/, '');
-										}
-										
+										var displayQuery = search.display_query || '';
+
 										html += '<tr>';
 										html += '<td><span style="display: inline-block; padding: 3px 8px; background: #f0f0f1; border-radius: 3px; font-size: 11px; text-transform: uppercase; font-weight: 600; color: #2c3338;">' + search.type + '</span></td>';
-										html += '<td style="font-family: Consolas, Monaco, monospace; font-size: 12px; color: #50575e;">' + displayQuery + '</td>';
+										html += '<td class="rentfetch-search-query" style="font-family: Consolas, Monaco, monospace; font-size: 12px; color: #50575e;">' + displayQuery + '</td>';
 										html += '<td style="text-align: center; font-weight: 600; color: #2271b1;">' + search.count + '</td>';
 										html += '<td style="color: #646970; font-size: 13px;">' + search.last_used + '</td>';
 										html += '</tr>';
@@ -300,6 +315,28 @@ function rentfetch_settings_shared_general() {
 				});
 			});
 			</script>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="section">
+			<label class="label-large">Analytics</label>
+			<p class="description">Enable or disable analytics event tracking for Rent Fetch templates. When enabled, events are sent to any existing Google Analytics or Tag Manager setup found on the site.</p>
+
+			<ul class="checkboxes">
+				<li>
+					<label for="rentfetch_options_enable_analytics">
+						<input type="checkbox" name="rentfetch_options_enable_analytics" id="rentfetch_options_enable_analytics" <?php checked( get_option( 'rentfetch_options_enable_analytics', '1' ), '1' ); ?>>
+						Enable analytics tracking (recommended)
+					</label>
+				</li>
+				<li>
+					<label for="rentfetch_options_enable_analytics_debug">
+						<input type="checkbox" name="rentfetch_options_enable_analytics_debug" id="rentfetch_options_enable_analytics_debug" <?php checked( get_option( 'rentfetch_options_enable_analytics_debug', '0' ), '1' ); ?>>
+						Enable analytics debug overlay on click
+					</label>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<?php
@@ -529,6 +566,14 @@ function rentfetch_save_settings_general() {
 			rentfetch_remove_indexes();
 		}
 	}
+
+	// Checkbox field - Enable analytics
+	$enable_analytics = isset( $_POST['rentfetch_options_enable_analytics'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_enable_analytics', $enable_analytics );
+
+	// Checkbox field - Enable analytics debug overlay
+	$enable_analytics_debug = isset( $_POST['rentfetch_options_enable_analytics_debug'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_enable_analytics_debug', $enable_analytics_debug );
 
 	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
 	delete_transient( 'rentfetch_api_info' );

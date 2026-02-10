@@ -50,8 +50,8 @@ function rentfetch_search_filters_baths() {
 					%s />
 				<span>%s</span>
 			</label>',
-			wp_kses_post( $bath ),
-			wp_kses_post( $bath ),
+			esc_attr( $bath ),
+			esc_attr( $bath ),
 			$checked ? 'checked' : '', // Apply checked attribute.
 			wp_kses_post( $label )
 		);

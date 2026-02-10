@@ -10,6 +10,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Sanitize search parameters for analytics storage/output.
+ *
+ * @param array $params Search parameters.
+ * @return array Sanitized parameters.
+ */
+function rentfetch_sanitize_search_params( $params ) {
+	$sanitized = array();
+
+	foreach ( $params as $key => $value ) {
+		if ( is_array( $value ) ) {
+			$sanitized[ $key ] = rentfetch_sanitize_search_params( $value );
+			continue;
+		}
+
+		if ( is_object( $value ) ) {
+			continue;
+		}
+
+		$sanitized[ $key ] = sanitize_text_field( wp_unslash( (string) $value ) );
+	}
+
+	return $sanitized;
+}
+
+/**
  * Track search queries for analytics
  *
  * @param string $search_type Type of search (properties or floorplans).
@@ -30,6 +55,9 @@ function rentfetch_track_search( $search_type, $params, $skip_tracking = false )
 		},
 		ARRAY_FILTER_USE_BOTH
 	);
+
+	$clean_params = rentfetch_sanitize_search_params( $clean_params );
+	$clean_params = array_filter( $clean_params );
 
 	// Sort params for consistent cache keys.
 	ksort( $clean_params );

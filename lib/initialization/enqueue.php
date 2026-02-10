@@ -86,6 +86,9 @@ function rentfetch_enqueue_scripts_stylesheets() {
 
 	// Property fees tooltip.
 	wp_register_script( 'rentfetch-property-fees-tooltip', RENTFETCH_PATH . 'js/rentfetch-property-fees-tooltip.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+
+	// Analytics events.
+	wp_register_script( 'rentfetch-analytics-events', RENTFETCH_PATH . 'js/rentfetch-analytics-events.js', array(), RENTFETCH_VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
 
