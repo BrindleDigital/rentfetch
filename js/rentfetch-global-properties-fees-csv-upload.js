@@ -45,72 +45,73 @@
 })();
 
 jQuery(document).ready(function ($) {
+	var fileInput = document.getElementById(
+		'rentfetch_options_global_property_fees_csv'
+	);
+	if (!fileInput) {
+		return;
+	}
+
 	// Handle CSV file upload
-	document
-		.getElementById('rentfetch_options_global_property_fees_csv')
-		.addEventListener(
-			'change',
-			function (e) {
-				var file = e.target.files[0];
-				if (!file) {
-					return;
-				}
+	fileInput.addEventListener(
+		'change',
+		function (e) {
+			var file = e.target.files[0];
+			if (!file) {
+				return;
+			}
 
-				// Check if it's a CSV file
-				if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-					alert('Please select a valid CSV file.');
-					return;
-				}
+			// Check if it's a CSV file
+			if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+				alert('Please select a valid CSV file.');
+				return;
+			}
 
-				var formData = new FormData();
-				formData.append('action', 'upload_global_property_fees_csv');
-				formData.append(
-					'_wpnonce',
-					$('#rentfetch_main_options_nonce_field').val()
-				);
-				formData.append('file', file);
+			var formData = new FormData();
+			formData.append('action', 'upload_global_property_fees_csv');
+			formData.append(
+				'_wpnonce',
+				$('#rentfetch_main_options_nonce_field').val()
+			);
+			formData.append('file', file);
 
-				// Show loading state
-				$(this).prop('disabled', true);
-				$(this).after(
-					'<span class="csv-upload-loading"> Uploading CSV...</span>'
-				);
+			// Show loading state
+			$(this).prop('disabled', true);
+			$(this).after(
+				'<span class="csv-upload-loading"> Uploading CSV...</span>'
+			);
 
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						if (response.success) {
-							// Set the URL in the input field
-							$(
-								'#rentfetch_options_global_property_fees_csv_url'
-							).val(response.data.url);
-						} else {
-							alert(
-								'Error uploading CSV: ' + response.data.message
-							);
-						}
-					},
-					error: function (xhr, status, error) {
-						alert('Error uploading CSV file.');
-					},
-					complete: function () {
-						// Remove loading state
-						$('#rentfetch_options_global_property_fees_csv').prop(
-							'disabled',
-							false
+			$.ajax({
+				url: ajaxurl,
+				type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					if (response.success) {
+						// Set the URL in the input field
+						$('#rentfetch_options_global_property_fees_csv_url').val(
+							response.data.url
 						);
-						$('.csv-upload-loading').remove();
-						// Clear the file input
-						$('#rentfetch_options_global_property_fees_csv').val(
-							''
-						);
-					},
-				});
-			},
-			{ passive: true }
-		);
+					} else {
+						alert('Error uploading CSV: ' + response.data.message);
+					}
+				},
+				error: function (xhr, status, error) {
+					alert('Error uploading CSV file.');
+				},
+				complete: function () {
+					// Remove loading state
+					$('#rentfetch_options_global_property_fees_csv').prop(
+						'disabled',
+						false
+					);
+					$('.csv-upload-loading').remove();
+					// Clear the file input
+					$('#rentfetch_options_global_property_fees_csv').val('');
+				},
+			});
+		},
+		{ passive: true }
+	);
 });

@@ -1734,14 +1734,15 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 			}
 		}
 
-		// Priority 2: Use property_fees_data (this is the json) if it's a non-empty array
-		elseif ( ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
+		// Priority 2: Use property_fees_data (this is the json) if it's a non-empty array.
+		// This is also a fallback if the CSV URL exists but fails to fetch/parse.
+		if ( empty( $property_fees_markup ) && ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
 			$property_fees_json   = wp_json_encode( $property_fees_data );
 			$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
 		}
 
-		// Priority 3: Fallback to property_fees_embed
-		elseif ( ! empty( $property_fees_embed ) ) {
+		// Priority 3: Fallback to property_fees_embed.
+		if ( empty( $property_fees_markup ) && ! empty( $property_fees_embed ) ) {
 			$property_fees_markup = $property_fees_embed;
 		}
 	}
@@ -1765,18 +1766,19 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 			}
 		}
 
-		// Priority 2: Use global_fees_data if it's a non-empty array
-		elseif ( ! empty( $global_fees_data ) && is_array( $global_fees_data ) ) {
+		// Priority 2: Use global_fees_data if it's a non-empty array.
+		// This is also a fallback if the CSV URL exists but fails to fetch/parse.
+		if ( empty( $property_fees_markup ) && ! empty( $global_fees_data ) && is_array( $global_fees_data ) ) {
 			$global_fees_json     = wp_json_encode( $global_fees_data );
 			$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json );
 		}
 
 		// Priority 3: Fallback to global_fees_embed
-		elseif ( ! empty( $global_fees_embed ) ) {
+		if ( empty( $property_fees_markup ) && ! empty( $global_fees_embed ) ) {
 			$property_fees_markup = $global_fees_embed;
 		}
 		// If none, return empty
-		else {
+		if ( empty( $property_fees_markup ) ) {
 			return '';
 		}
 	}
@@ -1955,6 +1957,282 @@ function rentfetch_property_fees_embed_and_wrap() {
 add_action( 'rentfetch_after_floorplans_simple_grid', 'rentfetch_property_fees_embed_and_wrap' );
 add_action( 'rentfetch_after_floorplans_search', 'rentfetch_property_fees_embed_and_wrap' );
 
+/**
+ * Extract the first numeric value from a fee price string.
+ *
+ * Examples:
+ * "$85" => 85
+ * "$42-$65" => 65
+ * "$10-20" => 20
+ * "2.5% of total payment" => 2.5
+ *
+ * @param string $price The raw price string.
+ * @return float|null A numeric value or null if none is found.
+ */
+function rentfetch_extract_first_numeric_fee_value( $price ) {
+	$price_string = trim( (string) $price );
+	if ( '' === $price_string ) {
+		return null;
+	}
+
+	// For explicit ranges like "$10-20" or "$10-$20", use the higher bound.
+	if ( preg_match( '/\$?\s*(-?\d[\d,]*(?:\.\d+)?)\s*-\s*\$?\s*(-?\d[\d,]*(?:\.\d+)?)/', $price_string, $range_matches ) ) {
+		$range_start = str_replace( ',', '', $range_matches[1] );
+		$range_end   = str_replace( ',', '', $range_matches[2] );
+
+		if ( is_numeric( $range_start ) && is_numeric( $range_end ) ) {
+			return (float) max( (float) $range_start, (float) $range_end );
+		}
+	}
+
+	if ( ! preg_match( '/-?\d[\d,]*(?:\.\d+)?/', $price_string, $matches ) ) {
+		return null;
+	}
+
+	$normalized = str_replace( ',', '', $matches[0] );
+	if ( ! is_numeric( $normalized ) ) {
+		return null;
+	}
+
+	return (float) $normalized;
+}
+
+/**
+ * Get rows that contribute to monthly required total fees.
+ *
+ * @param array $fees_data Parsed fee rows.
+ * @return array[] Contributing rows with 'description' and 'applied_price'.
+ */
+function rentfetch_get_monthly_required_fee_contributors( $fees_data ) {
+	$contributors = array();
+
+	if ( ! is_array( $fees_data ) || empty( $fees_data ) ) {
+		return $contributors;
+	}
+
+	foreach ( $fees_data as $fee ) {
+		if ( ! is_array( $fee ) ) {
+			continue;
+		}
+
+		$notes     = strtolower( trim( (string) ( $fee['notes'] ?? '' ) ) );
+		$frequency = strtolower( (string) ( $fee['frequency'] ?? '' ) );
+
+		if ( 'required' !== $notes ) {
+			continue;
+		}
+
+		if ( false === strpos( $frequency, 'month' ) ) {
+			continue;
+		}
+
+		$numeric_price = rentfetch_extract_first_numeric_fee_value( $fee['price'] ?? '' );
+		if ( null === $numeric_price || $numeric_price <= 0 ) {
+			continue;
+		}
+
+		$contributors[] = array(
+			'description'  => sanitize_text_field( (string) ( $fee['description'] ?? '' ) ),
+			'applied_price' => (float) $numeric_price,
+		);
+	}
+
+	return $contributors;
+}
+
+/**
+ * Calculate monthly required total fees from parsed CSV fee rows.
+ *
+ * Rules:
+ * - notes must exactly match "required" (case-insensitive)
+ * - frequency must fuzzy-match "month" (case-insensitive)
+ * - price contributes a parsed numeric value from the price column
+ *   (for explicit numeric ranges, the higher bound is used)
+ *
+ * @param array $fees_data Parsed fee rows.
+ * @return float Total monthly required fees.
+ */
+function rentfetch_calculate_monthly_required_total_fees( $fees_data ) {
+	$contributors = rentfetch_get_monthly_required_fee_contributors( $fees_data );
+	$total = 0.0;
+
+	foreach ( $contributors as $contributor ) {
+		$total += (float) ( $contributor['applied_price'] ?? 0 );
+	}
+
+	return round( $total, 2 );
+}
+
+/**
+ * Update stored monthly required total fees for a property from its fees CSV URL.
+ *
+ * @param int $property_post_id The property post ID.
+ * @return bool True when a positive total is saved, false otherwise.
+ */
+function rentfetch_update_property_monthly_required_total_fees_from_csv( $property_post_id ) {
+	$property_post_id = (int) $property_post_id;
+	if ( $property_post_id <= 0 ) {
+		return false;
+	}
+
+	$csv_url = trim( (string) get_post_meta( $property_post_id, 'property_fees_csv_url', true ) );
+
+	// Requirement: if there's no CSV, don't save this meta.
+	if ( '' === $csv_url ) {
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked' );
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	$response = wp_remote_get( $csv_url );
+
+	// Record that we attempted a CSV check so we can enforce the ~12 hour cadence.
+	update_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', time() );
+
+	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	$csv_content = wp_remote_retrieve_body( $response );
+	$fees_data   = rentfetch_process_csv_content_to_fees_array( $csv_content );
+
+	if ( empty( $fees_data ) ) {
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	$contributors = rentfetch_get_monthly_required_fee_contributors( $fees_data );
+	$total = rentfetch_calculate_monthly_required_total_fees( $fees_data );
+
+	// Requirement: don't save if total is zero (or missing/invalid).
+	if ( $total <= 0 ) {
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	update_post_meta( $property_post_id, 'property_monthly_required_total_fees', number_format( $total, 2, '.', '' ) );
+	update_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows', $contributors );
+	return true;
+}
+
+/**
+ * Update stored monthly required total fees from the global fees CSV URL.
+ *
+ * @return bool True when a positive total is saved, false otherwise.
+ */
+function rentfetch_update_global_monthly_required_total_fees_from_csv() {
+	$csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+
+	// If there's no CSV, don't save this option.
+	if ( '' === $csv_url ) {
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	$response = wp_remote_get( $csv_url );
+
+	// Record that we attempted a CSV check.
+	update_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', time() );
+
+	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	$csv_content = wp_remote_retrieve_body( $response );
+	$fees_data   = rentfetch_process_csv_content_to_fees_array( $csv_content );
+
+	if ( empty( $fees_data ) ) {
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	$contributors = rentfetch_get_monthly_required_fee_contributors( $fees_data );
+	$total        = rentfetch_calculate_monthly_required_total_fees( $fees_data );
+
+	// Don't save if total is zero (or missing/invalid).
+	if ( $total <= 0 ) {
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+		return false;
+	}
+
+	update_option( 'rentfetch_options_global_monthly_required_total_fees', number_format( $total, 2, '.', '' ) );
+	update_option( 'rentfetch_options_global_monthly_required_total_fees_rows', $contributors );
+	return true;
+}
+
+/**
+ * Resolve the current singular context to a property post ID for fee refreshing.
+ *
+ * @return int|null Property post ID if available, null otherwise.
+ */
+function rentfetch_get_property_post_id_for_monthly_fees_refresh() {
+	if ( ! is_singular() ) {
+		return null;
+	}
+
+	if ( is_singular( 'properties' ) ) {
+		return get_queried_object_id();
+	}
+
+	if ( is_singular( 'floorplans' ) ) {
+		$floorplan_post_id = get_queried_object_id();
+		$property_id       = get_post_meta( $floorplan_post_id, 'property_id', true );
+		if ( ! $property_id ) {
+			return null;
+		}
+
+		return rentfetch_get_post_id_from_property_id( $property_id );
+	}
+
+	return null;
+}
+
+/**
+ * Refresh monthly required total fees for the current property context.
+ *
+ * Runs at most once every 12 hours per property, on single property/floorplan page loads.
+ *
+ * @return void
+ */
+function rentfetch_maybe_refresh_property_monthly_required_total_fees() {
+	if ( is_admin() || wp_doing_ajax() ) {
+		return;
+	}
+
+	$property_post_id = rentfetch_get_property_post_id_for_monthly_fees_refresh();
+	if ( ! $property_post_id ) {
+		return;
+	}
+
+	$csv_url = trim( (string) get_post_meta( $property_post_id, 'property_fees_csv_url', true ) );
+	if ( '' === $csv_url ) {
+		// Requirement: if there's no CSV, don't save this meta.
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked' );
+		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
+		return;
+	}
+
+	$last_checked = (int) get_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', true );
+	if ( $last_checked > 0 && ( time() - $last_checked ) < ( 12 * HOUR_IN_SECONDS ) ) {
+		return;
+	}
+
+	rentfetch_update_property_monthly_required_total_fees_from_csv( $property_post_id );
+}
+add_action( 'wp_footer', 'rentfetch_maybe_refresh_property_monthly_required_total_fees', 999 );
+
 // * OFFICE HOURS
 
 /**
@@ -2022,15 +2300,28 @@ function rentfetch_get_property_office_hours( $property_id = null, $include_head
 
 function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 	$fees_data = array();
-	$lines = explode( "\n", $csv_content );
-	if ( empty( $lines ) ) {
+	if ( ! is_string( $csv_content ) || '' === trim( $csv_content ) ) {
 		return $fees_data;
 	}
-	
-	$header = str_getcsv( array_shift( $lines ), ',', '"', '\\' );
+
+	$handle = fopen( 'php://temp', 'r+' );
+	if ( false === $handle ) {
+		return $fees_data;
+	}
+
+	fwrite( $handle, $csv_content );
+	rewind( $handle );
+
+	$header = fgetcsv( $handle, 100000, ',', '"', '\\' );
+	if ( false === $header || ! is_array( $header ) ) {
+		fclose( $handle );
+		return $fees_data;
+	}
+
 	// Normalize header: trim and lowercase
 	$header = array_map( function( $col ) {
-		return strtolower( trim( $col ) );
+		$clean_col = str_replace( "\xEF\xBB\xBF", '', (string) $col ); // Strip UTF-8 BOM if present.
+		return strtolower( trim( $clean_col ) );
 	}, $header );
 	
 	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
@@ -2044,14 +2335,14 @@ function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 	
 	// Must have at least 'description' column
 	if ( $column_indices['description'] === -1 ) {
+		fclose( $handle );
 		return $fees_data;
 	}
 	
-	foreach ( $lines as $line ) {
-		if ( empty( trim( $line ) ) ) {
+	while ( ( $data = fgetcsv( $handle, 100000, ',', '"', '\\' ) ) !== false ) {
+		if ( ! is_array( $data ) ) {
 			continue;
 		}
-		$data = str_getcsv( $line, ',', '"', '\\' );
 		
 		// Get value from column index, or empty string if column doesn't exist
 		$get_value = function( $col ) use ( $column_indices, $data ) {
@@ -2084,6 +2375,8 @@ function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 			'longnotes'   => $longnotes_value,
 		);
 	}
+
+	fclose( $handle );
 	return $fees_data;
 }
 

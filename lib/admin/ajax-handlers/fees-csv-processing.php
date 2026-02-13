@@ -59,10 +59,24 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 		);
 	}
 
-	// Parse the CSV header
-	$lines = preg_split( '/\r\n|\r|\n/', $body );
+	$handle = fopen( 'php://temp', 'r+' );
+	if ( false === $handle ) {
+		return array(
+			'success' => false,
+			'error'   => array(
+				'message' => 'Could not read CSV content',
+				'type'    => 'parse_error',
+			),
+		);
+	}
 
-	if ( empty( $lines ) || empty( $lines[0] ) ) {
+	fwrite( $handle, $body );
+	rewind( $handle );
+
+	// Parse the header row.
+	$header_row = fgetcsv( $handle, 100000, ',', '"', '\\' );
+	if ( false === $header_row || ! is_array( $header_row ) ) {
+		fclose( $handle );
 		return array(
 			'success' => false,
 			'error'   => array(
@@ -72,10 +86,14 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 		);
 	}
 
-	// Parse the header row
-	$header_row       = str_getcsv( $lines[0] );
 	$header_row       = array_map( 'trim', $header_row );
-	$header_row_lower = array_map( 'strtolower', $header_row );
+	$header_row_lower = array_map(
+		function( $col ) {
+			$clean_col = str_replace( "\xEF\xBB\xBF", '', (string) $col ); // Strip UTF-8 BOM if present.
+			return strtolower( trim( $clean_col ) );
+		},
+		$header_row
+	);
 
 	// Count empty columns
 	$empty_column_count = 0;
@@ -98,13 +116,23 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 	// Find extra columns (not in expected list, and not empty)
 	$extra_columns = array_diff( $non_empty_columns, $expected_columns );
 
-	// Count data rows (excluding header)
+	// Count data rows (excluding header), supporting multiline quoted cells.
 	$data_row_count = 0;
-	for ( $i = 1; $i < count( $lines ); $i++ ) {
-		if ( ! empty( trim( $lines[ $i ] ) ) ) {
+	while ( ( $row = fgetcsv( $handle, 100000, ',', '"', '\\' ) ) !== false ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+		$non_empty_cells = array_filter(
+			$row,
+			function( $cell ) {
+				return '' !== trim( (string) $cell );
+			}
+		);
+		if ( ! empty( $non_empty_cells ) ) {
 			$data_row_count++;
 		}
 	}
+	fclose( $handle );
 
 	// Build validation result
 	$validation_result = array(
@@ -382,7 +410,8 @@ function rentfetch_process_uploaded_csv_file( $csv_file ) {
 
 		// Normalize header
 		$header = array_map( function( $col ) {
-			return strtolower( trim( $col ) );
+			$clean_col = str_replace( "\xEF\xBB\xBF", '', (string) $col ); // Strip UTF-8 BOM if present.
+			return strtolower( trim( $clean_col ) );
 		}, $header );
 
 		$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
@@ -533,3 +562,93 @@ function upload_property_fees_csv() {
 	}
 }
 add_action( 'wp_ajax_upload_property_fees_csv', 'upload_property_fees_csv' );
+
+/**
+ * AJAX handler to force refresh global monthly required fees from CSV.
+ *
+ * @return void
+ */
+function rentfetch_refresh_global_monthly_required_fees_now() {
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_refresh_global_monthly_required_fees_now' ) ) {
+		wp_send_json_error( array( 'message' => 'Security check failed' ) );
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( array( 'message' => 'Permission denied.' ) );
+	}
+
+	if ( ! function_exists( 'rentfetch_update_global_monthly_required_total_fees_from_csv' ) ) {
+		wp_send_json_error( array( 'message' => 'Refresh function is unavailable.' ) );
+	}
+
+	$csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	$updated = rentfetch_update_global_monthly_required_total_fees_from_csv();
+	$total   = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
+
+	if ( '' === $csv_url ) {
+		$message = 'No global property fees CSV URL is set, so the stored value was cleared.';
+	} elseif ( $updated ) {
+		$message = 'Global monthly required fees refreshed from CSV.';
+	} else {
+		$message = 'CSV parsed, but no positive monthly required total was found. Stored value was cleared.';
+	}
+
+	wp_send_json_success(
+		array(
+			'updated' => (bool) $updated,
+			'total'   => $total,
+			'message' => $message,
+		)
+	);
+}
+add_action( 'wp_ajax_rentfetch_refresh_global_monthly_required_fees_now', 'rentfetch_refresh_global_monthly_required_fees_now' );
+
+/**
+ * AJAX handler to force refresh monthly required fees from CSV for a property.
+ *
+ * @return void
+ */
+function rentfetch_refresh_monthly_required_fees_now() {
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_refresh_monthly_required_fees_now' ) ) {
+		wp_send_json_error( array( 'message' => 'Security check failed' ) );
+	}
+
+	$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
+	if ( $post_id <= 0 ) {
+		wp_send_json_error( array( 'message' => 'Invalid property ID.' ) );
+	}
+
+	if ( 'properties' !== get_post_type( $post_id ) ) {
+		wp_send_json_error( array( 'message' => 'Invalid post type for refresh.' ) );
+	}
+
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		wp_send_json_error( array( 'message' => 'Permission denied.' ) );
+	}
+
+	if ( ! function_exists( 'rentfetch_update_property_monthly_required_total_fees_from_csv' ) ) {
+		wp_send_json_error( array( 'message' => 'Refresh function is unavailable.' ) );
+	}
+
+	$csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
+	$updated = rentfetch_update_property_monthly_required_total_fees_from_csv( $post_id );
+
+	$total = get_post_meta( $post_id, 'property_monthly_required_total_fees', true );
+
+	if ( '' === $csv_url ) {
+		$message = 'No property fees CSV URL is set, so the stored value was cleared.';
+	} elseif ( $updated ) {
+		$message = 'Monthly required fees refreshed from CSV.';
+	} else {
+		$message = 'CSV parsed, but no positive monthly required total was found. Stored value was cleared.';
+	}
+
+	wp_send_json_success(
+		array(
+			'updated' => (bool) $updated,
+			'total'   => $total,
+			'message' => $message,
+		)
+	);
+}
+add_action( 'wp_ajax_rentfetch_refresh_monthly_required_fees_now', 'rentfetch_refresh_monthly_required_fees_now' );

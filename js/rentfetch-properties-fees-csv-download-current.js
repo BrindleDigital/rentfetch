@@ -1,12 +1,22 @@
 jQuery(document).ready(function ($) {
+	var downloadButton = document.getElementById('download-current-fees');
+	if (!downloadButton) {
+		return;
+	}
+
 	// Handle download current fees button
-	document.getElementById('download-current-fees').addEventListener(
+	downloadButton.addEventListener(
 		'click',
 		function (e) {
 			e.preventDefault();
 
 			// Get JSON from textarea (or CodeMirror if available)
-			var jsonText = document.querySelector('.rentfetch-fees-json').value;
+			var jsonTextarea = document.querySelector('.rentfetch-fees-json');
+			if (!jsonTextarea) {
+				alert('Could not find fees JSON data to export.');
+				return;
+			}
+			var jsonText = jsonTextarea.value;
 
 			try {
 				var feesData = JSON.parse(jsonText);

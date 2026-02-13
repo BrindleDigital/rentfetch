@@ -53,6 +53,9 @@ function rentfetch_settings_set_defaults_properties() {
 	add_option( 'rentfetch_options_global_property_fees_data', array() );
 	add_option( 'rentfetch_options_global_property_fees_json_url', '' );
 	add_option( 'rentfetch_options_global_property_fees_embed', '' );
+	add_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
+	add_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', 0 );
+	add_option( 'rentfetch_options_global_monthly_required_total_fees_rows', array() );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties' );
 
@@ -584,6 +587,13 @@ add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_maps' );
  * Adds the global property fees settings subsection to the Rent Fetch settings page
  */
 function rentfetch_settings_properties_global_property_fees() {
+	$global_monthly_required_total_fees = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
+	$global_monthly_last_checked        = (int) get_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', 0 );
+	$global_monthly_fee_rows            = get_option( 'rentfetch_options_global_monthly_required_total_fees_rows', array() );
+	$global_refresh_nonce               = wp_create_nonce( 'rentfetch_refresh_global_monthly_required_fees_now' );
+	if ( ! is_array( $global_monthly_fee_rows ) ) {
+		$global_monthly_fee_rows = array();
+	}
 	?>
 	<div class="header">
 		<h2 class="title">Property Fees</h2>
@@ -604,6 +614,56 @@ function rentfetch_settings_properties_global_property_fees() {
 					or <a href="#" id="download-global-current-fees">download current data</a>
 				<?php endif; ?>
 			</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_global_monthly_required_total_fees">Global Monthly Required Total Fees</label>
+			<p class="description">Auto-calculated from the global fees CSV by summing rows where notes are exactly "required" (case-insensitive) and frequency includes "month".</p>
+			<input
+				type="text"
+				id="rentfetch_options_global_monthly_required_total_fees"
+				name="rentfetch_options_global_monthly_required_total_fees"
+				value="<?php echo esc_attr( $global_monthly_required_total_fees ); ?>"
+				placeholder="e.g. 129.50"
+				style="width: 100%; max-width: 240px;"
+			/>
+			<p class="description">You can edit this manually if needed. Leave blank to clear the stored value.</p>
+			<p>
+				<button
+					type="button"
+					class="button button-secondary"
+					id="refresh-global-monthly-required-fees-now"
+					data-nonce="<?php echo esc_attr( $global_refresh_nonce ); ?>"
+				>Refresh from CSV now</button>
+			</p>
+			<div id="global-monthly-required-fees-refresh-status" style="min-height: 18px; margin-top: 2px;"></div>
+			<?php if ( $global_monthly_last_checked > 0 ) : ?>
+				<p class="description">Last CSV check: <?php echo esc_html( wp_date( 'M j, Y g:ia', $global_monthly_last_checked ) ); ?></p>
+				<?php if ( ! empty( $global_monthly_fee_rows ) ) : ?>
+					<table style="margin-top: 6px; border-collapse: collapse; font-size: 12px; width: 100%; max-width: 420px;">
+						<thead>
+							<tr>
+								<th style="text-align: left; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Description</th>
+								<th style="text-align: right; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Applied Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ( $global_monthly_fee_rows as $row ) : ?>
+								<?php
+								$row_description = sanitize_text_field( (string) ( $row['description'] ?? '' ) );
+								$row_price       = isset( $row['applied_price'] ) ? (float) $row['applied_price'] : 0;
+								?>
+								<tr>
+									<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1;"><?php echo esc_html( $row_description ); ?></td>
+									<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1; text-align: right;"><?php echo esc_html( '$' . number_format( $row_price, 2 ) ); ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				<?php endif; ?>
+			<?php endif; ?>
 		</div>
 	</div>
 	
@@ -642,6 +702,63 @@ function rentfetch_settings_properties_global_property_fees() {
 			});
 			
 			mediaFrame.open();
+		});
+
+		var $refreshButton = $('#refresh-global-monthly-required-fees-now');
+		var $refreshStatus = $('#global-monthly-required-fees-refresh-status');
+		var $totalField = $('#rentfetch_options_global_monthly_required_total_fees');
+
+		function setRefreshStatus(message, isError) {
+			$refreshStatus
+				.text(message)
+				.css('color', isError ? '#b32d2e' : '#1d7f2f');
+		}
+
+		$refreshButton.on('click', function(e) {
+			e.preventDefault();
+
+			if (!$refreshButton.length) {
+				return;
+			}
+
+			$refreshButton.prop('disabled', true);
+			setRefreshStatus('Refreshing from CSV...', false);
+
+			$.ajax({
+				url: ajaxurl,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					action: 'rentfetch_refresh_global_monthly_required_fees_now',
+					nonce: $refreshButton.data('nonce')
+				}
+			}).done(function(response) {
+				if (!response || !response.success) {
+					var errorMessage =
+						response && response.data && response.data.message
+							? response.data.message
+							: 'Refresh failed.';
+					setRefreshStatus(errorMessage, true);
+					return;
+				}
+
+				if (response.data && typeof response.data.total !== 'undefined') {
+					$totalField.val(response.data.total || '');
+				}
+
+				var successMessage =
+					response.data && response.data.message
+						? response.data.message
+						: 'Refresh complete.';
+				setRefreshStatus(successMessage + ' Reloading...', false);
+				setTimeout(function() {
+					window.location.reload();
+				}, 500);
+			}).fail(function() {
+				setRefreshStatus('Request failed while refreshing fees.', true);
+			}).always(function() {
+				$refreshButton.prop('disabled', false);
+			});
 		});
 	});
 	</script>
@@ -690,9 +807,35 @@ function rentfetch_save_settings_global_property_fees() {
 	}
 
 	// CSV URL
+	$global_csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
 	if ( isset( $_POST['rentfetch_options_global_property_fees_csv_url'] ) ) {
-		$url = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_csv_url'] ) );
-		update_option( 'rentfetch_options_global_property_fees_csv_url', $url );
+		$global_csv_url = trim( sanitize_text_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_csv_url'] ) ) );
+		update_option( 'rentfetch_options_global_property_fees_csv_url', $global_csv_url );
+		if ( '' === $global_csv_url ) {
+			delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+			delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
+			delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+		}
+	}
+
+	// Global monthly required total fees (editable override).
+	if ( isset( $_POST['rentfetch_options_global_monthly_required_total_fees'] ) ) {
+		$raw_total = trim( (string) wp_unslash( $_POST['rentfetch_options_global_monthly_required_total_fees'] ) );
+
+		if ( '' === $global_csv_url || '' === $raw_total ) {
+			delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+			if ( '' === $global_csv_url ) {
+				delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
+				delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+			}
+		} else {
+			$numeric_total = rentfetch_extract_first_numeric_fee_value( $raw_total );
+			if ( null === $numeric_total || $numeric_total <= 0 ) {
+				delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+			} else {
+				update_option( 'rentfetch_options_global_monthly_required_total_fees', number_format( $numeric_total, 2, '.', '' ) );
+			}
+		}
 	}
 
 	// Embed code

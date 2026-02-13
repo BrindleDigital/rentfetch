@@ -3,6 +3,7 @@ jQuery(document).ready(function ($) {
 	if (
 		typeof wp !== 'undefined' &&
 		wp.codeEditor &&
+		typeof rentfetchCodeEditorSettings !== 'undefined' &&
 		rentfetchCodeEditorSettings
 	) {
 		var textarea = document.querySelector('.rentfetch-fees-json');
@@ -11,8 +12,13 @@ jQuery(document).ready(function ($) {
 		}
 	}
 
+	var copyButton = document.getElementById('copy-fees-json');
+	if (!copyButton) {
+		return;
+	}
+
 	// Handle copy to clipboard button
-	document.getElementById('copy-fees-json').addEventListener(
+	copyButton.addEventListener(
 		'click',
 		function (e) {
 			e.preventDefault();

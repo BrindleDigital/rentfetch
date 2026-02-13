@@ -1,14 +1,26 @@
 jQuery(document).ready(function ($) {
+	var downloadButton = document.getElementById(
+		'download-global-current-fees'
+	);
+	if (!downloadButton) {
+		return;
+	}
+
 	// Handle download current global fees button
-	document.getElementById('download-global-current-fees').addEventListener(
+	downloadButton.addEventListener(
 		'click',
 		function (e) {
 			e.preventDefault();
 
 			// Get JSON from textarea (or CodeMirror if available)
-			var jsonText = document.querySelector(
+			var jsonTextarea = document.querySelector(
 				'textarea[name="rentfetch_options_global_property_fees_data"]'
-			).value;
+			);
+			if (!jsonTextarea) {
+				alert('Could not find global fees JSON data to export.');
+				return;
+			}
+			var jsonText = jsonTextarea.value;
 
 			try {
 				var feesData = JSON.parse(jsonText);

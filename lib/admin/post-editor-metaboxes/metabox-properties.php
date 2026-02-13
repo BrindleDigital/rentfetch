@@ -1239,6 +1239,133 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		</div>
 		
 		<?php
+		// * Monthly required total fees.
+		$monthly_required_total_fees = get_post_meta( $post->ID, 'property_monthly_required_total_fees', true );
+		$monthly_fees_last_checked   = (int) get_post_meta( $post->ID, 'property_monthly_required_total_fees_last_checked', true );
+		$monthly_fee_rows            = get_post_meta( $post->ID, 'property_monthly_required_total_fees_rows', true );
+		$monthly_fees_refresh_nonce  = wp_create_nonce( 'rentfetch_refresh_monthly_required_fees_now' );
+		if ( ! is_array( $monthly_fee_rows ) ) {
+			$monthly_fee_rows = array();
+		}
+		?>
+		<div class="field">
+			<div class="column">
+				<label for="property_monthly_required_total_fees">Monthly Required Total Fees</label>
+				<p class="description">Auto-calculated from the property fees CSV about every 12 hours by summing rows where notes are exactly "required" (case-insensitive) and frequency includes "month".</p>
+			</div>
+			<div class="column">
+				<input
+					type="text"
+					id="property_monthly_required_total_fees"
+					name="property_monthly_required_total_fees"
+					value="<?php echo esc_attr( $monthly_required_total_fees ); ?>"
+					placeholder="e.g. 129.50"
+					style="width: 100%; max-width: 240px;"
+				/>
+				<p class="description">You can edit this manually if needed. Leave blank to clear the stored value. This value is refreshed from the CSV approximately every 12 hours and may be overwritten or cleared when parsing runs.</p>
+				<p>
+					<button
+						type="button"
+						class="button button-secondary"
+						id="refresh-monthly-required-fees-now"
+						data-post-id="<?php echo esc_attr( $post->ID ); ?>"
+						data-nonce="<?php echo esc_attr( $monthly_fees_refresh_nonce ); ?>"
+					>Refresh from CSV now</button>
+				</p>
+				<div id="monthly-required-fees-refresh-status" style="min-height: 18px; margin-top: 2px;"></div>
+				<?php if ( $monthly_fees_last_checked > 0 ) : ?>
+					<p class="description">Last CSV check: <?php echo esc_html( wp_date( 'M j, Y g:ia', $monthly_fees_last_checked ) ); ?></p>
+					<?php if ( ! empty( $monthly_fee_rows ) ) : ?>
+						<table style="margin-top: 6px; border-collapse: collapse; font-size: 12px; width: 100%; max-width: 420px;">
+							<thead>
+								<tr>
+									<th style="text-align: left; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Description</th>
+									<th style="text-align: right; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Applied Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $monthly_fee_rows as $row ) : ?>
+									<?php
+									$row_description = sanitize_text_field( (string) ( $row['description'] ?? '' ) );
+									$row_price       = isset( $row['applied_price'] ) ? (float) $row['applied_price'] : 0;
+									?>
+									<tr>
+										<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1;"><?php echo esc_html( $row_description ); ?></td>
+										<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1; text-align: right;"><?php echo esc_html( '$' . number_format( $row_price, 2 ) ); ?></td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					<?php endif; ?>
+				<?php endif; ?>
+			</div>
+		</div>
+		<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				var $refreshButton = $('#refresh-monthly-required-fees-now');
+				var $refreshStatus = $('#monthly-required-fees-refresh-status');
+				var $totalField = $('#property_monthly_required_total_fees');
+
+				if (!$refreshButton.length) {
+					return;
+				}
+
+				function setStatus(message, isError) {
+					$refreshStatus
+						.text(message)
+						.css('color', isError ? '#b32d2e' : '#1d7f2f');
+				}
+
+				$refreshButton.on('click', function(e) {
+					e.preventDefault();
+
+					var postId = $refreshButton.data('post-id');
+					var nonce = $refreshButton.data('nonce');
+
+					$refreshButton.prop('disabled', true);
+					setStatus('Refreshing from CSV...', false);
+
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						dataType: 'json',
+						data: {
+							action: 'rentfetch_refresh_monthly_required_fees_now',
+							post_id: postId,
+							nonce: nonce
+						}
+					}).done(function(response) {
+						if (!response || !response.success) {
+							var errorMessage =
+								response && response.data && response.data.message
+									? response.data.message
+									: 'Refresh failed.';
+							setStatus(errorMessage, true);
+							return;
+						}
+
+						if (response.data && typeof response.data.total !== 'undefined') {
+							$totalField.val(response.data.total || '');
+						}
+
+						var successMessage =
+							response.data && response.data.message
+								? response.data.message
+								: 'Refresh complete.';
+						setStatus(successMessage + ' Reloading...', false);
+						setTimeout(function() {
+							window.location.reload();
+						}, 500);
+					}).fail(function() {
+						setStatus('Request failed while refreshing fees.', true);
+					}).always(function() {
+						$refreshButton.prop('disabled', false);
+					});
+				});
+			});
+		</script>
+
+		<?php
 		// * Property Fees Embed
 		$property_fees_embed = get_post_meta( $post->ID, 'property_fees_embed', true );
 		?>
@@ -1555,6 +1682,27 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		if ( ! empty( $url ) ) {
 			// Clear the JSON data when CSV URL is set
 			delete_post_meta( $post_id, 'property_fees_data' );
+		}
+	}
+
+	$property_fees_csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
+	if ( isset( $_POST['property_monthly_required_total_fees'] ) ) {
+		$raw_total = trim( (string) wp_unslash( $_POST['property_monthly_required_total_fees'] ) );
+
+		// Requirement: if there's no CSV URL, don't save this meta.
+		if ( '' === $property_fees_csv_url || '' === $raw_total ) {
+			delete_post_meta( $post_id, 'property_monthly_required_total_fees' );
+			if ( '' === $property_fees_csv_url ) {
+				delete_post_meta( $post_id, 'property_monthly_required_total_fees_last_checked' );
+				delete_post_meta( $post_id, 'property_monthly_required_total_fees_rows' );
+			}
+		} else {
+			$numeric_total = rentfetch_extract_first_numeric_fee_value( $raw_total );
+			if ( null === $numeric_total || $numeric_total <= 0 ) {
+				delete_post_meta( $post_id, 'property_monthly_required_total_fees' );
+			} else {
+				update_post_meta( $post_id, 'property_monthly_required_total_fees', number_format( $numeric_total, 2, '.', '' ) );
+			}
 		}
 	}
 
