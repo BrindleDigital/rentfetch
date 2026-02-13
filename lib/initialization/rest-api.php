@@ -55,6 +55,12 @@ function rentfetch_rest_search_properties( $request ) {
 	// This allows all the filter hooks that check $_POST to function correctly
 	$_POST = array_merge( $_POST, $request->get_params() );
 
+	// Rebuild floorplan aggregates after request params are merged so property-card
+	// pricing/availability reflects active floorplan filters (beds, baths, price, etc).
+	if ( function_exists( 'rentfetch_set_floorplans' ) ) {
+		rentfetch_set_floorplans();
+	}
+
 	$property_ids = rentfetch_get_property_ids_with_available_floorplans();
 	if ( empty( $property_ids ) ) {
 		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything.
@@ -122,8 +128,26 @@ function rentfetch_rest_search_properties( $request ) {
 	// Apply filters (this allows all the filter hooks to modify the query)
 	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
 
+	$floorplan_args_for_cache = array(
+		'post_type'      => 'floorplans',
+		'posts_per_page' => -1,
+		'orderby'        => 'date',
+		'order'          => 'ASC',
+		'no_found_rows'  => true,
+		'post_status'    => 'publish',
+	);
+	$floorplan_args_for_cache = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args_for_cache );
+
 	// Build cache key
-	$cache_key = 'rentfetch_propertysearch_markup_' . md5( wp_json_encode( array( 'args' => $property_args, 'atts' => $atts ) ) );
+	$cache_key = 'rentfetch_propertysearch_markup_' . md5(
+		wp_json_encode(
+			array(
+				'args'           => $property_args,
+				'atts'           => $atts,
+				'floorplan_args' => $floorplan_args_for_cache,
+			)
+		)
+	);
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$cached_markup = get_transient( $cache_key );
 		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
