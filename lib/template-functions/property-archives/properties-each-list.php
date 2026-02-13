@@ -81,7 +81,7 @@ function rentfetch_properties_each_list() {
 
 			echo '<div class="property-availability">';
 
-				printf( '<p class="rent">%s</p>', esc_html( $rent ) );
+				printf( '<p class="rent">%s</p>', wp_kses_post( $rent ) );
 
 				$rentfetch_options_properties_hide_number_of_units = get_option( 'rentfetch_options_properties_hide_number_of_units' );
 				if ( '1' !== $rentfetch_options_properties_hide_number_of_units ) {

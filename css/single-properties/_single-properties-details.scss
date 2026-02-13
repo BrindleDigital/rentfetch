@@ -83,6 +83,26 @@
 			> p {
 				margin: 0 35px 5px 0;
 			}
+
+			> p.rent {
+				.rentfetch-property-rent-lines {
+					display: block;
+				}
+
+				.rentfetch-property-rent-with-fees {
+					display: block;
+					font-size: inherit;
+					font-weight: inherit;
+					line-height: inherit;
+				}
+
+				.rentfetch-property-base-rent {
+					display: block;
+					font-size: var(--rentfetch-font-size-smallest);
+					font-weight: 400;
+					line-height: 1.2;
+				}
+			}
 		}
 
 		.property-links {

@@ -304,6 +304,13 @@
 			display: none;
 		}
 	}
+
+	.properties-loop .property-availability {
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		gap: 4px;
+	}
 }
 
 // .rent-fetch-floorplan-search-default-layout {

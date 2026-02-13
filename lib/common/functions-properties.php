@@ -1242,72 +1242,170 @@ function rentfetch_property_square_feet( $property_id = null ) {
 // * PROPERTY RENT
 
 /**
- * Get the property rent.
+ * Normalize rent values into floats >= 100.
+ *
+ * @param mixed $values Raw rent value or values.
+ * @return float[] Normalized rent values.
+ */
+function rentfetch_get_normalized_property_rent_values( $values ) {
+	if ( ! is_array( $values ) ) {
+		$values = array( $values );
+	}
+
+	$normalized = array();
+
+	foreach ( $values as $value ) {
+		if ( ! is_numeric( $value ) ) {
+			continue;
+		}
+
+		$float_value = (float) $value;
+		if ( $float_value >= 100 ) {
+			$normalized[] = $float_value;
+		}
+	}
+
+	return $normalized;
+}
+
+/**
+ * Format a rent value as a currency string.
+ *
+ * @param float $value Rent value.
+ * @return string Formatted value, e.g. "$1,500".
+ */
+function rentfetch_format_property_rent_value( $value ) {
+	return '$' . number_format( (float) $value );
+}
+
+/**
+ * Format property rent display for configured mode.
+ *
+ * @param float  $min_rent Minimum rent.
+ * @param float  $max_rent Maximum rent.
+ * @param string $pricing_display Display mode, usually "range" or "minimum".
+ * @return string Formatted rent display.
+ */
+function rentfetch_format_property_rent_display( $min_rent, $max_rent, $pricing_display ) {
+	if ( 'minimum' === $pricing_display ) {
+		return rentfetch_format_property_rent_value( $min_rent );
+	}
+
+	if ( null !== $max_rent && $max_rent > $min_rent ) {
+		return rentfetch_format_property_rent_value( $min_rent ) . '-' . rentfetch_format_property_rent_value( $max_rent );
+	}
+
+	return rentfetch_format_property_rent_value( $min_rent );
+}
+
+/**
+ * Get monthly required total fees for a property, with global fallback.
+ *
+ * @param int|null $property_post_id The property post ID.
+ * @return float The monthly required total fees.
+ */
+function rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id = null ) {
+	$property_total = null;
+
+	if ( $property_post_id ) {
+		$property_raw = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
+		$property_total = rentfetch_extract_first_numeric_fee_value( $property_raw );
+	}
+
+	if ( null !== $property_total && $property_total > 0 ) {
+		return (float) $property_total;
+	}
+
+	$global_raw   = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
+	$global_total = rentfetch_extract_first_numeric_fee_value( $global_raw );
+
+	if ( null !== $global_total && $global_total > 0 ) {
+		return (float) $global_total;
+	}
+
+	return 0.0;
+}
+
+/**
+ * Get the property rent markup.
  *
  * @param string $property_id Optional property_id meta value.
- * @return string The property rent.
+ * @return string The property rent markup.
  */
 function rentfetch_get_property_pricing( $property_id = null ) {
 	if ( ! $property_id ) {
 		$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
 	}
-	
+
 	$floorplan_data  = rentfetch_get_floorplans( $property_id );
 	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
-	$rent_range = null;
-	$min_rent = null;
-	
-	// get the rent range if avail.
-	if ( isset( $floorplan_data['rentrange'] ) ) {
-		$rent_range = $floorplan_data['rentrange'];
-	}
-	
-	// get the min rent array if avail.
-	if ( isset( $floorplan_data['minimum_rent'] ) ) {
-		$min_rent_array = $floorplan_data['minimum_rent'];
-		
-		// filter this array to remove any null values and any values below 100.
-		$min_rent_array = array_filter( $min_rent_array, fn( $value ) => $value !== null && $value >= 100 );
-		
-		// if there's noting left in the array after filtering, set it to null.
-		if ( !empty( $min_rent_array ) ) {
-			
-			// get the lowest remaining value in the array.
-			$min_rent = number_format( (int) min( $min_rent_array ) );
-		} else {
-			$min_rent = null;
+	$rent_range      = $floorplan_data['rentrange'] ?? null;
+
+	$min_rent_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_rent'] ?? array() );
+	$max_rent_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_rent'] ?? array() );
+
+	$min_rent = ! empty( $min_rent_values ) ? min( $min_rent_values ) : null;
+	$max_rent = ! empty( $max_rent_values ) ? max( $max_rent_values ) : null;
+
+	// Fallback to parsing rentrange when API min/max arrays are not available.
+	if ( null === $min_rent && ! empty( $rent_range ) ) {
+		preg_match_all( '/\d[\d,]*(?:\.\d+)?/', (string) $rent_range, $matches );
+		$range_numbers = array_map(
+			function( $number ) {
+				return (float) str_replace( ',', '', $number );
+			},
+			$matches[0] ?? array()
+		);
+		$range_numbers = rentfetch_get_normalized_property_rent_values( $range_numbers );
+		if ( ! empty( $range_numbers ) ) {
+			$min_rent = min( $range_numbers );
+			$max_rent = max( $range_numbers );
 		}
 	}
 
-	// return the string for display.
-	if ( 'range' === $pricing_display ) {
-		if ( $rent_range ) {
-			$rent = '$' . $rent_range;
-		} else {
-			$rent = apply_filters( 'rentfetch_filter_property_pricing_no_price_available', 'Call for Pricing' );
-		}
-	} elseif ( 'minimum' === $pricing_display ) {
-		if ( $min_rent ) {
-			$rent = 'From $' . $min_rent;
-		} else {
-			$rent = apply_filters( 'rentfetch_filter_property_pricing_no_price_available', 'Call for Pricing' );
-		}
+	if ( null === $min_rent && null !== $max_rent ) {
+		$min_rent = $max_rent;
 	}
-	
-	// make our variables a bit friendlier in case this filter is used, to make it easier to understand what's going on.
-	if ( !isset( $floorplan_data['rentrange'] ) ) {
-		$floorplan_data['rentrange'] = null;
+	if ( null === $max_rent && null !== $min_rent ) {
+		$max_rent = $min_rent;
 	}
-	
-	if ( !isset( $floorplan_data['minimum_rent'] ) ) {
-		$floorplan_data['minimum_rent'] = null;
+	if ( null !== $min_rent && null !== $max_rent && $max_rent < $min_rent ) {
+		$temp = $min_rent;
+		$min_rent = $max_rent;
+		$max_rent = $temp;
 	}
-	
-	if ( !isset( $floorplan_data['maximum_rent'] ) ) {
-		$floorplan_data['maximum_rent'] = null;
+
+	if ( null === $min_rent ) {
+		$rent = apply_filters( 'rentfetch_filter_property_pricing_no_price_available', 'Call for Pricing' );
+		return apply_filters( 'rentfetch_filter_property_pricing', $rent, $floorplan_data['rentrange'] ?? null, $floorplan_data['minimum_rent'] ?? null, $floorplan_data['maximum_rent'] ?? null );
 	}
-	
-	return apply_filters( 'rentfetch_filter_property_pricing', $rent, $floorplan_data['rentrange'], $floorplan_data['minimum_rent'], $floorplan_data['maximum_rent'] );
+
+	$property_post_id = rentfetch_get_post_id_from_property_id( $property_id );
+	if ( ! $property_post_id && is_singular( 'properties' ) ) {
+		$property_post_id = get_the_ID();
+	}
+	$monthly_required_fees = rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id );
+
+	$base_rent_display = rentfetch_format_property_rent_display( $min_rent, $max_rent, $pricing_display );
+
+	if ( $monthly_required_fees > 0 ) {
+		$including_fees_min_rent     = $min_rent + $monthly_required_fees;
+		$including_fees_max_rent     = ( null !== $max_rent ? $max_rent : $min_rent ) + $monthly_required_fees;
+		$including_fees_rent_display = rentfetch_format_property_rent_display( $including_fees_min_rent, $including_fees_max_rent, $pricing_display );
+
+		$rent = sprintf(
+			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees">%1$s/mo</span><span class="rentfetch-property-base-rent">%2$s base rent</span></span>',
+			esc_html( $including_fees_rent_display ),
+			esc_html( $base_rent_display )
+		);
+	} else {
+		$rent = sprintf(
+			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees">%1$s base rent</span></span>',
+			esc_html( $base_rent_display )
+		);
+	}
+
+	return apply_filters( 'rentfetch_filter_property_pricing', $rent, $floorplan_data['rentrange'] ?? null, $floorplan_data['minimum_rent'] ?? null, $floorplan_data['maximum_rent'] ?? null );
 }
 
 /**
@@ -1320,7 +1418,7 @@ function rentfetch_property_pricing( $property_id = null ) {
 	$rent = rentfetch_get_property_pricing( $property_id );
 
 	if ( $rent ) {
-		echo esc_html( $rent );
+		echo wp_kses_post( $rent );
 	}
 }
 
