@@ -3686,12 +3686,13 @@ body.single-floorplans .current-floorplan-info p.pricing .rentfetch-floorplan-ba
 }
 body.single-floorplans .current-floorplan-info .floorplan-attributes {
   line-height: 1;
+  margin-top: 1.5rem;
 }
 body.single-floorplans .current-floorplan-info .floorplan-attributes p {
   font-size: var(--rentfetch-font-size-large);
   display: inline-block;
-  padding: 0 0.8em;
-  margin: 0 0 15px 0;
+  padding: 0 0.65em;
+  margin: 0 0 12px 0;
   position: relative;
 }
 body.single-floorplans .current-floorplan-info .floorplan-attributes p:first-child {
@@ -3713,8 +3714,13 @@ body.single-floorplans .current-floorplan-info .floorplan-attributes p:after {
   top: 50%;
   transform: translateY(-50%);
 }
+body.single-floorplans .current-floorplan-info .floorplan-attributes p.beds,
+body.single-floorplans .current-floorplan-info .floorplan-attributes p.baths,
+body.single-floorplans .current-floorplan-info .floorplan-attributes p.square-feet {
+  font-size: var(--rentfetch-font-size-medium);
+}
 body.single-floorplans .current-floorplan-info .floorplan-buttons {
-  margin-top: 15px;
+  margin-top: 12px;
 }
 body.single-floorplans .current-floorplan-info .floorplan-buttons a {
   margin: 0 5px 5px 0;
@@ -3909,6 +3915,14 @@ body.single-floorplans h2 {
   font-size: var(--rentfetch-font-size-small);
   font-weight: 400;
   line-height: 1.2;
+}
+#details .property-details-body .property-stats > p.beds,
+#details .property-details-body .property-stats > p.sqrft {
+  font-size: var(--rentfetch-font-size-medium);
+  line-height: 1.15;
+  margin-top: 1.5rem;
+  margin-right: 26px;
+  margin-bottom: 8px;
 }
 .property-links .property-link {
   display: block;

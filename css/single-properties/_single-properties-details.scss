@@ -113,6 +113,15 @@
 					line-height: 1.2;
 				}
 			}
+
+			> p.beds,
+			> p.sqrft {
+				font-size: var(--rentfetch-font-size-medium);
+				line-height: 1.15;
+				margin-top: 1.5rem;
+				margin-right: 26px;
+				margin-bottom: 8px;
+			}
 		}
 
 		.property-links {

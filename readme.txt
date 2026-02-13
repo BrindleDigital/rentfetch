@@ -103,6 +103,36 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.33.0-alpha =
+
+* Major update to fee-inclusive pricing display across properties, floorplans, and units, including two-line pricing output where applicable.
+* Added property-level monthly required fees total parsing from CSV data using strict matching rules:
+* Only rows with notes exactly matching "required" (case-insensitive) and frequency containing "month" are included.
+* Price ranges like "$10-20" or "$10-$20" now use the higher value.
+* Monthly required fees totals are now stored as property meta and used throughout pricing displays.
+* Added property-level editable monthly required fees field and improved helper text to clarify periodic overwrite behavior from CSV parsing.
+* Added global monthly required fees fallback setting used only when a property does not have its own fee total.
+* Updated fee refresh behavior to process during relevant single-property and single-floorplan contexts and on settings save flows where CSV inputs are changed.
+* Added "last CSV check" context and display of contributing required-monthly fee rows (description + applied price) where fee analysis is shown.
+* Added short-term CSV caching keyed by CSV URL (shared across properties using the same file), with a 30-minute cache window.
+* Added cache busting for fee CSV caches when:
+* Property fee settings are saved.
+* Global fee settings are saved.
+* The general "clear cache" action is used.
+* Refined behavior when CSV is missing/unparseable/zero-total so invalid totals are not persisted.
+* Updated property pricing outputs to show fee-inclusive and base rent lines where fees exist, and streamlined non-fee states.
+* Updated floorplan pricing outputs to always resolve fees from the connected property via shared `property_id`.
+* Ensured floorplan pricing display mode settings (range vs minimum) are respected consistently in single floorplans, floorplan search, and floorplan grid.
+* Updated SEOpress pricing integration to output fee-inclusive pricing only when fees exist.
+* Added/expanded unit-level fee-inclusive pricing so unit pricing derives from the connected property's fee totals.
+* Updated styles for property/floorplan search and grid templates to improve layout consistency, readability, and wrapping behavior.
+* Removed legacy AJAX search handler no longer used by active search implementations.
+* Fixed property search behavior where filtered bedroom selections were not properly reflected in shown pricing/availability counts.
+* Refactored tooltip implementation into a general-purpose Rent Fetch tooltip system (instead of property-fees-specific naming).
+* Added global setting for pricing tooltip text with a textarea-style control and improved admin field presentation.
+* Improved tooltip support in shortcode/AJAX-rendered contexts (re-initialization and interaction reliability).
+* Updated tooltip and pricing display styles on single property and single floorplan templates, including trigger/icon presentation and typography spacing refinements.
+
 = 0.32.7 =
 
 * Security: sanitize tracked search params and escape tracked search output in the admin UI to prevent stored XSS. (NOTE: This should close a vulnerability disclosed to us by WordFence, which could allow an attacker to store a payload in a transient.)
