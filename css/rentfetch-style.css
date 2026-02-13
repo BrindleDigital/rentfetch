@@ -52,6 +52,28 @@ pre {
   line-height: 1.2em;
 }
 
+.rentfetch-property-rent-lines,
+.rentfetch-floorplan-rent-lines,
+.rentfetch-unit-rent-lines {
+  display: block;
+}
+
+.rentfetch-property-rent-with-fees,
+.rentfetch-floorplan-rent-with-fees,
+.rentfetch-unit-rent-with-fees {
+  display: block;
+  line-height: 1.25;
+}
+
+.rentfetch-property-base-rent,
+.rentfetch-floorplan-base-rent,
+.rentfetch-unit-base-rent {
+  display: block;
+  font-size: 0.8em;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
 body.post-type-floorplans .row-actions {
   opacity: 1;
   /* left: auto; */
@@ -1484,14 +1506,35 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   padding-top: 15px;
   border-top: 1px solid rgba(0, 0, 0, 0.07);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
 }
 .floorplans-loop p.pricing,
 .floorplans-simple-grid p.pricing {
   font-size: var(--rentfetch-font-size-large);
   font-weight: bold;
   margin: 0;
+}
+.floorplans-loop p.pricing .rentfetch-floorplan-rent-lines,
+.floorplans-simple-grid p.pricing .rentfetch-floorplan-rent-lines {
+  display: block;
+  line-height: 1.25;
+}
+.floorplans-loop p.pricing .rentfetch-floorplan-rent-with-fees,
+.floorplans-simple-grid p.pricing .rentfetch-floorplan-rent-with-fees {
+  display: block;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+.floorplans-loop p.pricing .rentfetch-floorplan-base-rent,
+.floorplans-simple-grid p.pricing .rentfetch-floorplan-base-rent {
+  display: block;
+  font-size: var(--rentfetch-font-size-small);
+  font-weight: 400;
+  line-height: 1.2;
 }
 .floorplans-loop p.availability,
 .floorplans-simple-grid p.availability {
@@ -1680,6 +1723,22 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 .floorplans-in-archive p.pricing {
   font-weight: bold;
+}
+.floorplans-in-archive p.pricing .rentfetch-floorplan-rent-lines {
+  display: block;
+  line-height: 1.25;
+}
+.floorplans-in-archive p.pricing .rentfetch-floorplan-rent-with-fees {
+  display: block;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+.floorplans-in-archive p.pricing .rentfetch-floorplan-base-rent {
+  display: block;
+  font-size: var(--rentfetch-font-size-smallest);
+  font-weight: 400;
+  line-height: 1.2;
 }
 .floorplans-in-archive summary.rentfetch-button {
   display: inline-block;
@@ -3563,6 +3622,22 @@ body.single-floorplans .current-floorplan-info p.specials:before {
 body.single-floorplans .current-floorplan-info p.pricing {
   font-size: var(--rentfetch-font-size-large);
 }
+body.single-floorplans .current-floorplan-info p.pricing .rentfetch-floorplan-rent-lines {
+  display: block;
+  line-height: 1.25;
+}
+body.single-floorplans .current-floorplan-info p.pricing .rentfetch-floorplan-rent-with-fees {
+  display: block;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+body.single-floorplans .current-floorplan-info p.pricing .rentfetch-floorplan-base-rent {
+  display: block;
+  font-size: var(--rentfetch-font-size-small);
+  font-weight: 400;
+  line-height: 1.2;
+}
 body.single-floorplans .current-floorplan-info .floorplan-attributes {
   line-height: 1;
 }
@@ -4149,7 +4224,7 @@ body.properties-template-default .full-width .wrap {
 .unit-details-list details.unit-details summary.unit-summary p {
   margin: 0;
   padding: 0;
-  line-height: 1;
+  line-height: 1.2;
 }
 .unit-details-list details.unit-details summary.unit-summary span.dropdown {
   margin-left: 5px;

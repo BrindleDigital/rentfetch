@@ -62,11 +62,11 @@ function rentfetch_floorplans_each_list_default() {
 				printf( '<p class="square-feet">%s</p>', wp_kses_post( $square_feet ) );
 			}
 
-			if ( $pricing ) {
-				printf( '<p class="pricing">%s</p>', wp_kses_post( $pricing ) );
-			}
-
 		echo '</div>'; // .floorplan-attributes.
+
+		if ( $pricing ) {
+			printf( '<p class="pricing">%s</p>', wp_kses_post( $pricing ) );
+		}
 
 		if ( $units_count > 0 ) {
 			

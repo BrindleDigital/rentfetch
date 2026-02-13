@@ -165,6 +165,126 @@ function rentfetch_floorplan_available_units() {
 // * Pricing
 
 /**
+ * Format a floorplan rent display string based on the configured display mode.
+ *
+ * @param float       $minimum_rent Minimum monthly rent.
+ * @param float       $maximum_rent Maximum monthly rent.
+ * @param string|null $price_display Display mode ('range' or 'minimum').
+ * @return string|null
+ */
+function rentfetch_format_floorplan_rent_display( $minimum_rent, $maximum_rent, $price_display = null ) {
+	$minimum_rent = is_numeric( $minimum_rent ) ? (float) $minimum_rent : null;
+	$maximum_rent = is_numeric( $maximum_rent ) ? (float) $maximum_rent : null;
+	$minimum_rent = ( null !== $minimum_rent && $minimum_rent > 0 ) ? $minimum_rent : null;
+	$maximum_rent = ( null !== $maximum_rent && $maximum_rent > 0 ) ? $maximum_rent : null;
+
+	if ( null === $minimum_rent && null === $maximum_rent ) {
+		return null;
+	}
+
+	if ( null === $minimum_rent ) {
+		$minimum_rent = $maximum_rent;
+	}
+	if ( null === $maximum_rent ) {
+		$maximum_rent = $minimum_rent;
+	}
+
+	if ( null === $minimum_rent || null === $maximum_rent ) {
+		return null;
+	}
+
+	if ( $maximum_rent < $minimum_rent ) {
+		$temp         = $minimum_rent;
+		$minimum_rent = $maximum_rent;
+		$maximum_rent = $temp;
+	}
+
+	if ( ! $price_display ) {
+		$price_display = get_option( 'rentfetch_options_floorplan_pricing_display', 'range' );
+	}
+
+	if ( 'minimum' === $price_display ) {
+		return sprintf( 'From $%s', number_format( $minimum_rent ) );
+	}
+
+	if ( $minimum_rent === $maximum_rent ) {
+		return sprintf( '$%s', number_format( $minimum_rent ) );
+	}
+
+	return sprintf( '$%s-$%s', number_format( $minimum_rent ), number_format( $maximum_rent ) );
+}
+
+/**
+ * Resolve a floorplan post to its connected property post ID via matching property_id meta.
+ *
+ * @param int|null $floorplan_post_id Optional floorplan post ID.
+ * @return int|null Property post ID when found, null otherwise.
+ */
+function rentfetch_get_connected_property_post_id_for_floorplan( $floorplan_post_id = null ) {
+	if ( ! $floorplan_post_id ) {
+		$floorplan_post_id = get_the_ID();
+	}
+
+	$floorplan_post_id = (int) $floorplan_post_id;
+	if ( $floorplan_post_id <= 0 ) {
+		return null;
+	}
+
+	$property_id = trim( (string) get_post_meta( $floorplan_post_id, 'property_id', true ) );
+	if ( '' === $property_id || ! function_exists( 'rentfetch_get_post_id_from_property_id' ) ) {
+		return null;
+	}
+
+	$property_post_id = (int) rentfetch_get_post_id_from_property_id( $property_id );
+	if ( $property_post_id <= 0 ) {
+		return null;
+	}
+
+	return $property_post_id;
+}
+
+/**
+ * Get property-level monthly required total fees for a floorplan.
+ *
+ * Fees for floorplan pricing come from the related property's stored fee total only.
+ *
+ * @param int|null $floorplan_post_id Optional floorplan post ID.
+ * @return float
+ */
+function rentfetch_get_floorplan_property_monthly_required_fees_total( $floorplan_post_id = null ) {
+	$property_post_id = rentfetch_get_connected_property_post_id_for_floorplan( $floorplan_post_id );
+	if ( ! $property_post_id ) {
+		return 0.0;
+	}
+
+	if ( function_exists( 'rentfetch_get_effective_monthly_required_total_fees_for_property' ) ) {
+		$effective_total = rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id );
+		if ( is_numeric( $effective_total ) && (float) $effective_total > 0 ) {
+			return (float) $effective_total;
+		}
+		return 0.0;
+	}
+
+	$property_raw = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
+	if ( '' === (string) $property_raw ) {
+		return 0.0;
+	}
+
+	$property_total = null;
+	if ( function_exists( 'rentfetch_extract_first_numeric_fee_value' ) ) {
+		$property_total = rentfetch_extract_first_numeric_fee_value( $property_raw );
+	} elseif ( is_numeric( $property_raw ) ) {
+		$property_total = (float) $property_raw;
+	}
+
+	if ( null === $property_total || $property_total <= 0 ) {
+		return 0.0;
+	}
+
+	return (float) $property_total;
+}
+
+/**
  * Get the pricing for the floorplan
  *
  * @return string the pricing for the floorplan.
@@ -178,47 +298,46 @@ function rentfetch_get_floorplan_pricing() {
 		return apply_filters( 'rentfetch_filter_floorplan_pricing', null, $minimum_rent, $maximum_rent );
 	}
 
-	$price_display = get_option( 'rentfetch_options_floorplan_pricing_display', 'range' );
-
-	if ( 'range' === $price_display ) {
-
-		if ( $minimum_rent && $maximum_rent && $minimum_rent > 0 && $maximum_rent > 0 ) {
-			if ( $minimum_rent === $maximum_rent ) {
-				$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
-			} elseif ( $minimum_rent < $maximum_rent ) {
-				$rent_range = sprintf( '$%s-$%s', number_format( $minimum_rent ), number_format( $maximum_rent ) );
-			} elseif ( $minimum_rent > $maximum_rent ) {
-				$rent_range = sprintf( '$%s-$%s', number_format( $maximum_rent ), number_format( $minimum_rent ) );
-			}
-		} elseif ( $minimum_rent && ! $maximum_rent ) {
-			$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
-		} elseif ( ! $minimum_rent && $maximum_rent ) {
-			$rent_range = sprintf( '$%s', number_format( $maximum_rent ) );
-		} else {
-			$rent_range = null;
-		}
-	} elseif ( 'minimum' === $price_display ) {
-
-		if ( $minimum_rent && $maximum_rent && $minimum_rent > 0 && $maximum_rent > 0 ) {
-			if ( $minimum_rent === $maximum_rent ) {
-				$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
-			} elseif ( $minimum_rent < $maximum_rent ) {
-				$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
-			} elseif ( $minimum_rent > $maximum_rent ) {
-				$rent_range = sprintf( 'From $%s', number_format( $maximum_rent ) );
-			}
-		} elseif ( $minimum_rent && ! $maximum_rent ) {
-			$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
-		} elseif ( ! $minimum_rent && $maximum_rent ) {
-			$rent_range = sprintf( 'From $%s', number_format( $maximum_rent ) );
-		} else {
-			$rent_range = null;
-		}
+	$minimum_rent_value = $minimum_rent > 0 ? (float) $minimum_rent : null;
+	$maximum_rent_value = $maximum_rent > 0 ? (float) $maximum_rent : null;
+	if ( null === $minimum_rent_value ) {
+		$minimum_rent_value = $maximum_rent_value;
+	}
+	if ( null === $maximum_rent_value ) {
+		$maximum_rent_value = $minimum_rent_value;
+	}
+	if ( null !== $minimum_rent_value && null !== $maximum_rent_value && $maximum_rent_value < $minimum_rent_value ) {
+		$temp               = $minimum_rent_value;
+		$minimum_rent_value = $maximum_rent_value;
+		$maximum_rent_value = $temp;
 	}
 
-	$rent_range = apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_range, $minimum_rent, $maximum_rent );
+	$price_display = get_option( 'rentfetch_options_floorplan_pricing_display', 'range' );
+	$base_rent     = rentfetch_format_floorplan_rent_display( $minimum_rent_value, $maximum_rent_value, $price_display );
 
-	return $rent_range;
+	if ( ! $base_rent ) {
+		return apply_filters( 'rentfetch_filter_floorplan_pricing', null, $minimum_rent, $maximum_rent );
+	}
+
+	$monthly_required_fees = rentfetch_get_floorplan_property_monthly_required_fees_total( get_the_ID() );
+	if ( $monthly_required_fees > 0 ) {
+		$minimum_rent_with_fees = $minimum_rent_value + $monthly_required_fees;
+		$maximum_rent_with_fees = $maximum_rent_value + $monthly_required_fees;
+		$including_fees_rent    = rentfetch_format_floorplan_rent_display( $minimum_rent_with_fees, $maximum_rent_with_fees, $price_display );
+
+		$rent_range = sprintf(
+			'<span class="rentfetch-floorplan-rent-lines"><span class="rentfetch-floorplan-rent-with-fees">%1$s/mo</span><span class="rentfetch-floorplan-base-rent">%2$s base rent</span></span>',
+			esc_html( $including_fees_rent ),
+			esc_html( $base_rent )
+		);
+	} else {
+		$rent_range = sprintf(
+			'<span class="rentfetch-floorplan-rent-lines"><span class="rentfetch-floorplan-rent-with-fees">%1$s/mo</span></span>',
+			esc_html( $base_rent )
+		);
+	}
+
+	return apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_range, $minimum_rent, $maximum_rent );
 }
 
 /**
@@ -227,7 +346,7 @@ function rentfetch_get_floorplan_pricing() {
  * @return void.
  */
 function rentfetch_floorplan_pricing() {
-	echo esc_html( rentfetch_get_floorplan_pricing() );
+	echo wp_kses_post( rentfetch_get_floorplan_pricing() );
 }
 
 // * Move in special
@@ -901,7 +1020,7 @@ function rentfetch_floorplan_unit_table() {
 					}
 
 					if ( in_array( 'pricing', $columns, true ) ) {
-						printf( '<td class="unit-starting-at">%s</td>', esc_html( $pricing ) );
+						printf( '<td class="unit-starting-at">%s</td>', $pricing ? wp_kses_post( $pricing ) : '' );
 					}
 
 					if ( in_array( 'deposit', $columns, true ) ) {
@@ -988,7 +1107,7 @@ function rentfetch_floorplan_unit_list() {
 			echo '<details class="unit-details">';
 				echo '<summary class="unit-summary">';
 					if ( $pricing ) {
-						printf( '<p class="unit-title">%s, <span class="label">starting at</span> %s<span class="dropdown"></span></p>', esc_html( $title ), esc_html( $pricing ) );
+						printf( '<p class="unit-title">%s, <span class="label">starting at</span> %s<span class="dropdown"></span></p>', esc_html( $title ), wp_kses_post( $pricing ) );
 					} else {
 						printf( '<p class="unit-title">%s<span class="dropdown"></span></p>', esc_html( $title ) );
 					}
@@ -1151,27 +1270,7 @@ function rentfetch_get_property_fee_embed_from_floorplan_id( $post_id = null ) {
 		return;
 	}
 
-	// get the id of the property this floorplan belongs to.
-	$property_id = get_post_meta( $post_id, 'property_id', true );
-		
-	// query the properties to get the $post->ID of the property with 'property_id' of $property_id. Limit to one post.
-	$property_args = array(
-		'post_type'      => 'properties',
-		'posts_per_page' => 1,
-		'post_status'    => 'publish',
-		'meta_query'     => array(
-			array(
-				'key'   => 'property_id',
-				'value' => $property_id,
-			),
-		),
-		'fields'         => 'ids',
-	);
-	$property_posts = get_posts( $property_args );
-	$property_post_id = $property_posts ? $property_posts[0] : null;
-	
-	// reset the global post to the original floorplan post.
-	wp_reset_postdata();
+	$property_post_id = rentfetch_get_connected_property_post_id_for_floorplan( $post_id );
 	
 	// bail if we can't find the id.
 	if ( ! $property_post_id ) {

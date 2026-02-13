@@ -629,7 +629,7 @@ function rentfetch_settings_properties_global_property_fees() {
 				placeholder="e.g. 129.50"
 				style="width: 100%; max-width: 240px;"
 			/>
-			<p class="description">You can edit this manually if needed. Leave blank to clear the stored value.</p>
+			<p class="description">You can edit this manually if needed. Leave blank to clear the stored value. Manual edits here may be periodically overwritten by calculated totals from the spreadsheet.</p>
 			<p>
 				<button
 					type="button"
@@ -807,7 +807,8 @@ function rentfetch_save_settings_global_property_fees() {
 	}
 
 	// CSV URL
-	$global_csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	$previous_global_csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	$global_csv_url          = $previous_global_csv_url;
 	if ( isset( $_POST['rentfetch_options_global_property_fees_csv_url'] ) ) {
 		$global_csv_url = trim( sanitize_text_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_csv_url'] ) ) );
 		update_option( 'rentfetch_options_global_property_fees_csv_url', $global_csv_url );
@@ -817,17 +818,23 @@ function rentfetch_save_settings_global_property_fees() {
 			delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
 		}
 	}
+	$global_csv_url_changed = ( $global_csv_url !== $previous_global_csv_url );
+
+	// Parse CSV immediately on save so analysis is ready right away.
+	if ( '' !== $global_csv_url && function_exists( 'rentfetch_update_global_monthly_required_total_fees_from_csv' ) ) {
+		rentfetch_update_global_monthly_required_total_fees_from_csv();
+	}
 
 	// Global monthly required total fees (editable override).
 	if ( isset( $_POST['rentfetch_options_global_monthly_required_total_fees'] ) ) {
 		$raw_total = trim( (string) wp_unslash( $_POST['rentfetch_options_global_monthly_required_total_fees'] ) );
 
-		if ( '' === $global_csv_url || '' === $raw_total ) {
+		if ( '' === $global_csv_url ) {
 			delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
-			if ( '' === $global_csv_url ) {
-				delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
-				delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
-			}
+			delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
+			delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+		} elseif ( '' === $raw_total || $global_csv_url_changed ) {
+			// Keep current parsed value (or cleared state from parser) when blank or when CSV changed.
 		} else {
 			$numeric_total = rentfetch_extract_first_numeric_fee_value( $raw_total );
 			if ( null === $numeric_total || $numeric_total <= 0 ) {

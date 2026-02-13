@@ -1400,7 +1400,7 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 		);
 	} else {
 		$rent = sprintf(
-			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees">%1$s base rent</span></span>',
+			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees">%1$s/mo</span></span>',
 			esc_html( $base_rent_display )
 		);
 	}
@@ -2183,7 +2183,13 @@ function rentfetch_update_property_monthly_required_total_fees_from_csv( $proper
 		return false;
 	}
 
-	$response = wp_remote_get( $csv_url );
+	$response = wp_remote_get(
+		$csv_url,
+		array(
+			'timeout'   => 15,
+			'sslverify' => false, // Allow self-signed certs for local development.
+		)
+	);
 
 	// Record that we attempted a CSV check so we can enforce the ~12 hour cadence.
 	update_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', time() );
@@ -2234,7 +2240,13 @@ function rentfetch_update_global_monthly_required_total_fees_from_csv() {
 		return false;
 	}
 
-	$response = wp_remote_get( $csv_url );
+	$response = wp_remote_get(
+		$csv_url,
+		array(
+			'timeout'   => 15,
+			'sslverify' => false, // Allow self-signed certs for local development.
+		)
+	);
 
 	// Record that we attempted a CSV check.
 	update_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', time() );
@@ -2300,6 +2312,7 @@ function rentfetch_get_property_post_id_for_monthly_fees_refresh() {
  * Refresh monthly required total fees for the current property context.
  *
  * Runs at most once every 12 hours per property, on single property/floorplan page loads.
+ * Hooked early enough in the request lifecycle so rendered pricing can use refreshed values.
  *
  * @return void
  */
@@ -2329,7 +2342,7 @@ function rentfetch_maybe_refresh_property_monthly_required_total_fees() {
 
 	rentfetch_update_property_monthly_required_total_fees_from_csv( $property_post_id );
 }
-add_action( 'wp_footer', 'rentfetch_maybe_refresh_property_monthly_required_total_fees', 999 );
+add_action( 'wp', 'rentfetch_maybe_refresh_property_monthly_required_total_fees', 999 );
 
 // * OFFICE HOURS
 

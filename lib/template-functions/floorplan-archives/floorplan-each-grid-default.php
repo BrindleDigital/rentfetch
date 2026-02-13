@@ -67,7 +67,9 @@ function rentfetch_floorplans_each_grid_default() {
 
 			echo '<div class="floorplan-availability">';
 
-				printf( '<p class="pricing">%s</p>', esc_html( $pricing ) );
+				if ( $pricing ) {
+					printf( '<p class="pricing">%s</p>', wp_kses_post( $pricing ) );
+				}
 				
 				$rentfetch_options_floorplan_hide_number_of_units = get_option( 'rentfetch_options_floorplan_hide_number_of_units' );
 				if ( '1' !== $rentfetch_options_floorplan_hide_number_of_units ) {

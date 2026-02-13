@@ -292,6 +292,25 @@ function rentfetch_settings_floorplans_floorplan_display()
 add_action('rentfetch_do_settings_floorplans_floorplan_display', 'rentfetch_settings_floorplans_floorplan_display');
 
 /**
+ * Clear floorplan search/result transients when pricing display settings change.
+ *
+ * @return void
+ */
+function rentfetch_clear_floorplan_pricing_display_caches() {
+	global $wpdb;
+
+	// Clear floorplan search markup and related array caches so pricing display mode changes appear immediately.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query(
+		"DELETE FROM {$wpdb->options}
+		WHERE option_name LIKE '_transient_rentfetch_floorplansearch_%'
+		OR option_name LIKE '_transient_timeout_rentfetch_floorplansearch_%'
+		OR option_name LIKE '_transient_rentfetch_floorplans_array_sql_%'
+		OR option_name LIKE '_transient_timeout_rentfetch_floorplans_array_sql_%'"
+	);
+}
+
+/**
  * Save the floorplan
  */
 function rentfetch_save_settings_floorplan_search()
@@ -328,8 +347,13 @@ function rentfetch_save_settings_floorplan_search()
 
 	// Select field.
 	if (isset($_POST['rentfetch_options_floorplan_pricing_display'])) {
-		$property_display = sanitize_text_field(wp_unslash($_POST['rentfetch_options_floorplan_pricing_display']));
-		update_option('rentfetch_options_floorplan_pricing_display', $property_display);
+		$old_display = (string) get_option('rentfetch_options_floorplan_pricing_display', 'range');
+		$new_display = sanitize_text_field(wp_unslash($_POST['rentfetch_options_floorplan_pricing_display']));
+		update_option('rentfetch_options_floorplan_pricing_display', $new_display);
+
+		if ($old_display !== $new_display) {
+			rentfetch_clear_floorplan_pricing_display_caches();
+		}
 	}
 }
 add_action('rentfetch_save_settings', 'rentfetch_save_settings_floorplan_search');

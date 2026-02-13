@@ -156,8 +156,8 @@ function rentfetch_seopress_get_floorplan_pricing( $post ) {
 		return '';
 	}
 
-	$minimum_rent = intval( get_post_meta( $post->ID, 'minimum_rent', true ) );
-	$maximum_rent = intval( get_post_meta( $post->ID, 'maximum_rent', true ) );
+	$minimum_rent = (float) get_post_meta( $post->ID, 'minimum_rent', true );
+	$maximum_rent = (float) get_post_meta( $post->ID, 'maximum_rent', true );
 
 	// bail if there's no rent value over $50 (this is junk data).
 	if ( max( $minimum_rent, $maximum_rent ) < 50 ) {
@@ -165,41 +165,35 @@ function rentfetch_seopress_get_floorplan_pricing( $post ) {
 	}
 
 	$price_display = get_option( 'rentfetch_options_floorplan_pricing_display', 'range' );
-	$rent_range = null;
+	$base_rent     = null;
+	$rent_display  = null;
 
-	if ( 'range' === $price_display ) {
-		if ( $minimum_rent && $maximum_rent && $minimum_rent > 0 && $maximum_rent > 0 ) {
-			if ( $minimum_rent === $maximum_rent ) {
-				$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
-			} elseif ( $minimum_rent < $maximum_rent ) {
-				$rent_range = sprintf( '$%s-$%s', number_format( $minimum_rent ), number_format( $maximum_rent ) );
-			} elseif ( $minimum_rent > $maximum_rent ) {
-				$rent_range = sprintf( '$%s-$%s', number_format( $maximum_rent ), number_format( $minimum_rent ) );
-			}
-		} elseif ( $minimum_rent && ! $maximum_rent ) {
-			$rent_range = sprintf( '$%s', number_format( $minimum_rent ) );
-		} elseif ( ! $minimum_rent && $maximum_rent ) {
-			$rent_range = sprintf( '$%s', number_format( $maximum_rent ) );
-		}
-	} elseif ( 'minimum' === $price_display ) {
-		if ( $minimum_rent && $maximum_rent && $minimum_rent > 0 && $maximum_rent > 0 ) {
-			if ( $minimum_rent === $maximum_rent ) {
-				$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
-			} elseif ( $minimum_rent < $maximum_rent ) {
-				$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
-			} elseif ( $minimum_rent > $maximum_rent ) {
-				$rent_range = sprintf( 'From $%s', number_format( $maximum_rent ) );
-			}
-		} elseif ( $minimum_rent && ! $maximum_rent ) {
-			$rent_range = sprintf( 'From $%s', number_format( $minimum_rent ) );
-		} elseif ( ! $minimum_rent && $maximum_rent ) {
-			$rent_range = sprintf( 'From $%s', number_format( $maximum_rent ) );
-		}
+	if ( function_exists( 'rentfetch_format_floorplan_rent_display' ) ) {
+		$base_rent = rentfetch_format_floorplan_rent_display( $minimum_rent, $maximum_rent, $price_display );
 	}
 
-	$rent_range = apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_range, $minimum_rent, $maximum_rent );
+	if ( ! $base_rent ) {
+		return '';
+	}
 
-	return $rent_range ? sanitize_text_field( $rent_range ) : '';
+	$monthly_required_fees = 0.0;
+	if ( function_exists( 'rentfetch_get_floorplan_property_monthly_required_fees_total' ) ) {
+		$monthly_required_fees = (float) rentfetch_get_floorplan_property_monthly_required_fees_total( $post->ID );
+	}
+
+	if ( $monthly_required_fees > 0 && function_exists( 'rentfetch_format_floorplan_rent_display' ) ) {
+		$minimum_with_fees = ( $minimum_rent > 0 ? $minimum_rent : $maximum_rent ) + $monthly_required_fees;
+		$maximum_with_fees = ( $maximum_rent > 0 ? $maximum_rent : $minimum_rent ) + $monthly_required_fees;
+		$with_fees         = rentfetch_format_floorplan_rent_display( $minimum_with_fees, $maximum_with_fees, $price_display );
+
+		$rent_display = sprintf( '%s/mo', $with_fees );
+	} else {
+		$rent_display = sprintf( '%s/mo', $base_rent );
+	}
+
+	$rent_display = apply_filters( 'rentfetch_filter_floorplan_pricing', $rent_display, $minimum_rent, $maximum_rent );
+
+	return $rent_display ? sanitize_text_field( $rent_display ) : '';
 }
 
 /**

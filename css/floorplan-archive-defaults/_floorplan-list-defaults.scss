@@ -134,6 +134,25 @@
 
 	p.pricing {
 		font-weight: bold;
+
+		.rentfetch-floorplan-rent-lines {
+			display: block;
+			line-height: 1.25;
+		}
+
+		.rentfetch-floorplan-rent-with-fees {
+			display: block;
+			font-size: inherit;
+			font-weight: inherit;
+			line-height: inherit;
+		}
+
+		.rentfetch-floorplan-base-rent {
+			display: block;
+			font-size: var(--rentfetch-font-size-smallest);
+			font-weight: 400;
+			line-height: 1.2;
+		}
 	}
 
 	summary.rentfetch-button {

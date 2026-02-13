@@ -99,3 +99,26 @@ pre {
 	font-size: 13px;
 	line-height: 1.2em;
 }
+
+// Shared pricing line styles used by shortcode outputs outside template-specific contexts.
+.rentfetch-property-rent-lines,
+.rentfetch-floorplan-rent-lines,
+.rentfetch-unit-rent-lines {
+	display: block;
+}
+
+.rentfetch-property-rent-with-fees,
+.rentfetch-floorplan-rent-with-fees,
+.rentfetch-unit-rent-with-fees {
+	display: block;
+	line-height: 1.25;
+}
+
+.rentfetch-property-base-rent,
+.rentfetch-floorplan-base-rent,
+.rentfetch-unit-base-rent {
+	display: block;
+	font-size: 0.8em;
+	font-weight: 400;
+	line-height: 1.2;
+}

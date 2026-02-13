@@ -1675,6 +1675,8 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		}
 	}
 
+	$previous_property_fees_csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
+
 	// Handle CSV upload or URL for property fees
 	if ( isset( $_POST['property_fees_csv_url'] ) ) {
 		$url = esc_url_raw( $_POST['property_fees_csv_url'] );
@@ -1686,16 +1688,28 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 	}
 
 	$property_fees_csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
+	$csv_url_changed       = ( $property_fees_csv_url !== $previous_property_fees_csv_url );
+
+	// Parse CSV immediately on save so analysis is ready right away.
+	if ( '' === $property_fees_csv_url ) {
+		delete_post_meta( $post_id, 'property_monthly_required_total_fees' );
+		delete_post_meta( $post_id, 'property_monthly_required_total_fees_last_checked' );
+		delete_post_meta( $post_id, 'property_monthly_required_total_fees_rows' );
+	} elseif ( function_exists( 'rentfetch_update_property_monthly_required_total_fees_from_csv' ) ) {
+		rentfetch_update_property_monthly_required_total_fees_from_csv( $post_id );
+	}
+
+	// Manual override field. If CSV URL changed in this save, keep the freshly parsed value.
 	if ( isset( $_POST['property_monthly_required_total_fees'] ) ) {
 		$raw_total = trim( (string) wp_unslash( $_POST['property_monthly_required_total_fees'] ) );
 
 		// Requirement: if there's no CSV URL, don't save this meta.
-		if ( '' === $property_fees_csv_url || '' === $raw_total ) {
+		if ( '' === $property_fees_csv_url ) {
 			delete_post_meta( $post_id, 'property_monthly_required_total_fees' );
-			if ( '' === $property_fees_csv_url ) {
-				delete_post_meta( $post_id, 'property_monthly_required_total_fees_last_checked' );
-				delete_post_meta( $post_id, 'property_monthly_required_total_fees_rows' );
-			}
+			delete_post_meta( $post_id, 'property_monthly_required_total_fees_last_checked' );
+			delete_post_meta( $post_id, 'property_monthly_required_total_fees_rows' );
+		} elseif ( '' === $raw_total || $csv_url_changed ) {
+			// Keep current parsed value (or cleared state from parser) when blank or when CSV changed.
 		} else {
 			$numeric_total = rentfetch_extract_first_numeric_fee_value( $raw_total );
 			if ( null === $numeric_total || $numeric_total <= 0 ) {
