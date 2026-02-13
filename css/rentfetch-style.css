@@ -29,6 +29,7 @@ html {
   --rentfetch-box-shadow: rgba(0, 0, 0, 0.07) 0px 3px 12px;
   --rentfetch-box-shadow-hover: rgba(0, 0, 0, 0.12) 0px 8px 15px;
   --rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
+  --rentfetch-border-radius: 4px;
   --rentfetch-error: #ffe5e5;
   --rentfetch-success: #e6f4e6;
   --rentfetch-notice: #f8f8e9;
@@ -65,6 +66,10 @@ pre {
   line-height: 1.25;
 }
 
+.rentfetch-unit-rent-with-fees--inclusive {
+  font-weight: 700;
+}
+
 .rentfetch-property-base-rent,
 .rentfetch-floorplan-base-rent,
 .rentfetch-unit-base-rent {
@@ -72,6 +77,13 @@ pre {
   font-size: 0.8em;
   font-weight: 400;
   line-height: 1.2;
+}
+
+.rentfetch-pricing-with-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  white-space: nowrap;
 }
 
 body.post-type-floorplans .row-actions {
@@ -1148,12 +1160,10 @@ form.rent-fetch-options h3,
   box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.07);
   cursor: pointer;
   display: inline-block;
-  font-size: 13px;
   margin: 0 5px 10px 0;
   padding: 8px 15px;
   position: relative;
   transition: 0.3s all ease;
-  z-index: 0;
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode:hover,
 .container.shortcodes span.shortcode:hover {
@@ -1166,7 +1176,7 @@ form.rent-fetch-options h3,
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode.copied:before,
 .container.shortcodes span.shortcode.copied:before {
-  content: "✓ Shortcode copied!";
+  content: "Copied";
   position: absolute;
   inset: 0;
   background-color: white;
@@ -1175,9 +1185,6 @@ form.rent-fetch-options h3,
   justify-content: center;
   opacity: 1;
   padding-top: 3px;
-  z-index: 1;
-  color: inherit;
-  font-weight: inherit;
 }
 
 #rent-fetch-shortcodes-page .separator {
@@ -1447,6 +1454,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 .floorplans-loop .floorplan-attributes p,
 .floorplans-simple-grid .floorplan-attributes p {
+  font-size: var(--rentfetch-font-size-small);
   display: inline-block;
   padding: 0 0.8em;
   margin: 0 0 15px 0;
@@ -1513,14 +1521,14 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 .floorplans-loop p.pricing,
 .floorplans-simple-grid p.pricing {
-  font-size: var(--rentfetch-font-size-large);
+  font-size: var(--rentfetch-font-size-medium);
   font-weight: bold;
   margin: 0;
 }
 .floorplans-loop p.pricing .rentfetch-floorplan-rent-lines,
 .floorplans-simple-grid p.pricing .rentfetch-floorplan-rent-lines {
   display: block;
-  line-height: 1.25;
+  line-height: 1.3;
 }
 .floorplans-loop p.pricing .rentfetch-floorplan-rent-with-fees,
 .floorplans-simple-grid p.pricing .rentfetch-floorplan-rent-with-fees {
@@ -1532,9 +1540,9 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 .floorplans-loop p.pricing .rentfetch-floorplan-base-rent,
 .floorplans-simple-grid p.pricing .rentfetch-floorplan-base-rent {
   display: block;
-  font-size: var(--rentfetch-font-size-small);
+  font-size: var(--rentfetch-font-size-smallest);
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 .floorplans-loop p.availability,
 .floorplans-simple-grid p.availability {
@@ -3355,50 +3363,81 @@ table.property-fees-table .fee-notes {
 }
 
 /* ==========================================================================
-   Fee Description Tooltip Trigger Styles
+   Rent Fetch Tooltip Trigger Styles
    ========================================================================== */
+.rentfetch-tooltip-trigger,
 .fee-description-with-tooltip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   cursor: help;
+  position: relative;
+  z-index: 20;
+  vertical-align: middle;
 }
+.rentfetch-tooltip-trigger .rentfetch-tooltip-icon,
+.rentfetch-tooltip-trigger .fee-info-icon,
+.fee-description-with-tooltip .rentfetch-tooltip-icon,
 .fee-description-with-tooltip .fee-info-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.2em;
-  height: 1.2em;
-  font-size: 0.7em;
-  font-weight: 600;
+  display: inline-grid;
+  place-items: center;
+  width: 1em;
+  height: 1em;
+  min-width: 1em;
+  min-height: 1em;
+  font-size: 0.8em;
+  font-weight: 400;
   line-height: 1;
-  padding-top: 0.1em;
   color: var(--rentfetch-dark);
-  border: 1.5px solid currentColor;
+  border: 0;
   border-radius: 50%;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+  background: transparent;
+  box-shadow: none;
+  opacity: 1;
+  transition: color 0.18s ease, opacity 0.18s ease;
   cursor: pointer;
   flex-shrink: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+.rentfetch-tooltip-trigger .rentfetch-tooltip-icon::before,
+.rentfetch-tooltip-trigger .fee-info-icon::before,
+.fee-description-with-tooltip .rentfetch-tooltip-icon::before,
+.fee-description-with-tooltip .fee-info-icon::before {
+  content: "\f14c";
+  font-family: "dashicons";
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1;
+  speak: never;
+}
+.rentfetch-tooltip-trigger .rentfetch-tooltip-icon:hover,
+.rentfetch-tooltip-trigger .fee-info-icon:hover,
+.fee-description-with-tooltip .rentfetch-tooltip-icon:hover,
 .fee-description-with-tooltip .fee-info-icon:hover {
-  opacity: 1;
+  color: var(--rentfetch-dark);
 }
-@media (max-width: 600px) {
-  .fee-description-with-tooltip .fee-info-icon {
-    width: 1.4em;
-    height: 1.4em;
-    font-size: 0.8em;
-  }
+.rentfetch-tooltip-trigger .rentfetch-tooltip-icon:focus-visible,
+.rentfetch-tooltip-trigger .fee-info-icon:focus-visible,
+.fee-description-with-tooltip .rentfetch-tooltip-icon:focus-visible,
+.fee-description-with-tooltip .fee-info-icon:focus-visible {
+  outline: 2px solid var(--rentfetch-default);
+  outline-offset: 2px;
+  border-radius: 999px;
 }
-.fee-description-with-tooltip:hover .fee-info-icon, .fee-description-with-tooltip:focus .fee-info-icon {
+.rentfetch-tooltip-trigger:hover .rentfetch-tooltip-icon, .rentfetch-tooltip-trigger:hover .fee-info-icon, .rentfetch-tooltip-trigger:focus .rentfetch-tooltip-icon, .rentfetch-tooltip-trigger:focus .fee-info-icon,
+.fee-description-with-tooltip:hover .rentfetch-tooltip-icon,
+.fee-description-with-tooltip:hover .fee-info-icon,
+.fee-description-with-tooltip:focus .rentfetch-tooltip-icon,
+.fee-description-with-tooltip:focus .fee-info-icon {
   opacity: 1;
+  color: var(--rentfetch-dark);
 }
 
 /* ==========================================================================
-   Property Fees Tooltip Styles
+   Rent Fetch Tooltip Styles
    ========================================================================== */
-.rentfetch-fee-tooltip {
+.rentfetch-tooltip {
   position: absolute;
   z-index: 99999;
   max-width: 700px;
@@ -3417,19 +3456,19 @@ table.property-fees-table .fee-notes {
   transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
   pointer-events: none;
 }
-.rentfetch-fee-tooltip.is-visible {
+.rentfetch-tooltip.is-visible {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
   pointer-events: auto;
 }
-.rentfetch-fee-tooltip.is-above {
+.rentfetch-tooltip.is-above {
   transform: translateY(-5px);
 }
-.rentfetch-fee-tooltip.is-above.is-visible {
+.rentfetch-tooltip.is-above.is-visible {
   transform: translateY(0);
 }
-.rentfetch-fee-tooltip::before {
+.rentfetch-tooltip::before {
   content: "";
   position: absolute;
   top: -8px;
@@ -3439,7 +3478,7 @@ table.property-fees-table .fee-notes {
   border-top: none;
   border-bottom-color: var(--rentfetch-base-3, #ddd);
 }
-.rentfetch-fee-tooltip::after {
+.rentfetch-tooltip::after {
   content: "";
   position: absolute;
   top: -6px;
@@ -3449,7 +3488,7 @@ table.property-fees-table .fee-notes {
   border-top: none;
   border-bottom-color: var(--rentfetch-base-1, #fff);
 }
-.rentfetch-fee-tooltip.is-above::before {
+.rentfetch-tooltip.is-above::before {
   top: auto;
   bottom: -8px;
   left: var(--caret-left, 50%);
@@ -3457,7 +3496,7 @@ table.property-fees-table .fee-notes {
   border-bottom: none;
   border-top-color: var(--rentfetch-base-3, #ddd);
 }
-.rentfetch-fee-tooltip.is-above::after {
+.rentfetch-tooltip.is-above::after {
   top: auto;
   bottom: -6px;
   left: var(--caret-left, 50%);
@@ -3465,91 +3504,91 @@ table.property-fees-table .fee-notes {
   border-bottom: none;
   border-top-color: var(--rentfetch-base-1, #fff);
 }
-.rentfetch-fee-tooltip h1,
-.rentfetch-fee-tooltip h2,
-.rentfetch-fee-tooltip h3,
-.rentfetch-fee-tooltip h4,
-.rentfetch-fee-tooltip h5 {
+.rentfetch-tooltip h1,
+.rentfetch-tooltip h2,
+.rentfetch-tooltip h3,
+.rentfetch-tooltip h4,
+.rentfetch-tooltip h5 {
   margin: 0 0 0.5rem 0;
   padding: 0;
   font-weight: 600;
   line-height: 1.3;
 }
-.rentfetch-fee-tooltip h1:not(:first-child),
-.rentfetch-fee-tooltip h2:not(:first-child),
-.rentfetch-fee-tooltip h3:not(:first-child),
-.rentfetch-fee-tooltip h4:not(:first-child),
-.rentfetch-fee-tooltip h5:not(:first-child) {
+.rentfetch-tooltip h1:not(:first-child),
+.rentfetch-tooltip h2:not(:first-child),
+.rentfetch-tooltip h3:not(:first-child),
+.rentfetch-tooltip h4:not(:first-child),
+.rentfetch-tooltip h5:not(:first-child) {
   margin-top: 0.75rem;
 }
-.rentfetch-fee-tooltip h1 {
+.rentfetch-tooltip h1 {
   font-size: 1.1rem;
 }
-.rentfetch-fee-tooltip h2 {
+.rentfetch-tooltip h2 {
   font-size: 1rem;
 }
-.rentfetch-fee-tooltip h3 {
+.rentfetch-tooltip h3 {
   font-size: 0.95rem;
 }
-.rentfetch-fee-tooltip h4 {
+.rentfetch-tooltip h4 {
   font-size: 0.9rem;
 }
-.rentfetch-fee-tooltip h5 {
+.rentfetch-tooltip h5 {
   font-size: 0.85rem;
 }
-.rentfetch-fee-tooltip p {
+.rentfetch-tooltip p {
   margin: 0 0 0.6rem 0;
 }
-.rentfetch-fee-tooltip p:last-child {
+.rentfetch-tooltip p:last-child {
   margin-bottom: 0;
 }
-.rentfetch-fee-tooltip ul,
-.rentfetch-fee-tooltip ol {
+.rentfetch-tooltip ul,
+.rentfetch-tooltip ol {
   margin: 0.4rem 0 0.6rem 0;
   padding-left: 1.25rem;
 }
-.rentfetch-fee-tooltip ul:last-child,
-.rentfetch-fee-tooltip ol:last-child {
+.rentfetch-tooltip ul:last-child,
+.rentfetch-tooltip ol:last-child {
   margin-bottom: 0;
 }
-.rentfetch-fee-tooltip ul li,
-.rentfetch-fee-tooltip ol li {
+.rentfetch-tooltip ul li,
+.rentfetch-tooltip ol li {
   margin-bottom: 0.2rem;
   padding-left: 0.15rem;
 }
-.rentfetch-fee-tooltip ul li:last-child,
-.rentfetch-fee-tooltip ol li:last-child {
+.rentfetch-tooltip ul li:last-child,
+.rentfetch-tooltip ol li:last-child {
   margin-bottom: 0;
 }
-.rentfetch-fee-tooltip ul {
+.rentfetch-tooltip ul {
   list-style-type: disc;
 }
-.rentfetch-fee-tooltip ul ul {
+.rentfetch-tooltip ul ul {
   list-style-type: circle;
 }
-.rentfetch-fee-tooltip ol {
+.rentfetch-tooltip ol {
   list-style-type: decimal;
 }
-.rentfetch-fee-tooltip ol ol {
+.rentfetch-tooltip ol ol {
   list-style-type: lower-alpha;
 }
-.rentfetch-fee-tooltip strong,
-.rentfetch-fee-tooltip b {
+.rentfetch-tooltip strong,
+.rentfetch-tooltip b {
   font-weight: 600;
 }
-.rentfetch-fee-tooltip em,
-.rentfetch-fee-tooltip i {
+.rentfetch-tooltip em,
+.rentfetch-tooltip i {
   font-style: italic;
 }
-.rentfetch-fee-tooltip a {
+.rentfetch-tooltip a {
   color: var(--rentfetch-accent-1, #0066cc);
   text-decoration: underline;
 }
-.rentfetch-fee-tooltip a:hover {
+.rentfetch-tooltip a:hover {
   text-decoration: none;
 }
 @media (max-width: 600px) {
-  .rentfetch-fee-tooltip {
+  .rentfetch-tooltip {
     max-width: calc(100vw - 40px);
     max-height: 60vh;
     overflow-y: auto;
@@ -3557,22 +3596,22 @@ table.property-fees-table .fee-notes {
     padding: 0.875rem 1rem;
     font-size: 0.75rem;
   }
-  .rentfetch-fee-tooltip::before, .rentfetch-fee-tooltip::after {
+  .rentfetch-tooltip::before, .rentfetch-tooltip::after {
     display: none;
   }
-  .rentfetch-fee-tooltip h1 {
+  .rentfetch-tooltip h1 {
     font-size: 1rem;
   }
-  .rentfetch-fee-tooltip h2 {
+  .rentfetch-tooltip h2 {
     font-size: 0.95rem;
   }
-  .rentfetch-fee-tooltip h3 {
+  .rentfetch-tooltip h3 {
     font-size: 0.9rem;
   }
-  .rentfetch-fee-tooltip h4 {
+  .rentfetch-tooltip h4 {
     font-size: 0.85rem;
   }
-  .rentfetch-fee-tooltip h5 {
+  .rentfetch-tooltip h5 {
     font-size: 0.8rem;
   }
 }
@@ -3620,20 +3659,27 @@ body.single-floorplans .current-floorplan-info p.specials:before {
   transform: translateY(-50%);
 }
 body.single-floorplans .current-floorplan-info p.pricing {
-  font-size: var(--rentfetch-font-size-large);
+  margin: 0 0 12px 0;
+  font-size: var(--rentfetch-font-size-larger);
+  line-height: 1.2;
+}
+@media (max-width: 600px) {
+  body.single-floorplans .current-floorplan-info p.pricing {
+    margin-bottom: 8px;
+  }
 }
 body.single-floorplans .current-floorplan-info p.pricing .rentfetch-floorplan-rent-lines {
   display: block;
-  line-height: 1.25;
 }
 body.single-floorplans .current-floorplan-info p.pricing .rentfetch-floorplan-rent-with-fees {
   display: block;
   font-size: inherit;
-  font-weight: inherit;
+  font-weight: 700;
   line-height: inherit;
 }
 body.single-floorplans .current-floorplan-info p.pricing .rentfetch-floorplan-base-rent {
   display: block;
+  margin-top: 4px;
   font-size: var(--rentfetch-font-size-small);
   font-weight: 400;
   line-height: 1.2;
@@ -3837,18 +3883,30 @@ body.single-floorplans h2 {
 #details .property-details-body .property-stats > p {
   margin: 0 35px 5px 0;
 }
+#details .property-details-body .property-stats > p.rent {
+  flex: 0 0 100%;
+  margin: 0 0 12px 0;
+  font-size: var(--rentfetch-font-size-larger);
+  line-height: 1.2;
+}
+@media (max-width: 600px) {
+  #details .property-details-body .property-stats > p.rent {
+    margin-bottom: 8px;
+  }
+}
 #details .property-details-body .property-stats > p.rent .rentfetch-property-rent-lines {
   display: block;
 }
 #details .property-details-body .property-stats > p.rent .rentfetch-property-rent-with-fees {
   display: block;
   font-size: inherit;
-  font-weight: inherit;
+  font-weight: 700;
   line-height: inherit;
 }
 #details .property-details-body .property-stats > p.rent .rentfetch-property-base-rent {
   display: block;
-  font-size: var(--rentfetch-font-size-smallest);
+  margin-top: 4px;
+  font-size: var(--rentfetch-font-size-small);
   font-weight: 400;
   line-height: 1.2;
 }

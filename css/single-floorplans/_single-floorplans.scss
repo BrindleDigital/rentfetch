@@ -47,22 +47,28 @@ body.single-floorplans {
 		}
 
 		p.pricing {
-			font-size: var(--rentfetch-font-size-large);
+			margin: 0 0 12px 0;
+			font-size: var(--rentfetch-font-size-larger);
+			line-height: 1.2;
+
+			@include mobile {
+				margin-bottom: 8px;
+			}
 
 			.rentfetch-floorplan-rent-lines {
 				display: block;
-				line-height: 1.25;
 			}
 
 			.rentfetch-floorplan-rent-with-fees {
 				display: block;
 				font-size: inherit;
-				font-weight: inherit;
+				font-weight: 700;
 				line-height: inherit;
 			}
 
 			.rentfetch-floorplan-base-rent {
 				display: block;
+				margin-top: 4px;
 				font-size: var(--rentfetch-font-size-small);
 				font-weight: 400;
 				line-height: 1.2;

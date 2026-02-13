@@ -44,6 +44,9 @@ function rentfetch_propertysearch_default_layout( $atts ) {
 	wp_enqueue_style( 'rentfetch-glightbox-style' );
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
 	wp_enqueue_script( 'rentfetch-glightbox-init' );
+
+	// Ensure tooltip behavior is available for pricing/fees in AJAX-loaded results.
+	wp_enqueue_script( 'rentfetch-tooltip' );
 	
 	// * Our container markup for the results
 	echo '<div class="rent-fetch-property-search-default-layout">';
@@ -227,123 +230,3 @@ function rentfetch_render_property_query_results( $property_args ) {
 
 	return ob_get_clean();
 }
-
-/**
- * AJAX handler for the property search
- * 
- * @deprecated This function is deprecated as of the REST API implementation.
- *             Use the REST endpoint /wp-json/rentfetch/v1/search/properties instead.
- *             Kept for backward compatibility only.
- *
- * @return void
- */
-function rentfetch_filter_properties() {
-
-	// Verify nonce for security
-	$nonce = isset( $_POST['rentfetch_frontend_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_frontend_nonce_field'] ) ) : '';
-	if ( ! wp_verify_nonce( $nonce, 'rentfetch_frontend_nonce_action' ) ) {
-		wp_send_json_error( array( 'message' => 'Security verification failed. Please refresh the page and try again.' ) );
-		wp_die();
-	}
-
-	// Keep card-level pricing/availability aligned with active floorplan filters.
-	if ( function_exists( 'rentfetch_set_floorplans' ) ) {
-		rentfetch_set_floorplans();
-	}
-
-	$property_ids = rentfetch_get_property_ids_with_available_floorplans();
-	if ( empty( $property_ids ) ) {
-		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything – empty array will let us find everything, so let's pass nonsense to make the search find nothing.
-	}
-	
-	// Get a list of the possible properties to show from the shortcode attributes.
-	$referring_page_id = url_to_postid( wp_get_referer() );
-	$atts = rentfetch_get_shortcode_attributes( 'rentfetch_propertysearch', $referring_page_id );
-	
-
-	// set -1 for $properties_posts_per_page if it's not set.
-	$properties_maximum_per_page = get_option( 'rentfetch_options_maximum_number_of_properties_to_show' );
-	if ( 0 === $properties_maximum_per_page ) {
-		$properties_maximum_per_page = -1;
-	}
-
-	// * The base property query.
-	$property_args = array(
-		'post_type'      => 'properties',
-		'posts_per_page' => $properties_maximum_per_page,
-		'no_found_rows'  => true,
-		'post_status' => 'publish',
-	);
-
-	$display_availability = get_option( 'rentfetch_options_property_availability_display' );
-	if ( 'all' !== $display_availability ) {
-		
-		// If we have a propertyids attribute, use the intersection of that and the $property_ids array.
-		if ( isset( $atts['propertyids'] ) ) {
-			$property_ids = array_intersect( $property_ids, explode( ',', $atts['propertyids'] ) );
-		}
-
-		// * Add all of our property IDs into the property search
-		$property_args['meta_query'] = array(
-			array(
-				'key'   => 'property_id',
-				'value' => $property_ids,
-			),
-		);
-
-	} else {
-		if ( isset( $atts['propertyids'] ) ) {
-			$property_ids = explode( ',', $atts['propertyids'] );
-		}
-		
-		// * Add all of our property IDs into the property search
-		$property_args['meta_query'] = array(
-			array(
-				'key'   => 'property_id',
-				'value' => $property_ids,
-			),
-		);
-	}
-
-	$property_args = apply_filters( 'rentfetch_search_property_map_properties_query_args', $property_args );
-
-	$floorplan_args_for_cache = array(
-		'post_type'      => 'floorplans',
-		'posts_per_page' => -1,
-		'orderby'        => 'date',
-		'order'          => 'ASC',
-		'no_found_rows'  => true,
-		'post_status'    => 'publish',
-	);
-	$floorplan_args_for_cache = apply_filters( 'rentfetch_search_floorplans_query_args', $floorplan_args_for_cache );
-
-	// Build a cache key from the property args and shortcode atts so different filters cache separately.
-	$cache_key = 'rentfetch_propertysearch_markup_' . md5(
-		wp_json_encode(
-			array(
-				'args'           => $property_args,
-				'atts'           => $atts,
-				'floorplan_args' => $floorplan_args_for_cache,
-			)
-		)
-	);
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$cached_markup = get_transient( $cache_key );
-		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
-			echo $cached_markup;
-			die();
-		}
-	}
-
-	// Render and cache the results.
-	$markup = rentfetch_render_property_query_results( $property_args );
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
-	}
-
-	echo $markup;
-
-	die();
-}
-add_action( 'wp_ajax_propertysearch', 'rentfetch_filter_properties' ); // wp_ajax_{ACTION HERE}.
-add_action( 'wp_ajax_nopriv_propertysearch', 'rentfetch_filter_properties' );

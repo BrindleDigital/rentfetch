@@ -1,14 +1,22 @@
 /**
- * Property Fees Tooltip functionality
+ * Rent Fetch tooltip functionality.
  *
  * Handles non-native tooltips for displaying HTML content
- * associated with property fee descriptions.
+ * on any Rent Fetch tooltip trigger.
  *
  * @package rentfetch
  */
 
 (function ($) {
 	'use strict';
+
+	const TRIGGER_SELECTOR = '.rentfetch-tooltip-trigger, .fee-description-with-tooltip';
+	const ICON_SELECTOR = '.rentfetch-tooltip-icon, .fee-info-icon';
+	const TOOLTIP_SELECTOR = '.rentfetch-tooltip';
+	const ICON_CLICK_SELECTOR =
+		'.rentfetch-tooltip-trigger .rentfetch-tooltip-icon, .rentfetch-tooltip-trigger .fee-info-icon, .fee-description-with-tooltip .rentfetch-tooltip-icon, .fee-description-with-tooltip .fee-info-icon';
+	const SAFE_CONTAINER_SELECTOR =
+		'.rentfetch-tooltip-trigger, .fee-description-with-tooltip, .rentfetch-tooltip';
 
 	// Tooltip element reference
 	let $tooltip = null;
@@ -21,43 +29,27 @@
 		// Create tooltip element if it doesn't exist
 		if (!$tooltip) {
 			$tooltip = $(
-				'<div class="rentfetch-fee-tooltip" role="tooltip" aria-hidden="true"></div>'
+				'<div class="rentfetch-tooltip" role="tooltip" aria-hidden="true"></div>'
 			);
 			$('body').append($tooltip);
 		}
 
 		// Bind events using event delegation for dynamically loaded content
-		$(document).on(
-			'mouseenter',
-			'.fee-description-with-tooltip',
-			showTooltip
-		);
-		$(document).on(
-			'mouseleave',
-			'.fee-description-with-tooltip',
-			hideTooltipDelayed
-		);
-		$(document).on('focus', '.fee-description-with-tooltip', showTooltip);
-		$(document).on('blur', '.fee-description-with-tooltip', hideTooltip);
-		$(document).on(
-			'click',
-			'.fee-description-with-tooltip .fee-info-icon',
-			toggleTooltipOnClick
-		);
+		$(document).on('mouseenter', TRIGGER_SELECTOR, showTooltip);
+		$(document).on('mouseleave', TRIGGER_SELECTOR, hideTooltipDelayed);
+		$(document).on('focus', TRIGGER_SELECTOR, showTooltip);
+		$(document).on('blur', TRIGGER_SELECTOR, hideTooltip);
+		$(document).on('click', ICON_CLICK_SELECTOR, toggleTooltipOnClick);
 
 		// Keep tooltip visible when hovering over it
-		$(document).on('mouseenter', '.rentfetch-fee-tooltip', function () {
+		$(document).on('mouseenter', TOOLTIP_SELECTOR, function () {
 			clearTimeout(hideTimeout);
 		});
-		$(document).on('mouseleave', '.rentfetch-fee-tooltip', hideTooltip);
+		$(document).on('mouseleave', TOOLTIP_SELECTOR, hideTooltip);
 
 		// Close tooltip when clicking outside
 		$(document).on('click', function (e) {
-			if (
-				!$(e.target).closest(
-					'.fee-description-with-tooltip, .rentfetch-fee-tooltip'
-				).length
-			) {
+			if (!$(e.target).closest(SAFE_CONTAINER_SELECTOR).length) {
 				hideTooltip();
 			}
 		});
@@ -121,7 +113,7 @@
 		e.preventDefault();
 		e.stopPropagation();
 
-		const $trigger = $(this).closest('.fee-description-with-tooltip');
+		const $trigger = $(this).closest(TRIGGER_SELECTOR);
 
 		if ($tooltip.hasClass('is-visible')) {
 			hideTooltip();
@@ -137,7 +129,7 @@
 	 */
 	function positionTooltip($trigger) {
 		// Find the info icon within the trigger to center on it
-		const $icon = $trigger.find('.fee-info-icon');
+		const $icon = $trigger.find(ICON_SELECTOR).first();
 		const $positionElement = $icon.length ? $icon : $trigger;
 
 		const elementOffset = $positionElement.offset();

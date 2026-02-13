@@ -167,10 +167,12 @@ function rentfetch_get_unit_pricing() {
 	$monthly_required_fees = rentfetch_get_unit_property_monthly_required_fees_total( get_the_ID() );
 	if ( $monthly_required_fees > 0 ) {
 		$rent_with_fees_display = rentfetch_format_unit_rent_value( $base_rent_value + $monthly_required_fees );
+		$tooltip_markup         = function_exists( 'rentfetch_get_total_monthly_leasing_pricing_tooltip_markup' ) ? rentfetch_get_total_monthly_leasing_pricing_tooltip_markup() : '';
 		$rent_range             = sprintf(
-			'<span class="rentfetch-unit-rent-lines"><span class="rentfetch-unit-rent-with-fees">%1$s/mo</span><span class="rentfetch-unit-base-rent">%2$s base rent</span></span>',
+			'<span class="rentfetch-unit-rent-lines"><span class="rentfetch-unit-rent-with-fees rentfetch-unit-rent-with-fees--inclusive"><span class="rentfetch-pricing-with-tooltip">%1$s/mo%3$s</span></span><span class="rentfetch-unit-base-rent">%2$s base rent</span></span>',
 			esc_html( $rent_with_fees_display ),
-			esc_html( $base_rent_display )
+			esc_html( $base_rent_display ),
+			$tooltip_markup
 		);
 	} else {
 		$rent_range = sprintf(

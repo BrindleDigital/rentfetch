@@ -34,6 +34,7 @@ html {
 	--rentfetch-box-shadow: rgba(0, 0, 0, 0.07) 0px 3px 12px;
 	--rentfetch-box-shadow-hover: rgba(0, 0, 0, 0.12) 0px 8px 15px;
 	--rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
+	--rentfetch-border-radius: 4px;
 	--rentfetch-error: #ffe5e5;
 	--rentfetch-success: #e6f4e6;
 	--rentfetch-notice: #f8f8e9;
@@ -114,6 +115,10 @@ pre {
 	line-height: 1.25;
 }
 
+.rentfetch-unit-rent-with-fees--inclusive {
+	font-weight: 700;
+}
+
 .rentfetch-property-base-rent,
 .rentfetch-floorplan-base-rent,
 .rentfetch-unit-base-rent {
@@ -121,4 +126,11 @@ pre {
 	font-size: 0.8em;
 	font-weight: 400;
 	line-height: 1.2;
+}
+
+.rentfetch-pricing-with-tooltip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35em;
+	white-space: nowrap;
 }

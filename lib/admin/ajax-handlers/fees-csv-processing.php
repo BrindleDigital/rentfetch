@@ -582,6 +582,9 @@ function rentfetch_refresh_global_monthly_required_fees_now() {
 	}
 
 	$csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	if ( function_exists( 'rentfetch_clear_cached_fees_csv_content' ) ) {
+		rentfetch_clear_cached_fees_csv_content( $csv_url );
+	}
 	$updated = rentfetch_update_global_monthly_required_total_fees_from_csv();
 	$total   = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
 
@@ -631,6 +634,9 @@ function rentfetch_refresh_monthly_required_fees_now() {
 	}
 
 	$csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
+	if ( function_exists( 'rentfetch_clear_cached_fees_csv_content' ) ) {
+		rentfetch_clear_cached_fees_csv_content( $csv_url );
+	}
 	$updated = rentfetch_update_property_monthly_required_total_fees_from_csv( $post_id );
 
 	$total = get_post_meta( $post_id, 'property_monthly_required_total_fees', true );

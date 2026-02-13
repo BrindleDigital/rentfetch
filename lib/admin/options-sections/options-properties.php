@@ -56,6 +56,7 @@ function rentfetch_settings_set_defaults_properties() {
 	add_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
 	add_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', 0 );
 	add_option( 'rentfetch_options_global_monthly_required_total_fees_rows', array() );
+	add_option( 'rentfetch_options_total_monthly_leasing_pricing_tooltip_text', 'Total Monthly Leasing Pricing' );
 }
 register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_properties' );
 
@@ -590,6 +591,9 @@ function rentfetch_settings_properties_global_property_fees() {
 	$global_monthly_required_total_fees = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
 	$global_monthly_last_checked        = (int) get_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', 0 );
 	$global_monthly_fee_rows            = get_option( 'rentfetch_options_global_monthly_required_total_fees_rows', array() );
+	$default_tooltip_text               = 'Total Monthly Leasing Pricing';
+	$tooltip_text_raw                   = trim( (string) get_option( 'rentfetch_options_total_monthly_leasing_pricing_tooltip_text', '' ) );
+	$tooltip_text                       = ( $default_tooltip_text === $tooltip_text_raw ) ? '' : $tooltip_text_raw;
 	$global_refresh_nonce               = wp_create_nonce( 'rentfetch_refresh_global_monthly_required_fees_now' );
 	if ( ! is_array( $global_monthly_fee_rows ) ) {
 		$global_monthly_fee_rows = array();
@@ -664,6 +668,20 @@ function rentfetch_settings_properties_global_property_fees() {
 					</table>
 				<?php endif; ?>
 			<?php endif; ?>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_total_monthly_leasing_pricing_tooltip_text">Pricing Tooltip Text</label>
+			<p class="description">Controls the text shown when hovering the small circled question-mark icon next to fee-inclusive monthly pricing.</p>
+			<textarea
+				id="rentfetch_options_total_monthly_leasing_pricing_tooltip_text"
+				name="rentfetch_options_total_monthly_leasing_pricing_tooltip_text"
+				placeholder="Total Monthly Leasing Pricing"
+				rows="5"
+				style="width:100%;"
+			><?php echo esc_textarea( $tooltip_text ); ?></textarea>
 		</div>
 	</div>
 	
@@ -820,6 +838,12 @@ function rentfetch_save_settings_global_property_fees() {
 	}
 	$global_csv_url_changed = ( $global_csv_url !== $previous_global_csv_url );
 
+	// Bust short-term CSV cache on settings save (shared URL cache key).
+	if ( function_exists( 'rentfetch_clear_cached_fees_csv_content' ) ) {
+		rentfetch_clear_cached_fees_csv_content( $previous_global_csv_url );
+		rentfetch_clear_cached_fees_csv_content( $global_csv_url );
+	}
+
 	// Parse CSV immediately on save so analysis is ready right away.
 	if ( '' !== $global_csv_url && function_exists( 'rentfetch_update_global_monthly_required_total_fees_from_csv' ) ) {
 		rentfetch_update_global_monthly_required_total_fees_from_csv();
@@ -849,6 +873,15 @@ function rentfetch_save_settings_global_property_fees() {
 	if ( isset( $_POST['rentfetch_options_global_property_fees_embed'] ) ) {
 		$embed = sanitize_textarea_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_embed'] ) );
 		update_option( 'rentfetch_options_global_property_fees_embed', $embed );
+	}
+
+	if ( isset( $_POST['rentfetch_options_total_monthly_leasing_pricing_tooltip_text'] ) ) {
+		$tooltip_text = trim( sanitize_text_field( wp_unslash( $_POST['rentfetch_options_total_monthly_leasing_pricing_tooltip_text'] ) ) );
+		if ( '' === $tooltip_text ) {
+			delete_option( 'rentfetch_options_total_monthly_leasing_pricing_tooltip_text' );
+		} else {
+			update_option( 'rentfetch_options_total_monthly_leasing_pricing_tooltip_text', $tooltip_text );
+		}
 	}
 }
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_global_property_fees' );

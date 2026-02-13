@@ -1690,6 +1690,12 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 	$property_fees_csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
 	$csv_url_changed       = ( $property_fees_csv_url !== $previous_property_fees_csv_url );
 
+	// Bust short-term CSV cache on any property save for previous/current URL.
+	if ( function_exists( 'rentfetch_clear_cached_fees_csv_content' ) ) {
+		rentfetch_clear_cached_fees_csv_content( $previous_property_fees_csv_url );
+		rentfetch_clear_cached_fees_csv_content( $property_fees_csv_url );
+	}
+
 	// Parse CSV immediately on save so analysis is ready right away.
 	if ( '' === $property_fees_csv_url ) {
 		delete_post_meta( $post_id, 'property_monthly_required_total_fees' );

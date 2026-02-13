@@ -24,6 +24,9 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
 	wp_enqueue_script( 'rentfetch-glightbox-init' );
 
+	// Ensure tooltip behavior is available for pricing/fees in AJAX-loaded results.
+	wp_enqueue_script( 'rentfetch-tooltip' );
+
 	// get the attributes so that we can pass them to the child shortcodes.
 	$string_atts = '';
 

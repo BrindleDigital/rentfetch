@@ -22,6 +22,9 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	// Plugin styles.
 	wp_enqueue_style( 'rentfetch-style', RENTFETCH_PATH . 'css/rentfetch-style.css', array(), RENTFETCH_VERSION, 'screen' );
 
+	// Rent Fetch tooltip library.
+	wp_register_script( 'rentfetch-tooltip', RENTFETCH_PATH . 'js/rentfetch-tooltip.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+
 	// NoUISlider (MIT license, for dropdown double range slider).
 	wp_register_style( 'rentfetch-nouislider-style', RENTFETCH_PATH . 'vendor/nouislider/nouislider.min.css', array(), RENTFETCH_VERSION, 'screen' );
 	wp_register_script( 'rentfetch-nouislider-script', RENTFETCH_PATH . 'vendor/nouislider/nouislider.min.js', array( 'jquery' ), RENTFETCH_VERSION, true );
@@ -33,12 +36,12 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_script( 'rentfetch-glightbox-init', RENTFETCH_PATH . 'js/rentfetch-glightbox-init.js', array( 'rentfetch-glightbox-script', 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Properties search.
-	wp_register_script( 'rentfetch-search-properties-ajax', RENTFETCH_PATH . 'js/rentfetch-search-properties-ajax.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-search-properties-ajax', RENTFETCH_PATH . 'js/rentfetch-search-properties-ajax.js', array( 'jquery', 'rentfetch-tooltip' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-property-search-featured-filters-toggle', RENTFETCH_PATH . 'js/rentfetch-property-search-featured-filters-toggle.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-property-search-filters-dialog', RENTFETCH_PATH . 'js/rentfetch-property-search-filters-dialog.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Floorplans search.
-	wp_register_script( 'rentfetch-search-floorplans-ajax', RENTFETCH_PATH . 'js/rentfetch-search-floorplans-ajax.js', array( 'jquery' ), RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-search-floorplans-ajax', RENTFETCH_PATH . 'js/rentfetch-search-floorplans-ajax.js', array( 'jquery', 'rentfetch-tooltip' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-floorplan-search-featured-filters-toggle', RENTFETCH_PATH . 'js/rentfetch-floorplan-search-featured-filters-toggle.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Google Maps script.
@@ -83,9 +86,6 @@ function rentfetch_enqueue_scripts_stylesheets() {
 	wp_register_script( 'blaze-script', RENTFETCH_PATH . 'vendor/blaze-slider/blaze-slider.min.js', array(), RENTFETCH_VERSION, true );
 	wp_register_script( 'blaze-more-properties-init', RENTFETCH_PATH . 'js/rentfetch-blaze-more-properties-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-floorplan-images-slider-init', RENTFETCH_PATH . 'js/rentfetch-blaze-floorplan-images-init.js', array( 'blaze-script' ), RENTFETCH_VERSION, true );
-
-	// Property fees tooltip.
-	wp_register_script( 'rentfetch-property-fees-tooltip', RENTFETCH_PATH . 'js/rentfetch-property-fees-tooltip.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Analytics events.
 	wp_register_script( 'rentfetch-analytics-events', RENTFETCH_PATH . 'js/rentfetch-analytics-events.js', array(), RENTFETCH_VERSION, true );

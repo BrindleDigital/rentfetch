@@ -1327,6 +1327,45 @@ function rentfetch_get_effective_monthly_required_total_fees_for_property( $prop
 }
 
 /**
+ * Get the tooltip text for fee-inclusive monthly leasing pricing.
+ *
+ * @return string
+ */
+function rentfetch_get_total_monthly_leasing_pricing_tooltip_text() {
+	$default_text = 'Total Monthly Leasing Pricing';
+	$text         = trim( (string) get_option( 'rentfetch_options_total_monthly_leasing_pricing_tooltip_text', '' ) );
+
+	if ( '' === $text ) {
+		$text = $default_text;
+	}
+
+	return apply_filters( 'rentfetch_filter_total_monthly_leasing_pricing_tooltip_text', $text );
+}
+
+/**
+ * Get the tooltip markup for fee-inclusive pricing lines.
+ *
+ * @return string
+ */
+function rentfetch_get_total_monthly_leasing_pricing_tooltip_markup() {
+	$tooltip_text = rentfetch_get_total_monthly_leasing_pricing_tooltip_text();
+	if ( '' === trim( (string) $tooltip_text ) ) {
+		return '';
+	}
+
+	$tooltip_html = nl2br( esc_html( $tooltip_text ) );
+
+	// Reuse the shared Rent Fetch tooltip behavior and styling.
+	wp_enqueue_script( 'rentfetch-tooltip' );
+
+	return sprintf(
+		'<span class="fee-description-with-tooltip rentfetch-tooltip-trigger rentfetch-pricing-tooltip-trigger" data-tooltip-content="%1$s" tabindex="0"><span class="fee-info-icon rentfetch-tooltip-icon" aria-label="%2$s"></span></span>',
+		esc_attr( $tooltip_html ),
+		esc_attr( $tooltip_text )
+	);
+}
+
+/**
  * Get the property rent markup.
  *
  * @param string $property_id Optional property_id meta value.
@@ -1392,11 +1431,13 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 		$including_fees_min_rent     = $min_rent + $monthly_required_fees;
 		$including_fees_max_rent     = ( null !== $max_rent ? $max_rent : $min_rent ) + $monthly_required_fees;
 		$including_fees_rent_display = rentfetch_format_property_rent_display( $including_fees_min_rent, $including_fees_max_rent, $pricing_display );
+		$tooltip_markup              = rentfetch_get_total_monthly_leasing_pricing_tooltip_markup();
 
 		$rent = sprintf(
-			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees">%1$s/mo</span><span class="rentfetch-property-base-rent">%2$s base rent</span></span>',
+			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees"><span class="rentfetch-pricing-with-tooltip">%1$s/mo%3$s</span></span><span class="rentfetch-property-base-rent">%2$s base rent</span></span>',
 			esc_html( $including_fees_rent_display ),
-			esc_html( $base_rent_display )
+			esc_html( $base_rent_display ),
+			$tooltip_markup
 		);
 	} else {
 		$rent = sprintf(
@@ -1821,9 +1862,8 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 
 		// Priority 1: Use property_fees_csv_url if available
 		if ( ! empty( $property_fees_csv_url ) ) {
-			$response = wp_remote_get( $property_fees_csv_url );
-			if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$csv_content = wp_remote_retrieve_body( $response );
+			$csv_content = rentfetch_get_cached_fees_csv_content( $property_fees_csv_url );
+			if ( false !== $csv_content ) {
 				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
 				if ( ! empty( $fees_data ) ) {
 					$property_fees_json   = wp_json_encode( $fees_data );
@@ -1853,9 +1893,8 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 
 		// Priority 1: Use global_fees_csv_url if available
 		if ( ! empty( $global_fees_csv_url ) ) {
-			$response = wp_remote_get( $global_fees_csv_url );
-			if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
-				$csv_content = wp_remote_retrieve_body( $response );
+			$csv_content = rentfetch_get_cached_fees_csv_content( $global_fees_csv_url );
+			if ( false !== $csv_content ) {
 				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
 				if ( ! empty( $fees_data ) ) {
 					$global_fees_json     = wp_json_encode( $fees_data );
@@ -1898,6 +1937,84 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 	return apply_filters( 'rentfetch_filter_property_fees_embed', $property_fees_markup, $post_id );
 }
 
+/**
+ * Get the transient key for cached fees CSV content.
+ *
+ * @param string $csv_url CSV URL.
+ * @return string|null
+ */
+function rentfetch_get_fees_csv_cache_key( $csv_url ) {
+	$csv_url = trim( (string) $csv_url );
+	if ( '' === $csv_url ) {
+		return null;
+	}
+
+	return 'rentfetch_fees_csv_' . md5( $csv_url );
+}
+
+/**
+ * Clear cached fees CSV content for a URL.
+ *
+ * @param string $csv_url CSV URL.
+ * @return void
+ */
+function rentfetch_clear_cached_fees_csv_content( $csv_url ) {
+	$cache_key = rentfetch_get_fees_csv_cache_key( $csv_url );
+	if ( ! $cache_key ) {
+		return;
+	}
+
+	delete_transient( $cache_key );
+}
+
+/**
+ * Fetch fees CSV content with short-term URL-keyed caching.
+ *
+ * Shared CSV URLs share the same transient across properties.
+ *
+ * @param string $csv_url CSV URL.
+ * @return string|false CSV content on success, false on failure.
+ */
+function rentfetch_get_cached_fees_csv_content( $csv_url ) {
+	$csv_url = trim( (string) $csv_url );
+	if ( '' === $csv_url ) {
+		return false;
+	}
+
+	$cache_key      = rentfetch_get_fees_csv_cache_key( $csv_url );
+	$disable_caches = get_option( 'rentfetch_options_disable_query_caching' ) === '1';
+
+	if ( ! $disable_caches && $cache_key ) {
+		$cached_content = get_transient( $cache_key );
+		if ( is_string( $cached_content ) && '' !== $cached_content ) {
+			return $cached_content;
+		}
+	}
+
+	$response = wp_remote_get(
+		$csv_url,
+		array(
+			'timeout'   => 15,
+			'sslverify' => false, // Allow self-signed certs for local development.
+		)
+	);
+
+	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+		return false;
+	}
+
+	$csv_content = (string) wp_remote_retrieve_body( $response );
+	if ( '' === $csv_content ) {
+		return false;
+	}
+
+	if ( ! $disable_caches && $cache_key ) {
+		set_transient( $cache_key, $csv_content, 30 * MINUTE_IN_SECONDS );
+	}
+
+	return $csv_content;
+}
+
 function rentfetch_get_property_fees_markup( $property_fees_json ) {
 	
 	// Start output buffering
@@ -1922,7 +2039,7 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 	
 	// Enqueue tooltip script if we have content to display
 	if ( $has_tooltip_content ) {
-		wp_enqueue_script( 'rentfetch-property-fees-tooltip' );
+		wp_enqueue_script( 'rentfetch-tooltip' );
 	}
 	// Extract unique categories
 	$categories = array();
@@ -1955,9 +2072,9 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 				if ( $has_longnotes ) {
 					// Apply the_content filter for consistent HTML output, then sanitize
 					$longnotes_html = wp_kses_post( apply_filters( 'the_content', $fee['longnotes'] ) );
-					echo '<span class="fee-description-with-tooltip" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
+					echo '<span class="fee-description-with-tooltip rentfetch-tooltip-trigger" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
 					echo esc_html( $fee['description'] ?? '' );
-					echo '<span class="fee-info-icon" aria-label="More information">?</span>';
+					echo '<span class="fee-info-icon rentfetch-tooltip-icon" aria-label="More information"></span>';
 					echo '</span>';
 				} else {
 					echo esc_html( $fee['description'] ?? '' );
@@ -1985,9 +2102,9 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 			if ( $has_longnotes ) {
 				// Apply the_content filter for consistent HTML output, then sanitize
 				$longnotes_html = wp_kses_post( apply_filters( 'the_content', $fee['longnotes'] ) );
-				echo '<span class="fee-description-with-tooltip" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
+				echo '<span class="fee-description-with-tooltip rentfetch-tooltip-trigger" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
 				echo esc_html( $fee['description'] ?? '' );
-				echo '<span class="fee-info-icon" aria-label="More information">?</span>';
+				echo '<span class="fee-info-icon rentfetch-tooltip-icon" aria-label="More information"></span>';
 				echo '</span>';
 			} else {
 				echo esc_html( $fee['description'] ?? '' );
@@ -2183,24 +2300,16 @@ function rentfetch_update_property_monthly_required_total_fees_from_csv( $proper
 		return false;
 	}
 
-	$response = wp_remote_get(
-		$csv_url,
-		array(
-			'timeout'   => 15,
-			'sslverify' => false, // Allow self-signed certs for local development.
-		)
-	);
-
 	// Record that we attempted a CSV check so we can enforce the ~12 hour cadence.
 	update_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', time() );
 
-	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+	$csv_content = rentfetch_get_cached_fees_csv_content( $csv_url );
+	if ( false === $csv_content ) {
 		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
 		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
 		return false;
 	}
 
-	$csv_content = wp_remote_retrieve_body( $response );
 	$fees_data   = rentfetch_process_csv_content_to_fees_array( $csv_content );
 
 	if ( empty( $fees_data ) ) {
@@ -2240,24 +2349,16 @@ function rentfetch_update_global_monthly_required_total_fees_from_csv() {
 		return false;
 	}
 
-	$response = wp_remote_get(
-		$csv_url,
-		array(
-			'timeout'   => 15,
-			'sslverify' => false, // Allow self-signed certs for local development.
-		)
-	);
-
 	// Record that we attempted a CSV check.
 	update_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', time() );
 
-	if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+	$csv_content = rentfetch_get_cached_fees_csv_content( $csv_url );
+	if ( false === $csv_content ) {
 		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
 		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
 		return false;
 	}
 
-	$csv_content = wp_remote_retrieve_body( $response );
 	$fees_data   = rentfetch_process_csv_content_to_fees_array( $csv_content );
 
 	if ( empty( $fees_data ) ) {

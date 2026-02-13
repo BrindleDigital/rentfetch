@@ -28,6 +28,7 @@ html {
   --rentfetch-box-shadow: rgba(0, 0, 0, 0.07) 0px 3px 12px;
   --rentfetch-box-shadow-hover: rgba(0, 0, 0, 0.12) 0px 8px 15px;
   --rentfetch-box-shadow-active: 0 0 0 5px var(--rentfetch-accent);
+  --rentfetch-border-radius: 4px;
   --rentfetch-error: #ffe5e5;
   --rentfetch-success: #e6f4e6;
   --rentfetch-notice: #f8f8e9;
@@ -49,6 +50,39 @@ html {
 pre {
   font-size: 13px;
   line-height: 1.2em;
+}
+
+.rentfetch-property-rent-lines,
+.rentfetch-floorplan-rent-lines,
+.rentfetch-unit-rent-lines {
+  display: block;
+}
+
+.rentfetch-property-rent-with-fees,
+.rentfetch-floorplan-rent-with-fees,
+.rentfetch-unit-rent-with-fees {
+  display: block;
+  line-height: 1.25;
+}
+
+.rentfetch-unit-rent-with-fees--inclusive {
+  font-weight: 700;
+}
+
+.rentfetch-property-base-rent,
+.rentfetch-floorplan-base-rent,
+.rentfetch-unit-base-rent {
+  display: block;
+  font-size: 0.8em;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.rentfetch-pricing-with-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  white-space: nowrap;
 }
 
 body.post-type-floorplans .row-actions {
@@ -1125,12 +1159,10 @@ form.rent-fetch-options h3,
   box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.07);
   cursor: pointer;
   display: inline-block;
-  font-size: 13px;
   margin: 0 5px 10px 0;
   padding: 8px 15px;
   position: relative;
   transition: 0.3s all ease;
-  z-index: 0;
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode:hover,
 .container.shortcodes span.shortcode:hover {
@@ -1143,7 +1175,7 @@ form.rent-fetch-options h3,
 }
 .rent-fetch_page_rentfetch-shortcodes span.shortcode.copied:before,
 .container.shortcodes span.shortcode.copied:before {
-  content: "✓ Shortcode copied!";
+  content: "Copied";
   position: absolute;
   inset: 0;
   background-color: white;
@@ -1152,9 +1184,6 @@ form.rent-fetch-options h3,
   justify-content: center;
   opacity: 1;
   padding-top: 3px;
-  z-index: 1;
-  color: inherit;
-  font-weight: inherit;
 }
 
 #rent-fetch-shortcodes-page .separator {

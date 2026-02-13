@@ -27,7 +27,7 @@ function rentfetch_ajax_clear_search_cache() {
 
 	global $wpdb;
 
-	// Get search-specific transients (propertysearch, floorplansearch, floorplans array, and property floorplans).
+	// Get cache transients (search transients + fees CSV transients).
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$all_transients = $wpdb->get_col(
 		"SELECT option_name FROM {$wpdb->options} 
@@ -35,14 +35,15 @@ function rentfetch_ajax_clear_search_cache() {
 		OR option_name LIKE '_transient_rentfetch_floorplansearch_%'
 		OR option_name LIKE '_transient_rentfetch_floorplans_array_sql_%'
 		OR option_name LIKE '_transient_rentfetch_property_ids_available_%'
-		OR option_name LIKE '_transient_rentfetch_property_floorplans_%')
+		OR option_name LIKE '_transient_rentfetch_property_floorplans_%'
+		OR option_name LIKE '_transient_rentfetch_fees_csv_%')
 		AND option_name NOT LIKE '_transient_timeout_%'"
 	);
 
 	$transient_count = count( $all_transients );
 
 	if ( $transient_count > 0 ) {
-		// Delete search transients and their timeouts.
+		// Delete cache transients and their timeouts.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$deleted = $wpdb->query(
 			"DELETE FROM {$wpdb->options} 
@@ -55,13 +56,15 @@ function rentfetch_ajax_clear_search_cache() {
 			OR option_name LIKE '_transient_rentfetch_property_ids_available_%' 
 			OR option_name LIKE '_transient_timeout_rentfetch_property_ids_available_%'
 			OR option_name LIKE '_transient_rentfetch_property_floorplans_%' 
-			OR option_name LIKE '_transient_timeout_rentfetch_property_floorplans_%'"
+			OR option_name LIKE '_transient_timeout_rentfetch_property_floorplans_%'
+			OR option_name LIKE '_transient_rentfetch_fees_csv_%'
+			OR option_name LIKE '_transient_timeout_rentfetch_fees_csv_%'"
 		);
 
 		wp_send_json_success(
 			array(
 				'message' => sprintf(
-					'Successfully cleared %d cached search result(s).',
+					'Successfully cleared %d cached result(s).',
 					$transient_count
 				),
 				'count'   => $transient_count,
@@ -70,7 +73,7 @@ function rentfetch_ajax_clear_search_cache() {
 	} else {
 		wp_send_json_success(
 			array(
-				'message' => 'No cached search results found to clear.',
+				'message' => 'No cached results found to clear.',
 				'count'   => 0,
 			)
 		);

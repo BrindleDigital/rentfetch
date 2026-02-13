@@ -324,11 +324,13 @@ function rentfetch_get_floorplan_pricing() {
 		$minimum_rent_with_fees = $minimum_rent_value + $monthly_required_fees;
 		$maximum_rent_with_fees = $maximum_rent_value + $monthly_required_fees;
 		$including_fees_rent    = rentfetch_format_floorplan_rent_display( $minimum_rent_with_fees, $maximum_rent_with_fees, $price_display );
+		$tooltip_markup         = function_exists( 'rentfetch_get_total_monthly_leasing_pricing_tooltip_markup' ) ? rentfetch_get_total_monthly_leasing_pricing_tooltip_markup() : '';
 
 		$rent_range = sprintf(
-			'<span class="rentfetch-floorplan-rent-lines"><span class="rentfetch-floorplan-rent-with-fees">%1$s/mo</span><span class="rentfetch-floorplan-base-rent">%2$s base rent</span></span>',
+			'<span class="rentfetch-floorplan-rent-lines"><span class="rentfetch-floorplan-rent-with-fees"><span class="rentfetch-pricing-with-tooltip">%1$s/mo%3$s</span></span><span class="rentfetch-floorplan-base-rent">%2$s base rent</span></span>',
 			esc_html( $including_fees_rent ),
-			esc_html( $base_rent )
+			esc_html( $base_rent ),
+			$tooltip_markup
 		);
 	} else {
 		$rent_range = sprintf(
