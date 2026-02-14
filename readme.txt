@@ -103,7 +103,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.33.0-alpha =
+= 0.33.1-alpha =
 
 * Major update to fee-inclusive pricing display across properties, floorplans, and units, including two-line pricing output where applicable.
 * Added property-level monthly required fees total parsing from CSV data using strict matching rules:

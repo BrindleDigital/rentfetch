@@ -6,6 +6,7 @@ jQuery(document).ready(function ($) {
 	var $urlInput = $('#rentfetch_options_global_property_fees_csv_url');
 	var $statusDiv = $('#global-csv-url-validation-status');
 	var validationTimeout = null;
+	var lastValidatedUrl = '';
 
 	// Don't run if elements don't exist
 	if (!$urlInput.length || !$statusDiv.length) {
@@ -83,19 +84,39 @@ jQuery(document).ready(function ($) {
 	/**
 	 * Validate the CSV URL
 	 */
-	function validateCsvUrl() {
+	function validateCsvUrl(force) {
 		var url = $urlInput.val().trim();
+		force = !!force;
 
 		// Clear status if URL is empty
 		if (!url) {
+			lastValidatedUrl = '';
 			clearStatus();
+			$(document).trigger('rentfetch_global_fees_csv_validation_complete', [
+				{ url: '', valid: false, empty: true },
+			]);
+			return;
+		}
+
+		// Prevent duplicate validation calls for the same URL
+		// (e.g. paste triggers validation, then blur/change fires again).
+		if (!force && url === lastValidatedUrl) {
 			return;
 		}
 
 		// Basic URL validation
 		if (!url.match(/^https?:\/\//i)) {
+			lastValidatedUrl = url;
 			showStatus('error', 'Invalid URL format', [
 				'URL must start with http:// or https://',
+			]);
+			$(document).trigger('rentfetch_global_fees_csv_validation_complete', [
+				{
+					url: url,
+					valid: false,
+					message: 'Invalid URL format',
+					empty: false,
+				},
 			]);
 			return;
 		}
@@ -156,6 +177,18 @@ jQuery(document).ready(function ($) {
 								allDetails
 							);
 						}
+						$(document).trigger(
+							'rentfetch_global_fees_csv_validation_complete',
+							[
+								{
+									url: url,
+									valid: true,
+									message: data.success_message,
+									empty: false,
+								},
+							]
+						);
+						lastValidatedUrl = url;
 					} else {
 						// Invalid CSV
 						var errorDetails = [];
@@ -200,12 +233,38 @@ jQuery(document).ready(function ($) {
 							'CSV validation failed',
 							errorDetails
 						);
+						$(document).trigger(
+							'rentfetch_global_fees_csv_validation_complete',
+							[
+								{
+									url: url,
+									valid: false,
+									message: 'CSV validation failed',
+									empty: false,
+								},
+							]
+						);
+						lastValidatedUrl = url;
 					}
 				} else {
 					// Error response
 					showStatus('error', 'Validation error', [
 						response.data.message || 'Could not validate CSV file',
 					]);
+					$(document).trigger(
+						'rentfetch_global_fees_csv_validation_complete',
+						[
+							{
+								url: url,
+								valid: false,
+								message:
+									(response.data && response.data.message) ||
+									'Could not validate CSV file',
+								empty: false,
+							},
+						]
+					);
+					lastValidatedUrl = url;
 				}
 			},
 			error: function (xhr, status, error) {
@@ -213,13 +272,25 @@ jQuery(document).ready(function ($) {
 					'Could not connect to server to validate CSV',
 					error,
 				]);
+				$(document).trigger(
+					'rentfetch_global_fees_csv_validation_complete',
+					[
+						{
+							url: url,
+							valid: false,
+							message: 'Could not connect to server to validate CSV',
+							empty: false,
+						},
+					]
+				);
+				lastValidatedUrl = url;
 			},
 		});
 	}
 
 	// Validate on page load if URL exists
 	if ($urlInput.val().trim()) {
-		validateCsvUrl();
+		validateCsvUrl(true);
 	}
 
 	// Validate on URL change with debounce
@@ -232,7 +303,14 @@ jQuery(document).ready(function ($) {
 		var url = $urlInput.val().trim();
 
 		if (!url) {
+			lastValidatedUrl = '';
 			clearStatus();
+			return;
+		}
+
+		// Do not restart validation UI for an unchanged URL
+		// (e.g. blur/change firing right after a paste validation).
+		if (url === lastValidatedUrl) {
 			return;
 		}
 
@@ -241,12 +319,12 @@ jQuery(document).ready(function ($) {
 
 		// Debounce the actual validation
 		validationTimeout = setTimeout(function () {
-			validateCsvUrl();
+			validateCsvUrl(false);
 		}, 500);
 	});
 
 	// Also trigger validation after file upload completes
 	$(document).on('rentfetch_global_csv_uploaded', function () {
-		validateCsvUrl();
+		validateCsvUrl(true);
 	});
 });

@@ -318,252 +318,6 @@ function rentfetch_output_fees_csv( $fees_data, $filename ) {
 }
 
 /**
- * AJAX handler to upload and process fees CSV (property-specific)
- */
-function rentfetch_upload_fees_csv() {
-	// Verify nonce for security
-	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_properties_metabox_nonce' ) ) {
-		wp_send_json_error( array( 'message' => 'Security check failed' ) );
-	}
-
-	// Get the post ID
-	$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
-
-	if ( ! $post_id ) {
-		wp_send_json_error( array( 'message' => 'Invalid post ID' ) );
-	}
-
-	// Check if file was uploaded
-	if ( ! isset( $_FILES['csv_file'] ) || empty( $_FILES['csv_file']['tmp_name'] ) ) {
-		wp_send_json_error( array( 'message' => 'No file uploaded' ) );
-	}
-
-	$result = rentfetch_process_uploaded_csv_file( $_FILES['csv_file'] );
-
-	if ( ! $result['success'] ) {
-		wp_send_json_error( array( 'message' => $result['message'] ) );
-	}
-
-	// Save the processed fees data
-	update_post_meta( $post_id, 'property_fees_data', $result['data'] );
-
-	// Return the updated JSON
-	wp_send_json_success( array(
-		'json'  => wp_json_encode( $result['data'], JSON_PRETTY_PRINT ),
-		'count' => count( $result['data'] ),
-	) );
-}
-add_action( 'wp_ajax_rentfetch_upload_fees_csv', 'rentfetch_upload_fees_csv' );
-
-/**
- * AJAX handler to process global fees CSV from uploaded file
- */
-function rentfetch_process_global_fees_csv() {
-	// Verify nonce for security
-	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_main_options_nonce_action' ) ) {
-		wp_send_json_error( array( 'message' => 'Security check failed' ) );
-	}
-
-	// Check if file was uploaded
-	if ( ! isset( $_FILES['csv_file'] ) || empty( $_FILES['csv_file']['tmp_name'] ) ) {
-		wp_send_json_error( array( 'message' => 'No file uploaded' ) );
-	}
-
-	$result = rentfetch_process_uploaded_csv_file( $_FILES['csv_file'] );
-
-	if ( ! $result['success'] ) {
-		wp_send_json_error( array( 'message' => $result['message'] ) );
-	}
-
-	// Save the processed fees data
-	update_option( 'rentfetch_options_global_property_fees_data', $result['data'] );
-
-	// Return the updated JSON
-	wp_send_json_success( array(
-		'json'  => wp_json_encode( $result['data'], JSON_PRETTY_PRINT ),
-		'count' => count( $result['data'] ),
-	) );
-}
-add_action( 'wp_ajax_rentfetch_process_global_fees_csv', 'rentfetch_process_global_fees_csv' );
-
-/**
- * Process an uploaded CSV file and return fees data
- *
- * @param array $csv_file The $_FILES array element for the uploaded file.
- * @return array Result with 'success', 'data' or 'message' keys.
- */
-function rentfetch_process_uploaded_csv_file( $csv_file ) {
-	// Check if it's a valid CSV file
-	$file_type = wp_check_filetype( $csv_file['name'] );
-	if ( 'csv' !== $file_type['ext'] ) {
-		return array(
-			'success' => false,
-			'message' => 'Invalid file type. Please upload a CSV file.',
-		);
-	}
-
-	// Process the CSV file
-	$fees_data = array();
-
-	if ( ( $handle = fopen( $csv_file['tmp_name'], 'r' ) ) !== false ) {
-		$header = fgetcsv( $handle, 1000, ',' );
-
-		// Normalize header
-		$header = array_map( function( $col ) {
-			$clean_col = str_replace( "\xEF\xBB\xBF", '', (string) $col ); // Strip UTF-8 BOM if present.
-			return strtolower( trim( $clean_col ) );
-		}, $header );
-
-		$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
-
-		// Find column indices
-		$column_indices = array();
-		foreach ( $expected_columns as $col ) {
-			$index                    = array_search( $col, $header, true );
-			$column_indices[ $col ] = ( $index !== false ) ? $index : -1;
-		}
-
-		// Must have at least 'description' column
-		if ( $column_indices['description'] === -1 ) {
-			fclose( $handle );
-			return array(
-				'success' => false,
-				'message' => 'Invalid CSV format. Missing required column: description',
-			);
-		}
-
-		while ( ( $data = fgetcsv( $handle, 1000, ',' ) ) !== false ) {
-			// Get value from column index, or empty string if column doesn't exist
-			$get_value = function( $col ) use ( $column_indices, $data ) {
-				$index = $column_indices[ $col ];
-				if ( $index === -1 || ! isset( $data[ $index ] ) ) {
-					return '';
-				}
-				return sanitize_text_field( $data[ $index ] );
-			};
-
-			// Skip rows where description is empty
-			$description = $get_value( 'description' );
-			if ( empty( $description ) ) {
-				continue;
-			}
-
-			// Get longnotes value - allow HTML so use wp_kses_post instead of sanitize_text_field
-			$longnotes_index = $column_indices['longnotes'];
-			$longnotes_value = '';
-			if ( $longnotes_index !== -1 && isset( $data[ $longnotes_index ] ) ) {
-				$longnotes_value = wp_kses_post( $data[ $longnotes_index ] );
-			}
-
-			$fees_data[] = array(
-				'description' => $description,
-				'price'       => $get_value( 'price' ),
-				'frequency'   => $get_value( 'frequency' ),
-				'notes'       => $get_value( 'notes' ),
-				'category'    => $get_value( 'category' ),
-				'longnotes'   => $longnotes_value,
-			);
-		}
-
-		fclose( $handle );
-	} else {
-		return array(
-			'success' => false,
-			'message' => 'Could not read CSV file',
-		);
-	}
-
-	return array(
-		'success' => true,
-		'data'    => $fees_data,
-	);
-}
-
-/**
- * AJAX handler to upload global property fees CSV to media library
- */
-function upload_global_property_fees_csv() {
-	if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'rentfetch_main_options_nonce_action' ) ) {
-		wp_send_json_error( array( 'message' => 'Security check failed' ) );
-	}
-	if ( ! current_user_can( 'upload_files' ) ) {
-		wp_send_json_error( array( 'message' => 'Permission denied' ) );
-	}
-
-	// Allow CSV uploads
-	add_filter( 'upload_mimes', function( $mimes ) {
-		$mimes['csv'] = 'text/csv';
-		return $mimes;
-	} );
-
-	if ( empty( $_FILES['file'] ) ) {
-		wp_send_json_error( array( 'message' => 'No file provided' ) );
-	}
-	$file             = $_FILES['file'];
-	$upload_overrides = array( 'test_form' => false );
-	$movefile         = wp_handle_upload( $file, $upload_overrides );
-	if ( $movefile && ! isset( $movefile['error'] ) ) {
-		$attachment = array(
-			'guid'           => $movefile['url'],
-			'post_mime_type' => $movefile['type'],
-			'post_title'     => sanitize_file_name( $file['name'] ),
-			'post_content'   => '',
-			'post_status'    => 'inherit',
-		);
-		$attach_id  = wp_insert_attachment( $attachment, $movefile['file'] );
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		$attach_data = wp_generate_attachment_metadata( $attach_id, $movefile['file'] );
-		wp_update_attachment_metadata( $attach_id, $attach_data );
-		wp_send_json_success( array( 'url' => wp_get_attachment_url( $attach_id ) ) );
-	} else {
-		wp_send_json_error( array( 'message' => $movefile['error'] ) );
-	}
-}
-add_action( 'wp_ajax_upload_global_property_fees_csv', 'upload_global_property_fees_csv' );
-
-/**
- * AJAX handler to upload property fees CSV to media library
- */
-function upload_property_fees_csv() {
-	if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'upload_property_fees_csv' ) ) {
-		wp_send_json_error( array( 'message' => 'Security check failed' ) );
-	}
-	if ( ! current_user_can( 'upload_files' ) ) {
-		wp_send_json_error( array( 'message' => 'Permission denied' ) );
-	}
-
-	// Allow CSV uploads
-	add_filter( 'upload_mimes', function( $mimes ) {
-		$mimes['csv'] = 'text/csv';
-		return $mimes;
-	} );
-
-	if ( empty( $_FILES['file'] ) ) {
-		wp_send_json_error( array( 'message' => 'No file provided' ) );
-	}
-	$file             = $_FILES['file'];
-	$upload_overrides = array( 'test_form' => false );
-	$movefile         = wp_handle_upload( $file, $upload_overrides );
-	if ( $movefile && ! isset( $movefile['error'] ) ) {
-		$attachment = array(
-			'guid'           => $movefile['url'],
-			'post_mime_type' => $movefile['type'],
-			'post_title'     => sanitize_file_name( $file['name'] ),
-			'post_content'   => '',
-			'post_status'    => 'inherit',
-		);
-		$attach_id  = wp_insert_attachment( $attachment, $movefile['file'] );
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		$attach_data = wp_generate_attachment_metadata( $attach_id, $movefile['file'] );
-		wp_update_attachment_metadata( $attach_id, $attach_data );
-		wp_send_json_success( array( 'url' => wp_get_attachment_url( $attach_id ) ) );
-	} else {
-		wp_send_json_error( array( 'message' => $movefile['error'] ) );
-	}
-}
-add_action( 'wp_ajax_upload_property_fees_csv', 'upload_property_fees_csv' );
-
-/**
  * AJAX handler to force refresh global monthly required fees from CSV.
  *
  * @return void
@@ -581,15 +335,58 @@ function rentfetch_refresh_global_monthly_required_fees_now() {
 		wp_send_json_error( array( 'message' => 'Refresh function is unavailable.' ) );
 	}
 
-	$csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	$current_csv_url   = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	$request_has_csv   = isset( $_POST['csv_url'] );
+	$requested_csv_url = $request_has_csv ? trim( (string) esc_url_raw( wp_unslash( $_POST['csv_url'] ) ) ) : $current_csv_url;
+	$source_csv_url    = ( $request_has_csv && isset( $_POST['source_csv_url'] ) ) ? trim( (string) esc_url_raw( wp_unslash( $_POST['source_csv_url'] ) ) ) : null;
+
+	// Skip stale async requests when the configured CSV URL changed after this request was initiated.
+	if ( $request_has_csv && null !== $source_csv_url && $source_csv_url !== $current_csv_url ) {
+		$total = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
+		wp_send_json_success(
+			array(
+				'stale'   => true,
+				'updated' => false,
+				'total'   => $total,
+				'message' => 'Skipped an outdated CSV refresh request.',
+			)
+		);
+	}
+
+	if ( $request_has_csv && $requested_csv_url !== $current_csv_url ) {
+		update_option( 'rentfetch_options_global_property_fees_csv_url', $requested_csv_url );
+	}
+
+	$csv_url = $requested_csv_url;
+
 	if ( function_exists( 'rentfetch_clear_cached_fees_csv_content' ) ) {
+		rentfetch_clear_cached_fees_csv_content( $current_csv_url );
 		rentfetch_clear_cached_fees_csv_content( $csv_url );
 	}
-	$updated = rentfetch_update_global_monthly_required_total_fees_from_csv();
+	if ( function_exists( 'rentfetch_clear_cached_monthly_required_fees_calculation' ) ) {
+		rentfetch_clear_cached_monthly_required_fees_calculation( $current_csv_url );
+		rentfetch_clear_cached_monthly_required_fees_calculation( $csv_url );
+	}
+
+	// If CSV was explicitly removed, clear stored totals immediately.
+	if ( $request_has_csv && '' === $csv_url ) {
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
+		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
+		wp_send_json_success(
+			array(
+				'updated' => false,
+				'total'   => '',
+				'message' => 'Global property fees CSV URL was removed. Stored value was cleared.',
+			)
+		);
+	}
+
+	$updated = rentfetch_update_global_monthly_required_total_fees_from_csv( true );
 	$total   = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
 
 	if ( '' === $csv_url ) {
-		$message = 'No global property fees CSV URL is set, so the stored value was cleared.';
+		$message = 'No global property fees CSV URL is set; existing stored value was left unchanged.';
 	} elseif ( $updated ) {
 		$message = 'Global monthly required fees refreshed from CSV.';
 	} else {
@@ -633,16 +430,62 @@ function rentfetch_refresh_monthly_required_fees_now() {
 		wp_send_json_error( array( 'message' => 'Refresh function is unavailable.' ) );
 	}
 
-	$csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
+	$current_csv_url   = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
+	$request_has_csv   = isset( $_POST['csv_url'] );
+	$requested_csv_url = $request_has_csv ? trim( (string) esc_url_raw( wp_unslash( $_POST['csv_url'] ) ) ) : $current_csv_url;
+	$source_csv_url    = ( $request_has_csv && isset( $_POST['source_csv_url'] ) ) ? trim( (string) esc_url_raw( wp_unslash( $_POST['source_csv_url'] ) ) ) : null;
+
+	// Skip stale async requests when the configured CSV URL changed after this request was initiated.
+	if ( $request_has_csv && null !== $source_csv_url && $source_csv_url !== $current_csv_url ) {
+		$total = get_post_meta( $post_id, 'property_monthly_required_total_fees', true );
+		wp_send_json_success(
+			array(
+				'stale'   => true,
+				'updated' => false,
+				'total'   => $total,
+				'message' => 'Skipped an outdated CSV refresh request.',
+			)
+		);
+	}
+
+	if ( $request_has_csv && $requested_csv_url !== $current_csv_url ) {
+		update_post_meta( $post_id, 'property_fees_csv_url', $requested_csv_url );
+		if ( '' !== $requested_csv_url ) {
+			delete_post_meta( $post_id, 'property_fees_data' );
+		}
+	}
+
+	$csv_url = $requested_csv_url;
+
 	if ( function_exists( 'rentfetch_clear_cached_fees_csv_content' ) ) {
+		rentfetch_clear_cached_fees_csv_content( $current_csv_url );
 		rentfetch_clear_cached_fees_csv_content( $csv_url );
 	}
-	$updated = rentfetch_update_property_monthly_required_total_fees_from_csv( $post_id );
+	if ( function_exists( 'rentfetch_clear_cached_monthly_required_fees_calculation' ) ) {
+		rentfetch_clear_cached_monthly_required_fees_calculation( $current_csv_url );
+		rentfetch_clear_cached_monthly_required_fees_calculation( $csv_url );
+	}
+
+	// If CSV was explicitly removed, clear stored totals immediately.
+	if ( $request_has_csv && '' === $csv_url ) {
+		delete_post_meta( $post_id, 'property_monthly_required_total_fees' );
+		delete_post_meta( $post_id, 'property_monthly_required_total_fees_last_checked' );
+		delete_post_meta( $post_id, 'property_monthly_required_total_fees_rows' );
+		wp_send_json_success(
+			array(
+				'updated' => false,
+				'total'   => '',
+				'message' => 'Property fees CSV URL was removed. Stored value was cleared.',
+			)
+		);
+	}
+
+	$updated = rentfetch_update_property_monthly_required_total_fees_from_csv( $post_id, true );
 
 	$total = get_post_meta( $post_id, 'property_monthly_required_total_fees', true );
 
 	if ( '' === $csv_url ) {
-		$message = 'No property fees CSV URL is set, so the stored value was cleared.';
+		$message = 'No property fees CSV URL is set; existing stored value was left unchanged.';
 	} elseif ( $updated ) {
 		$message = 'Monthly required fees refreshed from CSV.';
 	} else {

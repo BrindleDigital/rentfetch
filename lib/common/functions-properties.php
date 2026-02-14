@@ -1953,6 +1953,21 @@ function rentfetch_get_fees_csv_cache_key( $csv_url ) {
 }
 
 /**
+ * Get the transient key for cached monthly required fee calculations by CSV URL.
+ *
+ * @param string $csv_url CSV URL.
+ * @return string|null
+ */
+function rentfetch_get_fees_csv_monthly_required_calc_cache_key( $csv_url ) {
+	$csv_url = trim( (string) $csv_url );
+	if ( '' === $csv_url ) {
+		return null;
+	}
+
+	return 'rentfetch_fees_csv_calc_' . md5( $csv_url );
+}
+
+/**
  * Clear cached fees CSV content for a URL.
  *
  * @param string $csv_url CSV URL.
@@ -1960,6 +1975,21 @@ function rentfetch_get_fees_csv_cache_key( $csv_url ) {
  */
 function rentfetch_clear_cached_fees_csv_content( $csv_url ) {
 	$cache_key = rentfetch_get_fees_csv_cache_key( $csv_url );
+	if ( ! $cache_key ) {
+		return;
+	}
+
+	delete_transient( $cache_key );
+}
+
+/**
+ * Clear cached monthly required fee calculation results for a CSV URL.
+ *
+ * @param string $csv_url CSV URL.
+ * @return void
+ */
+function rentfetch_clear_cached_monthly_required_fees_calculation( $csv_url ) {
+	$cache_key = rentfetch_get_fees_csv_monthly_required_calc_cache_key( $csv_url );
 	if ( ! $cache_key ) {
 		return;
 	}
@@ -2013,6 +2043,87 @@ function rentfetch_get_cached_fees_csv_content( $csv_url ) {
 	}
 
 	return $csv_content;
+}
+
+/**
+ * Get monthly required fee calculation results for a CSV URL with 12-hour URL-keyed caching.
+ *
+ * Shared CSV URLs share a single validation/recalculation cadence.
+ *
+ * @param string $csv_url         CSV URL.
+ * @param bool   $force_recompute Whether to force recomputing now.
+ * @return array{
+ *   checked_at:int,
+ *   has_positive_total:bool,
+ *   total:float,
+ *   contributors:array
+ * }
+ */
+function rentfetch_get_cached_monthly_required_fees_calculation( $csv_url, $force_recompute = false ) {
+	$csv_url = trim( (string) $csv_url );
+	$result  = array(
+		'checked_at'         => time(),
+		'has_positive_total' => false,
+		'total'              => 0.0,
+		'contributors'       => array(),
+	);
+
+	if ( '' === $csv_url ) {
+		return $result;
+	}
+
+	$cache_key = rentfetch_get_fees_csv_monthly_required_calc_cache_key( $csv_url );
+	$now       = time();
+
+	if ( ! $force_recompute && $cache_key ) {
+		$cached_result = get_transient( $cache_key );
+		if ( is_array( $cached_result ) ) {
+			$checked_at = isset( $cached_result['checked_at'] ) ? (int) $cached_result['checked_at'] : 0;
+			if ( $checked_at > 0 && ( $now - $checked_at ) < ( 12 * HOUR_IN_SECONDS ) ) {
+				$cached_has_positive_total = ! empty( $cached_result['has_positive_total'] );
+				$cached_total              = isset( $cached_result['total'] ) ? (float) $cached_result['total'] : 0.0;
+				$cached_contributors       = isset( $cached_result['contributors'] ) && is_array( $cached_result['contributors'] ) ? $cached_result['contributors'] : array();
+
+				return array(
+					'checked_at'         => $checked_at,
+					'has_positive_total' => $cached_has_positive_total,
+					'total'              => $cached_total,
+					'contributors'       => $cached_contributors,
+				);
+			}
+		}
+	}
+
+	$csv_content = rentfetch_get_cached_fees_csv_content( $csv_url );
+	if ( false === $csv_content ) {
+		if ( $cache_key ) {
+			set_transient( $cache_key, $result, 12 * HOUR_IN_SECONDS );
+		}
+		return $result;
+	}
+
+	$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
+	if ( empty( $fees_data ) ) {
+		if ( $cache_key ) {
+			set_transient( $cache_key, $result, 12 * HOUR_IN_SECONDS );
+		}
+		return $result;
+	}
+
+	$contributors = rentfetch_get_monthly_required_fee_contributors( $fees_data );
+	$total        = rentfetch_calculate_monthly_required_total_fees( $fees_data );
+
+	if ( $total > 0 ) {
+		$result['has_positive_total'] = true;
+		$result['total']              = (float) round( $total, 2 );
+		$result['contributors']       = $contributors;
+	}
+
+	if ( $cache_key ) {
+		set_transient( $cache_key, $result, 12 * HOUR_IN_SECONDS );
+	}
+
+	return $result;
 }
 
 function rentfetch_get_property_fees_markup( $property_fees_json ) {
@@ -2284,7 +2395,7 @@ function rentfetch_calculate_monthly_required_total_fees( $fees_data ) {
  * @param int $property_post_id The property post ID.
  * @return bool True when a positive total is saved, false otherwise.
  */
-function rentfetch_update_property_monthly_required_total_fees_from_csv( $property_post_id ) {
+function rentfetch_update_property_monthly_required_total_fees_from_csv( $property_post_id, $force_recompute = false ) {
 	$property_post_id = (int) $property_post_id;
 	if ( $property_post_id <= 0 ) {
 		return false;
@@ -2292,37 +2403,22 @@ function rentfetch_update_property_monthly_required_total_fees_from_csv( $proper
 
 	$csv_url = trim( (string) get_post_meta( $property_post_id, 'property_fees_csv_url', true ) );
 
-	// Requirement: if there's no CSV, don't save this meta.
+	// No CSV URL present: do not modify the stored value here.
+	// Explicit removal clearing is handled in the property save flow.
 	if ( '' === $csv_url ) {
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked' );
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
 		return false;
 	}
 
-	// Record that we attempted a CSV check so we can enforce the ~12 hour cadence.
-	update_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', time() );
+	$calculation = rentfetch_get_cached_monthly_required_fees_calculation( $csv_url, (bool) $force_recompute );
+	$checked_at  = isset( $calculation['checked_at'] ) ? (int) $calculation['checked_at'] : time();
+	update_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', $checked_at );
 
-	$csv_content = rentfetch_get_cached_fees_csv_content( $csv_url );
-	if ( false === $csv_content ) {
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
-		return false;
-	}
-
-	$fees_data   = rentfetch_process_csv_content_to_fees_array( $csv_content );
-
-	if ( empty( $fees_data ) ) {
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
-		return false;
-	}
-
-	$contributors = rentfetch_get_monthly_required_fee_contributors( $fees_data );
-	$total = rentfetch_calculate_monthly_required_total_fees( $fees_data );
+	$has_positive_total = ! empty( $calculation['has_positive_total'] );
+	$total              = isset( $calculation['total'] ) ? (float) $calculation['total'] : 0.0;
+	$contributors       = isset( $calculation['contributors'] ) && is_array( $calculation['contributors'] ) ? $calculation['contributors'] : array();
 
 	// Requirement: don't save if total is zero (or missing/invalid).
-	if ( $total <= 0 ) {
+	if ( ! $has_positive_total || $total <= 0 ) {
 		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
 		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
 		return false;
@@ -2338,40 +2434,25 @@ function rentfetch_update_property_monthly_required_total_fees_from_csv( $proper
  *
  * @return bool True when a positive total is saved, false otherwise.
  */
-function rentfetch_update_global_monthly_required_total_fees_from_csv() {
+function rentfetch_update_global_monthly_required_total_fees_from_csv( $force_recompute = false ) {
 	$csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
 
-	// If there's no CSV, don't save this option.
+	// No CSV URL present: do not modify the stored value here.
+	// Explicit removal clearing is handled in the options save flow.
 	if ( '' === $csv_url ) {
-		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
-		delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
-		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
 		return false;
 	}
 
-	// Record that we attempted a CSV check.
-	update_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', time() );
+	$calculation = rentfetch_get_cached_monthly_required_fees_calculation( $csv_url, (bool) $force_recompute );
+	$checked_at  = isset( $calculation['checked_at'] ) ? (int) $calculation['checked_at'] : time();
+	update_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', $checked_at );
 
-	$csv_content = rentfetch_get_cached_fees_csv_content( $csv_url );
-	if ( false === $csv_content ) {
-		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
-		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
-		return false;
-	}
-
-	$fees_data   = rentfetch_process_csv_content_to_fees_array( $csv_content );
-
-	if ( empty( $fees_data ) ) {
-		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
-		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
-		return false;
-	}
-
-	$contributors = rentfetch_get_monthly_required_fee_contributors( $fees_data );
-	$total        = rentfetch_calculate_monthly_required_total_fees( $fees_data );
+	$has_positive_total = ! empty( $calculation['has_positive_total'] );
+	$total              = isset( $calculation['total'] ) ? (float) $calculation['total'] : 0.0;
+	$contributors       = isset( $calculation['contributors'] ) && is_array( $calculation['contributors'] ) ? $calculation['contributors'] : array();
 
 	// Don't save if total is zero (or missing/invalid).
-	if ( $total <= 0 ) {
+	if ( ! $has_positive_total || $total <= 0 ) {
 		delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
 		delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
 		return false;
@@ -2429,10 +2510,7 @@ function rentfetch_maybe_refresh_property_monthly_required_total_fees() {
 
 	$csv_url = trim( (string) get_post_meta( $property_post_id, 'property_fees_csv_url', true ) );
 	if ( '' === $csv_url ) {
-		// Requirement: if there's no CSV, don't save this meta.
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees' );
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked' );
-		delete_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows' );
+		// No CSV URL: leave current stored value unchanged.
 		return;
 	}
 
@@ -2444,6 +2522,32 @@ function rentfetch_maybe_refresh_property_monthly_required_total_fees() {
 	rentfetch_update_property_monthly_required_total_fees_from_csv( $property_post_id );
 }
 add_action( 'wp', 'rentfetch_maybe_refresh_property_monthly_required_total_fees', 999 );
+
+/**
+ * Refresh global monthly required total fees at most once every 12 hours.
+ *
+ * Keeps the global fallback current even when no one manually triggers an admin refresh.
+ *
+ * @return void
+ */
+function rentfetch_maybe_refresh_global_monthly_required_total_fees() {
+	if ( is_admin() || wp_doing_ajax() ) {
+		return;
+	}
+
+	$csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	if ( '' === $csv_url ) {
+		return;
+	}
+
+	$last_checked = (int) get_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', 0 );
+	if ( $last_checked > 0 && ( time() - $last_checked ) < ( 12 * HOUR_IN_SECONDS ) ) {
+		return;
+	}
+
+	rentfetch_update_global_monthly_required_total_fees_from_csv();
+}
+add_action( 'wp', 'rentfetch_maybe_refresh_global_monthly_required_total_fees', 998 );
 
 // * OFFICE HOURS
 
