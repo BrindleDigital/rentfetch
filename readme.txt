@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.32.7
+Stable tag: 0.33.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,7 +103,7 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
-= 0.33.1-alpha =
+= 0.33.1 =
 
 * Major update to fee-inclusive pricing display across properties, floorplans, and units, including two-line pricing output where applicable.
 * Added property-level monthly required fees total parsing from CSV data using strict matching rules:
