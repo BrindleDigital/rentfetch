@@ -1,203 +1,226 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
 	var map;
-	var locationsArray = [];
 	var markers = [];
-
-	//* Vars from localization
-	// grab the marker image from localization
+	var locationsArray = [];
 	var markerImage = options.marker_url;
-
-	var google_maps_default_longitude = options.google_maps_default_longitude;
-	var google_maps_default_latitude = options.google_maps_default_latitude;
-
-	// grab the styles from localization and convert the php array to json
+	var googleMapsDefaultLongitude = options.google_maps_default_longitude;
+	var googleMapsDefaultLatitude = options.google_maps_default_latitude;
 	var mapStyle = options.json_style;
-	mapsStyle = JSON.stringify(mapStyle);
+	var suppressBoundsFilter = false;
+	var suppressBoundsFilterTimeout = null;
+	var userInteractionDetected = false;
+	var latestSearchPayload = null;
+
+	function withSuppressedBoundsFilter(callback) {
+		suppressBoundsFilter = true;
+		clearTimeout(suppressBoundsFilterTimeout);
+		callback();
+		suppressBoundsFilterTimeout = setTimeout(function () {
+			suppressBoundsFilter = false;
+		}, 250);
+	}
+
+	function isGoogleMapsReady() {
+		return (
+			window.google &&
+			window.google.maps &&
+			typeof window.google.maps.LatLng === 'function'
+		);
+	}
 
 	function renderMap() {
+		var mapElement = document.getElementById('map');
+		if (!mapElement) {
+			return false;
+		}
+
 		var myLatlng = new google.maps.LatLng(
-			google_maps_default_latitude,
-			google_maps_default_longitude
+			googleMapsDefaultLatitude,
+			googleMapsDefaultLongitude
 		);
 
-		var mapOptions = {
+		map = new google.maps.Map(mapElement, {
 			zoom: 8,
 			minZoom: 5,
-			maxZoom: 16,
+			maxZoom: 17,
 			center: myLatlng,
 			styles: mapStyle,
-			disableDefaultUI: true, // removes the satellite/map selection (might also remove other stuff)
-			// scaleControl: true,
+			disableDefaultUI: true,
 			zoomControl: true,
 			zoomControlOptions: {
 				position: google.maps.ControlPosition.RIGHT_TOP,
 			},
 			fullscreenControl: false,
-		};
+		});
 
-		map = new google.maps.Map(document.getElementById('map'), mapOptions);
+		map.addListener('dragstart', function () {
+			userInteractionDetected = true;
+		});
+
+		map.addListener('zoom_changed', function () {
+			if (!suppressBoundsFilter) {
+				userInteractionDetected = true;
+			}
+		});
+
+		map.addListener('idle', function () {
+			if (!userInteractionDetected || suppressBoundsFilter) {
+				userInteractionDetected = false;
+				return;
+			}
+
+			var bounds = map.getBounds();
+			if (!bounds) {
+				userInteractionDetected = false;
+				return;
+			}
+
+			var northEast = bounds.getNorthEast();
+			var southWest = bounds.getSouthWest();
+
+			$(document).trigger('rentfetchPropertyMapBoundsChanged', [
+				{
+					userInitiated: true,
+					bounds: {
+						north: northEast.lat(),
+						east: northEast.lng(),
+						south: southWest.lat(),
+						west: southWest.lng(),
+					},
+				},
+			]);
+
+			userInteractionDetected = false;
+		});
+
+		return true;
 	}
 
-	function getLocations() {
-		// reset the array
-		locationsArray = [];
+	function setLocations(points) {
+		locationsArray = Array.isArray(points) ? points : [];
+	}
 
-		// get the positions
-		$('#response .type-properties').each(function () {
-			lat = $(this).attr('data-latitude');
-			long = $(this).attr('data-longitude');
-			title = $(this).find('h3').text();
-			content = $(this).find('.property-in-map').html();
-			id = $(this).attr('data-id');
-			locationsArray.push([lat, long, title, content, id]);
+	function clearMarkers() {
+		markers.forEach(function (marker) {
+			marker.setMap(null);
 		});
+		markers = [];
 	}
 
 	function addMarkers() {
 		var bounds = new google.maps.LatLngBounds();
 
-		for (let i = 0; i < locationsArray.length; i++) {
-			var latitude = locationsArray[i][0];
-			var longitude = locationsArray[i][1];
-			var title = locationsArray[i][2];
-			var content = locationsArray[i][3];
-			var id = locationsArray[i][4];
-			var theposition = new google.maps.LatLng(latitude, longitude);
+		locationsArray.forEach(function (location) {
+			var position = new google.maps.LatLng(
+				location.latitude,
+				location.longitude
+			);
+			var marker = new google.maps.Marker({
+				position: position,
+				map: null,
+				title: location.title,
+				icon: typeof markerImage !== 'undefined' ? markerImage : undefined,
+			});
 
-			var marker;
-			if (typeof markerImage !== 'undefined') {
-				// if there's a custom marker set, use that
-				marker = new google.maps.Marker({
-					position: theposition,
-					map: null, // Don't add to map yet
-					title: title,
-					icon: markerImage,
-				});
-			} else {
-				// if there's no custom icon, just use the google default
-				marker = new google.maps.Marker({
-					position: theposition,
-					map: null, // Don't add to map yet
-					title: title,
-				});
-			}
+			bounds.extend(position);
 
-			bounds.extend(theposition);
-
-			marker['infowindow'] = new google.maps.InfoWindow({
+			marker.infowindow = new google.maps.InfoWindow({
 				content:
 					'<div class="map-property-popup" id="overlay-' +
-					id +
+					location.marker_id +
 					'">' +
-					content +
+					location.popup_html +
 					'</div>',
 			});
 
-			// We want the click event to do most of the same stuff as the hover, so that we can click on a .type-properties
 			google.maps.event.addListener(marker, 'click', function () {
-				for (let i = 0; i < markers.length; i++) {
-					markers[i]['infowindow'].close(map, this);
-				}
+				markers.forEach(function (existingMarker) {
+					existingMarker.infowindow.close(map, marker);
+				});
 
-				this['infowindow'].open(map, this);
-
+				marker.infowindow.open(map, marker);
 				$('.type-properties').removeClass('active');
-				$('.type-properties[data-id=' + i + ']').addClass('active');
+				$('.type-properties[data-id=' + location.marker_id + ']').addClass(
+					'active'
+				);
 
-				scrollToActiveProperty(i);
+				if (typeof scrollToActiveProperty === 'function') {
+					scrollToActiveProperty(location.marker_id);
+				}
 
 				setTimeout(function () {
 					$('.type-properties').removeClass('active');
 				}, 1000);
 			});
 
-			// We want the click event to do most of the same stuff as the hover, so that we can click on a .type-properties
 			google.maps.event.addListener(marker, 'mouseover', function () {
-				for (let i = 0; i < markers.length; i++) {
-					markers[i]['infowindow'].close(map, this);
-				}
+				markers.forEach(function (existingMarker) {
+					existingMarker.infowindow.close(map, marker);
+				});
 
-				this['infowindow'].open(map, this);
-
+				marker.infowindow.open(map, marker);
 				$('.type-properties').removeClass('active');
-				// $('.type-properties[data-id=' + i + ']').addClass('active');
 			});
 
 			markers.push(marker);
-		}
+		});
 
-		// Return the bounds so resetMap can handle the transition
 		return bounds;
 	}
-	function resetMap() {
-		// At the start of resetMap, reset the hooks flag
-		window.hooksRan = false;
 
-		// Only render a new map if one doesn't exist
+	function applyMapPoints(points, preserveCurrentBounds) {
+		if (!isGoogleMapsReady()) {
+			return;
+		}
+
 		if (!map) {
-			renderMap();
+			if (!renderMap()) {
+				return;
+			}
 		}
 
-		// Get new locations first
-		getLocations();
+		setLocations(points);
+		clearMarkers();
 
-		// Store reference to old markers
-		var oldMarkers = markers.slice(); // Create a copy of the current markers array
-
-		// Reset markers array for new markers
-		markers = [];
-
-		// Create new markers and get their bounds
-		var newBounds = addMarkers();
-
-		// If we have new locations, animate to new bounds smoothly
-		if (locationsArray.length > 0) {
-			// Show new markers before zoom animation
-			for (let i = 0; i < markers.length; i++) {
-				markers[i].setMap(map);
+		if (!locationsArray.length) {
+			if (!preserveCurrentBounds) {
+				withSuppressedBoundsFilter(function () {
+					map.setCenter(
+						new google.maps.LatLng(
+							googleMapsDefaultLatitude,
+							googleMapsDefaultLongitude
+						)
+					);
+					map.setZoom(8);
+				});
 			}
-
-			// Animate to new bounds
-			map.fitBounds(newBounds);
-
-			// Wait for animation to complete (fitBounds animation typically takes ~500-1000ms)
-			setTimeout(function () {
-				// Remove old markers after animation completes
-				for (let i = 0; i < oldMarkers.length; i++) {
-					oldMarkers[i].setMap(null);
-				}
-
-				// Run hooks after transition is complete
-				if (typeof window.rentFetchMapHooks === 'undefined') {
-					window.rentFetchMapHooks = [];
-				}
-
-				if (!window.hooksRan) {
-					window.rentFetchMapHooks.forEach((hook) => {
-						if (typeof hook === 'function') {
-							hook(map, markers);
-						}
-					});
-					window.hooksRan = true;
-				}
-			}, 600); // Wait 600ms for fitBounds animation to complete
-		} else {
-			// No locations found, just clear old markers and center on default
-			for (let i = 0; i < oldMarkers.length; i++) {
-			oldMarkers[i].setMap(null);
-			}
-
-			var myLatlng = new google.maps.LatLng(
-				google_maps_default_latitude,
-				google_maps_default_longitude
-			);
-			map.setCenter(myLatlng);
-			map.setZoom(8);
+			return;
 		}
+
+		var bounds = addMarkers();
+		markers.forEach(function (marker) {
+			marker.setMap(map);
+		});
+
+		if (!preserveCurrentBounds) {
+			withSuppressedBoundsFilter(function () {
+				map.fitBounds(bounds);
+			});
+		}
+
+		if (typeof window.rentFetchMapHooks === 'undefined') {
+			window.rentFetchMapHooks = [];
+		}
+
+		window.rentFetchMapHooks.forEach(function (hook) {
+			if (typeof hook === 'function') {
+				hook(map, markers);
+			}
+		});
 	}
 
 	function openMarkerOnGridHover() {
-		let markerIndex = parseInt($(this).attr('data-id')); // Parse as integer
+		var markerIndex = parseInt($(this).attr('data-id'), 10);
 
 		if (markerIndex >= 0 && markerIndex < markers.length) {
 			google.maps.event.trigger(markers[markerIndex], 'mouseover');
@@ -206,46 +229,32 @@ jQuery(document).ready(function ($) {
 
 	$(document).on('mouseenter', '.type-properties', openMarkerOnGridHover);
 
-	// function activeOnClick() {
-	//     $('.type-properties').removeClass('active');
-	//     $(this).addClass('active');
-	// }
-
-	// $(document).on('click touchstart', '.type-properties', activeOnClick);
-
-	// Listen for property search completion
-	$(document).on('rentfetchPropertySearchComplete', function () {
-		if (
-			!window.google ||
-			!window.google.maps ||
-			typeof window.google.maps.LatLng !== 'function'
-		) {
+	$(document).on('rentfetchPropertySearchComplete', function (event, payload) {
+		if (!payload || !Array.isArray(payload.mapPoints)) {
 			return;
 		}
 
-		resetMap();
+		latestSearchPayload = payload;
+
+		if (!isGoogleMapsReady()) {
+			return;
+		}
+
+		applyMapPoints(payload.mapPoints, !!payload.preserveCurrentMapBounds);
 	});
 
-	function initMapFlow() {
-		if (!$('#map').length) {
-			return;
-		}
-
-		renderMap();
-		getLocations();
-		var initialBounds = addMarkers();
-
-		// Show initial markers immediately
-		if (locationsArray.length > 0) {
-			map.fitBounds(initialBounds);
-			for (let i = 0; i < markers.length; i++) {
-				markers[i].setMap(map);
-			}
-		}
-	}
-
 	function handleGoogleMapsReady() {
-		initMapFlow();
+		if (!map) {
+			renderMap();
+		}
+
+		if (latestSearchPayload && Array.isArray(latestSearchPayload.mapPoints)) {
+			applyMapPoints(
+				latestSearchPayload.mapPoints,
+				!!latestSearchPayload.preserveCurrentMapBounds
+			);
+		}
+
 		if (!window.rentfetchAdvancedMarkerNoticeShown) {
 			window.rentfetchAdvancedMarkerNoticeShown = true;
 			console.warn(
@@ -254,17 +263,19 @@ jQuery(document).ready(function ($) {
 		}
 	}
 
-	window.rentfetchGoogleMapsLoaded = window.rentfetchGoogleMapsLoaded || function () {
-		$(document).trigger('rentfetchGoogleMapsReady');
-	};
+	window.rentfetchGoogleMapsLoaded =
+		window.rentfetchGoogleMapsLoaded ||
+		function () {
+			window.rentfetchGoogleMapsReadyFired = true;
+			$(document).trigger('rentfetchGoogleMapsReady');
+		};
 
 	$(document).on('rentfetchGoogleMapsReady', handleGoogleMapsReady);
 	if (window.rentfetchGoogleMapsReadyFired) {
 		$(document).trigger('rentfetchGoogleMapsReady');
 	}
 
-	// Initialize map on page load if the API is already available
-	if (window.google && window.google.maps && typeof window.google.maps.LatLng === 'function') {
+	if (isGoogleMapsReady()) {
 		handleGoogleMapsReady();
 	}
 });

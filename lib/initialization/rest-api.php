@@ -150,11 +150,12 @@ function rentfetch_rest_search_properties( $request ) {
 	);
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$cached_markup = get_transient( $cache_key );
-		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
+		if ( false !== $cached_markup && is_array( $cached_markup ) ) {
 			$response = rest_ensure_response(
 				array(
-					'html'  => $cached_markup,
-					'count' => substr_count( $cached_markup, 'class="property' ),
+					'html'       => $cached_markup['html'],
+					'map_points' => isset( $cached_markup['map_points'] ) && is_array( $cached_markup['map_points'] ) ? $cached_markup['map_points'] : array(),
+					'count'      => substr_count( $cached_markup['html'], 'class="property' ),
 					'cached' => true,
 				)
 			);
@@ -164,17 +165,18 @@ function rentfetch_rest_search_properties( $request ) {
 	}
 
 	// Render the results
-	$markup = rentfetch_render_property_query_results( $property_args );
+	$results_data = rentfetch_render_property_query_results_data( $property_args );
 
 	// Cache the results
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
+		set_transient( $cache_key, $results_data, 30 * MINUTE_IN_SECONDS );
 	}
 
 	$response = rest_ensure_response(
 		array(
-			'html'  => $markup,
-			'count' => substr_count( $markup, 'class="property' ),
+			'html'       => $results_data['html'],
+			'map_points' => $results_data['map_points'],
+			'count'      => substr_count( $results_data['html'], 'class="property' ),
 			'cached' => false,
 		)
 	);

@@ -9,6 +9,16 @@ jQuery(function ($) {
 	var shortcodeAttributesJson = $searchRoot.attr(
 		'data-property-search-shortcode-attributes'
 	);
+	var $filter = $('#filter');
+	var $reset = $('#reset');
+	var $response = $('#response');
+	var $filterToggles = $('#filter-toggles');
+	var $propertiesFound = $('#properties-found');
+	var activeMapBounds = null;
+	var isMapBoundsFilterActive = false;
+	var latestMapPoints = [];
+	var activeRequest = null;
+	var latestRequestId = 0;
 
 	if (shortcodeAttributesJson) {
 		try {
@@ -25,14 +35,6 @@ jQuery(function ($) {
 		console.error('REST API URL not available from server');
 	}
 
-	// Cache frequently used DOM elements
-	var $filter = $('#filter');
-	var $reset = $('#reset');
-	var $response = $('#response');
-	var $filterToggles = $('#filter-toggles');
-	var $propertiesFound = $('#properties-found');
-
-	// Pre-compute date ranges for performance
 	var dateRangeCache = {};
 	function getDateRangeLabel(val) {
 		if (dateRangeCache[val]) {
@@ -56,48 +58,45 @@ jQuery(function ($) {
 				end.getDate() +
 				')';
 		} else if (val === '30-60') {
-			var start = new Date();
-			start.setDate(start.getDate() + 30);
-			var end = new Date();
-			end.setDate(end.getDate() + 60);
+			var startThirty = new Date();
+			startThirty.setDate(startThirty.getDate() + 30);
+			var endSixty = new Date();
+			endSixty.setDate(endSixty.getDate() + 60);
 			label =
 				'30-60 days (' +
-				(start.getMonth() + 1) +
+				(startThirty.getMonth() + 1) +
 				'/' +
-				start.getDate() +
+				startThirty.getDate() +
 				'-' +
-				(end.getMonth() + 1) +
+				(endSixty.getMonth() + 1) +
 				'/' +
-				end.getDate() +
+				endSixty.getDate() +
 				')';
 		} else if (val === '60-90') {
-			var start = new Date();
-			start.setDate(start.getDate() + 60);
-			var end = new Date();
-			end.setDate(end.getDate() + 90);
+			var startSixty = new Date();
+			startSixty.setDate(startSixty.getDate() + 60);
+			var endNinety = new Date();
+			endNinety.setDate(endNinety.getDate() + 90);
 			label =
 				'60-90 days (' +
-				(start.getMonth() + 1) +
+				(startSixty.getMonth() + 1) +
 				'/' +
-				start.getDate() +
+				startSixty.getDate() +
 				'-' +
-				(end.getMonth() + 1) +
+				(endNinety.getMonth() + 1) +
 				'/' +
-				end.getDate() +
+				endNinety.getDate() +
 				')';
 		} else if (val.startsWith('fall-')) {
-			var year = val.split('-')[1];
-			label = 'Fall ' + year + ' (6/30-10/1)';
+			label = 'Fall ' + val.split('-')[1] + ' (6/30-10/1)';
 		} else if (val.startsWith('spring-')) {
-			var year = val.split('-')[1];
-			label = 'Spring ' + year + ' (3/1-5/31)';
+			label = 'Spring ' + val.split('-')[1] + ' (3/1-5/31)';
 		}
 
 		dateRangeCache[val] = label;
 		return label;
 	}
 
-	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
 		var url = new URL(window.location.href);
 		var existingParams = {};
@@ -105,42 +104,48 @@ jQuery(function ($) {
 			existingParams[key] = value;
 		});
 		var mergedParams = $.extend({}, existingParams, params);
+		delete mergedParams.map_north;
+		delete mergedParams.map_south;
+		delete mergedParams.map_east;
+		delete mergedParams.map_west;
 		var baseUrl = url.origin + url.pathname;
 		var queryString = $.param(mergedParams);
 		var newUrl = baseUrl + (queryString ? '?' + queryString : '');
 		history.pushState(null, '', newUrl);
 	}
 
-	// Function to get query parameters from form for URL updates
 	function getQueryParametersFromForm() {
 		var queryParams = {};
 
-		// Use cached selector and more efficient iteration
 		$filter.find('input, select').each(function () {
-			var $this = $(this);
-			var inputName = $this.attr('name');
-			if (inputName) {
-				var inputValue = $this.val();
+			var $input = $(this);
+			var inputName = $input.attr('name');
 
-				// Handle checkboxes and multiple values
-				if ($this.is(':checkbox')) {
-					if (!queryParams[inputName]) {
-						queryParams[inputName] = [];
-					}
-					if ($this.is(':checked')) {
-						queryParams[inputName].push(inputValue);
-					}
-				} else {
+			if (!inputName) {
+				return;
+			}
+
+			var inputValue = $input.val();
+			if ($input.is(':checkbox')) {
+				if (!queryParams[inputName]) {
+					queryParams[inputName] = [];
+				}
+				if ($input.is(':checked')) {
+					queryParams[inputName].push(inputValue);
+				}
+			} else if ($input.is(':radio')) {
+				if ($input.is(':checked')) {
 					queryParams[inputName] = inputValue;
 				}
+			} else {
+				queryParams[inputName] = inputValue;
 			}
 		});
 
-		// Remove empty and unwanted parameters
 		$.each(queryParams, function (key, value) {
 			if (
-				value === '' || // Exclude empty values
-				key === 'action' || // Exclude specific parameters
+				value === '' ||
+				key === 'action' ||
 				key === 'availability' ||
 				key === 'rentfetch_frontend_nonce_field'
 			) {
@@ -151,24 +156,10 @@ jQuery(function ($) {
 		return queryParams;
 	}
 
-	// Function to clear values from corresponding fields and trigger change event
-	$(document).on('click', '#filter-toggles button', function () {
-		var dataId = $(this).data('id');
-		var correspondingFields = $('[name="' + dataId + '"]');
-		var fieldset = correspondingFields.closest('fieldset'); // Find the fieldset containing the correspondingFields
-
-		fieldset.find(':checkbox').prop('checked', false); // Clear checkbox inputs within the fieldset
-		fieldset.find(':input:not(:checkbox)').val('').trigger('change'); // Clear non-checkbox inputs within the fieldset and trigger change event
-		submitForm();
-	});
-
 	function outputToggles(toggleData) {
 		var toggleMarkup = '';
-
-		// Get all the fieldsets within the toggleData
 		var fieldsets = toggleData.find('fieldset');
 
-		// Iterate through each fieldset
 		fieldsets.each(function () {
 			var fieldset = $(this);
 			var legend = fieldset.find('legend').text();
@@ -177,11 +168,10 @@ jQuery(function ($) {
 					'input:checked, input[type="number"], input[type="text"], input[type="date"]'
 				)
 				.filter(function () {
-					return $(this).val().trim() !== ''; // Check if input is not empty
+					return $(this).val().trim() !== '';
 				})
 				.not('[name="action"]');
 
-			// Check if there are any active fields
 			if (activeFields.length > 0) {
 				var dataId = activeFields.first().attr('name');
 				var dataType = activeFields.first().attr('data-type');
@@ -191,36 +181,31 @@ jQuery(function ($) {
 					})
 					.get()
 					.join(',');
-
-				// Create the button element
 				var buttonContent = legend + ': ';
+
 				switch (true) {
 					case activeFields.length === 2 &&
 						!activeFields.is(':checkbox'):
-						// if it's a range, replace the comma with a dash
-						if (dataId === 'pricesmall' || dataId === 'pricebig') {
-							buttonContent += '$' + dataValues.replace(',', '-');
-						} else {
-							buttonContent += dataValues.replace(/,/g, '-');
-						}
+						buttonContent +=
+							dataId === 'pricesmall' || dataId === 'pricebig'
+								? '$' + dataValues.replace(',', '-')
+								: dataValues.replace(/,/g, '-');
 						break;
 					case dataType === 'taxonomy':
-						// if it's a taxonomy, change the content
 						buttonContent =
 							legend + ' (' + activeFields.length + ' selected)';
 						break;
 					case dataId === 'search-dates[]':
-						// Map selected values to display labels with date ranges (using cache)
-						var selectedValues = dataValues.split(',');
 						var labels = [];
-						selectedValues.forEach(function (val) {
+						dataValues.split(',').forEach(function (val) {
 							var label = getDateRangeLabel(val);
-							if (label) labels.push(label);
+							if (label) {
+								labels.push(label);
+							}
 						});
 						buttonContent = legend + ': ' + labels.join(', ');
 						break;
 					default:
-						// otherwise, just add the values (this handles checkboxes)
 						buttonContent += dataValues.replace(/,/g, ', ');
 				}
 
@@ -235,11 +220,108 @@ jQuery(function ($) {
 			}
 		});
 
+		if (isMapBoundsFilterActive && activeMapBounds) {
+			toggleMarkup +=
+				'<button data-id="map_area" data-values="Map area">Map area</button>';
+		}
+
 		return toggleMarkup;
 	}
 
-	// Function to perform REST API search
-	function performAJAXSearch() {
+	function updateToggleMarkup() {
+		$filterToggles.html(outputToggles($filter));
+	}
+
+	function clearMapBoundsFilter() {
+		activeMapBounds = null;
+		isMapBoundsFilterActive = false;
+	}
+
+	function isPointWithinBounds(latitude, longitude, bounds) {
+		var lat = parseFloat(latitude);
+		var lng = parseFloat(longitude);
+
+		if (
+			!bounds ||
+			Number.isNaN(lat) ||
+			Number.isNaN(lng)
+		) {
+			return false;
+		}
+
+		return (
+			lat <= bounds.north &&
+			lat >= bounds.south &&
+			lng <= bounds.east &&
+			lng >= bounds.west
+		);
+	}
+
+	function updateVisiblePropertyCount() {
+		var visibleCount = $response.find('.properties-loop > :visible').length;
+		var $resultsCount = $response.find('#properties-results-count-number');
+
+		if ($resultsCount.length) {
+			$resultsCount.text(visibleCount);
+		}
+
+		$propertiesFound.text(visibleCount);
+	}
+
+	function getFilteredMapPoints() {
+		if (!isMapBoundsFilterActive || !activeMapBounds) {
+			return latestMapPoints.slice();
+		}
+
+		return latestMapPoints.filter(function (point) {
+			return isPointWithinBounds(
+				point.latitude,
+				point.longitude,
+				activeMapBounds
+			);
+		});
+	}
+
+	function applyClientSideMapAreaFilter(options) {
+		var filterOptions = $.extend(
+			{
+				preserveCurrentMapBounds: isMapBoundsFilterActive,
+			},
+			options
+		);
+
+		$response.find('.properties-loop > *').each(function () {
+			var $property = $(this);
+			var isVisible =
+				!isMapBoundsFilterActive ||
+				!activeMapBounds ||
+				isPointWithinBounds(
+					$property.attr('data-latitude'),
+					$property.attr('data-longitude'),
+					activeMapBounds
+				);
+
+			$property.toggle(isVisible);
+		});
+
+		updateVisiblePropertyCount();
+
+		$(document).trigger('rentfetchPropertySearchComplete', [
+			{
+				mapPoints: getFilteredMapPoints(),
+				preserveCurrentMapBounds: !!filterOptions.preserveCurrentMapBounds,
+			},
+		]);
+	}
+
+	function performAJAXSearch(options) {
+		var requestOptions = $.extend(
+			{
+				preserveCurrentMapBounds: false,
+			},
+			options
+		);
+
 		if (!restUrl) {
 			console.error('REST API URL not available');
 			$reset.text('Clear All');
@@ -248,174 +330,127 @@ jQuery(function ($) {
 			);
 			return;
 		}
-		performActualPropertySearch();
-	}
 
-	// Function to perform the actual REST API search
-	function performActualPropertySearch() {
-		var filter = $('#filter');
-		var toggleData = filter;
+		var queryData = $.extend({}, shortcodeAttributes, getQueryParametersFromForm());
+		var requestId = ++latestRequestId;
 
-		// Build query parameters from form and shortcode attributes
-		var formData = {};
-		filter.find('input, select').each(function () {
-			var name = $(this).attr('name');
-			var value = $(this).val();
+		if (activeRequest && activeRequest.readyState !== 4) {
+			activeRequest.abort();
+		}
 
-			// Skip hidden fields like action and nonce
-			if (
-				name === 'action' ||
-				name === 'rentfetch_frontend_nonce_field'
-			) {
-				return;
-			}
-
-			if ($(this).is(':checkbox')) {
-				if ($(this).is(':checked')) {
-					if (!formData[name]) {
-						formData[name] = [];
-					}
-					formData[name].push(value);
-				}
-			} else if ($(this).is(':radio')) {
-				if ($(this).is(':checked')) {
-					formData[name] = value;
-				}
-			} else if (value !== '') {
-				formData[name] = value;
-			}
-		});
-
-		// Merge with shortcode attributes
-		var queryData = $.extend({}, shortcodeAttributes, formData);
-
-		$.ajax({
+		activeRequest = $.ajax({
 			url: restUrl,
 			data: queryData,
 			type: 'GET',
 			dataType: 'json',
-			beforeSend: function (xhr) {
-				$reset.text('Searching...'); // changing the button label
-				$response.html(''); // clear #response div
+			beforeSend: function () {
+				$reset.text('Searching...');
+				$response.html('');
 			},
 			success: function (response) {
-				$reset.text('Clear All'); // changing the button label
-				$response.html(response.html); // insert HTML from REST response
+				if (requestId !== latestRequestId) {
+					return;
+				}
 
-				var toggles = outputToggles(toggleData);
-				$filterToggles.html(toggles);
+				$reset.text('Clear All');
+				$response.html(response.html);
+				latestMapPoints = Array.isArray(response.map_points)
+					? response.map_points
+					: [];
+				updateToggleMarkup();
 
 				if ($('#map').length) {
 					var mapOffset = $('#map').offset().top;
 					var viewportTop = $(window).scrollTop();
 					if (mapOffset - viewportTop > 200) {
-						$('html, body').animate(
-							{
-								// scrollTop: mapOffset,
-								// TODO make the scrolldown optional
-							},
-							1000
-						);
+						$('html, body').animate({}, 1000);
 					}
 				}
 
-				// look in data for .properties-loop, and count the number of children
-				var count = $('.properties-loop').children().length;
-				// update #properties-found with the count
-				$propertiesFound.text(count);
-
-				// Trigger custom event for map update
-				$(document).trigger('rentfetchPropertySearchComplete');
+				applyClientSideMapAreaFilter({
+					preserveCurrentMapBounds:
+						!!requestOptions.preserveCurrentMapBounds ||
+						isMapBoundsFilterActive,
+				});
 			},
-			error: function (jqXHR) {
+			error: function (jqXHR, textStatus) {
+				if (textStatus === 'abort' || requestId !== latestRequestId) {
+					return;
+				}
+
 				$reset.text('Clear All');
 				$response.html('<p>Search failed. Please try again.</p>');
 			},
 		});
 	}
 
-	// Our ajax query to get stuff and put it into the response div
-	function submitForm() {
-		var queryParams = getQueryParametersFromForm();
-		updateURLWithQueryParameters(queryParams);
-		performAJAXSearch(); // Perform REST API search
-
+	function submitForm(options) {
+		updateURLWithQueryParameters(getQueryParametersFromForm());
+		performAJAXSearch(options);
 		return false;
 	}
 
-	// submit on page load
-	submitForm();
-
-	//! WHEN CHANGES ARE MADE, SUBMIT THE FORM
-
-	var submitTimer; // Timer identifier
-
-	// Function to submit the form after half a second of inactivity
+	var submitTimer;
 	function submitFormAfterInactivity() {
-		var self = this; // Capture the current context
-		clearTimeout(submitTimer); // Clear any previous timer
+		clearTimeout(submitTimer);
 		submitTimer = setTimeout(function () {
-			submitForm(); // Submit the form after half a second of inactivity
+			submitForm();
 		}, 500);
 	}
 
-	// Call the function on input
-	// $('#filter').on('change', submitFormAfterInactivity);
-
-	//! RESET THE FORMS
-
-	// Function to clear all values from fields in #filter when #reset is clicked
 	function clearFilterValues() {
-		// Reset all non-hidden inputs to null value
 		$('#filter, #featured-filters')
 			.find('input:not([type="hidden"],[type="checkbox"],[type="radio"])')
 			.val('');
-		// .trigger('change'); // Trigger the change event
-
-		// Reset checkboxes to unchecked
 		$('#filter, #featured-filters')
-			.find('[type="checkbox"]:checked') // Select only checked checkboxes
+			.find('[type="checkbox"]:checked')
 			.prop('checked', false);
-		// .trigger('change'); // Trigger the change event
+		$('#filter, #featured-filters')
+			.find('[type="radio"]:checked')
+			.prop('checked', false);
 
-		// Get default values for input#pricesmall and input#pricebig
 		var defaultValSmall = $('#pricesmall').data('default-value');
 		var defaultValBig = $('#pricebig').data('default-value');
 
-		// Set default values for input#pricesmall and input#pricebig
 		$('#pricesmall, #featured-pricesmall').val(defaultValSmall);
-		// .trigger('change'); // Trigger the change event
 		$('#pricebig, #featured-pricebig').val(defaultValBig);
-		// .trigger('change'); // Trigger the change event
 	}
 
-	// Call the function when #reset is clicked
-	$('#reset, #featured-reset').click(function () {
-		clearFilterValues();
-		submitForm();
-	});
+	$(document).on('click', '#filter-toggles button', function () {
+		var dataId = $(this).data('id');
 
-	//! SYNC THE FORMS
-
-	// Select all input, select, and textarea elements
-	var $inputs = $('input, select, textarea');
-
-	var programmaticChange = false; // Flag to check if the change was programmatic
-
-	$inputs.on('change input', function () {
-		if (programmaticChange) {
-			// If the change was programmatic, return early
+		if (dataId === 'map_area') {
+			clearMapBoundsFilter();
+			updateToggleMarkup();
+			applyClientSideMapAreaFilter({ preserveCurrentMapBounds: false });
 			return;
 		}
 
-		var elementName = $(this).attr('name');
-		var newValue = $(this).val();
-		var isChecked = $(this).is(':checked');
+		var correspondingFields = $('[name="' + dataId + '"]');
+		var fieldset = correspondingFields.closest('fieldset');
 
-		// Update identically named elements with the new value and checked status
+		fieldset.find(':checkbox').prop('checked', false);
+		fieldset.find(':input:not(:checkbox)').val('').trigger('change');
+		submitForm();
+	});
+
+	$('#reset, #featured-reset').click(function () {
+		clearMapBoundsFilter();
+		clearFilterValues();
+		submitForm({ preserveCurrentMapBounds: false });
+	});
+
+	var $inputs = $('input, select, textarea');
+	$inputs.on('change input', function () {
+		var $source = $(this);
+		var elementName = $source.attr('name');
+		var newValue = $source.val();
+		var isChecked = $source.is(':checked');
+		var sourceId = $source.attr('id');
+
 		$inputs
 			.filter('[name="' + elementName + '"]')
-			.not(this)
+			.not($source)
 			.each(function () {
 				var elementType = $(this).prop('tagName').toLowerCase();
 
@@ -423,22 +458,38 @@ jQuery(function ($) {
 					elementType === 'input' &&
 					$(this).attr('type') === 'checkbox'
 				) {
-					// For checkboxes, update the checked status
-					var otherValue = $(this).val();
-					if (otherValue === newValue) {
+					if ($(this).val() === newValue) {
 						$(this).prop('checked', isChecked);
 					}
-				} else {
-					// For other elements, update the value
-					if ($(this).val() !== newValue) {
-						$(this).off('change input'); // Temporarily remove the event handler
-						$(this).val(newValue);
-						$(this).trigger('change');
-						// $(this).on('change input', changeInputHandler); // Reattach the event handler
-					}
+				} else if ($(this).is(':radio')) {
+					$(this).prop(
+						'checked',
+						isChecked && $(this).attr('id') === sourceId
+					);
+				} else if ($(this).val() !== newValue) {
+					$(this).val(newValue);
 				}
-			}); // end .each()
+			});
 
 		submitFormAfterInactivity();
-	}); // end $inputs.on()
-}); // end jQuery
+	});
+
+	$(document).on('rentfetchPropertyMapBoundsChanged', function (event, payload) {
+		if (
+			!payload ||
+			!payload.bounds ||
+			(typeof payload.userInitiated !== 'undefined' &&
+				!payload.userInitiated)
+		) {
+			return;
+		}
+
+		activeMapBounds = payload.bounds;
+		isMapBoundsFilterActive = true;
+		updateToggleMarkup();
+		applyClientSideMapAreaFilter({ preserveCurrentMapBounds: true });
+	});
+
+	updateToggleMarkup();
+	submitForm({ preserveCurrentMapBounds: false });
+});
