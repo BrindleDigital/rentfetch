@@ -161,15 +161,55 @@ function rentfetch_propertysearchresults() {
 add_shortcode( 'rentfetch_propertysearchresults', 'rentfetch_propertysearchresults' );
 
 /**
- * Render the property query results and return the markup as a string.
+ * Render map popup markup for the current property in the loop.
+ *
+ * @return string
+ */
+function rentfetch_get_property_map_popup_markup() {
+	ob_start();
+
+	do_action( 'rentfetch_do_properties_each_map' );
+
+	return ob_get_clean();
+}
+
+/**
+ * Build structured map point data for the current property in the loop.
+ *
+ * @param int $marker_index Marker index for client-side matching.
+ * @return array<string,mixed>|null
+ */
+function rentfetch_get_property_map_point_data( int $marker_index ) {
+	$latitude  = get_post_meta( get_the_ID(), 'latitude', true );
+	$longitude = get_post_meta( get_the_ID(), 'longitude', true );
+
+	if ( ! $latitude || ! $longitude ) {
+		return null;
+	}
+
+	$point_data = array(
+		'id'         => (int) get_the_ID(),
+		'marker_id'  => $marker_index,
+		'latitude'   => (float) $latitude,
+		'longitude'  => (float) $longitude,
+		'title'      => wp_strip_all_tags( rentfetch_get_property_title() ),
+		'popup_html' => rentfetch_get_property_map_popup_markup(),
+	);
+
+	return apply_filters( 'rentfetch_property_map_point_data', $point_data, get_the_ID(), $marker_index );
+}
+
+/**
+ * Render the property query results and return markup plus structured map points.
  *
  * @param array $property_args WP_Query args for properties.
- * @return string HTML markup for the properties results.
+ * @return array{html:string,map_points:array<int,array<string,mixed>>}
  */
-function rentfetch_render_property_query_results( $property_args ) {
+function rentfetch_render_property_query_results_data( $property_args ) {
 	ob_start();
 
 	$propertyquery = new WP_Query( $property_args );
+	$map_points    = array();
 
 	if ( $propertyquery->have_posts() ) {
 
@@ -184,13 +224,14 @@ function rentfetch_render_property_query_results( $property_args ) {
 
 			$propertyquery->the_post();
 
-			$latitude  = get_post_meta( get_the_ID(), 'latitude', true );
-			$longitude = get_post_meta( get_the_ID(), 'longitude', true );
+			$map_point = rentfetch_get_property_map_point_data( $count );
 
-			// skip if there's no latitude or longitude.
-			if ( ! $latitude || ! $longitude ) {
+			// Skip if there is no mappable point for this property.
+			if ( ! $map_point ) {
 				continue;
 			}
+
+			$map_points[] = $map_point;
 
 			$classes_array = get_post_class();
 			$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
@@ -199,8 +240,8 @@ function rentfetch_render_property_query_results( $property_args ) {
 			printf(
 				'<div class="%s" data-latitude="%s" data-longitude="%s" data-id="%s" data-marker-id="%s">',
 				esc_attr( $class ),
-				esc_attr( $latitude ),
-				esc_attr( $longitude ),
+				esc_attr( (string) $map_point['latitude'] ),
+				esc_attr( (string) $map_point['longitude'] ),
 				(int) $count,
 				(int) get_the_ID(),
 			);
@@ -209,7 +250,7 @@ function rentfetch_render_property_query_results( $property_args ) {
 					do_action( 'rentfetch_do_properties_each_list' );
 				echo '</div>';
 				echo '<div class="property-in-map" style="display:none;">';
-					do_action( 'rentfetch_do_properties_each_map' );
+					echo wp_kses_post( $map_point['popup_html'] );
 				echo '</div>';
 
 			echo '</div>'; // post_class.
@@ -226,5 +267,20 @@ function rentfetch_render_property_query_results( $property_args ) {
 		echo 'No properties with availability were found matching the current search parameters.';
 	}
 
-	return ob_get_clean();
+	return array(
+		'html'       => ob_get_clean(),
+		'map_points' => $map_points,
+	);
+}
+
+/**
+ * Render the property query results and return the markup as a string.
+ *
+ * @param array $property_args WP_Query args for properties.
+ * @return string HTML markup for the properties results.
+ */
+function rentfetch_render_property_query_results( $property_args ) {
+	$results = rentfetch_render_property_query_results_data( $property_args );
+
+	return $results['html'];
 }
