@@ -215,6 +215,14 @@ jQuery(document).ready(function ($) {
 
 	// Listen for property search completion
 	$(document).on('rentfetchPropertySearchComplete', function () {
+		if (
+			!window.google ||
+			!window.google.maps ||
+			typeof window.google.maps.LatLng !== 'function'
+		) {
+			return;
+		}
+
 		resetMap();
 	});
 
