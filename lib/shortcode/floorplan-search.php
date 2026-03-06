@@ -32,7 +32,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 
 	if ( $atts ) {
 		foreach ( $atts as $key => $value ) {
-			$string_atts .= ' ' . $key . '=' . $value;
+			$string_atts .= sprintf( ' %s="%s"', $key, esc_attr( $value ) );
 		}
 	}
 	
