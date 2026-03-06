@@ -1,15 +1,28 @@
-// REST API configuration comes from inline script in wp_add_inline_script (see floorplan-search.php)
 jQuery(function ($) {
-	// Get REST URL and shortcode attributes from PHP-generated inline script
-	var rentfetchData = window.rentfetchFloorplanSearch || {};
-	var restUrl = rentfetchData.restUrl || null;
-	var shortcodeAttributes = rentfetchData.shortcodeAttributes || {};
+	var $searchRoot = $('[data-floorplan-search-shortcode-attributes]').first();
+	var rentfetchConfig = window.rentfetchFloorplanSearchConfig || {};
+	var restUrl =
+		$searchRoot.attr('data-floorplan-search-rest-url') ||
+		rentfetchConfig.restUrl ||
+		null;
+	var shortcodeAttributes = {};
+	var shortcodeAttributesJson = $searchRoot.attr(
+		'data-floorplan-search-shortcode-attributes'
+	);
+
+	if (shortcodeAttributesJson) {
+		try {
+			shortcodeAttributes = JSON.parse(shortcodeAttributesJson);
+		} catch (error) {
+			console.error(
+				'Floorplan search shortcode attributes could not be parsed',
+				error
+			);
+		}
+	}
 
 	if (!restUrl) {
-		console.error(
-			'REST API URL not available from server - rentfetchFloorplanSearch:',
-			rentfetchData
-		);
+		console.error('REST API URL not available from server');
 	}
 
 	// Function to update URL with query parameters

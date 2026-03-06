@@ -1,8 +1,25 @@
 jQuery(function ($) {
-	// Get REST URL and shortcode attributes from localized data (generated in PHP via wp_add_inline_script)
-	var rentfetchData = window.rentfetchPropertySearch || {};
-	var restUrl = rentfetchData.restUrl || null;
-	var shortcodeAttributes = rentfetchData.shortcodeAttributes || {};
+	var $searchRoot = $('[data-property-search-shortcode-attributes]').first();
+	var rentfetchConfig = window.rentfetchPropertySearchConfig || {};
+	var restUrl =
+		$searchRoot.attr('data-property-search-rest-url') ||
+		rentfetchConfig.restUrl ||
+		null;
+	var shortcodeAttributes = {};
+	var shortcodeAttributesJson = $searchRoot.attr(
+		'data-property-search-shortcode-attributes'
+	);
+
+	if (shortcodeAttributesJson) {
+		try {
+			shortcodeAttributes = JSON.parse(shortcodeAttributesJson);
+		} catch (error) {
+			console.error(
+				'Property search shortcode attributes could not be parsed',
+				error
+			);
+		}
+	}
 
 	if (!restUrl) {
 		console.error('REST API URL not available from server');

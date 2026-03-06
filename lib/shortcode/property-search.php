@@ -76,16 +76,6 @@ function rentfetch_propertysearchfilters( $atts ) {
 	// enqueue the search properties ajax script
 	wp_enqueue_script( 'rentfetch-search-properties-ajax' );
 
-	// Add inline script with REST API URL and shortcode attributes
-	if ( ! wp_script_is( 'rentfetch-search-properties-ajax', 'done' ) ) {
-		$inline_script = sprintf(
-			'var rentfetchPropertySearch = { restUrl: %s, shortcodeAttributes: %s };',
-			wp_json_encode( rest_url( 'rentfetch/v1/search/properties' ) ),
-			wp_json_encode( $atts ?: array() )
-		);
-		wp_add_inline_script( 'rentfetch-search-properties-ajax', $inline_script, 'before' );
-	}
-
 	// needed for toggling the featured filters on and off.
 	wp_enqueue_script( 'rentfetch-property-search-featured-filters-toggle' );
 
@@ -95,7 +85,14 @@ function rentfetch_propertysearchfilters( $atts ) {
 	// we need to do output the dialog when we're outputting this, but we don't want to do that inside this container.
 	add_action( 'wp_footer', 'rentfetch_propertysearch_filters_dialog' );
 
-	echo '<div class="filters-wrap">';
+	$shortcode_attributes_json = esc_attr( wp_json_encode( $atts ?: array() ) );
+	$rest_url                 = esc_url( rest_url( 'rentfetch/v1/search/properties' ) );
+
+	printf(
+		'<div class="filters-wrap" data-property-search-rest-url="%s" data-property-search-shortcode-attributes="%s">',
+		$rest_url,
+		$shortcode_attributes_json
+	);
 		echo '<div id="featured-filters">';
 			do_action( 'rentfetch_do_search_properties_featured_filters' );
 			echo '<button type="button" id="open-search-filters">Filters</button>';
@@ -140,6 +137,7 @@ function rentfetch_propertysearchmap() {
 
 	ob_start();
 
+	wp_enqueue_script( 'rentfetch-google-maps' );
 	wp_enqueue_script( 'rentfetch-property-map' );
 
 	echo '<div id="map"></div>';

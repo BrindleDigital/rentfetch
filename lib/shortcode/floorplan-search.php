@@ -76,16 +76,6 @@ function rentfetch_floorplansearchfilters( $atts ) {
 
 	// enqueue the search floorplans ajax script.
 	wp_enqueue_script( 'rentfetch-search-floorplans-ajax' );
-
-	// Add inline script with REST API URL and shortcode attributes
-	if ( ! wp_script_is( 'rentfetch-search-floorplans-ajax', 'done' ) ) {
-		$inline_script = sprintf(
-			'var rentfetchFloorplanSearch = { restUrl: %s, shortcodeAttributes: %s };',
-			wp_json_encode( rest_url( 'rentfetch/v1/search/floorplans' ) ),
-			wp_json_encode( $atts ?: array() )
-		);
-		wp_add_inline_script( 'rentfetch-search-floorplans-ajax', $inline_script, 'before' );
-	}
 	
 	// remove the taxonomy filter if there's a shortcode attribute for it (which hard-sets it and should disable selection).
 	if ( isset( $atts['taxonomy'] ) ) {
@@ -100,7 +90,14 @@ function rentfetch_floorplansearchfilters( $atts ) {
 	// needed for toggling the featured filters on and off.
 	wp_enqueue_script( 'rentfetch-floorplan-search-featured-filters-toggle' );
 
-	echo '<div class="filters-wrap">';
+	$shortcode_attributes_json = esc_attr( wp_json_encode( $atts ?: array() ) );
+	$rest_url                 = esc_url( rest_url( 'rentfetch/v1/search/floorplans' ) );
+
+	printf(
+		'<div class="filters-wrap" data-floorplan-search-rest-url="%s" data-floorplan-search-shortcode-attributes="%s">',
+		$rest_url,
+		$shortcode_attributes_json
+	);
 		echo '<div id="featured-filters">';
 			do_action( 'rentfetch_do_search_floorplans_filters' );
 		echo '</div>';

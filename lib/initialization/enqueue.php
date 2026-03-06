@@ -37,17 +37,30 @@ function rentfetch_enqueue_scripts_stylesheets() {
 
 	// Properties search.
 	wp_register_script( 'rentfetch-search-properties-ajax', RENTFETCH_PATH . 'js/rentfetch-search-properties-ajax.js', array( 'jquery', 'rentfetch-tooltip' ), RENTFETCH_VERSION, true );
+	wp_localize_script(
+		'rentfetch-search-properties-ajax',
+		'rentfetchPropertySearchConfig',
+		array(
+			'restUrl' => rest_url( 'rentfetch/v1/search/properties' ),
+		)
+	);
 	wp_register_script( 'rentfetch-property-search-featured-filters-toggle', RENTFETCH_PATH . 'js/rentfetch-property-search-featured-filters-toggle.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-property-search-filters-dialog', RENTFETCH_PATH . 'js/rentfetch-property-search-filters-dialog.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Floorplans search.
 	wp_register_script( 'rentfetch-search-floorplans-ajax', RENTFETCH_PATH . 'js/rentfetch-search-floorplans-ajax.js', array( 'jquery', 'rentfetch-tooltip' ), RENTFETCH_VERSION, true );
+	wp_localize_script(
+		'rentfetch-search-floorplans-ajax',
+		'rentfetchFloorplanSearchConfig',
+		array(
+			'restUrl' => rest_url( 'rentfetch/v1/search/floorplans' ),
+		)
+	);
 	wp_register_script( 'rentfetch-floorplan-search-featured-filters-toggle', RENTFETCH_PATH . 'js/rentfetch-floorplan-search-featured-filters-toggle.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 
 	// Google Maps script.
-	// we must enqueue this script here instead of within the shortcode because doing it in the shortcode breaks in FSE themes.
 	$key = apply_filters( 'rentfetch_get_google_maps_api_key', null );
-	wp_enqueue_script( 'rentfetch-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $key . '&loading=async&callback=rentfetchGoogleMapsLoaded', array(), RENTFETCH_VERSION, true );
+	wp_register_script( 'rentfetch-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $key . '&loading=async&callback=rentfetchGoogleMapsLoaded', array(), RENTFETCH_VERSION, true );
 	wp_script_add_data( 'rentfetch-google-maps', 'strategy', 'async' );
 	wp_add_inline_script(
 		'rentfetch-google-maps',
@@ -66,7 +79,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 		'google_maps_default_longitude' => get_option( 'rentfetch_options_google_maps_default_longitude' ),
 	);
 
-	// we must localize and enqueue this script here instead of within the shortcode because doing it in the shortcode breaks in FSE themes.
+	// Keep the shared map config attached to the registered handle before any render-time enqueue.
 	wp_localize_script( 'rentfetch-property-map', 'options', $maps_options );
 
 	wp_register_script( 'rentfetch-single-property-map', RENTFETCH_PATH . 'js/rentfetch-single-property-map.js', array( 'jquery', 'rentfetch-google-maps' ), RENTFETCH_VERSION, true );
