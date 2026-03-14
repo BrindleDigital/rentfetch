@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.33.3
+Stable tag: 0.33.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,11 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.33.4 =
+
+* Added aggregate sync-status support so admin sync colors use normalized sync metadata instead of parsing raw API payloads.
+* Updated sync handling compatibility for properties, floorplans, and units across the Rent Fetch Sync integrations.
 
 = 0.33.3 =
 

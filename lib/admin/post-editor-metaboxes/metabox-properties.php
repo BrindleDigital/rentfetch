@@ -607,28 +607,18 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
  * @return string Color class (green/yellow/red/gray)
  */
 function rentfetch_get_sync_status_class( $post_id ) {
-	$api_response = get_post_meta( $post_id, 'api_response', true );
-	
-	if ( empty( $api_response ) || ! is_array( $api_response ) ) {
-		return 'sync-gray'; // No API data
+	$sync_state = rentfetch_get_last_synced_state( $post_id );
+
+	if ( in_array( $sync_state['state'], array( 'failed', 'partial' ), true ) ) {
+		return 'sync-red';
 	}
-	
-	$latest_timestamp = 0;
-	foreach ( $api_response as $response ) {
-		if ( isset( $response['updated'] ) ) {
-			$timestamp = strtotime( $response['updated'] );
-			if ( $timestamp > $latest_timestamp ) {
-				$latest_timestamp = $timestamp;
-			}
-		}
+
+	if ( 'synced' !== $sync_state['state'] || $sync_state['timestamp'] <= 0 ) {
+		return 'sync-gray'; // No valid timestamps.
 	}
-	
-	if ( $latest_timestamp === 0 ) {
-		return 'sync-gray'; // No valid timestamps
-	}
-	
+
 	$current_time = current_time( 'timestamp' );
-	$hours_diff = ( $current_time - $latest_timestamp ) / 3600;
+	$hours_diff = ( $current_time - $sync_state['timestamp'] ) / 3600;
 	
 	if ( $hours_diff <= 24 ) {
 		return 'sync-green'; // Within 24 hours
@@ -637,6 +627,135 @@ function rentfetch_get_sync_status_class( $post_id ) {
 	} else {
 		return 'sync-red'; // Older than 3 days
 	}
+}
+
+/**
+ * Convert a stored sync timestamp value into a Unix timestamp.
+ *
+ * @param mixed $raw_value Stored timestamp value.
+ * @return int
+ */
+function rentfetch_parse_sync_timestamp( $raw_value ) {
+	if ( empty( $raw_value ) ) {
+		return 0;
+	}
+
+	if ( is_numeric( $raw_value ) ) {
+		return (int) $raw_value;
+	}
+
+	$timestamp = strtotime( (string) $raw_value );
+
+	return false === $timestamp ? 0 : $timestamp;
+}
+
+/**
+ * Get the latest known sync timestamp for a record.
+ *
+ * Prefer the derived aggregate sync fields, then fall back to legacy fields for
+ * older records that have not been backfilled yet.
+ *
+ * @param int $post_id The post ID.
+ * @return int
+ */
+function rentfetch_get_last_synced_timestamp( $post_id ) {
+	$sync_state = rentfetch_get_last_synced_state( $post_id );
+
+	return 'synced' === $sync_state['state'] ? $sync_state['timestamp'] : 0;
+}
+
+/**
+ * Get the normalized sync state for a record.
+ *
+ * `last_sync_state` is authoritative when present:
+ * - never: no endpoint has attempted
+ * - success: all attempted endpoints succeeded
+ * - failed: all attempted endpoints failed
+ * - partial: some attempted endpoints failed and some succeeded
+ *
+ * Older records fall back to legacy `last_synced_at` and `updated`.
+ *
+ * @param int $post_id The post ID.
+ * @return array{state:string,timestamp:int}
+ */
+function rentfetch_get_last_synced_state( $post_id ) {
+	$aggregate_state = get_post_meta( $post_id, 'last_sync_state', true );
+
+	if ( '' !== (string) $aggregate_state ) {
+		if ( in_array( $aggregate_state, array( 'failed', 'partial' ), true ) ) {
+			return array(
+				'state'     => (string) $aggregate_state,
+				'timestamp' => 0,
+			);
+		}
+
+		if ( 'never' === $aggregate_state ) {
+			return array(
+				'state'     => 'never',
+				'timestamp' => 0,
+			);
+		}
+
+		$last_synced_at = get_post_meta( $post_id, 'last_synced_at', true );
+		$timestamp      = rentfetch_parse_sync_timestamp( $last_synced_at );
+
+		if ( $timestamp > 0 ) {
+			return array(
+				'state'     => 'synced',
+				'timestamp' => $timestamp,
+			);
+		}
+
+		$last_attempt_at = get_post_meta( $post_id, 'last_sync_attempt_at', true );
+		$timestamp       = rentfetch_parse_sync_timestamp( $last_attempt_at );
+
+		if ( $timestamp > 0 ) {
+			return array(
+				'state'     => 'synced',
+				'timestamp' => $timestamp,
+			);
+		}
+	}
+
+	$last_synced_at = get_post_meta( $post_id, 'last_synced_at', true );
+
+	if ( '' !== (string) $last_synced_at ) {
+		if ( '0' === trim( (string) $last_synced_at ) ) {
+			return array(
+				'state'     => 'failed',
+				'timestamp' => 0,
+			);
+		}
+
+		$timestamp = rentfetch_parse_sync_timestamp( $last_synced_at );
+
+		if ( $timestamp > 0 ) {
+			return array(
+				'state'     => 'synced',
+				'timestamp' => $timestamp,
+			);
+		}
+
+		return array(
+			'state'     => 'failed',
+			'timestamp' => 0,
+		);
+	}
+
+	$legacy_updated = get_post_meta( $post_id, 'updated', true );
+	$timestamp      = rentfetch_parse_sync_timestamp( $legacy_updated );
+
+	if ( $timestamp > 0 ) {
+		return array(
+			'state'     => 'synced',
+			'timestamp' => $timestamp,
+		);
+	}
+
+	return array(
+		'state'     => 'never',
+		'timestamp' => 0,
+	);
 }
 
 /**
