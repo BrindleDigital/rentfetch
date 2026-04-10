@@ -31,13 +31,13 @@ register_activation_hook( RENTFETCH_BASENAME, 'rentfetch_settings_set_defaults_g
  * @return string
  */
 function rentfetch_settings_get_general_section() {
-	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : '';
+	$route = rentfetch_settings_get_current_route();
 
-	if ( '' === $section ) {
+	if ( 'general' !== $route['tab'] ) {
 		return 'data-sync';
 	}
 
-	return $section;
+	return $route['section'];
 }
 
 /**

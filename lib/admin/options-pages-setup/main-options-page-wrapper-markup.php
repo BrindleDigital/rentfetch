@@ -21,7 +21,8 @@ function rentfetch_options_page_html() {
 	add_filter('admin_footer_text', 'rentfetch_override_admin_footer');
 	add_filter('update_footer', function () { echo ''; });
 
-	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
+	$route = rentfetch_settings_get_current_route();
+	$tab   = $route['tab'];
 
 	echo '<div class="wrap" id="rent-fetch-wrap-page">';
 
@@ -43,7 +44,7 @@ function rentfetch_options_page_html() {
 					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=floorplans' ) ), esc_html( $active ), esc_html( 'Floor Plan Settings' ) );
 					
 					$active = ( 'properties' === $tab ) ? 'nav-tab-active' : '';
-					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties' ) ), esc_html( $active ), esc_html( 'Property Settings' ) );
+					printf( '<a href="%s" class="nav-tab %s">%s</a>', esc_url( admin_url( 'admin.php?page=rentfetch-options&tab=properties&section=property-maps' ) ), esc_html( $active ), esc_html( 'Property Settings' ) );
 
 					// TODO Removing this settings tab temporarily; we need to implement in a more flexible way.
 					// $active = ( 'labels' === $tab ) ? 'nav-tab-active' : '';
@@ -70,18 +71,13 @@ function rentfetch_options_page_html() {
  */
 function rentfetch_settings_output_each_page_fields() {
 
-	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
+	$route = rentfetch_settings_get_current_route();
+	$tab   = $route['tab'];
 
 	if ( 'general' === $tab ) {
 		do_action( 'rentfetch_do_settings_general' );
 	} elseif ( 'properties' === $tab ) {
 		do_action( 'rentfetch_do_settings_properties' );
-	} elseif ( 'property-search' === $tab ) {
-		do_action( 'rentfetch_do_settings_property_search' );
-	} elseif ( 'property-archives' === $tab ) {
-		do_action( 'rentfetch_do_settings_property_archives' );
-	} elseif ( 'single-property-template' === $tab ) {
-		do_action( 'rentfetch_do_settings_single_property_template' );
 	} elseif ( 'floorplans' === $tab ) {
 		do_action( 'rentfetch_do_settings_floorplans' );
 	} elseif ( 'labels' === $tab ) {
@@ -96,11 +92,8 @@ function rentfetch_settings_output_each_page_fields() {
  */
 function rentfetch_settings_properties() {
 
-	// set the tab to 'properties' if it's not set.
-	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'properties';
-
-	// set the section to 'property-maps' if it's not set.
-	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : 'property-maps';
+	$route   = rentfetch_settings_get_current_route();
+	$section = $route['section'];
 
 	echo '<section id="rent-fetch-property-settings-page" class="options-container">';
 	
@@ -171,11 +164,8 @@ add_action( 'rentfetch_do_settings_properties', 'rentfetch_settings_properties' 
  */
 function rentfetch_settings_floorplans() {
 
-	// set the tab to 'properties' if it's not set.
-	$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'floorplans';
-
-	// set the section to 'floorplan-search' if it's not set.
-	$section = isset( $_GET['section'] ) ? sanitize_text_field( wp_unslash( $_GET['section'] ) ) : 'floorplan-search';
+	$route   = rentfetch_settings_get_current_route();
+	$section = $route['section'];
 
 	echo '<section id="rent-fetch-floorplans-page" class="options-container">';	
 		echo '<div class="rent-fetch-options-nav-wrap">';

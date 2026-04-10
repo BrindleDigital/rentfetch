@@ -1005,7 +1005,8 @@ function rentfetch_enqueue_global_property_fees_scripts( $hook ) {
 	}
 
 	// Check if we're on the properties tab and global-property-fees section
-	if ( isset( $_GET['tab'] ) && 'properties' === $_GET['tab'] && isset( $_GET['section'] ) && 'global-property-fees' === $_GET['section'] ) {
+	$route = rentfetch_settings_get_current_route();
+	if ( 'properties' === $route['tab'] && 'global-property-fees' === $route['section'] ) {
 		// Enqueue WordPress Media Library
 		wp_enqueue_media();
 		
