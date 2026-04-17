@@ -1363,9 +1363,24 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		$monthly_fees_last_checked   = (int) get_post_meta( $post->ID, 'property_monthly_required_total_fees_last_checked', true );
 		$monthly_fee_rows            = get_post_meta( $post->ID, 'property_monthly_required_total_fees_rows', true );
 		$monthly_fees_refresh_nonce  = wp_create_nonce( 'rentfetch_refresh_monthly_required_fees_now' );
+		$effective_monthly_fees_context = function_exists( 'rentfetch_get_effective_monthly_required_fees_preview_context_for_property' )
+			? rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $post->ID )
+			: array();
+		$effective_fees_display_source_context = function_exists( 'rentfetch_get_property_fees_display_source_context' )
+			? rentfetch_get_property_fees_display_source_context( $post->ID )
+			: array();
+		$effective_fees_preview_markup = function_exists( 'rentfetch_get_property_fees_embed' )
+			? rentfetch_get_property_fees_embed( $post->ID )
+			: '';
 		if ( ! is_array( $monthly_fee_rows ) ) {
 			$monthly_fee_rows = array();
 		}
+		if ( ! is_array( $effective_monthly_fees_context ) ) {
+			$effective_monthly_fees_context = array();
+		}
+		$effective_monthly_fee_rows = isset( $effective_monthly_fees_context['contributors'] ) && is_array( $effective_monthly_fees_context['contributors'] )
+			? $effective_monthly_fees_context['contributors']
+			: array();
 		?>
 		<div class="field">
 			<div class="column">
@@ -1417,6 +1432,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 						</table>
 					<?php endif; ?>
 				<?php endif; ?>
+
 			</div>
 		</div>
 		<script type="text/javascript">
@@ -1598,6 +1614,145 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 				<p class="description">Paste in your embed code for property fees. This can include script tags, iframes, etc. Please ensure the code is from a trusted source.</p>
 			</div>
 		</div>
+
+		<div class="field">
+			<div class="column">
+				<label>Effective Frontend Pricing Fees</label>
+				<p class="description">This section explains which fees are currently changing frontend pricing for this property and why.</p>
+			</div>
+			<div class="column">
+				<div style="border: 1px solid #dcdcde; background: #f6f7f7; padding: 12px; max-width: 760px; margin-bottom: 18px;">
+					<p class="description" style="margin-top: 0;">
+						<strong>Effective frontend source:</strong>
+						<?php echo esc_html( (string) ( $effective_monthly_fees_context['source_label'] ?? 'No active fees source' ) ); ?>
+					</p>
+					<p class="description">
+						<strong>Effective total added to pricing:</strong>
+						<?php
+						$effective_total = isset( $effective_monthly_fees_context['total'] ) ? (float) $effective_monthly_fees_context['total'] : 0;
+						echo esc_html( '$' . number_format( $effective_total, 2 ) . '/mo' );
+						?>
+					</p>
+					<?php if ( ! empty( $effective_monthly_fees_context['description'] ) ) : ?>
+						<p class="description"><?php echo esc_html( (string) $effective_monthly_fees_context['description'] ); ?></p>
+					<?php endif; ?>
+					<?php if ( ! empty( $effective_monthly_fees_context['detail_label'] ) && ! empty( $effective_monthly_fees_context['detail_value'] ) ) : ?>
+						<p class="description">
+							<strong><?php echo esc_html( (string) $effective_monthly_fees_context['detail_label'] ); ?>:</strong>
+							<?php echo esc_html( (string) $effective_monthly_fees_context['detail_value'] ); ?>
+						</p>
+					<?php endif; ?>
+
+					<?php if ( ! empty( $effective_monthly_fee_rows ) ) : ?>
+						<table style="margin-top: 8px; border-collapse: collapse; font-size: 12px; width: 100%; max-width: 520px;">
+							<thead>
+								<tr>
+									<th style="text-align: left; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Reason Applied to Frontend Pricing</th>
+									<th style="text-align: right; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Applied Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $effective_monthly_fee_rows as $row ) : ?>
+									<?php
+									$row_description = sanitize_text_field( (string) ( $row['description'] ?? '' ) );
+									$row_price       = isset( $row['applied_price'] ) ? (float) $row['applied_price'] : 0;
+									?>
+									<tr>
+										<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1;"><?php echo esc_html( $row_description ); ?></td>
+										<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1; text-align: right;"><?php echo esc_html( '$' . number_format( $row_price, 2 ) ); ?></td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					<?php elseif ( 'none' !== (string) ( $effective_monthly_fees_context['source_key'] ?? 'none' ) ) : ?>
+						<p class="description" style="margin-bottom: 0;">No line-item contributor rows are available for the active source.</p>
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+
+		<div class="field">
+			<div class="column">
+				<label>Effective Fees Preview</label>
+				<p class="description">This preview shows the fees content currently resolved for this property after source precedence is applied.</p>
+			</div>
+			<div class="column">
+				<p class="description">
+					<strong>Preview source:</strong>
+					<?php echo esc_html( (string) ( $effective_fees_display_source_context['source_label'] ?? 'No active fees source' ) ); ?>
+				</p>
+				<?php if ( ! empty( trim( (string) $effective_fees_preview_markup ) ) ) : ?>
+					<div class="rentfetch-admin-effective-fees-preview" style="border: 1px solid #dcdcde; background: #fff; padding: 12px; max-width: 760px;">
+						<?php echo $effective_fees_preview_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</div>
+				<?php else : ?>
+					<p class="description">No fees preview is currently available for this property.</p>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<style>
+			.rentfetch-admin-effective-fees-preview .property-fees-description {
+				margin: 0 0 1rem;
+				max-width: 68ch;
+			}
+
+			.rentfetch-admin-effective-fees-preview h3 {
+				margin: 1.5rem 0 0.75rem;
+				font-size: 13px;
+				line-height: 1.4;
+			}
+
+			.rentfetch-admin-effective-fees-preview h3:first-of-type {
+				margin-top: 0;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table {
+				width: 100%;
+				max-width: 760px;
+				border-collapse: collapse;
+				table-layout: fixed;
+				margin: 0 0 1.5rem;
+				font-size: 13px;
+				line-height: 1.45;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table td {
+				padding: 4px 8px;
+				vertical-align: top;
+				border: 0;
+				border-bottom: 1px solid #f0f0f1;
+				word-break: break-word;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table tr:last-child td {
+				border-bottom: 0;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table td:first-child {
+				padding-left: 0;
+				font-weight: 500;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table td:nth-child(2) {
+				white-space: nowrap;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table td:nth-child(3) {
+				padding-right: 0;
+				text-align: right;
+				color: #50575e;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table .fee-price {
+				font-weight: 600;
+			}
+
+			.rentfetch-admin-effective-fees-preview .property-fees-table .fee-frequency,
+			.rentfetch-admin-effective-fees-preview .property-fees-table .fee-notes {
+				color: #50575e;
+			}
+		</style>
 		
 	</div>
 

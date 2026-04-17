@@ -1299,6 +1299,580 @@ function rentfetch_format_property_rent_display( $min_rent, $max_rent, $pricing_
 }
 
 /**
+ * Determine whether a synced Yardi lease-fee payload contains any actual fees.
+ *
+ * Empty-but-successful payloads should not become authoritative over manual/global
+ * fee sources.
+ *
+ * @param array $payload Synced lease-fee payload.
+ * @return bool
+ */
+function rentfetch_yardi_synced_property_lease_fees_payload_has_actual_fees( $payload ) {
+	if ( ! is_array( $payload ) ) {
+		return false;
+	}
+
+	foreach ( array( 'propertyFees', 'propertyCustomFees', 'rentableItemTypeFees' ) as $key ) {
+		if ( ! empty( $payload[ $key ] ) && is_array( $payload[ $key ] ) ) {
+			return true;
+		}
+	}
+
+	$unit_types = isset( $payload['unitTypes'] ) && is_array( $payload['unitTypes'] ) ? $payload['unitTypes'] : array();
+	foreach ( $unit_types as $unit_type ) {
+		if ( ! is_array( $unit_type ) ) {
+			continue;
+		}
+
+		foreach ( array( 'unitTypeFees', 'unitTypeCustomFees' ) as $unit_fee_key ) {
+			if ( ! empty( $unit_type[ $unit_fee_key ] ) && is_array( $unit_type[ $unit_fee_key ] ) ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Get the authoritative synced lease-fee payload for a property.
+ *
+ * @param int|null $property_post_id The property post ID.
+ * @return array|null
+ */
+function rentfetch_get_yardi_synced_property_lease_fees_payload( $property_post_id = null ) {
+	$property_post_id = (int) $property_post_id;
+	if ( $property_post_id <= 0 ) {
+		return null;
+	}
+
+	$payload = get_post_meta( $property_post_id, 'synced_property_lease_fees', true );
+	if ( ! is_array( $payload ) ) {
+		return null;
+	}
+
+	if ( ! isset( $payload['errorCode'] ) || 200 !== (int) $payload['errorCode'] ) {
+		return null;
+	}
+
+	if ( rentfetch_yardi_synced_property_lease_fees_payload_has_actual_fees( $payload ) ) {
+		return $payload;
+	}
+
+	return null;
+}
+
+/**
+ * Format an API fee amount for display.
+ *
+ * @param mixed $amount Numeric fee amount.
+ * @return string
+ */
+function rentfetch_format_yardi_api_fee_currency( $amount ) {
+	if ( ! is_numeric( $amount ) ) {
+		return '';
+	}
+
+	$formatted = number_format( (float) $amount, 2, '.', '' );
+	$formatted = preg_replace( '/\.00$/', '', $formatted );
+
+	return '$' . $formatted;
+}
+
+/**
+ * Resolve the most relevant numeric value from a Yardi lease fee payload row.
+ *
+ * @param array $fee Fee payload.
+ * @return float|null
+ */
+function rentfetch_get_yardi_api_fee_numeric_price( $fee ) {
+	if ( ! is_array( $fee ) ) {
+		return null;
+	}
+
+	$cost     = isset( $fee['feeCost'] ) && is_numeric( $fee['feeCost'] ) ? (float) $fee['feeCost'] : null;
+	$cost_max = isset( $fee['feeCostMax'] ) && is_numeric( $fee['feeCostMax'] ) ? (float) $fee['feeCostMax'] : null;
+
+	if ( null !== $cost && null !== $cost_max && $cost_max > $cost ) {
+		return $cost_max;
+	}
+
+	if ( null !== $cost && $cost > 0 ) {
+		return $cost;
+	}
+
+	if ( null !== $cost_max && $cost_max > 0 ) {
+		return $cost_max;
+	}
+
+	if ( ! empty( $fee['feeCostText'] ) && function_exists( 'rentfetch_extract_first_numeric_fee_value' ) ) {
+		return rentfetch_extract_first_numeric_fee_value( $fee['feeCostText'] );
+	}
+
+	return null;
+}
+
+/**
+ * Format a Yardi lease fee row into a manual-fee-style price string.
+ *
+ * @param array $fee Fee payload.
+ * @return string
+ */
+function rentfetch_get_yardi_api_fee_price_display( $fee ) {
+	if ( ! is_array( $fee ) ) {
+		return '';
+	}
+
+	$cost     = isset( $fee['feeCost'] ) && is_numeric( $fee['feeCost'] ) ? (float) $fee['feeCost'] : null;
+	$cost_max = isset( $fee['feeCostMax'] ) && is_numeric( $fee['feeCostMax'] ) ? (float) $fee['feeCostMax'] : null;
+
+	if ( null !== $cost && null !== $cost_max && $cost_max > $cost ) {
+		return rentfetch_format_yardi_api_fee_currency( $cost ) . '-' . rentfetch_format_yardi_api_fee_currency( $cost_max );
+	}
+
+	if ( null !== $cost && $cost > 0 ) {
+		return rentfetch_format_yardi_api_fee_currency( $cost );
+	}
+
+	if ( null !== $cost_max && $cost_max > 0 ) {
+		return rentfetch_format_yardi_api_fee_currency( $cost_max );
+	}
+
+	return sanitize_text_field( (string) ( $fee['feeCostText'] ?? '' ) );
+}
+
+/**
+ * Build a lowercase searchable text blob for API fee classification.
+ *
+ * @param array $fee Fee payload.
+ * @return string
+ */
+function rentfetch_get_yardi_api_fee_search_text( $fee ) {
+	if ( ! is_array( $fee ) ) {
+		return '';
+	}
+
+	$parts = array(
+		(string) ( $fee['feeName'] ?? '' ),
+		(string) ( $fee['feeDescription'] ?? '' ),
+		(string) ( $fee['feeCostText'] ?? '' ),
+		(string) ( $fee['feeAmountType'] ?? '' ),
+		(string) ( $fee['feeMethod'] ?? '' ),
+		(string) ( $fee['feePaymentTo'] ?? '' ),
+		(string) ( $fee['feeFrequency'] ?? '' ),
+		(string) ( $fee['feeTiming'] ?? '' ),
+		(string) ( $fee['feeChargeClass'] ?? '' ),
+		(string) ( $fee['feeChargeType'] ?? '' ),
+		(string) ( $fee['feeChargeCode']['code'] ?? '' ),
+		(string) ( $fee['feeChargeCode']['description'] ?? '' ),
+	);
+
+	return strtolower( trim( implode( ' ', array_filter( $parts ) ) ) );
+}
+
+/**
+ * Derive a display frequency for an API fee row.
+ *
+ * @param array $fee Fee payload.
+ * @return string
+ */
+function rentfetch_get_yardi_api_fee_frequency_label( $fee ) {
+	$search_text = rentfetch_get_yardi_api_fee_search_text( $fee );
+	$label       = '';
+
+	$monthly_markers = array( 'month', 'monthly', 'per month', '/mo', 'mo.' );
+	foreach ( $monthly_markers as $marker ) {
+		if ( false !== strpos( $search_text, $marker ) ) {
+			$label = 'Monthly';
+			break;
+		}
+	}
+
+	if ( '' === $label ) {
+		$one_time_markers = array(
+			'one-time',
+			'one time',
+			'once',
+			'move in',
+			'move-in',
+			'application',
+			'app fee',
+			'deposit',
+			'holding',
+			'reservation',
+			'setup',
+		);
+
+		foreach ( $one_time_markers as $marker ) {
+			if ( false !== strpos( $search_text, $marker ) ) {
+				$label = 'One-Time';
+				break;
+			}
+		}
+	}
+
+	if ( '' === $label ) {
+		$monthly_keywords = array(
+			'utility',
+			'insurance',
+			'liability',
+			'pet rent',
+			'water',
+			'sewer',
+			'trash',
+			'gas',
+			'electric',
+			'internet',
+			'cable',
+			'parking',
+			'storage',
+			'amenity',
+			'pest',
+		);
+
+		foreach ( $monthly_keywords as $keyword ) {
+			if ( false !== strpos( $search_text, $keyword ) ) {
+				$label = 'Monthly';
+				break;
+			}
+		}
+	}
+
+	if ( '' === $label ) {
+		$label = 'One-Time';
+	}
+
+	return apply_filters( 'rentfetch_filter_yardi_api_fee_frequency_label', $label, $fee );
+}
+
+/**
+ * Determine whether an API fee should count toward monthly required pricing.
+ *
+ * @param array $fee Fee payload.
+ * @return bool
+ */
+function rentfetch_is_yardi_api_fee_monthly_required( $fee ) {
+	$is_required      = ! empty( $fee['isRequired'] );
+	$frequency_label  = rentfetch_get_yardi_api_fee_frequency_label( $fee );
+	$numeric_price    = rentfetch_get_yardi_api_fee_numeric_price( $fee );
+	$is_monthly_match = ( 'Monthly' === $frequency_label );
+
+	$result = $is_required && $is_monthly_match && null !== $numeric_price && $numeric_price > 0;
+
+	return (bool) apply_filters( 'rentfetch_filter_yardi_api_fee_is_monthly_required', $result, $fee, $frequency_label, $numeric_price );
+}
+
+/**
+ * Categorize an API fee into the existing property-fees table grouping style.
+ *
+ * @param array  $fee             Fee payload.
+ * @param string $frequency_label Derived frequency label.
+ * @return string
+ */
+function rentfetch_get_yardi_api_fee_category_label( $fee, $frequency_label ) {
+	$is_required = ! empty( $fee['isRequired'] );
+	$is_monthly  = ( 'Monthly' === $frequency_label );
+
+	if ( $is_required && $is_monthly ) {
+		$category = 'Required Monthly Fees';
+	} elseif ( $is_required ) {
+		$category = 'Required One-Time Fees';
+	} elseif ( $is_monthly ) {
+		$category = 'Optional Monthly Fees';
+	} else {
+		$category = 'Optional One-Time Fees';
+	}
+
+	return apply_filters( 'rentfetch_filter_yardi_api_fee_category_label', $category, $fee, $frequency_label );
+}
+
+/**
+ * Build client-facing longnotes for a synced Yardi fee row.
+ *
+ * This intentionally avoids exposing internal charge-code metadata in the
+ * frontend/admin tooltip content. At the moment, `feeDescription` is the
+ * only clearly client-facing descriptive field in the Yardi payload.
+ *
+ * @param array $fee                 Fee payload.
+ * @param array $applies_to          Floorplans this fee applies to.
+ * @param int   $all_floorplan_count Total number of floorplans on the property.
+ * @return string
+ */
+function rentfetch_get_yardi_api_fee_longnotes( $fee, $applies_to = array(), $all_floorplan_count = 0 ) {
+	$tooltip_parts   = array();
+	$fee_description = trim( (string) ( $fee['feeDescription'] ?? '' ) );
+
+	if ( '' !== $fee_description ) {
+		$tooltip_parts[] = sanitize_text_field( $fee_description );
+	}
+
+	if ( ! empty( $applies_to ) && $all_floorplan_count > 0 && count( $applies_to ) < $all_floorplan_count ) {
+		$tooltip_parts[] = 'Applies to: ' . implode( ', ', array_map( 'sanitize_text_field', $applies_to ) );
+	}
+
+	$longnotes = implode( "\n\n", $tooltip_parts );
+
+	return (string) apply_filters(
+		'rentfetch_filter_yardi_api_fee_longnotes',
+		$longnotes,
+		$fee,
+		$applies_to,
+		$all_floorplan_count
+	);
+}
+
+/**
+ * Build a stable signature for fee deduplication across unit types.
+ *
+ * @param array $fee Fee payload.
+ * @return string
+ */
+function rentfetch_get_yardi_api_fee_signature( $fee ) {
+	$signature_payload = array(
+		'feeName'             => (string) ( $fee['feeName'] ?? '' ),
+		'feeCost'             => isset( $fee['feeCost'] ) ? (float) $fee['feeCost'] : null,
+		'feeCostMax'          => isset( $fee['feeCostMax'] ) ? (float) $fee['feeCostMax'] : null,
+		'feeCostText'         => (string) ( $fee['feeCostText'] ?? '' ),
+		'isRequired'          => ! empty( $fee['isRequired'] ),
+		'feeChargeCodeId'     => isset( $fee['feeChargeCode']['id'] ) ? (int) $fee['feeChargeCode']['id'] : 0,
+		'feeChargeCodeCode'   => (string) ( $fee['feeChargeCode']['code'] ?? '' ),
+		'feeChargeCodeDesc'   => (string) ( $fee['feeChargeCode']['description'] ?? '' ),
+		'frequency'           => rentfetch_get_yardi_api_fee_frequency_label( $fee ),
+	);
+
+	return md5( wp_json_encode( $signature_payload ) );
+}
+
+/**
+ * Translate synced API lease fees into the flat row structure used by manual fees.
+ *
+ * @param int|null $property_post_id The property post ID.
+ * @return array
+ */
+function rentfetch_get_yardi_api_property_fees_data( $property_post_id = null ) {
+	$payload = rentfetch_get_yardi_synced_property_lease_fees_payload( $property_post_id );
+	if ( ! is_array( $payload ) ) {
+		return array();
+	}
+
+	$aggregated         = array();
+	$all_floorplan_names = array();
+
+	$add_fee = static function( $fee, $applies_to = array() ) use ( &$aggregated ) {
+		if ( ! is_array( $fee ) ) {
+			return;
+		}
+
+		$signature = rentfetch_get_yardi_api_fee_signature( $fee );
+		if ( ! isset( $aggregated[ $signature ] ) ) {
+			$aggregated[ $signature ] = array(
+				'fee'        => $fee,
+				'applies_to' => array(),
+			);
+		}
+
+		foreach ( $applies_to as $floorplan_name ) {
+			$floorplan_name = sanitize_text_field( (string) $floorplan_name );
+			if ( '' !== $floorplan_name ) {
+				$aggregated[ $signature ]['applies_to'][ $floorplan_name ] = true;
+			}
+		}
+	};
+
+	foreach ( array( 'propertyFees', 'propertyCustomFees', 'rentableItemTypeFees' ) as $key ) {
+		$fees = isset( $payload[ $key ] ) && is_array( $payload[ $key ] ) ? $payload[ $key ] : array();
+		foreach ( $fees as $fee ) {
+			$add_fee( $fee );
+		}
+	}
+
+	$unit_types = isset( $payload['unitTypes'] ) && is_array( $payload['unitTypes'] ) ? $payload['unitTypes'] : array();
+	foreach ( $unit_types as $unit_type ) {
+		if ( ! is_array( $unit_type ) ) {
+			continue;
+		}
+
+		$floorplan_name = sanitize_text_field( (string) ( $unit_type['floorPlanName'] ?? $unit_type['unitTypeName'] ?? '' ) );
+		if ( '' !== $floorplan_name ) {
+			$all_floorplan_names[ $floorplan_name ] = true;
+		}
+
+		foreach ( array( 'unitTypeFees', 'unitTypeCustomFees' ) as $unit_fee_key ) {
+			$fees = isset( $unit_type[ $unit_fee_key ] ) && is_array( $unit_type[ $unit_fee_key ] ) ? $unit_type[ $unit_fee_key ] : array();
+			foreach ( $fees as $fee ) {
+				$add_fee( $fee, '' !== $floorplan_name ? array( $floorplan_name ) : array() );
+			}
+		}
+	}
+
+	$all_floorplan_names = array_keys( $all_floorplan_names );
+	sort( $all_floorplan_names );
+	$all_floorplan_count = count( $all_floorplan_names );
+
+	$rows = array();
+	foreach ( $aggregated as $entry ) {
+		$fee = $entry['fee'];
+
+		$description = sanitize_text_field( (string) ( $fee['feeName'] ?? '' ) );
+		if ( '' === $description ) {
+			$description = sanitize_text_field( (string) ( $fee['feeChargeCode']['description'] ?? 'Fee' ) );
+		}
+
+		$applies_to = array_keys( $entry['applies_to'] );
+		sort( $applies_to );
+
+		if ( ! empty( $applies_to ) && $all_floorplan_count > 0 && count( $applies_to ) < $all_floorplan_count ) {
+			$description .= ' (' . implode( ', ', array_map( 'sanitize_text_field', $applies_to ) ) . ')';
+		}
+
+		$frequency_label = rentfetch_get_yardi_api_fee_frequency_label( $fee );
+		$price_display   = rentfetch_get_yardi_api_fee_price_display( $fee );
+		$is_required     = ! empty( $fee['isRequired'] );
+		$notes           = $is_required ? 'required' : 'optional';
+
+		if ( ! empty( $applies_to ) && $all_floorplan_count > 0 && count( $applies_to ) < $all_floorplan_count ) {
+			$notes .= ' on select floorplans';
+		}
+
+		$rows[] = array(
+			'description' => $description,
+			'price'       => $price_display,
+			'frequency'   => $frequency_label,
+			'notes'       => $notes,
+			'category'    => rentfetch_get_yardi_api_fee_category_label( $fee, $frequency_label ),
+			'longnotes'   => rentfetch_get_yardi_api_fee_longnotes( $fee, $applies_to, $all_floorplan_count ),
+		);
+	}
+
+	$category_order = array(
+		'Required Monthly Fees' => 0,
+		'Required One-Time Fees' => 1,
+		'Optional Monthly Fees' => 2,
+		'Optional One-Time Fees' => 3,
+	);
+
+	usort(
+		$rows,
+		static function( $left, $right ) use ( $category_order ) {
+			$left_category_order  = $category_order[ $left['category'] ?? '' ] ?? 999;
+			$right_category_order = $category_order[ $right['category'] ?? '' ] ?? 999;
+
+			if ( $left_category_order !== $right_category_order ) {
+				return $left_category_order <=> $right_category_order;
+			}
+
+			return strcasecmp( (string) ( $left['description'] ?? '' ), (string) ( $right['description'] ?? '' ) );
+		}
+	);
+
+	return $rows;
+}
+
+/**
+ * Compute the Yardi API monthly required-fees summary for a property.
+ *
+ * Only property-scoped fees plus unit-type fees shared by every unit type are counted
+ * toward the property-wide pricing override.
+ *
+ * @param int|null $property_post_id The property post ID.
+ * @return array|null
+ */
+function rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $property_post_id = null ) {
+	$payload = rentfetch_get_yardi_synced_property_lease_fees_payload( $property_post_id );
+	if ( ! is_array( $payload ) ) {
+		return null;
+	}
+
+	$total        = 0.0;
+	$contributors = array();
+
+	foreach ( array( 'propertyFees', 'propertyCustomFees', 'rentableItemTypeFees' ) as $key ) {
+		$fees = isset( $payload[ $key ] ) && is_array( $payload[ $key ] ) ? $payload[ $key ] : array();
+		foreach ( $fees as $fee ) {
+			if ( ! rentfetch_is_yardi_api_fee_monthly_required( $fee ) ) {
+				continue;
+			}
+
+			$numeric_price = rentfetch_get_yardi_api_fee_numeric_price( $fee );
+			if ( null !== $numeric_price && $numeric_price > 0 ) {
+				$total += (float) $numeric_price;
+				$contributors[] = array(
+					'description'   => sanitize_text_field( (string) ( $fee['feeName'] ?? 'Fee' ) ),
+					'applied_price' => (float) $numeric_price,
+				);
+			}
+		}
+	}
+
+	$unit_types = isset( $payload['unitTypes'] ) && is_array( $payload['unitTypes'] ) ? $payload['unitTypes'] : array();
+	$unit_type_count = count( $unit_types );
+
+	if ( $unit_type_count > 0 ) {
+		$shared_monthly_required_fees = array();
+
+		foreach ( $unit_types as $unit_type ) {
+			if ( ! is_array( $unit_type ) ) {
+				continue;
+			}
+
+			$seen_this_unit_type = array();
+			foreach ( array( 'unitTypeFees', 'unitTypeCustomFees' ) as $unit_fee_key ) {
+				$fees = isset( $unit_type[ $unit_fee_key ] ) && is_array( $unit_type[ $unit_fee_key ] ) ? $unit_type[ $unit_fee_key ] : array();
+				foreach ( $fees as $fee ) {
+					if ( ! rentfetch_is_yardi_api_fee_monthly_required( $fee ) ) {
+						continue;
+					}
+
+					$signature = rentfetch_get_yardi_api_fee_signature( $fee );
+					if ( isset( $seen_this_unit_type[ $signature ] ) ) {
+						continue;
+					}
+
+					$numeric_price = rentfetch_get_yardi_api_fee_numeric_price( $fee );
+					if ( null === $numeric_price || $numeric_price <= 0 ) {
+						continue;
+					}
+
+					$seen_this_unit_type[ $signature ] = true;
+
+					if ( ! isset( $shared_monthly_required_fees[ $signature ] ) ) {
+						$shared_monthly_required_fees[ $signature ] = array(
+							'count'       => 0,
+							'price'       => (float) $numeric_price,
+							'description' => sanitize_text_field( (string) ( $fee['feeName'] ?? 'Fee' ) ),
+						);
+					}
+
+					$shared_monthly_required_fees[ $signature ]['count']++;
+				}
+			}
+		}
+
+		foreach ( $shared_monthly_required_fees as $shared_fee ) {
+			if ( (int) $shared_fee['count'] === $unit_type_count ) {
+				$total += (float) $shared_fee['price'];
+				$contributors[] = array(
+					'description'   => sanitize_text_field( (string) $shared_fee['description'] ) . ' (all floorplans)',
+					'applied_price' => (float) $shared_fee['price'],
+				);
+			}
+		}
+	}
+
+	usort(
+		$contributors,
+		static function( $left, $right ) {
+			return strcasecmp( (string) ( $left['description'] ?? '' ), (string) ( $right['description'] ?? '' ) );
+		}
+	);
+
+	return array(
+		'total'        => round( $total, 2 ),
+		'contributors' => $contributors,
+	);
+}
+
+/**
  * Get monthly required total fees for a property, with global fallback.
  *
  * @param int|null $property_post_id The property post ID.
@@ -1308,6 +1882,11 @@ function rentfetch_get_effective_monthly_required_total_fees_for_property( $prop
 	$property_total = null;
 
 	if ( $property_post_id ) {
+		$yardi_api_summary = rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $property_post_id );
+		if ( is_array( $yardi_api_summary ) && isset( $yardi_api_summary['total'] ) ) {
+			return (float) $yardi_api_summary['total'];
+		}
+
 		$property_raw = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
 		$property_total = rentfetch_extract_first_numeric_fee_value( $property_raw );
 	}
@@ -1324,6 +1903,106 @@ function rentfetch_get_effective_monthly_required_total_fees_for_property( $prop
 	}
 
 	return 0.0;
+}
+
+/**
+ * Get the effective monthly-fees preview context used for frontend pricing.
+ *
+ * @param int|null $property_post_id The property post ID.
+ * @return array
+ */
+function rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $property_post_id = null ) {
+	$property_post_id = (int) $property_post_id;
+	$empty_context    = array(
+		'source_key'    => 'none',
+		'source_label'  => 'No active fees source',
+		'total'         => 0.0,
+		'contributors'  => array(),
+		'detail_label'  => '',
+		'detail_value'  => '',
+		'description'   => 'No synced API fees, property-level monthly fees, or global monthly fees are currently affecting frontend pricing.',
+	);
+
+	if ( $property_post_id <= 0 ) {
+		return $empty_context;
+	}
+
+	$yardi_api_payload = rentfetch_get_yardi_synced_property_lease_fees_payload( $property_post_id );
+	if ( is_array( $yardi_api_payload ) ) {
+		$yardi_summary = rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $property_post_id );
+		$contributors  = is_array( $yardi_summary ) && isset( $yardi_summary['contributors'] ) && is_array( $yardi_summary['contributors'] )
+			? $yardi_summary['contributors']
+			: array();
+		$total         = is_array( $yardi_summary ) && isset( $yardi_summary['total'] )
+			? (float) $yardi_summary['total']
+			: 0.0;
+
+		return array(
+			'source_key'   => 'yardi_api',
+			'source_label' => 'Synced Yardi lease fees API',
+			'total'        => $total,
+			'contributors' => $contributors,
+			'detail_label' => '',
+			'detail_value' => '',
+			'description'  => $total > 0
+				? 'Frontend pricing is currently using synced Yardi monthly required fees. These take precedence over property-level and global manual fee totals.'
+				: 'A synced Yardi lease-fee payload is active for this property, but it does not currently contribute any required monthly fees to frontend pricing.',
+		);
+	}
+
+	$property_raw         = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
+	$property_total       = rentfetch_extract_first_numeric_fee_value( $property_raw );
+	$property_rows        = get_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows', true );
+	$property_csv_url     = trim( (string) get_post_meta( $property_post_id, 'property_fees_csv_url', true ) );
+	$property_last_checked = (int) get_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', true );
+
+	if ( ! is_array( $property_rows ) ) {
+		$property_rows = array();
+	}
+
+	if ( null !== $property_total && $property_total > 0 ) {
+		$is_csv_backed = ! empty( $property_rows ) && '' !== $property_csv_url;
+
+		return array(
+			'source_key'   => $is_csv_backed ? 'property_csv' : 'property_manual',
+			'source_label' => $is_csv_backed ? 'Property fees CSV' : 'Property monthly required fees field',
+			'total'        => (float) $property_total,
+			'contributors' => $property_rows,
+			'detail_label' => $is_csv_backed && $property_last_checked > 0 ? 'Last property CSV check' : '',
+			'detail_value' => $is_csv_backed && $property_last_checked > 0 ? wp_date( 'M j, Y g:ia', $property_last_checked ) : '',
+			'description'  => $is_csv_backed
+				? 'Frontend pricing is currently using the property-specific monthly required fees derived from this property\'s CSV.'
+				: 'Frontend pricing is currently using the property-level monthly required total stored on this property.',
+		);
+	}
+
+	$global_raw          = get_option( 'rentfetch_options_global_monthly_required_total_fees', '' );
+	$global_total        = rentfetch_extract_first_numeric_fee_value( $global_raw );
+	$global_rows         = get_option( 'rentfetch_options_global_monthly_required_total_fees_rows', array() );
+	$global_csv_url      = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
+	$global_last_checked = (int) get_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked', 0 );
+
+	if ( ! is_array( $global_rows ) ) {
+		$global_rows = array();
+	}
+
+	if ( null !== $global_total && $global_total > 0 ) {
+		$is_csv_backed = ! empty( $global_rows ) && '' !== $global_csv_url;
+
+		return array(
+			'source_key'   => $is_csv_backed ? 'global_csv' : 'global_manual',
+			'source_label' => $is_csv_backed ? 'Global fees CSV fallback' : 'Global monthly required fees fallback',
+			'total'        => (float) $global_total,
+			'contributors' => $global_rows,
+			'detail_label' => $is_csv_backed && $global_last_checked > 0 ? 'Last global CSV check' : '',
+			'detail_value' => $is_csv_backed && $global_last_checked > 0 ? wp_date( 'M j, Y g:ia', $global_last_checked ) : '',
+			'description'  => $is_csv_backed
+				? 'Frontend pricing is currently falling back to the global monthly required fees derived from the global fees CSV.'
+				: 'Frontend pricing is currently falling back to the global monthly required fees setting.',
+		);
+	}
+
+	return $empty_context;
 }
 
 /**
@@ -1832,6 +2511,108 @@ function rentfetch_property_fees_embed( $property_id_or_post_id = null ) {
 }
 
 /**
+ * Get the active fees-display source context for a property.
+ *
+ * Mirrors the same precedence used by the frontend fees embed renderer.
+ *
+ * @param string|int|null $property_id_or_post_id Property ID meta value or Post ID.
+ * @return array
+ */
+function rentfetch_get_property_fees_display_source_context( $property_id_or_post_id = null ) {
+	$post_id = null;
+
+	if ( $property_id_or_post_id ) {
+		if ( is_numeric( $property_id_or_post_id ) ) {
+			$post_id = (int) $property_id_or_post_id;
+		} else {
+			$post_id = rentfetch_get_post_id_from_property_id( $property_id_or_post_id );
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+
+	$context = array(
+		'source_key'   => 'none',
+		'source_label' => 'No active fees source',
+	);
+
+	if ( $post_id ) {
+		$api_fees_payload    = rentfetch_get_yardi_synced_property_lease_fees_payload( $post_id );
+		$api_fees_data       = rentfetch_get_yardi_api_property_fees_data( $post_id );
+		$property_fees_data    = get_post_meta( $post_id, 'property_fees_data', true );
+		$property_fees_csv_url = get_post_meta( $post_id, 'property_fees_csv_url', true );
+		$property_fees_embed   = get_post_meta( $post_id, 'property_fees_embed', true );
+
+		if ( is_array( $api_fees_payload ) ) {
+			return array(
+				'source_key'   => 'yardi_api',
+				'source_label' => 'Synced Yardi lease fees API',
+			);
+		}
+
+		if ( ! empty( $property_fees_csv_url ) ) {
+			$csv_content = rentfetch_get_cached_fees_csv_content( $property_fees_csv_url );
+			if ( false !== $csv_content ) {
+				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
+				if ( ! empty( $fees_data ) ) {
+					return array(
+						'source_key'   => 'property_csv',
+						'source_label' => 'Property fees CSV',
+					);
+				}
+			}
+		}
+
+		if ( ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
+			return array(
+				'source_key'   => 'property_data',
+				'source_label' => 'Property fees data',
+			);
+		}
+
+		if ( ! empty( $property_fees_embed ) ) {
+			return array(
+				'source_key'   => 'property_embed',
+				'source_label' => 'Property fees embed code',
+			);
+		}
+	}
+
+	$global_fees_csv_url = get_option( 'rentfetch_options_global_property_fees_csv_url' );
+	$global_fees_data    = get_option( 'rentfetch_options_global_property_fees_data' );
+	$global_fees_embed   = get_option( 'rentfetch_options_global_property_fees_embed' );
+
+	if ( ! empty( $global_fees_csv_url ) ) {
+		$csv_content = rentfetch_get_cached_fees_csv_content( $global_fees_csv_url );
+		if ( false !== $csv_content ) {
+			$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
+			if ( ! empty( $fees_data ) ) {
+				return array(
+					'source_key'   => 'global_csv',
+					'source_label' => 'Global fees CSV fallback',
+				);
+			}
+		}
+	}
+
+	if ( ! empty( $global_fees_data ) && is_array( $global_fees_data ) ) {
+		return array(
+			'source_key'   => 'global_data',
+			'source_label' => 'Global fees data fallback',
+		);
+	}
+
+	if ( ! empty( $global_fees_embed ) ) {
+		return array(
+			'source_key'   => 'global_embed',
+			'source_label' => 'Global fees embed fallback',
+		);
+	}
+
+	return $context;
+}
+
+/**
  * Gets the property fees embed code.
  *
  * @param string|int|null $property_id_or_post_id Property ID meta value or Post ID.
@@ -1853,15 +2634,27 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 	}
 
 	$property_fees_markup = '';
+	$api_fees_are_authoritative = false;
 
 	// If we have a valid post_id, try property-specific fees first
 	if ( $post_id ) {
+		$api_fees_payload    = rentfetch_get_yardi_synced_property_lease_fees_payload( $post_id );
+		$api_fees_data       = rentfetch_get_yardi_api_property_fees_data( $post_id );
 		$property_fees_data    = get_post_meta( $post_id, 'property_fees_data', true );
 		$property_fees_csv_url = get_post_meta( $post_id, 'property_fees_csv_url', true );
 		$property_fees_embed   = get_post_meta( $post_id, 'property_fees_embed', true );
 
+		// Priority 0: synced lease-fee API data is authoritative when present.
+		if ( is_array( $api_fees_payload ) ) {
+			$api_fees_are_authoritative = true;
+			if ( ! empty( $api_fees_data ) ) {
+				$property_fees_json   = wp_json_encode( $api_fees_data );
+				$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
+			}
+		}
+
 		// Priority 1: Use property_fees_csv_url if available
-		if ( ! empty( $property_fees_csv_url ) ) {
+		if ( ! $api_fees_are_authoritative && ! empty( $property_fees_csv_url ) ) {
 			$csv_content = rentfetch_get_cached_fees_csv_content( $property_fees_csv_url );
 			if ( false !== $csv_content ) {
 				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
@@ -1874,15 +2667,19 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 
 		// Priority 2: Use property_fees_data (this is the json) if it's a non-empty array.
 		// This is also a fallback if the CSV URL exists but fails to fetch/parse.
-		if ( empty( $property_fees_markup ) && ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
+		if ( ! $api_fees_are_authoritative && empty( $property_fees_markup ) && ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
 			$property_fees_json   = wp_json_encode( $property_fees_data );
 			$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
 		}
 
 		// Priority 3: Fallback to property_fees_embed.
-		if ( empty( $property_fees_markup ) && ! empty( $property_fees_embed ) ) {
+		if ( ! $api_fees_are_authoritative && empty( $property_fees_markup ) && ! empty( $property_fees_embed ) ) {
 			$property_fees_markup = $property_fees_embed;
 		}
+	}
+
+	if ( $api_fees_are_authoritative && empty( $property_fees_markup ) ) {
+		return '';
 	}
 
 	// If no property-specific fees or no post_id, try global fallbacks
@@ -2126,6 +2923,48 @@ function rentfetch_get_cached_monthly_required_fees_calculation( $csv_url, $forc
 	return $result;
 }
 
+/**
+ * Normalize fee text so duplicate tooltip content can be detected reliably.
+ *
+ * @param string $text Raw fee text.
+ * @return string
+ */
+function rentfetch_normalize_property_fee_tooltip_text( $text ) {
+	$text = wp_strip_all_tags( html_entity_decode( (string) $text, ENT_QUOTES, 'UTF-8' ) );
+	$text = strtolower( trim( preg_replace( '/\s+/', ' ', $text ) ) );
+	$text = trim( $text, " \t\n\r\0\x0B.:;,-" );
+
+	return $text;
+}
+
+/**
+ * Prepare tooltip HTML for a fee row, suppressing duplicate description-only notes.
+ *
+ * @param array $fee Fee row payload.
+ * @return string
+ */
+function rentfetch_get_property_fee_tooltip_html( $fee ) {
+	$raw_longnotes = isset( $fee['longnotes'] ) ? (string) $fee['longnotes'] : '';
+	if ( '' === trim( $raw_longnotes ) ) {
+		return '';
+	}
+
+	$longnotes_html       = wp_kses_post( apply_filters( 'the_content', $raw_longnotes ) );
+	$normalized_longnotes = rentfetch_normalize_property_fee_tooltip_text( $longnotes_html );
+	if ( '' === $normalized_longnotes ) {
+		return '';
+	}
+
+	$description            = isset( $fee['description'] ) ? (string) $fee['description'] : '';
+	$normalized_description = rentfetch_normalize_property_fee_tooltip_text( $description );
+
+	if ( '' !== $normalized_description && $normalized_description === $normalized_longnotes ) {
+		return '';
+	}
+
+	return $longnotes_html;
+}
+
 function rentfetch_get_property_fees_markup( $property_fees_json ) {
 	
 	// Start output buffering
@@ -2142,7 +2981,7 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 	// Check if any fee has longnotes (for tooltip functionality)
 	$has_tooltip_content = false;
 	foreach ( $fees_data as $fee ) {
-		if ( ! empty( $fee['longnotes'] ) ) {
+		if ( '' !== rentfetch_get_property_fee_tooltip_html( $fee ) ) {
 			$has_tooltip_content = true;
 			break;
 		}
@@ -2164,25 +3003,30 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 	// If we have categories, group by category
 	if ( ! empty( $categories ) ) {
 		foreach ( $categories as $category ) {
-			// Output category header
-			echo '<h3>' . esc_html( $category ) . '</h3>';
-			
-			// Start table
-			echo '<table class="property-fees-table">';
-			
 			// Get fees for this category
 			$category_fees = array_filter( $fees_data, function( $fee ) use ( $category ) {
 				return isset( $fee['category'] ) && $fee['category'] === $category;
 			} );
+
+			// Output category header
+			echo '<h3>' . esc_html( $category ) . '</h3>';
+
+			// Start table
+			echo '<table class="property-fees-table" style="width:100%; table-layout:fixed;">';
+			echo '<colgroup>';
+			echo '<col style="width:42%;">';
+			echo '<col style="width:33%;">';
+			echo '<col style="width:25%;">';
+			echo '</colgroup>';
+			echo '<tbody>';
 			
 			// Output table rows
 			foreach ( $category_fees as $fee ) {
-			$has_longnotes = ! empty( $fee['longnotes'] );
+				$longnotes_html = rentfetch_get_property_fee_tooltip_html( $fee );
+				$has_longnotes  = '' !== $longnotes_html;
 				echo '<tr>';
 				echo '<td class="fee-description">';
 				if ( $has_longnotes ) {
-					// Apply the_content filter for consistent HTML output, then sanitize
-					$longnotes_html = wp_kses_post( apply_filters( 'the_content', $fee['longnotes'] ) );
 					echo '<span class="fee-description-with-tooltip rentfetch-tooltip-trigger" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
 					echo esc_html( $fee['description'] ?? '' );
 					echo '<span class="fee-info-icon rentfetch-tooltip-icon" aria-label="More information"></span>';
@@ -2200,19 +3044,25 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 			}
 			
 			// End table
+			echo '</tbody>';
 			echo '</table>';
 		}
 	} else {
 		// No categories, output single table
-		echo '<table class="property-fees-table">';
+		echo '<table class="property-fees-table" style="width:100%; table-layout:fixed;">';
+		echo '<colgroup>';
+		echo '<col style="width:42%;">';
+		echo '<col style="width:33%;">';
+		echo '<col style="width:25%;">';
+		echo '</colgroup>';
+		echo '<tbody>';
 		
 		foreach ( $fees_data as $fee ) {
-			$has_longnotes = ! empty( $fee['longnotes'] );
+			$longnotes_html = rentfetch_get_property_fee_tooltip_html( $fee );
+			$has_longnotes  = '' !== $longnotes_html;
 			echo '<tr>';
 			echo '<td class="fee-description">';
 			if ( $has_longnotes ) {
-				// Apply the_content filter for consistent HTML output, then sanitize
-				$longnotes_html = wp_kses_post( apply_filters( 'the_content', $fee['longnotes'] ) );
 				echo '<span class="fee-description-with-tooltip rentfetch-tooltip-trigger" data-tooltip-content="' . esc_attr( $longnotes_html ) . '">';
 				echo esc_html( $fee['description'] ?? '' );
 				echo '<span class="fee-info-icon rentfetch-tooltip-icon" aria-label="More information"></span>';
@@ -2229,6 +3079,7 @@ function rentfetch_get_property_fees_markup( $property_fees_json ) {
 			echo '</tr>';
 		}
 		
+		echo '</tbody>';
 		echo '</table>';
 	}
 	
