@@ -3373,7 +3373,7 @@ table.property-fees-table .fee-notes {
   gap: 0.35rem;
   cursor: help;
   position: relative;
-  z-index: 20;
+  z-index: 5;
   vertical-align: middle;
 }
 .rentfetch-tooltip-trigger .rentfetch-tooltip-icon,
