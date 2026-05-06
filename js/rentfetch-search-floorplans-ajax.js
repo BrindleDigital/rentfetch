@@ -320,7 +320,10 @@ jQuery(function ($) {
 			data: queryData,
 			type: 'GET',
 			dataType: 'json',
-			beforeSend: function () {
+			beforeSend: function (xhr) {
+				if (rentfetchConfig.nonce) {
+					xhr.setRequestHeader('X-WP-Nonce', rentfetchConfig.nonce);
+				}
 				$('#reset').text('Searching...'); // changing the button label
 				$('#response').html(''); // clear response div
 			},

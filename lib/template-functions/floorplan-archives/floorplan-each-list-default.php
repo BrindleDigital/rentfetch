@@ -31,7 +31,7 @@ function rentfetch_floorplans_each_list_default() {
 	echo '<div class="images-column">';
 		do_action( 'rentfetch_do_floorplan_images' );
 
-		edit_post_link();
+		edit_post_link( null, '', '', get_the_ID() );
 
 		if ( $specials ) {
 			printf( '<p class="specials">%s</p>', esc_html( $specials ) );

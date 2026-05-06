@@ -49,7 +49,7 @@ function rentfetch_properties_each_list() {
 		echo wp_kses_post( $tour );
 	}
 
-	edit_post_link();
+	edit_post_link( null, '', '', get_the_ID() );
 
 	echo '<div class="property-details">';
 

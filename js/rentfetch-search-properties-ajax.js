@@ -343,7 +343,10 @@ jQuery(function ($) {
 			data: queryData,
 			type: 'GET',
 			dataType: 'json',
-			beforeSend: function () {
+			beforeSend: function (xhr) {
+				if (rentfetchConfig.nonce) {
+					xhr.setRequestHeader('X-WP-Nonce', rentfetchConfig.nonce);
+				}
 				$reset.text('Searching...');
 				$response.html('');
 			},

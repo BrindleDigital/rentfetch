@@ -44,6 +44,7 @@ add_action( 'rest_api_init', 'rentfetch_register_rest_routes' );
  * @return WP_REST_Response
  */
 function rentfetch_rest_search_properties( $request ) {
+	$can_use_markup_cache = ! is_user_logged_in();
 
 	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
@@ -148,7 +149,7 @@ function rentfetch_rest_search_properties( $request ) {
 			)
 		)
 	);
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$cached_markup = get_transient( $cache_key );
 		if ( false !== $cached_markup && is_array( $cached_markup ) ) {
 			$response = rest_ensure_response(
@@ -168,7 +169,7 @@ function rentfetch_rest_search_properties( $request ) {
 	$results_data = rentfetch_render_property_query_results_data( $property_args );
 
 	// Cache the results
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		set_transient( $cache_key, $results_data, 30 * MINUTE_IN_SECONDS );
 	}
 
@@ -181,15 +182,15 @@ function rentfetch_rest_search_properties( $request ) {
 		)
 	);
 
-	// Set cache headers if caching is enabled
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+	// Set cache headers if caching is enabled and this response is safe for shared caches.
+	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$response->header( 'Cache-Control', 'public, max-age=1800, s-maxage=1800' );
 		$response->header( 'X-WP-Cacheable', 'yes' );
 		$response->header( 'Pragma', 'public' );
 		// Remove cache-busting headers that WordPress might add
 		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + 1800 ) . ' GMT' );
 	} else {
-		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0' );
+		$response->header( 'Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0' );
 		$response->header( 'Pragma', 'no-cache' );
 		$response->header( 'Expires', '0' );
 	}
@@ -204,6 +205,7 @@ function rentfetch_rest_search_properties( $request ) {
  * @return WP_REST_Response
  */
 function rentfetch_rest_search_floorplans( $request ) {
+	$can_use_markup_cache = ! is_user_logged_in();
 
 	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
@@ -239,7 +241,7 @@ function rentfetch_rest_search_floorplans( $request ) {
 
 	// Build cache key
 	$cache_key = 'rentfetch_floorplansearch_markup_' . md5( wp_json_encode( array( 'args' => $floorplan_args, 'atts' => $atts ) ) );
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$cached_markup = get_transient( $cache_key );
 		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
 			$response = rest_ensure_response(
@@ -258,7 +260,7 @@ function rentfetch_rest_search_floorplans( $request ) {
 	$markup = rentfetch_render_floorplan_query_results( $floorplan_args );
 
 	// Cache the results
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
 	}
 
@@ -270,15 +272,15 @@ function rentfetch_rest_search_floorplans( $request ) {
 		)
 	);
 
-	// Set cache headers if caching is enabled
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+	// Set cache headers if caching is enabled and this response is safe for shared caches.
+	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
 		$response->header( 'Cache-Control', 'public, max-age=1800, s-maxage=1800' );
 		$response->header( 'X-WP-Cacheable', 'yes' );
 		$response->header( 'Pragma', 'public' );
 		// Remove cache-busting headers that WordPress might add
 		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + 1800 ) . ' GMT' );
 	} else {
-		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0' );
+		$response->header( 'Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0' );
 		$response->header( 'Pragma', 'no-cache' );
 		$response->header( 'Expires', '0' );
 	}
