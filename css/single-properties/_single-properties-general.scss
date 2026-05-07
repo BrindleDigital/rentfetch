@@ -27,7 +27,11 @@ body.properties-template-default {
 			max-width: 1200px;
 			margin: 0 auto;
 
-			:last-child {
+			h2 {
+				margin-bottom: 0.3em;
+			}
+
+			:last-child:not(.floorplan-attributes p) {
 				margin-bottom: 0;
 			}
 		}

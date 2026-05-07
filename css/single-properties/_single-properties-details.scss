@@ -1,13 +1,47 @@
 #details {
 	.property-details-header {
-		margin-bottom: 35px;
+		display: flex;
+		justify-content: space-between;
+		gap: 30px;
+		margin-bottom: 60px;
 
 		@include mobile {
-			margin-bottom: 15px;
+			display: block;
+			margin-bottom: 35px;
+		}
+
+		h1 {
+			margin-bottom: 0.3em;
+		}
+
+		.property-details-basic-info {
+			@include mobile {
+				margin-bottom: 20px;
+			}
 		}
 
 		.location {
-			font-size: var(--rentfetch-font-size-larger);
+			font-size: var(--rentfetch-font-size-medium);
+			line-height: 1.35;
+
+			> span {
+				display: inline-block;
+				margin-right: 20px;
+			}
+		}
+
+		.property-details-buttons {
+			text-align: right;
+
+			@include mobile {
+				text-align: left;
+				margin-top: 10px;
+			}
+
+			.rentfetch-property-rent-with-fees {
+				font-size: var(--rentfetch-font-size-larger);
+				font-weight: 700;
+			}
 		}
 	}
 
@@ -19,6 +53,48 @@
 
 			&:last-child {
 				margin-bottom: 0;
+			}
+		}
+	}
+
+	.property-description-details.is-collapsible {
+		.property-description-toggle {
+			display: none;
+		}
+
+		label {
+			cursor: pointer;
+			display: inline-block;
+			margin-top: 15px;
+			color: var(--rentfetch-accent);
+			font-weight: 700;
+
+			&:after {
+				content: '\f347';
+				font-family: 'dashicons';
+				font-size: var(--rentfetch-font-size-small);
+				margin-left: 0.35em;
+				position: relative;
+				top: 2px;
+			}
+		}
+
+		.description {
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 6;
+			line-clamp: 6;
+			overflow: hidden;
+		}
+
+		.property-description-toggle:checked {
+			~ label {
+				display: none;
+			}
+
+			~ .description {
+				display: block;
+				overflow: visible;
 			}
 		}
 	}
@@ -59,16 +135,34 @@
 
 	.property-details-body {
 		display: grid;
-		grid-template-columns: 1fr 3fr;
+		grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
 		gap: 80px;
+		align-items: start;
 
 		@include tablet {
-			grid-template-columns: 1fr 2fr;
+			grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+			gap: 40px;
 		}
 
 		@include mobile {
 			grid-template-columns: 1fr;
 			gap: 25px;
+		}
+
+		.property-main-content {
+			min-width: 0;
+		}
+
+		.property-basic-info {
+			margin-bottom: 60px;
+
+			@include mobile {
+				margin-bottom: 35px;
+			}
+		}
+
+		.rent-fetch-floorplan-search-default-layout {
+			min-width: 0;
 		}
 
 		.property-stats {
@@ -125,7 +219,122 @@
 		}
 
 		.property-links {
-			.property-link {
+			position: sticky;
+			top: 78px;
+			background-color: var(--rentfetch-white, #ffffff);
+			border: 1px solid var(--rentfetch-base-2, #eaeaea);
+			border-radius: var(--rentfetch-border-radius, 4px);
+			padding: 30px;
+
+			@include mobile {
+				position: static;
+			}
+
+			.property-sidebar-item {
+				display: grid;
+				grid-template-columns: auto minmax(0, 1fr);
+				gap: 0 12px;
+				margin-bottom: 20px;
+
+				> svg {
+					width: 1.2em;
+					height: 1.2em;
+					color: var(--rentfetch-accent);
+					stroke: currentColor;
+					margin-top: 0.1em;
+				}
+
+				h3 {
+					font-size: var(--rentfetch-font-size-medium);
+					margin-bottom: 8px;
+				}
+
+				a {
+					display: block;
+					font-size: var(--rentfetch-font-size-small);
+					line-height: 1.35;
+				}
+			}
+
+			.office-hours-details {
+				margin-bottom: 20px;
+
+				summary {
+					display: flex;
+					align-items: center;
+					gap: 12px;
+					cursor: pointer;
+					list-style: none;
+					position: static;
+					padding: 0;
+					line-height: 1.35;
+					margin-bottom: 0;
+					text-decoration: none;
+					color: var(--rentfetch-dark);
+					border: none;
+					border-radius: 0;
+					background-color: transparent;
+					font-family: inherit;
+					font-size: var(--rentfetch-font-size-medium);
+					font-weight: 700;
+
+					&::-webkit-details-marker {
+						display: none;
+					}
+
+					&:after {
+						content: '\f345';
+						font-family: 'dashicons';
+						font-size: var(--rentfetch-font-size-small);
+						margin-left: auto;
+						transition: 0.2s transform ease;
+					}
+
+					svg {
+						display: inline-block;
+						width: 1.2em;
+						height: 1.2em;
+						color: var(--rentfetch-accent);
+						stroke: currentColor;
+						margin-right: 0;
+						vertical-align: middle;
+					}
+				}
+
+				.office-hours-content {
+					margin-left: calc(1.2em + 12px);
+				}
+
+				&[open] {
+					summary:after {
+						transform: rotate(90deg);
+					}
+				}
+			}
+
+			.property-sidebar-actions {
+				margin-top: 25px;
+
+				.tour-booking-link {
+					display: block;
+					text-align: center;
+					font-weight: 700;
+					text-transform: uppercase;
+				}
+			}
+		}
+	}
+}
+
+body.admin-bar {
+	#details {
+		.property-details-body {
+			.property-links {
+				top: 110px;
+
+				@media screen and (max-width: 782px) {
+					top: 124px;
+				}
 			}
 		}
 	}

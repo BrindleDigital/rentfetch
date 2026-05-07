@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.34.2
+Stable tag: 0.35.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,15 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.35.0 =
+
+* Redesigned the single-property details and floor plans area into a combined section with a two-column content/sidebar layout.
+* Replaced the custom single-property floor plan listing with the floor plan search filtered automatically to the current property.
+* Merged the single-property details and floor plans internal navigation item and improved sticky offsets for the admin bar and sidebar.
+* Updated the single-property sidebar with linked address, website, phone, email, office hours, and tour actions using existing property helpers.
+* Improved responsive floor plan card layout, attribute wrapping, typography, and mobile two-column display.
+* Added conditional description truncation with a "More" expansion control for longer property descriptions.
 
 = 0.34.2 =
 

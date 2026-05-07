@@ -9,7 +9,8 @@
 	}
 
 	@include mobile {
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 15px;
 	}
 
 	.entry,
@@ -97,38 +98,32 @@
 	}
 
 	.floorplan-attributes {
-		line-height: 1;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.35em 0;
+		line-height: 1.35;
 		// margin-bottom: 15px;
 
 		p {
-			font-size: var(--rentfetch-font-size-small);
-			display: inline-block;
-			padding: 0 0.8em;
+			font-size: var(--rentfetch-font-size-smallest);
+			line-height: 1.35;
+			display: block;
+			padding: 0;
 			margin: 0 0 15px 0;
 			position: relative;
+			white-space: nowrap;
 
-			&:first-child {
-				padding-left: 0;
-			}
-
-			&:last-child {
-				padding-right: 0;
-				margin: 0 0 15px 0;
-
-				&:after {
-					display: none;
+			+ p {
+				&:before {
+					content: '';
+					display: inline-block;
+					width: 1px;
+					height: 0.85em;
+					margin: 0 0.8em;
+					background-color: var(--rentfetch-black-20-percent);
+					vertical-align: -0.1em;
 				}
-			}
-
-			&:after {
-				height: 50%;
-				position: absolute;
-				content: '';
-				width: 1px;
-				background-color: var(--rentfetch-black-20-percent);
-				right: 0;
-				top: 50%;
-				transform: translateY(-50%);
 			}
 		}
 	}
