@@ -19,7 +19,7 @@ function rentfetch_register_rest_routes() {
 		'/search/properties',
 		array(
 			'methods'             => 'GET',
-			'callback'            => 'rentfetch_rest_search_properties',
+			'callback'            => 'rentfetch_rest_search_properties_safe',
 			'permission_callback' => '__return_true', // Public endpoint
 		)
 	);
@@ -30,12 +30,116 @@ function rentfetch_register_rest_routes() {
 		'/search/floorplans',
 		array(
 			'methods'             => 'GET',
-			'callback'            => 'rentfetch_rest_search_floorplans',
+			'callback'            => 'rentfetch_rest_search_floorplans_safe',
 			'permission_callback' => '__return_true', // Public endpoint
 		)
 	);
 }
 add_action( 'rest_api_init', 'rentfetch_register_rest_routes' );
+
+/**
+ * Sanitize request parameters for search failure logging.
+ *
+ * @param array $params Request parameters.
+ * @return array
+ */
+function rentfetch_sanitize_search_log_params( $params ) {
+	$sanitized = array();
+
+	foreach ( $params as $key => $value ) {
+		$sanitized_key = sanitize_key( $key );
+
+		if ( is_array( $value ) ) {
+			$sanitized[ $sanitized_key ] = rentfetch_sanitize_search_log_params( wp_unslash( $value ) );
+		} else {
+			$sanitized[ $sanitized_key ] = sanitize_text_field( wp_unslash( $value ) );
+		}
+	}
+
+	return $sanitized;
+}
+
+/**
+ * Log failed search requests to the PHP/WordPress debug log.
+ *
+ * @param string          $search_type Search type.
+ * @param WP_REST_Request $request     REST request.
+ * @param Throwable       $exception   Exception or error.
+ * @return string Error reference for correlating frontend errors with logs.
+ */
+function rentfetch_log_search_failure( $search_type, $request, $exception ) {
+	$error_reference = uniqid( 'rf-search-', true );
+
+	error_log(
+		wp_json_encode(
+			array(
+				'source'          => 'rentfetch_search',
+				'error_reference' => $error_reference,
+				'search_type'     => $search_type,
+				'message'         => $exception->getMessage(),
+				'file'            => $exception->getFile(),
+				'line'            => $exception->getLine(),
+				'params'          => rentfetch_sanitize_search_log_params( $request->get_params() ),
+				'url'             => esc_url_raw( $request->get_route() ),
+			)
+		)
+	);
+
+	return $error_reference;
+}
+
+/**
+ * Build a REST error response for failed search requests.
+ *
+ * @param string          $search_type Search type.
+ * @param WP_REST_Request $request     REST request.
+ * @param Throwable       $exception   Exception or error.
+ * @return WP_Error
+ */
+function rentfetch_get_search_failure_response( $search_type, $request, $exception ) {
+	$error_reference = rentfetch_log_search_failure( $search_type, $request, $exception );
+
+	return new WP_Error(
+		'rentfetch_search_failed',
+		sprintf(
+			/* translators: %s: error reference ID */
+			__( 'Search failed because the server could not complete the request. Error reference: %s', 'rentfetch' ),
+			$error_reference
+		),
+		array(
+			'status'          => 500,
+			'error_reference' => $error_reference,
+		)
+	);
+}
+
+/**
+ * REST API handler wrapper for property search failures.
+ *
+ * @param WP_REST_Request $request The REST request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function rentfetch_rest_search_properties_safe( $request ) {
+	try {
+		return rentfetch_rest_search_properties( $request );
+	} catch ( Throwable $exception ) {
+		return rentfetch_get_search_failure_response( 'properties', $request, $exception );
+	}
+}
+
+/**
+ * REST API handler wrapper for floorplan search failures.
+ *
+ * @param WP_REST_Request $request The REST request object.
+ * @return WP_REST_Response|WP_Error
+ */
+function rentfetch_rest_search_floorplans_safe( $request ) {
+	try {
+		return rentfetch_rest_search_floorplans( $request );
+	} catch ( Throwable $exception ) {
+		return rentfetch_get_search_failure_response( 'floorplans', $request, $exception );
+	}
+}
 
 /**
  * REST API handler for property search

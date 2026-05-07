@@ -25,6 +25,41 @@ jQuery(function ($) {
 		console.error('REST API URL not available from server');
 	}
 
+	function getSearchErrorMessage(jqXHR, textStatus, errorThrown) {
+		var fallbackMessage =
+			'Search failed. Please refresh the page and try again.';
+
+		if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.message) {
+			return jqXHR.responseJSON.message;
+		}
+
+		if (jqXHR && jqXHR.status) {
+			return (
+				'Search failed with server status ' +
+				jqXHR.status +
+				'. Please refresh the page and try again.'
+			);
+		}
+
+		if (textStatus === 'parsererror') {
+			return 'Search failed because the server returned an invalid response.';
+		}
+
+		if (textStatus === 'timeout') {
+			return 'Search timed out. Please try again.';
+		}
+
+		if (errorThrown) {
+			return fallbackMessage + ' (' + errorThrown + ')';
+		}
+
+		return fallbackMessage;
+	}
+
+	function renderSearchError($target, message) {
+		$target.html('<p>' + $('<div>').text(message).html() + '</p>');
+	}
+
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
 		var url = new URL(window.location.href);
@@ -339,9 +374,20 @@ jQuery(function ($) {
 				// update #properties-found with the count
 				$('#floorplans-found').text(count);
 			},
-			error: function (jqXHR) {
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.error('Rent Fetch floorplan search failed', {
+					status: jqXHR.status,
+					statusText: jqXHR.statusText,
+					response: jqXHR.responseJSON || jqXHR.responseText,
+					textStatus: textStatus,
+					errorThrown: errorThrown,
+				});
+
 				$('#reset').text('Clear All');
-				$('#response').html('<p>Search failed. Please try again.</p>');
+				renderSearchError(
+					$('#response'),
+					getSearchErrorMessage(jqXHR, textStatus, errorThrown)
+				);
 			},
 		});
 	}
