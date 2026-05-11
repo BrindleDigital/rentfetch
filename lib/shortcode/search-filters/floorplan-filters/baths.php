@@ -16,10 +16,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_search_filters_baths() {
 
-	// get info about baths from the database.
-	$baths = rentfetch_get_meta_values( 'baths', 'floorplans' );
+	$property_ids = rentfetch_get_floorplan_filter_property_ids();
+
+	// Get info about baths from the database. Global searches use the cached helper;
+	// property-scoped searches query only those property floorplans without a transient.
+	if ( ! empty( $property_ids ) ) {
+		$baths = rentfetch_get_floorplan_meta_values_for_property_ids( 'baths', $property_ids );
+	} else {
+		$baths = rentfetch_get_meta_values( 'baths', 'floorplans' );
+	}
+
 	$baths = array_unique( $baths );
 	asort( $baths );
+	$baths = array_values(
+		array_filter(
+			$baths,
+			function( $bath ) {
+				return null !== $bath && 0 !== $bath && '0' !== $bath;
+			}
+		)
+	);
+
+	if ( count( $baths ) < 2 ) {
+		return;
+	}
 	
 	$label = apply_filters( 'rentfetch_search_filters_baths_label', 'Baths' );
 

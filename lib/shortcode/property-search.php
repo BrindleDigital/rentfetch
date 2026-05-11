@@ -73,6 +73,8 @@ function rentfetch_propertysearchfilters( $atts ) {
 
 	ob_start();
 
+	rentfetch_set_floorplan_filter_shortcode_atts( $atts ?: array() );
+
 	// enqueue the search properties ajax script
 	wp_enqueue_script( 'rentfetch-search-properties-ajax' );
 

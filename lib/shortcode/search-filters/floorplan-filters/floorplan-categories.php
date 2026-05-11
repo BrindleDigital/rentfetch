@@ -31,13 +31,20 @@ function rentfetch_search_filters_floorplan_categories() {
 		return;
 	}
 
-	// get information about types from the database.
-	$terms = get_terms(
-		array(
-			'taxonomy'   => $taxonomy_slug,
-			'hide_empty' => true,
-		),
-	);
+	$property_ids = rentfetch_get_floorplan_filter_property_ids();
+
+	// Get information about categories from the database. Property-scoped filters
+	// should only show terms attached to floorplans for those properties.
+	if ( ! empty( $property_ids ) ) {
+		$terms = rentfetch_get_floorplan_terms_for_property_ids( $taxonomy_slug, $property_ids );
+	} else {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => $taxonomy_slug,
+				'hide_empty' => true,
+			),
+		);
+	}
 
 	// bail if there aren't any terms.
 	if ( empty( $terms ) ) {

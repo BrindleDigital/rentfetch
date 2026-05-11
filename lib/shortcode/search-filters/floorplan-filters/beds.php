@@ -16,8 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_search_filters_beds() {
 
-	// get info about beds from the database.
-	$beds = rentfetch_get_meta_values( 'beds', 'floorplans' );
+	$property_ids = rentfetch_get_floorplan_filter_property_ids();
+
+	// Get info about beds from the database. Global searches use the cached helper;
+	// property-scoped searches query only those property floorplans without a transient.
+	if ( ! empty( $property_ids ) ) {
+		$beds = rentfetch_get_floorplan_meta_values_for_property_ids( 'beds', $property_ids );
+	} else {
+		$beds = rentfetch_get_meta_values( 'beds', 'floorplans' );
+	}
+
 	$beds = array_map( 'intval', $beds );
 	$beds = array_unique( $beds );
 	asort( $beds );
@@ -30,6 +38,19 @@ function rentfetch_search_filters_beds() {
 	}
 
 	$beds = apply_filters( 'rentfetch_filter_beds_in_dropdown', $beds );
+	$beds = array_values(
+		array_filter(
+			$beds,
+			function( $bed ) {
+				return null !== $bed;
+			}
+		)
+	);
+
+	if ( count( $beds ) < 2 ) {
+		return;
+	}
+
 	$label = apply_filters( 'rentfetch_search_filters_beds_label', 'Bedrooms' );
 
 	// build the beds search.
