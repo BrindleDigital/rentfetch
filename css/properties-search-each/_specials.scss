@@ -1,5 +1,5 @@
 .has-specials-property {
-	margin-top: 10px;
+	margin-top: var(--rentfetch-space-xs);
 	position: relative;
 	display: inline-block;
 	// position: absolute;
@@ -7,9 +7,9 @@
 	// top: 24px;
 	background-color: var(--rentfetch-accent-specials-background);
 	z-index: 20;
-	font-size: 14px;
+	font-size: var(--rentfetch-font-size-smallest);
 	line-height: 1em;
-	padding: 8px 10px 8px 30px;
+	padding: var(--rentfetch-space-xs) var(--rentfetch-space-xs) var(--rentfetch-space-xs) var(--rentfetch-space-xl);
 	border-radius: 3px;
 
 	&:before {

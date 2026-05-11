@@ -2,12 +2,15 @@
 	.property-details-header {
 		display: flex;
 		justify-content: space-between;
-		gap: 30px;
-		margin-bottom: 60px;
+		gap: var(--rentfetch-space-xl);
+		padding-bottom: var(--rentfetch-space-xl);
+		margin-bottom: var(--rentfetch-space-xl);
+		border-bottom: 1px solid var(--rentfetch-base-2);
 
 		@include mobile {
 			display: block;
-			margin-bottom: 35px;
+			padding-bottom: var(--rentfetch-space-lg);
+			margin-bottom: var(--rentfetch-space-lg);
 		}
 
 		h1 {
@@ -16,7 +19,7 @@
 
 		.property-details-basic-info {
 			@include mobile {
-				margin-bottom: 20px;
+				margin-bottom: var(--rentfetch-space-lg);
 			}
 		}
 
@@ -26,7 +29,7 @@
 
 			> span {
 				display: inline-block;
-				margin-right: 20px;
+				margin-right: var(--rentfetch-space-lg);
 			}
 		}
 
@@ -35,7 +38,7 @@
 
 			@include mobile {
 				text-align: left;
-				margin-top: 10px;
+				margin-top: var(--rentfetch-space-xs);
 			}
 
 			.rentfetch-property-rent-with-fees {
@@ -45,11 +48,59 @@
 		}
 	}
 
+	.property-stats {
+		display: flex;
+		flex-flow: row wrap;
+		gap: var(--rentfetch-space-xl) clamp(var(--rentfetch-space-2xl), 12vw, 180px);
+		margin-bottom: var(--rentfetch-space-4xl);
+
+		@include mobile {
+			gap: var(--rentfetch-space-lg);
+			margin-bottom: var(--rentfetch-space-2xl);
+		}
+	}
+
+	.property-stat {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: var(--rentfetch-space-sm);
+		align-items: center;
+		min-width: min(100%, 300px);
+		color: var(--rentfetch-dark);
+	}
+
+	.property-stat-icon {
+		width: 1.35em;
+		height: 1.35em;
+		color: var(--rentfetch-accent);
+	}
+
+	.property-stat-label,
+	.property-stat-value {
+		display: block;
+	}
+
+	.property-stat-label {
+		margin-bottom: 0.45em;
+		color: var(--rentfetch-default);
+		font-size: clamp(11px, 0.65rem + 0.08vw, 12px);
+		font-weight: 700;
+		line-height: 1.1;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.property-stat-value {
+		font-size: var(--rentfetch-font-size-medium);
+		font-weight: 700;
+		line-height: 1.25;
+	}
+
 	.description {
 		p,
 		ul,
 		ol {
-			margin-bottom: 5px;
+			margin-bottom: var(--rentfetch-space-2xs);
 
 			&:last-child {
 				margin-bottom: 0;
@@ -65,7 +116,7 @@
 		label {
 			cursor: pointer;
 			display: inline-block;
-			margin-top: 15px;
+			margin-top: var(--rentfetch-space-md);
 			color: var(--rentfetch-accent);
 			font-weight: 700;
 
@@ -100,11 +151,11 @@
 	}
 
 	.office-hours-section {
-		margin-top: 20px;
+		margin-top: var(--rentfetch-space-lg);
 
 		h3 {
 			font-size: var(--rentfetch-font-size-large);
-			margin-bottom: 10px;
+			margin-bottom: var(--rentfetch-space-xs);
 			color: var(--rentfetch-dark);
 		}
 
@@ -113,7 +164,7 @@
 				// display: flex;
 				// justify-content: space-between;
 				align-items: center;
-				padding: 5px 0;
+				padding: var(--rentfetch-space-2xs) 0;
 				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
 				&:last-child {
@@ -136,17 +187,17 @@
 	.property-details-body {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
-		gap: 80px;
+		gap: var(--rentfetch-space-4xl);
 		align-items: start;
 
 		@include tablet {
 			grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
-			gap: 40px;
+			gap: var(--rentfetch-space-2xl);
 		}
 
 		@include mobile {
 			grid-template-columns: 1fr;
-			gap: 25px;
+			gap: var(--rentfetch-space-lg);
 		}
 
 		.property-main-content {
@@ -154,68 +205,15 @@
 		}
 
 		.property-basic-info {
-			margin-bottom: 60px;
+			margin-bottom: var(--rentfetch-space-3xl);
 
 			@include mobile {
-				margin-bottom: 35px;
+				margin-bottom: var(--rentfetch-space-xl);
 			}
 		}
 
 		.rent-fetch-floorplan-search-default-layout {
 			min-width: 0;
-		}
-
-		.property-stats {
-			display: flex;
-			flex-flow: row wrap;
-			margin-bottom: 30px;
-
-			@include mobile {
-				margin-bottom: 10px;
-			}
-
-			> p {
-				margin: 0 35px 5px 0;
-			}
-
-			> p.rent {
-				flex: 0 0 100%;
-				margin: 0 0 12px 0;
-				font-size: var(--rentfetch-font-size-larger);
-				line-height: 1.2;
-
-				@include mobile {
-					margin-bottom: 8px;
-				}
-
-				.rentfetch-property-rent-lines {
-					display: block;
-				}
-
-				.rentfetch-property-rent-with-fees {
-					display: block;
-					font-size: inherit;
-					font-weight: 700;
-					line-height: inherit;
-				}
-
-				.rentfetch-property-base-rent {
-					display: block;
-					margin-top: 4px;
-					font-size: var(--rentfetch-font-size-small);
-					font-weight: 400;
-					line-height: 1.2;
-				}
-			}
-
-			> p.beds,
-			> p.sqrft {
-				font-size: var(--rentfetch-font-size-medium);
-				line-height: 1.15;
-				margin-top: 1.5rem;
-				margin-right: 26px;
-				margin-bottom: 8px;
-			}
 		}
 
 		.property-links {
@@ -224,7 +222,7 @@
 			background-color: var(--rentfetch-white, #ffffff);
 			border: 1px solid var(--rentfetch-base-2, #eaeaea);
 			border-radius: var(--rentfetch-border-radius, 4px);
-			padding: 30px;
+			padding: var(--rentfetch-space-xl);
 
 			@include mobile {
 				position: static;
@@ -233,8 +231,8 @@
 			.property-sidebar-item {
 				display: grid;
 				grid-template-columns: auto minmax(0, 1fr);
-				gap: 0 12px;
-				margin-bottom: 20px;
+				gap: 0 var(--rentfetch-space-sm);
+				margin-bottom: var(--rentfetch-space-lg);
 
 				> svg {
 					width: 1.2em;
@@ -246,7 +244,7 @@
 
 				h3 {
 					font-size: var(--rentfetch-font-size-medium);
-					margin-bottom: 8px;
+					margin-bottom: var(--rentfetch-space-xs);
 				}
 
 				a {
@@ -257,12 +255,12 @@
 			}
 
 			.office-hours-details {
-				margin-bottom: 20px;
+				margin-bottom: var(--rentfetch-space-lg);
 
 				summary {
 					display: flex;
 					align-items: center;
-					gap: 12px;
+					gap: var(--rentfetch-space-sm);
 					cursor: pointer;
 					list-style: none;
 					position: static;
@@ -302,7 +300,7 @@
 				}
 
 				.office-hours-content {
-					margin-left: calc(1.2em + 12px);
+					margin-left: calc(1.2em + var(--rentfetch-space-sm));
 				}
 
 				&[open] {
@@ -313,7 +311,7 @@
 			}
 
 			.property-sidebar-actions {
-				margin-top: 25px;
+				margin-top: var(--rentfetch-space-lg);
 
 				.tour-booking-link {
 					display: block;
@@ -345,9 +343,9 @@ body.admin-bar {
 		display: block;
 		color: var(--rentfetch-dark);
 		position: static;
-		padding: 15px 15px;
+		padding: var(--rentfetch-space-md);
 		line-height: 1;
-		margin-bottom: 10px;
+		margin-bottom: var(--rentfetch-space-xs);
 		text-decoration: none;
 		background-color: var(--rentfetch-white, #ffffff);
 		border: 1px solid var(--rentfetch-black-10-percent, rgba(0, 0, 0, 0.1));
@@ -374,11 +372,11 @@ body.admin-bar {
 }
 
 .office-hours-section {
-	margin-top: 20px;
+	margin-top: var(--rentfetch-space-lg);
 
 	h3 {
 		font-size: var(--rentfetch-font-size-large);
-		margin-bottom: 10px;
+		margin-bottom: var(--rentfetch-space-xs);
 		color: var(--rentfetch-dark);
 	}
 
@@ -387,7 +385,7 @@ body.admin-bar {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			padding: 5px 0;
+			padding: var(--rentfetch-space-2xs) 0;
 			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
 			&:last-child {
@@ -410,14 +408,14 @@ body.admin-bar {
 .office-hours-content {
 	display: none;
 	margin-top: 0.5rem;
-	font-size: 0.875rem;
+	font-size: var(--rentfetch-font-size-small);
 	line-height: 1.5;
 
 	.office-hours-day {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 5px 0;
+		padding: var(--rentfetch-space-2xs) 0;
 		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
 		&:first-child {
@@ -452,9 +450,9 @@ body.admin-bar {
 		list-style: none;
 		display: block;
 		position: static;
-		padding: 15px 15px;
+		padding: var(--rentfetch-space-md);
 		line-height: 1;
-		margin-bottom: 10px;
+		margin-bottom: var(--rentfetch-space-xs);
 		text-decoration: none;
 		color: var(--rentfetch-dark);
 		border: 1px solid var(--rentfetch-black-10-percent, rgba(0, 0, 0, 0.1));

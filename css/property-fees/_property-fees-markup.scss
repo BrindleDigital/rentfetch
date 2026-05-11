@@ -37,9 +37,9 @@ table.property-fees-table {
 
 	// Table cells
 	td {
-		padding: 0.5rem 0.5rem;
+		padding: var(--rentfetch-space-xs);
 		border: none;
-		border-bottom: 1px solid var(--rentfetch-base-3);
+		border-bottom: 1px solid var(--rentfetch-base-2);
 		vertical-align: middle;
 		text-wrap: balance;
 

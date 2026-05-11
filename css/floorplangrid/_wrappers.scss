@@ -1,6 +1,6 @@
 .floorplangrid-wrap {
 	display: grid;
-	grid-gap: 30px;
+	grid-gap: var(--rentfetch-space-xl);
 	grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
 	padding: 0;
 

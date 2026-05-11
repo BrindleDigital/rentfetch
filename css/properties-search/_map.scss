@@ -1,7 +1,7 @@
 #map {
 	width: 100%;
 	height: 500px;
-	margin-bottom: 30px;
+	margin-bottom: var(--rentfetch-space-xl);
 
 	// google's close button
 	.gm-style-iw-chr {
@@ -15,10 +15,10 @@
 	}
 
 	.map-property-popup {
-		padding: 15px 0 0 15px;
+		padding: var(--rentfetch-space-md) 0 0 var(--rentfetch-space-md);
 	}
 }
 
 .filters-wrap {
-	margin-bottom: 30px;
+	margin-bottom: var(--rentfetch-space-xl);
 }

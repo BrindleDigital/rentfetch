@@ -8,14 +8,14 @@
 		text-decoration: none;
 		transition: 0.3s all ease;
 		border-radius: 3px;
-		margin: 4px;
+		margin: var(--rentfetch-space-2xs);
 		display: inline-block;
 
 		@include mobile {
 			display: block;
 			width: 100%;
 			text-align: center;
-			margin: 4px 0;
+			margin: var(--rentfetch-space-2xs) 0;
 		}
 
 		&:hover,

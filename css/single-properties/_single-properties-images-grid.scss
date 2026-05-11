@@ -20,11 +20,11 @@
 
 	.view-all-images {
 		position: absolute;
-		bottom: 25px;
-		left: 25px;
+		bottom: var(--rentfetch-space-lg);
+		left: var(--rentfetch-space-lg);
 		background-color: var(--rentfetch-white);
 		color: var(--rentfetch-black);
-		padding: 15px 25px;
+		padding: var(--rentfetch-space-md) var(--rentfetch-space-lg);
 		text-decoration: none;
 		line-height: 1;
 		font-size: var(--rentfetch-font-size-medium);
@@ -46,7 +46,7 @@
 
 	&.multiple-images {
 		display: grid;
-		gap: 15px;
+		gap: var(--rentfetch-space-md);
 		grid-template-columns: repeat(4, 1fr);
 
 		@include mobile {

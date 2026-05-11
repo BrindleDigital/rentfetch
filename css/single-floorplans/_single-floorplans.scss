@@ -6,12 +6,12 @@ body.single-floorplans {
 	.current-floorplan-info {
 		display: grid;
 		grid-template-columns: 4fr 6fr;
-		gap: 60px;
+		gap: var(--rentfetch-space-3xl);
 		align-items: center;
 
 		@include notdesktop {
 			grid-template-columns: 1fr;
-			gap: 20px;
+			gap: var(--rentfetch-space-lg);
 		}
 
 		.images-column {
@@ -25,7 +25,7 @@ body.single-floorplans {
 
 		p.specials {
 			position: relative;
-			padding: 5px 10px 5px 30px;
+			padding: var(--rentfetch-space-2xs) var(--rentfetch-space-xs) var(--rentfetch-space-2xs) var(--rentfetch-space-xl);
 			background-color: var(--rentfetch-accent-specials-background);
 			z-index: 5;
 			font-size: var(--rentfetch-font-size-small);
@@ -47,12 +47,12 @@ body.single-floorplans {
 		}
 
 		p.pricing {
-			margin: 0 0 12px 0;
+			margin: 0 0 var(--rentfetch-space-sm) 0;
 			font-size: var(--rentfetch-font-size-larger);
 			line-height: 1.2;
 
 			@include mobile {
-				margin-bottom: 8px;
+				margin-bottom: var(--rentfetch-space-xs);
 			}
 
 			.rentfetch-floorplan-rent-lines {
@@ -68,7 +68,7 @@ body.single-floorplans {
 
 			.rentfetch-floorplan-base-rent {
 				display: block;
-				margin-top: 4px;
+				margin-top: var(--rentfetch-space-2xs);
 				font-size: var(--rentfetch-font-size-small);
 				font-weight: 400;
 				line-height: 1.2;
@@ -84,7 +84,7 @@ body.single-floorplans {
 				font-size: var(--rentfetch-font-size-large);
 				display: inline-block;
 				padding: 0 0.65em;
-				margin: 0 0 12px 0;
+				margin: 0 0 var(--rentfetch-space-sm) 0;
 				position: relative;
 
 				&:first-child {
@@ -119,20 +119,20 @@ body.single-floorplans {
 		}
 
 		.floorplan-buttons {
-			margin-top: 12px;
+			margin-top: var(--rentfetch-space-sm);
 
 			a {
-				margin: 0 5px 5px 0;
+				margin: 0 var(--rentfetch-space-2xs) var(--rentfetch-space-2xs) 0;
 			}
 		}
 
 		.floorplan-description {
-			margin-top: 25px;
+			margin-top: var(--rentfetch-space-lg);
 
 			p,
 			ul,
 			ol {
-				margin-bottom: 5px;
+				margin-bottom: var(--rentfetch-space-2xs);
 
 				&:last-child {
 					margin-bottom: 0;
@@ -161,10 +161,10 @@ body.single-floorplans {
 		margin: 0 calc(50% - 50vw);
 		max-width: 100vw;
 		width: 100vw;
-		padding: 60px 25px;
+		padding: var(--rentfetch-space-3xl) var(--rentfetch-space-lg);
 
 		@include notdesktop {
-			padding: 25px;
+			padding: var(--rentfetch-space-lg);
 		}
 
 		&:nth-child(even) {
@@ -184,14 +184,14 @@ body.single-floorplans {
 	.container-similar-floorplans {
 		.floorplans-loop {
 			@include desktop {
-				margin-top: 30px;
+				margin-top: var(--rentfetch-space-xl);
 			}
 		}
 	}
 
 	.container-units {
 		.unit-details-table {
-			margin-top: 30px;
+			margin-top: var(--rentfetch-space-xl);
 		}
 	}
 
@@ -199,7 +199,7 @@ body.single-floorplans {
 		text-align: center;
 
 		iframe {
-			margin-top: 15px;
+			margin-top: var(--rentfetch-space-md);
 		}
 	}
 

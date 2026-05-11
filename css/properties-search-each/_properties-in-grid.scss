@@ -4,7 +4,7 @@
 
 .properties-loop {
 	display: grid;
-	grid-gap: 20px;
+	grid-gap: var(--rentfetch-space-lg);
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	padding: 0;
 
@@ -75,8 +75,8 @@
 
 		p {
 			display: inline-block;
-			margin-right: 10px;
-			margin-bottom: 10px;
+			margin-right: var(--rentfetch-space-xs);
+			margin-bottom: var(--rentfetch-space-xs);
 			font-size: var(--rentfetch-font-size-small);
 		}
 
@@ -86,8 +86,8 @@
 	}
 
 	.property-availability {
-		margin-top: 5px;
-		padding-top: 15px;
+		margin-top: var(--rentfetch-space-2xs);
+		padding-top: var(--rentfetch-space-md);
 		border-top: 1px solid rgba(black, 0.07);
 		display: flex;
 		flex: 0 1 auto;
@@ -96,7 +96,7 @@
 	}
 
 	.property-details {
-		padding: 15px;
+		padding: var(--rentfetch-space-md);
 	}
 
 	a.post-edit-link {
@@ -104,7 +104,7 @@
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%);
-		padding: 5px 10px;
+		padding: var(--rentfetch-space-2xs) var(--rentfetch-space-xs);
 		background-color: var(--rentfetch-dark);
 		text-decoration: none;
 		line-height: 1;
@@ -123,9 +123,9 @@
 
 	p.specials {
 		position: absolute;
-		top: 15px;
-		left: 15px;
-		padding: 5px 10px 5px 30px;
+		top: var(--rentfetch-space-md);
+		left: var(--rentfetch-space-md);
+		padding: var(--rentfetch-space-2xs) var(--rentfetch-space-xs) var(--rentfetch-space-2xs) var(--rentfetch-space-xl);
 		background-color: var(--rentfetch-accent-specials-background);
 		z-index: 5;
 		font-size: var(--rentfetch-font-size-small);
@@ -139,20 +139,21 @@
 			color: var(--rentfetch-accent-specials-star);
 			font-size: var(--rentfetch-font-size-medium);
 			position: absolute;
-			left: 10px;
+			left: var(--rentfetch-space-xs);
 			top: 50%;
 			transform: translateY(-50%);
 		}
 	}
 
 	h3 {
-		margin: 0 0 10px;
+		margin: 0 0 var(--rentfetch-space-xs);
 		font-size: var(--rentfetch-font-size-large);
+		line-height: 1.15;
 	}
 
 	p {
 		font-size: var(--rentfetch-font-size-medium);
-		margin: 0 0 10px;
+		margin: 0 0 var(--rentfetch-space-xs);
 		line-height: 1.2;
 
 		&:last-child {
@@ -193,10 +194,14 @@
 		font-size: var(--rentfetch-font-size-small);
 		font-style: italic;
 	}
+
+	p.property-location {
+		font-size: var(--rentfetch-font-size-small);
+	}
 }
 
 .results-count {
-	margin-bottom: 20px;
+	margin-bottom: var(--rentfetch-space-lg);
 	font-size: var(--rentfetch-font-size-medium);
 	line-height: 1;
 

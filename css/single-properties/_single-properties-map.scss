@@ -17,7 +17,7 @@
 	}
 
 	.map-marker {
-		padding: 15px 0 0 15px;
+		padding: var(--rentfetch-space-md) 0 0 var(--rentfetch-space-md);
 	}
 
 	// google's close button

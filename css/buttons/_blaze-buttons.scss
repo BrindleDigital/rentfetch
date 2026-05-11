@@ -1,6 +1,6 @@
 .blaze-buttons {
 	display: block;
-	margin-top: 10px;
+	margin-top: var(--rentfetch-space-xs);
 
 	@include notmobile {
 		text-align: center;

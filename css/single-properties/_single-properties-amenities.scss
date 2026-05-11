@@ -5,7 +5,7 @@
 		list-style: none;
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: 15px 60px;
+		gap: var(--rentfetch-space-md) var(--rentfetch-space-3xl);
 
 		@include tablet {
 			grid-template-columns: repeat(2, 1fr);
@@ -16,7 +16,7 @@
 		}
 
 		li {
-			padding: 0 0 15px 0;
+			padding: 0 0 var(--rentfetch-space-md) 0;
 			margin: 0;
 			border-bottom: 1px solid var(--rentfetch-black-5-percent);
 		}

@@ -10,20 +10,20 @@
 	}
 
 	.floorplangrid__content {
-		padding: 15px;
+		padding: var(--rentfetch-space-md);
 
 		> :last-child {
 			margin-bottom: 0;
 		}
 
 		p {
-			margin-bottom: 5px;
+			margin-bottom: var(--rentfetch-space-2xs);
 			line-height: 1.4em;
 		}
 	}
 
 	h3.floorplangrid__title {
-		margin-bottom: 5px;
+		margin-bottom: var(--rentfetch-space-2xs);
 	}
 
 	.floorplangrid__info {
@@ -32,8 +32,8 @@
 
 			&:after {
 				content: '\00b7';
-				margin-left: 5px;
-				margin-right: 5px;
+				margin-left: var(--rentfetch-space-2xs);
+				margin-right: var(--rentfetch-space-2xs);
 			}
 
 			&:last-child {
@@ -53,7 +53,7 @@
 	}
 
 	.buttons {
-		padding-top: 8px;
+		padding-top: var(--rentfetch-space-xs);
 		width: calc(100% + 8px);
 		margin-left: -4px;
 		margin-right: -4px;

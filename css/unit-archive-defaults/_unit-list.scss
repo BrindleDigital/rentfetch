@@ -1,5 +1,5 @@
 .unit-details-list {
-	margin-top: 25px;
+	margin-top: var(--rentfetch-space-lg);
 
 	@include desktop {
 		display: none;
@@ -16,7 +16,7 @@
 
 		summary.unit-summary {
 			display: block;
-			padding: 15px;
+			padding: var(--rentfetch-space-md);
 			position: relative;
 
 			p {
@@ -26,7 +26,7 @@
 			}
 
 			span.dropdown {
-				margin-left: 5px;
+				margin-left: var(--rentfetch-space-2xs);
 				display: inline-block;
 				line-height: 1em;
 				transition: all 0.3s ease;
@@ -47,12 +47,12 @@
 		}
 
 		ul.unit-details-list-wrap {
-			padding: 15px;
+			padding: var(--rentfetch-space-md);
 			margin: 0;
 
 			li {
 				list-style: none;
-				margin: 0 0 10px;
+				margin: 0 0 var(--rentfetch-space-xs);
 				padding: 0;
 			}
 		}

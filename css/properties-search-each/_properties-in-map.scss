@@ -4,7 +4,7 @@
 
 	h3 {
 		font-size: var(--rentfetch-font-size-large);
-		margin: 0 0 15px;
+		margin: 0 0 var(--rentfetch-space-md);
 		color: var(--rentfetch-dark);
 
 		&:last-child {
@@ -15,7 +15,7 @@
 	p.city-state {
 		font-size: var(--rentfetch-font-size-small);
 		text-transform: uppercase;
-		margin: 0 0 5px;
+		margin: 0 0 var(--rentfetch-space-2xs);
 		color: var(--rentfetch-dark);
 		letter-spacing: 0.05em;
 		line-height: 1;

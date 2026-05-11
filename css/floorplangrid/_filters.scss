@@ -1,21 +1,21 @@
 .floorplangrid .filters {
 	text-align: center;
-	margin-bottom: 30px;
+	margin-bottom: var(--rentfetch-space-xl);
 
 	li {
 		list-style: none;
-		margin: 4px;
+		margin: var(--rentfetch-space-2xs);
 		display: inline-block;
 
 		@include mobile {
 			width: 100%;
 			display: block;
-			margin: 4px 0;
+			margin: var(--rentfetch-space-2xs) 0;
 		}
 	}
 
 	a {
-		padding: 8px 20px;
+		padding: var(--rentfetch-space-xs) var(--rentfetch-space-lg);
 		// font-size: 14px;
 		background-color: #111;
 		color: white;

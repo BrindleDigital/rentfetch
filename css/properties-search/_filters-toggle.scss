@@ -3,10 +3,10 @@
 		border: none;
 		background-color: var(--rentfetch-base);
 		display: inline-block;
-		padding: 10px 10px 10px 30px;
+		padding: var(--rentfetch-space-xs) var(--rentfetch-space-xs) var(--rentfetch-space-xs) var(--rentfetch-space-xl);
 		line-height: 1em;
 		font-size: var(--rentfetch-font-size-small);
-		margin: 20px 5px 5px 0;
+		margin: var(--rentfetch-space-lg) var(--rentfetch-space-2xs) var(--rentfetch-space-2xs) 0;
 		cursor: pointer;
 		transition: 0.3s all ease;
 		position: relative;

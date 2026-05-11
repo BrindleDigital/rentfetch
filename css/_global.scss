@@ -44,12 +44,29 @@ html {
 	--rentfetch-branding-base: #f0f7fc;
 
 	// font sizes
-	--rentfetch-font-size-smallest: 13px;
-	--rentfetch-font-size-small: 15px;
-	--rentfetch-font-size-medium: 17px;
-	--rentfetch-font-size-large: 22px;
-	--rentfetch-font-size-larger: 25px;
-	--rentfetch-font-size-largest: 30px;
+	--rentfetch-font-size-smallest: clamp(12px, 0.75rem + 0.1vw, 13px);
+	--rentfetch-font-size-small: clamp(14px, 0.875rem + 0.1vw, 15px);
+	--rentfetch-font-size-medium: clamp(16px, 1rem + 0.15vw, 17px);
+	--rentfetch-font-size-large: clamp(19px, 1.1rem + 0.45vw, 22px);
+	--rentfetch-font-size-larger: clamp(21px, 1.2rem + 0.6vw, 25px);
+	--rentfetch-font-size-largest: clamp(24px, 1.35rem + 0.9vw, 30px);
+
+	// spacing
+	--rentfetch-space-2xs: 4px;
+	--rentfetch-space-xs: 8px;
+	--rentfetch-space-sm: 12px;
+	--rentfetch-space-md: 16px;
+	--rentfetch-space-lg: 24px;
+	--rentfetch-space-xl: clamp(var(--rentfetch-space-lg), 4vw, 32px);
+	--rentfetch-space-2xl: clamp(var(--rentfetch-space-lg), 6vw, 48px);
+	--rentfetch-space-3xl: clamp(var(--rentfetch-space-lg), 8vw, 64px);
+	--rentfetch-space-4xl: clamp(var(--rentfetch-space-lg), 10vw, 80px);
+
+	// semantic spacing
+	--rentfetch-heading-margin-bottom: var(--rentfetch-space-md);
+	--rentfetch-section-padding-block: var(--rentfetch-space-3xl);
+	--rentfetch-section-padding-inline: var(--rentfetch-space-lg);
+	--rentfetch-content-gap: var(--rentfetch-space-2xl);
 }
 
 /* ==========================================================================

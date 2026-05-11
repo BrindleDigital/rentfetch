@@ -42,19 +42,9 @@ function rentfetch_single_properties_parts_details() {
 							printf( '<h1 class="title">%s</h1>', esc_html( $title ) );
 						}
 
-						if ( $location || $beds || $sqrft ) {
+						if ( $location ) {
 							echo '<p class="location">';
-								if ( $location ) {
-									printf( '<span class="city-state">%s</span>', esc_html( $location ) );
-								}
-
-								if ( $beds ) {
-									printf( '<span class="beds">%s</span>', wp_kses_post( $beds ) );
-								}
-
-								if ( $sqrft ) {
-									printf( '<span class="sqrft">%s</span>', wp_kses_post( $sqrft ) );
-								}
+								printf( '<span class="city-state">%s</span>', esc_html( $location ) );
 							echo '</p>';
 						}
 
@@ -67,6 +57,33 @@ function rentfetch_single_properties_parts_details() {
 
 					echo '</div>';
 				echo '</div>'; // .property-details-header.
+
+				if ( $beds || $sqrft ) {
+					$bed_icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true" focusable="false" class="property-stat-icon property-stat-icon-bed"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5v9m16.5 0v-5.25a3 3 0 0 0-3-3H9.75v8.25m-6 0h16.5m-16.5-6h6m-6 0V6.75A1.5 1.5 0 0 1 5.25 5.25h3A1.5 1.5 0 0 1 9.75 6.75v1.5" /></svg>';
+					$sqrft_icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true" focusable="false" class="property-stat-icon property-stat-icon-sqrft"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.25h13.5v13.5H5.25z" /><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15.75v-7.5h7.5" /></svg>';
+
+					echo '<div class="property-stats" aria-label="Property statistics">';
+						if ( $beds ) {
+							echo '<div class="property-stat property-stat-beds">';
+								echo $bed_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo '<div class="property-stat-text">';
+									echo '<span class="property-stat-label">Bedrooms</span>';
+									printf( '<span class="property-stat-value">%s</span>', wp_kses_post( $beds ) );
+								echo '</div>';
+							echo '</div>';
+						}
+
+						if ( $sqrft ) {
+							echo '<div class="property-stat property-stat-sqrft">';
+								echo $sqrft_icon; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo '<div class="property-stat-text">';
+									echo '<span class="property-stat-label">Square Feet</span>';
+									printf( '<span class="property-stat-value">%s</span>', wp_kses_post( $sqrft ) );
+								echo '</div>';
+							echo '</div>';
+						}
+					echo '</div>'; // .property-stats.
+				}
 			}
 
 			echo '<div class="property-details-body">';

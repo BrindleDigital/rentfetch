@@ -27,7 +27,7 @@
 			a {
 				display: block;
 				position: static;
-				padding: 12px 24px;
+				padding: var(--rentfetch-space-sm) var(--rentfetch-space-lg);
 				text-decoration: none;
 				color: var(--rentfetch-dark);
 			}
@@ -42,7 +42,7 @@
 		display: none;
 		background-color: white;
 		text-align: center;
-		padding: 12px 24px;
+		padding: var(--rentfetch-space-sm) var(--rentfetch-space-lg);
 		position: static;
 		line-height: 1;
 		color: var(--rentfetch-dark);
@@ -55,7 +55,7 @@
 			font-size: var(--rentfetch-font-size-medium);
 			position: absolute;
 			transition: 0.3s all ease;
-			margin-left: 5px;
+			margin-left: var(--rentfetch-space-2xs);
 		}
 
 		&.open {

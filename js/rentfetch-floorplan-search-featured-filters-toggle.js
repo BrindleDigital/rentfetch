@@ -1,25 +1,28 @@
 jQuery(document).ready(function ($) {
-	// For desktop: handle hover
-	if (window.matchMedia('(min-width: 1024px)').matches) {
-		$('.toggle, .input-wrap').on('mouseenter', function () {
+	const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+	const featuredFilters = $('#featured-filters');
+
+	// For pointer devices: handle hover regardless of viewport width.
+	if (canHover) {
+		featuredFilters.on('mouseenter', '.toggle, .input-wrap', function () {
 			var fieldset = $(this).closest('fieldset');
 			var inputWrap = fieldset.find('.input-wrap');
 
 			inputWrap.addClass('active').removeClass('inactive');
-			$('.input-wrap').not(inputWrap).removeClass('active');
+			featuredFilters.find('.input-wrap').not(inputWrap).removeClass('active');
 		});
 
 		// Track the active fieldset
 		let activeFieldset = null;
 
-		$('fieldset').on('mouseover', function () {
+		featuredFilters.on('mouseover', 'fieldset', function () {
 			activeFieldset = $(this);
 		});
 
 		$(document).on('mouseover', function (e) {
 			if (
 				activeFieldset &&
-				!$(e.target).closest('fieldset').is(activeFieldset) &&
+				!$(e.target).closest('#featured-filters fieldset').is(activeFieldset) &&
 				!$(e.target).closest('#ui-datepicker-div').length
 			) {
 				activeFieldset.find('.input-wrap').removeClass('active');
@@ -28,12 +31,12 @@ jQuery(document).ready(function ($) {
 		});
 	}
 
-	// For mobile: maintain click functionality
-	if (window.matchMedia('(max-width: 1023px)').matches) {
-		$('.toggle').on('click', function () {
+	// For touch devices: maintain click functionality.
+	if (!canHover) {
+		featuredFilters.on('click', '.toggle', function () {
 			var inputWrap = $(this).closest('fieldset').find('.input-wrap');
 			inputWrap.toggleClass('active inactive');
-			$('.input-wrap').not(inputWrap).removeClass('active');
+			featuredFilters.find('.input-wrap').not(inputWrap).removeClass('active');
 		});
 
 		$(document).on('click touchstart', function (event) {
@@ -43,11 +46,11 @@ jQuery(document).ready(function ($) {
 				!$(event.target).is('input') &&
 				!$(event.target).closest('#ui-datepicker-div').length
 			) {
-				$('.input-wrap').removeClass('active');
+				featuredFilters.find('.input-wrap').removeClass('active');
 			}
 		});
 
-		$('.input-wrap input').on('click touchstart', function (event) {
+		featuredFilters.on('click touchstart', '.input-wrap input', function (event) {
 			event.stopPropagation();
 		});
 	}

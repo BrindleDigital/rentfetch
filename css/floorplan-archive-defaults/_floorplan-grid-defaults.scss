@@ -2,7 +2,7 @@
 .floorplans-simple-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
-	gap: 25px;
+	gap: var(--rentfetch-space-lg);
 
 	@include tablet {
 		grid-template-columns: repeat(2, 1fr);
@@ -10,15 +10,17 @@
 
 	@include mobile {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 15px;
+		gap: var(--rentfetch-space-md);
 	}
 
 	.entry,
 	.hentry {
 		padding: 0;
 		margin: 0;
-		box-shadow: var(--rentfetch-box-shadow);
-		transition: 0.5s box-shadow ease;
+		border: 1px solid var(--rentfetch-base-2);
+		border-radius: var(--rentfetch-border-radius);
+		box-shadow: none;
+		transition: 0.3s box-shadow ease;
 		position: relative;
 		background-color: var(--rentfetch-white);
 		overflow: hidden; /* Hide overflow content */
@@ -30,7 +32,7 @@
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%);
-		padding: 3px 8px;
+		padding: 3px var(--rentfetch-space-xs);
 		background-color: var(--rentfetch-black-90-percent);
 		color: var(--rentfetch-white);
 		font-size: var(--rentfetch-font-size-small);
@@ -51,7 +53,7 @@
 	}
 
 	.floorplan-details {
-		padding: 15px;
+		padding: var(--rentfetch-space-md);
 	}
 
 	.floorplan-single-image-wrap,
@@ -60,7 +62,7 @@
 		height: 0;
 		padding-top: 66.7%;
 		position: relative;
-		margin: 15px 15px 0;
+		margin: var(--rentfetch-space-md) var(--rentfetch-space-md) 0;
 		// max-width: 100%;
 
 		img.floorplan-single-image,
@@ -74,7 +76,8 @@
 	}
 
 	h3 {
-		font-size: var(--rentfetch-font-size-large);
+		font-size: var(--rentfetch-font-size-medium);
+		line-height: 1.15;
 		color: var(--rentfetch-dark);
 	}
 
@@ -84,10 +87,15 @@
 		line-height: 1.2;
 	}
 
+	.floorplan-description,
+	.floorplan-details > p:not(.pricing):not(.specials):not(.availability) {
+		font-size: var(--rentfetch-font-size-small);
+	}
+
 	.floorplan-content {
 		h3,
 		p {
-			margin-bottom: 15px;
+			margin-bottom: var(--rentfetch-space-md);
 			overflow: hidden;
 			text-overflow: ellipsis;
 			display: -webkit-box;
@@ -101,38 +109,25 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.35em 0;
+		gap: var(--rentfetch-space-2xs);
 		line-height: 1.35;
-		// margin-bottom: 15px;
 
 		p {
 			font-size: var(--rentfetch-font-size-smallest);
 			line-height: 1.35;
 			display: block;
 			padding: 0;
-			margin: 0 0 15px 0;
+			margin: 0 0 var(--rentfetch-space-md) 0;
 			position: relative;
 			white-space: nowrap;
-
-			+ p {
-				&:before {
-					content: '';
-					display: inline-block;
-					width: 1px;
-					height: 0.85em;
-					margin: 0 8px;
-					background-color: var(--rentfetch-black-20-percent);
-					vertical-align: -0.1em;
-				}
-			}
 		}
 	}
 
 	p.specials {
 		position: absolute;
-		top: 15px;
-		left: 15px;
-		padding: 5px 10px 5px 30px;
+		top: var(--rentfetch-space-md);
+		left: var(--rentfetch-space-md);
+		padding: var(--rentfetch-space-2xs) var(--rentfetch-space-xs) var(--rentfetch-space-2xs) var(--rentfetch-space-xl);
 		background-color: var(--rentfetch-accent-specials-background);
 		z-index: 5;
 		font-size: var(--rentfetch-font-size-small);
@@ -146,21 +141,21 @@
 			color: var(--rentfetch-accent-specials-star);
 			font-size: var(--rentfetch-font-size-medium);
 			position: absolute;
-			left: 10px;
+			left: var(--rentfetch-space-xs);
 			top: 50%;
 			transform: translateY(-50%);
 		}
 	}
 
 	.floorplan-availability {
-		margin-top: 10px;
-		padding-top: 15px;
+		margin-top: var(--rentfetch-space-xs);
+		padding-top: var(--rentfetch-space-md);
 		border-top: 1px solid rgba(0, 0, 0, 0.07);
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		justify-content: flex-start;
-		gap: 8px;
+		gap: var(--rentfetch-space-xs);
 	}
 
 	p.pricing {
@@ -220,7 +215,7 @@
 			.rentfetch-button {
 				display: block;
 				text-align: center;
-				margin-bottom: 5px;
+				margin-bottom: var(--rentfetch-space-2xs);
 
 				&:last-child {
 					margin-bottom: 0;

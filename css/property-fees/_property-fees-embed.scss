@@ -1,8 +1,8 @@
 .rentfetch-before-floorplans-grid-search-property-fees-notes {
-	margin-bottom: 30px;
+	margin-bottom: var(--rentfetch-space-xl);
 
 	@include mobile {
-		margin-bottom: 15px;
+		margin-bottom: var(--rentfetch-space-md);
 	}
 
 	p {
@@ -11,9 +11,9 @@
 }
 
 .rentfetch-after-floorplans-grid-search-property-fees-embed-wrapper {
-	margin-top: 60px;
+	margin-top: var(--rentfetch-space-3xl);
 
 	@include mobile {
-		margin-top: 25px;
+		margin-top: var(--rentfetch-space-lg);
 	}
 }

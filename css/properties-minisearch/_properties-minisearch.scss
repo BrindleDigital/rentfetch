@@ -1,5 +1,5 @@
 form.minisearch {
-	padding: 15px;
+	padding: var(--rentfetch-space-md);
 	background-color: var(--rentfetch-base);
 	display: inline-block;
 	border-radius: 3px;
@@ -12,7 +12,7 @@ form.minisearch {
 		margin-bottom: 0;
 
 		#featured-filters {
-			gap: 8px 0;
+			gap: var(--rentfetch-space-xs) 0;
 
 			@include mobile {
 				grid-template-columns: 1fr;
@@ -33,7 +33,7 @@ form.minisearch {
 						border-radius: 3px;
 						&::after {
 							position: absolute;
-							right: 15px;
+							right: var(--rentfetch-space-md);
 						}
 					}
 				}
@@ -48,9 +48,9 @@ form.minisearch {
 			}
 
 			button#minisearch-submit {
-				margin-left: 25px;
+				margin-left: var(--rentfetch-space-lg);
 				position: relative;
-				padding: 15px 43px 15px 20px;
+				padding: var(--rentfetch-space-md) 43px var(--rentfetch-space-md) var(--rentfetch-space-lg);
 				border: none;
 				border-radius: 3px;
 				background-color: var(--rentfetch-accent);
@@ -62,7 +62,7 @@ form.minisearch {
 				}
 
 				@include mobile {
-					padding: 15px;
+					padding: var(--rentfetch-space-md);
 				}
 
 				&:hover {
@@ -73,9 +73,9 @@ form.minisearch {
 				&:after {
 					font-family: 'dashicons';
 					content: '\f344';
-					margin-left: 5px;
+					margin-left: var(--rentfetch-space-2xs);
 					position: absolute;
-					right: 15px;
+					right: var(--rentfetch-space-md);
 					top: 50%;
 					transform: translateY(-50%);
 

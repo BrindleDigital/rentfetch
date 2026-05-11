@@ -2,8 +2,8 @@
 	--slides-to-show: 3;
 
 	.blaze-track-container {
-		padding: 12px !important;
-		margin: -12px !important;
+		padding: var(--rentfetch-space-sm) !important;
+		margin: calc(-1 * var(--rentfetch-space-sm)) !important;
 	}
 
 	.entry {

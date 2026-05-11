@@ -1,5 +1,5 @@
 table.unit-details-table {
-	margin-top: 25px;
+	margin-top: var(--rentfetch-space-lg);
 	margin-bottom: 0;
 	border: none;
 	width: 100%;
@@ -19,7 +19,7 @@ table.unit-details-table {
 		text-align: left;
 		border: none;
 		border-bottom: 1px solid var(--rentfetch-black-10-percent);
-		padding: 5px 0;
+		padding: var(--rentfetch-space-2xs) 0;
 
 		@include mobile {
 			font-size: var(--rentfetch-font-size-small);
@@ -31,7 +31,7 @@ table.unit-details-table {
 		text-align: left;
 		border: none;
 		border-bottom: 1px solid var(--rentfetch-black-10-percent);
-		padding: 5px 0;
+		padding: var(--rentfetch-space-2xs) 0;
 		min-width: 70px;
 		max-width: 200px;
 		line-height: 1.4;
