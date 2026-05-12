@@ -42,7 +42,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 		'rentfetchPropertySearchConfig',
 		array(
 			'restUrl'                   => rest_url( 'rentfetch/v1/search/properties' ),
-			'nonce'                     => wp_create_nonce( 'wp_rest' ),
+			'nonce'                     => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
 			'enableCacheConsoleLogging' => get_option( 'rentfetch_options_enable_cache_console_logging', '0' ) === '1',
 		)
 	);
@@ -56,7 +56,7 @@ function rentfetch_enqueue_scripts_stylesheets() {
 		'rentfetchFloorplanSearchConfig',
 		array(
 			'restUrl'                   => rest_url( 'rentfetch/v1/search/floorplans' ),
-			'nonce'                     => wp_create_nonce( 'wp_rest' ),
+			'nonce'                     => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
 			'enableCacheConsoleLogging' => get_option( 'rentfetch_options_enable_cache_console_logging', '0' ) === '1',
 		)
 	);
