@@ -139,11 +139,13 @@ function rentfetch_warm_popular_searches( $limit = 50 ) {
 			$request->set_param( 'skip_tracking', true );
 
 			// Execute the search to warm the cache.
+			$GLOBALS['rentfetch_prioritize_search_query_cache'] = true;
 			if ( 'properties' === $search_type ) {
 				$response = rentfetch_rest_search_properties( $request );
 			} else {
 				$response = rentfetch_rest_search_floorplans( $request );
 			}
+			$GLOBALS['rentfetch_prioritize_search_query_cache'] = false;
 
 			if ( ! is_wp_error( $response ) ) {
 				++$warmed;
@@ -151,6 +153,7 @@ function rentfetch_warm_popular_searches( $limit = 50 ) {
 				++$failed;
 			}
 		} catch ( Exception $e ) {
+			$GLOBALS['rentfetch_prioritize_search_query_cache'] = false;
 			++$failed;
 		}
 	}

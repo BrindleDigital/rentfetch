@@ -148,7 +148,8 @@ function rentfetch_rest_search_floorplans_safe( $request ) {
  * @return WP_REST_Response
  */
 function rentfetch_rest_search_properties( $request ) {
-	$can_use_markup_cache = ! is_user_logged_in();
+	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching' ) !== '1';
+	$can_write_markup_cache = $can_read_markup_cache && ! is_user_logged_in();
 
 	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
@@ -253,18 +254,37 @@ function rentfetch_rest_search_properties( $request ) {
 			)
 		)
 	);
-	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$cached_markup = get_transient( $cache_key );
+	if ( $can_read_markup_cache ) {
+		$cached_markup = rentfetch_get_cache_transient( $cache_key, $cache_is_stale );
 		if ( false !== $cached_markup && is_array( $cached_markup ) ) {
+			$background_refresh_scheduled = false;
+			if ( $cache_is_stale && $can_write_markup_cache ) {
+				$background_refresh_scheduled = true;
+				rentfetch_refresh_cache_after_response(
+					$cache_key,
+					function() use ( $cache_key, $property_args ) {
+						rentfetch_set_cache_transient( $cache_key, rentfetch_render_property_query_results_data( $property_args ) );
+					}
+				);
+			}
+
 			$response = rest_ensure_response(
 				array(
 					'html'       => $cached_markup['html'],
 					'map_points' => isset( $cached_markup['map_points'] ) && is_array( $cached_markup['map_points'] ) ? $cached_markup['map_points'] : array(),
 					'count'      => substr_count( $cached_markup['html'], 'class="property' ),
 					'cached' => true,
+					'stale'  => $cache_is_stale,
+					'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'hit', $cache_is_stale, $background_refresh_scheduled ),
 				)
 			);
-			$response->header( 'Cache-Control', 'public, max-age=1800' );
+			if ( $can_write_markup_cache ) {
+				$response->header( 'Cache-Control', 'public, max-age=3600' );
+			} else {
+				$response->header( 'Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0' );
+				$response->header( 'Pragma', 'no-cache' );
+				$response->header( 'Expires', '0' );
+			}
 			return $response;
 		}
 	}
@@ -273,8 +293,8 @@ function rentfetch_rest_search_properties( $request ) {
 	$results_data = rentfetch_render_property_query_results_data( $property_args );
 
 	// Cache the results
-	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $results_data, 30 * MINUTE_IN_SECONDS );
+	if ( $can_write_markup_cache ) {
+		rentfetch_set_cache_transient( $cache_key, $results_data );
 	}
 
 	$response = rest_ensure_response(
@@ -283,16 +303,18 @@ function rentfetch_rest_search_properties( $request ) {
 			'map_points' => $results_data['map_points'],
 			'count'      => substr_count( $results_data['html'], 'class="property' ),
 			'cached' => false,
+			'stale'  => false,
+			'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'miss' ),
 		)
 	);
 
 	// Set cache headers if caching is enabled and this response is safe for shared caches.
-	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$response->header( 'Cache-Control', 'public, max-age=1800, s-maxage=1800' );
+	if ( $can_write_markup_cache ) {
+		$response->header( 'Cache-Control', 'public, max-age=3600, s-maxage=3600' );
 		$response->header( 'X-WP-Cacheable', 'yes' );
 		$response->header( 'Pragma', 'public' );
 		// Remove cache-busting headers that WordPress might add
-		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + 1800 ) . ' GMT' );
+		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + HOUR_IN_SECONDS ) . ' GMT' );
 	} else {
 		$response->header( 'Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0' );
 		$response->header( 'Pragma', 'no-cache' );
@@ -309,7 +331,8 @@ function rentfetch_rest_search_properties( $request ) {
  * @return WP_REST_Response
  */
 function rentfetch_rest_search_floorplans( $request ) {
-	$can_use_markup_cache = ! is_user_logged_in();
+	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching' ) !== '1';
+	$can_write_markup_cache = $can_read_markup_cache && ! is_user_logged_in();
 
 	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
@@ -345,17 +368,36 @@ function rentfetch_rest_search_floorplans( $request ) {
 
 	// Build cache key
 	$cache_key = 'rentfetch_floorplansearch_markup_' . md5( wp_json_encode( array( 'args' => $floorplan_args, 'atts' => $atts ) ) );
-	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$cached_markup = get_transient( $cache_key );
+	if ( $can_read_markup_cache ) {
+		$cached_markup = rentfetch_get_cache_transient( $cache_key, $cache_is_stale );
 		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
+			$background_refresh_scheduled = false;
+			if ( $cache_is_stale && $can_write_markup_cache ) {
+				$background_refresh_scheduled = true;
+				rentfetch_refresh_cache_after_response(
+					$cache_key,
+					function() use ( $cache_key, $floorplan_args ) {
+						rentfetch_set_cache_transient( $cache_key, rentfetch_render_floorplan_query_results( $floorplan_args ) );
+					}
+				);
+			}
+
 			$response = rest_ensure_response(
 				array(
 					'html'  => $cached_markup,
 					'count' => substr_count( $cached_markup, 'class="floorplan' ),
 					'cached' => true,
+					'stale'  => $cache_is_stale,
+					'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'hit', $cache_is_stale, $background_refresh_scheduled ),
 				)
 			);
-			$response->header( 'Cache-Control', 'public, max-age=1800' );
+			if ( $can_write_markup_cache ) {
+				$response->header( 'Cache-Control', 'public, max-age=3600' );
+			} else {
+				$response->header( 'Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0' );
+				$response->header( 'Pragma', 'no-cache' );
+				$response->header( 'Expires', '0' );
+			}
 			return $response;
 		}
 	}
@@ -364,8 +406,8 @@ function rentfetch_rest_search_floorplans( $request ) {
 	$markup = rentfetch_render_floorplan_query_results( $floorplan_args );
 
 	// Cache the results
-	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $markup, 30 * MINUTE_IN_SECONDS );
+	if ( $can_write_markup_cache ) {
+		rentfetch_set_cache_transient( $cache_key, $markup );
 	}
 
 	$response = rest_ensure_response(
@@ -373,16 +415,18 @@ function rentfetch_rest_search_floorplans( $request ) {
 			'html'  => $markup,
 			'count' => substr_count( $markup, 'class="floorplan' ),
 			'cached' => false,
+			'stale'  => false,
+			'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'miss' ),
 		)
 	);
 
 	// Set cache headers if caching is enabled and this response is safe for shared caches.
-	if ( $can_use_markup_cache && get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$response->header( 'Cache-Control', 'public, max-age=1800, s-maxage=1800' );
+	if ( $can_write_markup_cache ) {
+		$response->header( 'Cache-Control', 'public, max-age=3600, s-maxage=3600' );
 		$response->header( 'X-WP-Cacheable', 'yes' );
 		$response->header( 'Pragma', 'public' );
 		// Remove cache-busting headers that WordPress might add
-		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + 1800 ) . ' GMT' );
+		$response->header( 'Expires', gmdate( 'D, d M Y H:i:s', time() + HOUR_IN_SECONDS ) . ' GMT' );
 	} else {
 		$response->header( 'Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0' );
 		$response->header( 'Pragma', 'no-cache' );

@@ -38,10 +38,10 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	$args = apply_filters( 'rentfetch_search_floorplans_query_args', $args );
 
 	// Pseudocache: use a transient keyed by the query args to avoid expensive SQL on
-	// repeated calls. Expires after 5 minutes.
+	// repeated calls.
 	$cache_key = 'rentfetch_floorplans_array_sql_' . md5( wp_json_encode( $args ) );
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$cached = get_transient( $cache_key );
+		$cached = rentfetch_get_cache_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) ) {
 			// Populate the global and return cached value.
 			$floorplans = $cached;
@@ -107,7 +107,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	if ( empty( $ids ) ) {
 		// Cache empty results briefly to avoid repeated queries returning no IDs.
 		if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' && isset( $cache_key ) ) {
-			set_transient( $cache_key, array(), 5 * MINUTE_IN_SECONDS );
+			rentfetch_set_cache_transient( $cache_key, array() );
 		}
 		return array();
 	}
@@ -247,9 +247,9 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 		}
 	}
 
-	// Save computed floorplans to transient for 5 minutes to improve performance.
+	// Save computed floorplans to transient to improve performance.
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' && isset( $cache_key ) ) {
-		set_transient( $cache_key, $floorplans, 5 * MINUTE_IN_SECONDS );
+		rentfetch_set_cache_transient( $cache_key, $floorplans );
 	}
 
 	return $floorplans;
@@ -520,7 +520,7 @@ function rentfetch_get_property_ids_with_available_floorplans( $args = array() )
 	// Pseudocache: use a transient keyed by the query args
 	$cache_key = 'rentfetch_property_ids_available_' . md5( wp_json_encode( $args ) );
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$cached = get_transient( $cache_key );
+		$cached = rentfetch_get_cache_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) ) {
 			return $cached;
 		}
@@ -579,7 +579,7 @@ function rentfetch_get_property_ids_with_available_floorplans( $args = array() )
 	if ( empty( $ids ) ) {
 		// Cache empty results briefly
 		if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' && isset( $cache_key ) ) {
-			set_transient( $cache_key, array(), 5 * MINUTE_IN_SECONDS );
+			rentfetch_set_cache_transient( $cache_key, array() );
 		}
 		return array();
 	}
@@ -595,7 +595,7 @@ function rentfetch_get_property_ids_with_available_floorplans( $args = array() )
 
 	// Cache the results
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $property_ids, 5 * MINUTE_IN_SECONDS );
+		rentfetch_set_cache_transient( $cache_key, $property_ids );
 	}
 
 	return $property_ids;

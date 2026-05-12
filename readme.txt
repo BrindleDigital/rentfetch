@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.35.3
+Stable tag: 0.35.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,15 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.35.4 =
+
+* Extended search/query transient caching to use a 10-day lifetime with 1-hour stale refresh behavior.
+* Added a 500-entry cap for search/query cache combinations, prioritizing cache pre-fetching for the top tracked searches.
+* Added a Performance cache dashboard with HTML/query transient counts, age details, and cache hit-rate history.
+* Added an optional Performance setting to log search cache hits, misses, stale responses, and refresh scheduling in the browser console.
+* Allowed logged-in users to read existing search/query cache entries without writing new entries.
+* Improved property map updates with shared InfoWindow handling, less repetitive bounds fitting, and stable grid-to-marker matching after map filtering.
 
 = 0.35.3 =
 

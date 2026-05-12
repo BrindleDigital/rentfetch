@@ -10,6 +10,7 @@ jQuery(function ($) {
 		'data-property-search-shortcode-attributes'
 	);
 	var $filter = $('#filter');
+	var $featuredFilters = $('#featured-filters');
 	var $reset = $('#reset');
 	var $response = $('#response');
 	var $filterToggles = $('#filter-toggles');
@@ -68,6 +69,58 @@ jQuery(function ($) {
 
 	function renderSearchError($target, message) {
 		$target.html('<p>' + $('<div>').text(message).html() + '</p>');
+	}
+
+	function logTransientCacheDebug(debug) {
+		if (
+			!rentfetchConfig.enableCacheConsoleLogging ||
+			!debug ||
+			!window.console ||
+			!console.info
+		) {
+			return;
+		}
+
+		var label =
+			debug.status === 'hit'
+				? 'Rent Fetch transient HIT'
+				: 'Rent Fetch transient MISS';
+
+		console.info(label + ': ' + debug.description, {
+			key: debug.key,
+			family: debug.family,
+			stale: !!debug.stale,
+		});
+
+		if (debug.background_refresh_scheduled) {
+			console.info(
+				'Rent Fetch background transient refresh scheduled: ' +
+					debug.description,
+				{
+					key: debug.key,
+					family: debug.family,
+				}
+			);
+		}
+
+		if (Array.isArray(debug.events)) {
+			debug.events.forEach(function (event) {
+				if (event.key === debug.key) {
+					return;
+				}
+
+				console.info(
+					'Rent Fetch query transient ' +
+						event.status.toUpperCase() +
+						': ' +
+						event.description,
+					{
+						key: event.key,
+						family: event.family,
+					}
+				);
+			});
+		}
 	}
 
 	var dateRangeCache = {};
@@ -390,6 +443,8 @@ jQuery(function ($) {
 					return;
 				}
 
+				logTransientCacheDebug(response.cache_debug);
+
 				$reset.text('Clear All');
 				$response.html(response.html);
 				latestMapPoints = Array.isArray(response.map_points)
@@ -448,13 +503,13 @@ jQuery(function ($) {
 	}
 
 	function clearFilterValues() {
-		$('#filter, #featured-filters')
+		$filter.add($featuredFilters)
 			.find('input:not([type="hidden"],[type="checkbox"],[type="radio"])')
 			.val('');
-		$('#filter, #featured-filters')
+		$filter.add($featuredFilters)
 			.find('[type="checkbox"]:checked')
 			.prop('checked', false);
-		$('#filter, #featured-filters')
+		$filter.add($featuredFilters)
 			.find('[type="radio"]:checked')
 			.prop('checked', false);
 
@@ -465,7 +520,7 @@ jQuery(function ($) {
 		$('#pricebig, #featured-pricebig').val(defaultValBig);
 	}
 
-	$(document).on('click', '#filter-toggles button', function () {
+	$filterToggles.on('click', 'button', function () {
 		var dataId = $(this).data('id');
 
 		if (dataId === 'map_area') {
@@ -475,7 +530,9 @@ jQuery(function ($) {
 			return;
 		}
 
-		var correspondingFields = $('[name="' + dataId + '"]');
+		var correspondingFields = $filter
+			.add($featuredFilters)
+			.find('[name="' + dataId + '"]');
 		var fieldset = correspondingFields.closest('fieldset');
 
 		fieldset.find(':checkbox').prop('checked', false);
@@ -483,13 +540,13 @@ jQuery(function ($) {
 		submitForm();
 	});
 
-	$('#reset, #featured-reset').click(function () {
+	$filter.add($featuredFilters).on('click', '#reset, #featured-reset', function () {
 		clearMapBoundsFilter();
 		clearFilterValues();
 		submitForm({ preserveCurrentMapBounds: false });
 	});
 
-	var $inputs = $('input, select, textarea');
+	var $inputs = $filter.add($featuredFilters).find('input, select, textarea');
 	$inputs.on('change input', function () {
 		var $source = $(this);
 		var elementName = $source.attr('name');

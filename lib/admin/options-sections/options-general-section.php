@@ -19,6 +19,7 @@ function rentfetch_settings_set_defaults_general() {
 	add_option( 'rentfetch_options_disable_query_caching', '0' );
 	add_option( 'rentfetch_options_enable_search_indexes', '1' );
 	add_option( 'rentfetch_options_enable_cache_warming', '0' );
+	add_option( 'rentfetch_options_enable_cache_console_logging', '0' );
 	add_option( 'rentfetch_options_enable_search_tracking', '1' );
 	add_option( 'rentfetch_options_enable_analytics', '1' );
 	add_option( 'rentfetch_options_enable_analytics_debug', '0' );
@@ -117,7 +118,7 @@ function rentfetch_settings_general_performance() {
 	<div class="row">
 		<div class="section">
 			<label class="label-large">Search Result Caching</label>
-			<p class="description">Cache search results for 30 minutes to improve performance. Results are cached in WordPress transients (Redis/Memcached if configured) and sent with cache headers for CDN/edge caching (Varnish, Fastly, Cloudflare, etc.). Recommended for best performance. Only disable if you need real-time data updates or are troubleshooting cache issues. <em>Note: Disabling this setting prevents future caching but does not purge existing CDN/edge caches. You may need to manually purge your cache (typically through your host or CDN provider) to see immediate changes.</em></p>
+			<p class="description">Cache search results for up to 10 days to improve performance. Cached results older than 1 hour are served immediately and refreshed behind the scenes. Rent Fetch keeps up to 500 search/query cache combinations and prioritizes the top 50 tracked searches used by cache pre-fetching. Results are cached in WordPress transients (Redis/Memcached if configured) and sent with cache headers for CDN/edge caching (Varnish, Fastly, Cloudflare, etc.). Recommended for best performance. Only disable if you need real-time data updates or are troubleshooting cache issues. <em>Note: Disabling this setting prevents future caching but does not purge existing CDN/edge caches. You may need to manually purge your cache (typically through your host or CDN provider) to see immediate changes.</em></p>
 			<ul class="checkboxes">
 				<li>
 					<label for="rentfetch_options_disable_query_caching">
@@ -130,6 +131,13 @@ function rentfetch_settings_general_performance() {
 						<input type="checkbox" name="rentfetch_options_enable_cache_warming" id="rentfetch_options_enable_cache_warming" <?php checked( get_option( 'rentfetch_options_enable_cache_warming', '0' ), '1' ); ?>>
 						Automatically pre-fetch popular searches every 25 minutes (recommended)
 					</label>
+				</li>
+				<li>
+					<label for="rentfetch_options_enable_cache_console_logging">
+						<input type="checkbox" name="rentfetch_options_enable_cache_console_logging" id="rentfetch_options_enable_cache_console_logging" <?php checked( get_option( 'rentfetch_options_enable_cache_console_logging', '0' ), '1' ); ?>>
+						Show cache hits and misses in the browser console
+					</label>
+					<p class="description">When enabled, frontend property and floorplan searches log transient cache hits, misses, stale responses, and background refresh scheduling in DevTools. This is intended for troubleshooting cache behavior and is off by default.</p>
 				</li>
 			</ul>
 
@@ -144,6 +152,16 @@ function rentfetch_settings_general_performance() {
 			</p>
 			<div id="rentfetch-popular-searches-container" style="display: none; margin-top: 15px; background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
 				<p style="color: #646970; padding: 20px;"><em>Loading...</em></p>
+			</div>
+
+			<div id="rentfetch-cache-dashboard" style="margin-top: 18px; background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04);">
+				<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid #dcdcde;">
+					<strong>Transient Cache Dashboard</strong>
+					<button type="button" class="button button-small" id="rentfetch-refresh-cache-stats">Refresh Stats</button>
+				</div>
+				<div id="rentfetch-cache-dashboard-content">
+					<p style="color: #646970; padding: 16px; margin: 0;"><em>Loading cache stats...</em></p>
+				</div>
 			</div>
 
 			<style>
@@ -173,10 +191,136 @@ function rentfetch_settings_general_performance() {
 					overflow-wrap: anywhere;
 					word-break: break-word;
 				}
+				#rentfetch-cache-dashboard .rentfetch-cache-stat-grid {
+					display: grid;
+					grid-template-columns: repeat(2, minmax(0, 1fr));
+					gap: 12px;
+					padding: 16px;
+				}
+				#rentfetch-cache-dashboard .rentfetch-cache-stat-box {
+					border: 1px solid #dcdcde;
+					border-radius: 4px;
+					padding: 14px;
+					background: #f6f7f7;
+				}
+				#rentfetch-cache-dashboard .rentfetch-cache-stat-box h4 {
+					margin: 0 0 10px;
+				}
+				#rentfetch-cache-dashboard .rentfetch-cache-stat-number {
+					font-size: 28px;
+					line-height: 1.1;
+					font-weight: 600;
+					color: #1d2327;
+				}
+				#rentfetch-cache-dashboard .rentfetch-cache-stat-meta {
+					margin: 10px 0 0;
+					color: #646970;
+					font-size: 13px;
+				}
+				#rentfetch-cache-dashboard .rentfetch-cache-history {
+					padding: 0 16px 16px;
+				}
+				#rentfetch-cache-dashboard table {
+					margin: 0;
+				}
+				@media (max-width: 782px) {
+					#rentfetch-cache-dashboard .rentfetch-cache-stat-grid {
+						grid-template-columns: 1fr;
+					}
+				}
 			</style>
 
 			<script>
 			jQuery(document).ready(function($) {
+				function rentfetchPercent(hits, misses) {
+					var total = hits + misses;
+					if (!total) {
+						return 'n/a';
+					}
+					return Math.round((hits / total) * 100) + '%';
+				}
+
+				function rentfetchLoadCacheStats() {
+					var $content = $('#rentfetch-cache-dashboard-content');
+					var $button = $('#rentfetch-refresh-cache-stats');
+
+					$button.prop('disabled', true);
+					$content.html('<p style="color: #646970; padding: 16px; margin: 0;"><em>Loading cache stats...</em></p>');
+
+					$.post(ajaxurl, {
+						action: 'rentfetch_get_cache_stats',
+						nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_cache_stats' ) ); ?>'
+					}, function(response) {
+						$button.prop('disabled', false);
+
+						if (!response.success) {
+							$content.html('<p style="color: #d63638; padding: 16px; margin: 0;"><em>' + response.data.message + '</em></p>');
+							return;
+						}
+
+						var families = response.data.families || {};
+						var htmlStats = families.html || {};
+						var queryStats = families.query || {};
+						var history = response.data.hit_history || {};
+						var html = '<div class="rentfetch-cache-stat-grid">';
+						var boxes = [
+							{ title: 'HTML Transients', stats: htmlStats },
+							{ title: 'Query Result Transients', stats: queryStats }
+						];
+
+						$.each(boxes, function(index, box) {
+							var stats = box.stats || {};
+							html += '<div class="rentfetch-cache-stat-box">';
+							html += '<h4>' + box.title + '</h4>';
+							html += '<div class="rentfetch-cache-stat-number">' + (stats.count || 0) + '</div>';
+							html += '<p class="rentfetch-cache-stat-meta">';
+							html += 'Fresh: ' + (stats.fresh || 0) + ' | Stale: ' + (stats.stale || 0) + ' | Priority: ' + (stats.priority || 0) + '<br>';
+							html += 'Newest: ' + (stats.newest_age_label || 'n/a') + ' | Oldest: ' + (stats.oldest_age_label || 'n/a');
+							html += '</p>';
+							html += '</div>';
+						});
+
+						html += '</div>';
+						html += '<div class="rentfetch-cache-history">';
+						html += '<table class="widefat striped"><thead><tr>';
+						html += '<th>Date</th><th>HTML Hit Rate</th><th>HTML Hits / Misses</th><th>Query Hit Rate</th><th>Query Hits / Misses</th>';
+						html += '</tr></thead><tbody>';
+
+						if (Object.keys(history).length) {
+							$.each(history, function(date, day) {
+								var htmlDay = day.html || { hits: 0, misses: 0 };
+								var queryDay = day.query || { hits: 0, misses: 0 };
+
+								html += '<tr>';
+								html += '<td>' + date + '</td>';
+								html += '<td>' + rentfetchPercent(parseInt(htmlDay.hits || 0, 10), parseInt(htmlDay.misses || 0, 10)) + '</td>';
+								html += '<td>' + (htmlDay.hits || 0) + ' / ' + (htmlDay.misses || 0) + '</td>';
+								html += '<td>' + rentfetchPercent(parseInt(queryDay.hits || 0, 10), parseInt(queryDay.misses || 0, 10)) + '</td>';
+								html += '<td>' + (queryDay.hits || 0) + ' / ' + (queryDay.misses || 0) + '</td>';
+								html += '</tr>';
+							});
+						} else {
+							html += '<tr><td colspan="5" style="color: #646970;"><em>No cache hit-rate data has been recorded yet.</em></td></tr>';
+						}
+
+						html += '</tbody></table>';
+						html += '<p style="color: #646970; font-size: 13px;"><em>Showing the last 14 days of transient cache lookups. Current cache limit: ' + response.data.limit + ' search/query combinations.</em></p>';
+						html += '</div>';
+
+						$content.html(html);
+					}).fail(function() {
+						$button.prop('disabled', false);
+						$content.html('<p style="color: #d63638; padding: 16px; margin: 0;"><em>Error loading cache stats.</em></p>');
+					});
+				}
+
+				rentfetchLoadCacheStats();
+
+				$('#rentfetch-refresh-cache-stats').on('click', function(e) {
+					e.preventDefault();
+					rentfetchLoadCacheStats();
+				});
+
 				// Clear cache button
 				$('#rentfetch-clear-cache').on('click', function(e) {
 					e.preventDefault();
@@ -577,6 +721,10 @@ function rentfetch_save_settings_general_performance() {
 	$previous_cache_warming = get_option( 'rentfetch_options_enable_cache_warming', '0' );
 	update_option( 'rentfetch_options_enable_cache_warming', $enable_cache_warming );
 
+	// Checkbox field - Enable frontend cache console logging (checked = '1', unchecked = '0').
+	$enable_cache_console_logging = isset( $_POST['rentfetch_options_enable_cache_console_logging'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_enable_cache_console_logging', $enable_cache_console_logging );
+
 	// Schedule or unschedule cache warming based on setting change.
 	if ( $enable_cache_warming !== $previous_cache_warming ) {
 		if ( function_exists( 'rentfetch_schedule_cache_warming' ) ) {
@@ -592,6 +740,8 @@ function rentfetch_save_settings_general_performance() {
 			$key = str_replace( '_transient_', '', $transient );
 			delete_transient( $key );
 		}
+		delete_option( 'rentfetch_search_query_cache_registry' );
+		delete_option( 'rentfetch_search_query_cache_stats' );
 	}
 
 	// Checkbox field - Enable search indexes.

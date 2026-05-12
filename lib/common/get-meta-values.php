@@ -29,7 +29,7 @@ function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publis
 	// Pseudocache: transient keyed by key/type/status to avoid repeated DB queries.
 	$cache_key = 'rentfetch_meta_values_' . md5( wp_json_encode( array( 'key' => $key, 'type' => $type, 'status' => $status ) ) );
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$cached = get_transient( $cache_key );
+		$cached = rentfetch_get_cache_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) ) {
 			return $cached;
 		}
@@ -60,7 +60,7 @@ function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publis
 
 	// Cache the result briefly to avoid repeated expensive queries.
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		set_transient( $cache_key, $r, 5 * MINUTE_IN_SECONDS );
+		rentfetch_set_cache_transient( $cache_key, $r );
 	}
 
 	return $r;

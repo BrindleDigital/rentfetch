@@ -9,6 +9,11 @@ jQuery(function ($) {
 	var shortcodeAttributesJson = $searchRoot.attr(
 		'data-floorplan-search-shortcode-attributes'
 	);
+	var $filter = $('#filter');
+	var $featuredFilters = $('#featured-filters');
+	var $filterToggles = $('#filter-toggles');
+	var $response = $('#response');
+	var $reset = $('#reset');
 
 	if (shortcodeAttributesJson) {
 		try {
@@ -60,6 +65,58 @@ jQuery(function ($) {
 		$target.html('<p>' + $('<div>').text(message).html() + '</p>');
 	}
 
+	function logTransientCacheDebug(debug) {
+		if (
+			!rentfetchConfig.enableCacheConsoleLogging ||
+			!debug ||
+			!window.console ||
+			!console.info
+		) {
+			return;
+		}
+
+		var label =
+			debug.status === 'hit'
+				? 'Rent Fetch transient HIT'
+				: 'Rent Fetch transient MISS';
+
+		console.info(label + ': ' + debug.description, {
+			key: debug.key,
+			family: debug.family,
+			stale: !!debug.stale,
+		});
+
+		if (debug.background_refresh_scheduled) {
+			console.info(
+				'Rent Fetch background transient refresh scheduled: ' +
+					debug.description,
+				{
+					key: debug.key,
+					family: debug.family,
+				}
+			);
+		}
+
+		if (Array.isArray(debug.events)) {
+			debug.events.forEach(function (event) {
+				if (event.key === debug.key) {
+					return;
+				}
+
+				console.info(
+					'Rent Fetch query transient ' +
+						event.status.toUpperCase() +
+						': ' +
+						event.description,
+					{
+						key: event.key,
+						family: event.family,
+					}
+				);
+			});
+		}
+	}
+
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
 		var url = new URL(window.location.href);
@@ -77,8 +134,6 @@ jQuery(function ($) {
 	// Function to get query parameters from form for URL updates
 	function getQueryParametersFromForm() {
 		var queryParams = {};
-		var $filter = $('#filter');
-
 		$filter.find('input, select').each(function () {
 			var inputName = $(this).attr('name');
 			var inputId = $(this).attr('id');
@@ -119,9 +174,11 @@ jQuery(function ($) {
 	}
 
 	// Function to clear values from corresponding fields and trigger change event
-	$(document).on('click', '#filter-toggles button', function () {
+	$filterToggles.on('click', 'button', function () {
 		var dataId = $(this).data('id');
-		var correspondingFields = $('[name="' + dataId + '"]');
+		var correspondingFields = $filter
+			.add($featuredFilters)
+			.find('[name="' + dataId + '"]');
 		var fieldset = correspondingFields.closest('fieldset'); // Find the fieldset containing the correspondingFields
 
 		fieldset.find(':checkbox').prop('checked', false); // Clear checkbox inputs within the fieldset
@@ -303,8 +360,8 @@ jQuery(function ($) {
 	function performAJAXSearch(queryParams) {
 		if (!restUrl) {
 			console.error('REST API URL not available');
-			$('#reset').text('Clear All');
-			$('#response').html(
+			$reset.text('Clear All');
+			$response.html(
 				'<p>Search service unavailable. Please refresh the page and try again.</p>'
 			);
 			return;
@@ -314,12 +371,11 @@ jQuery(function ($) {
 
 	// Function to perform the actual REST API search
 	function performActualSearch(queryParams) {
-		var filter = $('#filter');
-		var toggleData = filter;
+		var toggleData = $filter;
 
 		// Build query parameters from form
 		var formData = {};
-		filter.find('input, select').each(function () {
+		$filter.find('input, select').each(function () {
 			var name = $(this).attr('name');
 			var value = $(this).val();
 
@@ -359,15 +415,17 @@ jQuery(function ($) {
 				if (rentfetchConfig.nonce) {
 					xhr.setRequestHeader('X-WP-Nonce', rentfetchConfig.nonce);
 				}
-				$('#reset').text('Searching...'); // changing the button label
-				$('#response').html(''); // clear response div
+				$reset.text('Searching...'); // changing the button label
+				$response.html(''); // clear response div
 			},
 			success: function (response) {
-				$('#reset').text('Clear All'); // changing the button label
-				$('#response').html(response.html); // insert HTML from REST response
+				logTransientCacheDebug(response.cache_debug);
+
+				$reset.text('Clear All'); // changing the button label
+				$response.html(response.html); // insert HTML from REST response
 
 				var toggles = outputToggles(toggleData);
-				$('#filter-toggles').html(toggles);
+				$filterToggles.html(toggles);
 
 				// look in data for .properties-loop, and count the number of children
 				var count = $('.floorplans-loop').children().length;
@@ -383,9 +441,9 @@ jQuery(function ($) {
 					errorThrown: errorThrown,
 				});
 
-				$('#reset').text('Clear All');
+				$reset.text('Clear All');
 				renderSearchError(
-					$('#response'),
+					$response,
 					getSearchErrorMessage(jqXHR, textStatus, errorThrown)
 				);
 			},
@@ -426,13 +484,13 @@ jQuery(function ($) {
 	// Function to clear all values from fields in #filter when #reset is clicked
 	function clearFilterValues() {
 		// Reset all non-hidden inputs to null value
-		$('#filter, #featured-filters')
+		$filter.add($featuredFilters)
 			.find('input:not([type="hidden"],[type="checkbox"],[type="radio"])')
 			.val('');
 		// .trigger('change'); // Trigger the change event
 
 		// Reset checkboxes to unchecked
-		$('#filter, #featured-filters')
+		$filter.add($featuredFilters)
 			.find('[type="checkbox"]:checked') // Select only checked checkboxes
 			.prop('checked', false);
 		// .trigger('change'); // Trigger the change event
@@ -449,7 +507,7 @@ jQuery(function ($) {
 	}
 
 	// Call the function when #reset is clicked
-	$('#reset, #featured-reset').click(function () {
+	$filter.add($featuredFilters).on('click', '#reset, #featured-reset', function () {
 		clearFilterValues();
 		submitForm();
 	});
@@ -457,7 +515,7 @@ jQuery(function ($) {
 	//! SYNC THE FORMS
 
 	// Select all input, select, and textarea elements
-	var $inputs = $('input, select, textarea');
+	var $inputs = $filter.add($featuredFilters).find('input, select, textarea');
 
 	var programmaticChange = false; // Flag to check if the change was programmatic
 

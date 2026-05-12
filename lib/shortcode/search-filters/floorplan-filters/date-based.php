@@ -23,9 +23,9 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 	if ( isset( $cache[ $cache_key ] ) ) {
 		return $cache[ $cache_key ];
 	}
-	
+
 	$transient_key = 'rentfetch_date_availability_' . $cache_key;
-	$has_availability = get_transient( $transient_key );
+	$has_availability = rentfetch_get_cache_transient( $transient_key );
 	if ( false !== $has_availability ) {
 		$cache[ $cache_key ] = (bool) $has_availability;
 		return $cache[ $cache_key ];
@@ -57,7 +57,7 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 
 	$has_availability = ( $floorplan_count > 0 || $unit_count > 0 );
 
-	set_transient( $transient_key, $has_availability, 30 * MINUTE_IN_SECONDS );
+	rentfetch_set_cache_transient( $transient_key, $has_availability );
 
 	$cache[ $cache_key ] = $has_availability;
 	return $has_availability;
@@ -229,7 +229,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	$transient_key = 'rentfetch_date_search_' . md5( serialize( $selected ) );
 	$floorplan_ids = false;
 	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-		$floorplan_ids = get_transient( $transient_key );
+		$floorplan_ids = rentfetch_get_cache_transient( $transient_key );
 	}
 
 	if ( false === $floorplan_ids ) {
@@ -296,7 +296,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 
 		$floorplan_ids = array_unique( array_map( 'intval', $floorplan_ids ) );
 		if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
-			set_transient( $transient_key, $floorplan_ids, 5 * MINUTE_IN_SECONDS ); // Cache for 5 minutes
+			rentfetch_set_cache_transient( $transient_key, $floorplan_ids );
 		}
 	}
 

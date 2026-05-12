@@ -37,6 +37,8 @@ function rentfetch_ajax_clear_search_cache() {
 			OR option_name LIKE '_transient_rentfetch_meta_values_%'
 			OR option_name LIKE '_transient_rentfetch_property_ids_available_%'
 			OR option_name LIKE '_transient_rentfetch_property_floorplans_%'
+			OR option_name LIKE '_transient_rentfetch_date_availability_%'
+			OR option_name LIKE '_transient_rentfetch_date_search_%'
 			OR option_name LIKE '_transient_rentfetch_fees_csv_%'
 			OR option_name LIKE '_transient_rentfetch_fees_csv_calc_%')
 			AND option_name NOT LIKE '_transient_timeout_%'"
@@ -61,11 +63,18 @@ function rentfetch_ajax_clear_search_cache() {
 			OR option_name LIKE '_transient_timeout_rentfetch_property_ids_available_%'
 				OR option_name LIKE '_transient_rentfetch_property_floorplans_%' 
 				OR option_name LIKE '_transient_timeout_rentfetch_property_floorplans_%'
+				OR option_name LIKE '_transient_rentfetch_date_availability_%'
+				OR option_name LIKE '_transient_timeout_rentfetch_date_availability_%'
+				OR option_name LIKE '_transient_rentfetch_date_search_%'
+				OR option_name LIKE '_transient_timeout_rentfetch_date_search_%'
 				OR option_name LIKE '_transient_rentfetch_fees_csv_%'
 				OR option_name LIKE '_transient_timeout_rentfetch_fees_csv_%'
 				OR option_name LIKE '_transient_rentfetch_fees_csv_calc_%'
 				OR option_name LIKE '_transient_timeout_rentfetch_fees_csv_calc_%'"
 			);
+
+		delete_option( 'rentfetch_search_query_cache_registry' );
+		delete_option( 'rentfetch_search_query_cache_stats' );
 
 		wp_send_json_success(
 			array(
