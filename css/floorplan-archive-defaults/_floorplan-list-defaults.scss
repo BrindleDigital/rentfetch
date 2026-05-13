@@ -143,7 +143,7 @@
 		font-weight: bold;
 
 		@include mobile {
-			font-size: var(--rentfetch-font-size-small);
+			font-size: var(--rentfetch-font-size-smallest);
 			line-height: 1.2;
 		}
 

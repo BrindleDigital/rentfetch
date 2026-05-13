@@ -24,9 +24,17 @@
 
 	h3.floorplangrid__title {
 		margin-bottom: var(--rentfetch-space-2xs);
+
+		@include mobile {
+			font-size: var(--rentfetch-font-size-small);
+		}
 	}
 
 	.floorplangrid__info {
+		@include mobile {
+			font-size: var(--rentfetch-font-size-smallest);
+		}
+
 		> span {
 			display: inline-block;
 
@@ -50,6 +58,10 @@
 
 	.floorplangrid__rentrange {
 		font-weight: bold;
+
+		@include mobile {
+			font-size: var(--rentfetch-font-size-smallest);
+		}
 	}
 
 	.buttons {

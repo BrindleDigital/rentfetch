@@ -1538,6 +1538,13 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   justify-content: flex-start;
   gap: var(--rentfetch-space-xs);
 }
+@media (max-width: 600px) {
+  .floorplans-loop .floorplan-availability,
+  .floorplans-simple-grid .floorplan-availability {
+    margin-top: var(--rentfetch-space-xs);
+    padding-top: var(--rentfetch-space-xs);
+  }
+}
 .floorplans-loop p.pricing,
 .floorplans-simple-grid p.pricing {
   font-size: var(--rentfetch-font-size-medium);
@@ -1547,7 +1554,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 @media (max-width: 600px) {
   .floorplans-loop p.pricing,
   .floorplans-simple-grid p.pricing {
-    font-size: var(--rentfetch-font-size-small);
+    font-size: var(--rentfetch-font-size-smallest);
     line-height: 1.2;
   }
 }
@@ -1579,7 +1586,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 @media (max-width: 600px) {
   .floorplans-loop p.availability,
   .floorplans-simple-grid p.availability {
-    font-size: var(--rentfetch-font-size-smallest);
+    font-size: clamp(11px, 0.6875rem + 0.1vw, 12px);
     line-height: 1.25;
   }
 }
@@ -1780,7 +1787,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 @media (max-width: 600px) {
   .floorplans-in-archive p.pricing {
-    font-size: var(--rentfetch-font-size-small);
+    font-size: var(--rentfetch-font-size-smallest);
     line-height: 1.2;
   }
 }
@@ -1875,6 +1882,16 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 .floorplangrid h3.floorplangrid__title {
   margin-bottom: var(--rentfetch-space-2xs);
 }
+@media (max-width: 600px) {
+  .floorplangrid h3.floorplangrid__title {
+    font-size: var(--rentfetch-font-size-small);
+  }
+}
+@media (max-width: 600px) {
+  .floorplangrid .floorplangrid__info {
+    font-size: var(--rentfetch-font-size-smallest);
+  }
+}
 .floorplangrid .floorplangrid__info > span {
   display: inline-block;
 }
@@ -1891,6 +1908,11 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 .floorplangrid .floorplangrid__rentrange {
   font-weight: bold;
+}
+@media (max-width: 600px) {
+  .floorplangrid .floorplangrid__rentrange {
+    font-size: var(--rentfetch-font-size-smallest);
+  }
 }
 .floorplangrid .buttons {
   padding-top: var(--rentfetch-space-xs);
@@ -3193,6 +3215,16 @@ footer.property-search-filters-footer button#show-properties {
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
+}
+
+@media (max-width: 600px) {
+  .rent-fetch-floorplan-search-default-layout #featured-filters button.toggle,
+  .rent-fetch-floorplan-search-default-layout #featured-filters button#open-search-filters {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--rentfetch-space-xs);
+    line-height: 1.2;
+  }
 }
 
 /* ==========================================================================

@@ -300,6 +300,20 @@
 	}
 }
 
+.rent-fetch-floorplan-search-default-layout {
+	#featured-filters {
+		button.toggle,
+		button#open-search-filters {
+			@include mobile {
+				display: inline-flex;
+				align-items: center;
+				padding: var(--rentfetch-space-xs);
+				line-height: 1.2;
+			}
+		}
+	}
+}
+
 /* ==========================================================================
    Specifically the properties filters
    ========================================================================== */
