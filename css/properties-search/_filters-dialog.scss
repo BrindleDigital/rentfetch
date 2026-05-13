@@ -38,6 +38,10 @@ header.property-search-filters-header {
 	padding: var(--rentfetch-space-lg);
 	border-bottom: 1px solid rgba(black, 0.1);
 
+	@include mobile {
+		padding: var(--rentfetch-space-md);
+	}
+
 	h2 {
 		font-size: var(--rentfetch-font-size-medium);
 		text-align: center;
@@ -55,10 +59,18 @@ form.property-search-filters {
 	margin-bottom: 0;
 	background-color: var(--rentfetch-base);
 
+	@include mobile {
+		padding: var(--rentfetch-space-xl);
+	}
+
 	fieldset {
 		border: none;
 		padding: 0;
 		margin-bottom: var(--rentfetch-space-2xl);
+
+		@include mobile {
+			margin-bottom: var(--rentfetch-space-xl);
+		}
 
 		&:last-child {
 			margin-bottom: 0;
@@ -111,6 +123,10 @@ form.property-search-filters {
 			justify-content: center;
 			gap: var(--rentfetch-space-lg);
 
+			@include mobile {
+				gap: var(--rentfetch-space-md);
+			}
+
 			.dash {
 				height: 1px;
 				background-color: black;
@@ -160,6 +176,10 @@ footer.property-search-filters-footer {
 	padding: var(--rentfetch-space-lg);
 	background-color: white;
 	border-top: 1px solid rgba(black, 0.1);
+
+	@include mobile {
+		padding: var(--rentfetch-space-md);
+	}
 
 	button#reset {
 		cursor: pointer;

@@ -10,7 +10,7 @@
 
 	@include mobile {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: var(--rentfetch-space-md);
+		gap: var(--rentfetch-space-sm);
 	}
 
 	.entry,

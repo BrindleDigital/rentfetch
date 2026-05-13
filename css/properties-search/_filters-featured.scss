@@ -9,6 +9,10 @@
 	width: 100%;
 	max-width: 100%;
 
+	@include mobile {
+		gap: var(--rentfetch-space-2xs);
+	}
+
 	input {
 		box-sizing: border-box;
 	}
@@ -43,6 +47,7 @@
 			@include mobile {
 				left: 0;
 				right: 0;
+				padding: var(--rentfetch-space-sm);
 			}
 
 			input[type='text'],
@@ -91,6 +96,10 @@
 				gap: var(--rentfetch-space-xs);
 				align-items: center;
 
+				@include mobile {
+					gap: var(--rentfetch-space-2xs);
+				}
+
 				> span {
 					display: block;
 				}
@@ -111,6 +120,10 @@
 			align-items: center;
 			justify-content: center;
 			gap: var(--rentfetch-space-xs);
+
+			@include mobile {
+				gap: var(--rentfetch-space-2xs);
+			}
 
 			.dash {
 				height: 1px;
@@ -296,7 +309,7 @@
 		@include mobile {
 			display: grid;
 			grid-template-columns: 2fr auto;
-			gap: 0.5em;
+			gap: var(--rentfetch-space-2xs);
 		}
 	}
 

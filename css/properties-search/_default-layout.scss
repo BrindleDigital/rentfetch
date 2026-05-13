@@ -65,6 +65,10 @@ body {
 				padding: var(--rentfetch-space-md);
 			}
 
+			@include mobile {
+				padding: var(--rentfetch-space-sm);
+			}
+
 			.filter-details {
 				display: flex;
 				align-items: center;
@@ -76,7 +80,7 @@ body {
 			padding: var(--rentfetch-space-xl);
 
 			@include mobile {
-				padding: var(--rentfetch-space-lg);
+				padding: var(--rentfetch-space-md);
 			}
 		}
 	}

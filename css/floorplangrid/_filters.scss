@@ -2,6 +2,10 @@
 	text-align: center;
 	margin-bottom: var(--rentfetch-space-xl);
 
+	@include mobile {
+		margin-bottom: var(--rentfetch-space-lg);
+	}
+
 	li {
 		list-style: none;
 		margin: var(--rentfetch-space-2xs);
@@ -27,6 +31,7 @@
 		@include mobile {
 			width: 100%;
 			display: block;
+			padding: var(--rentfetch-space-xs) var(--rentfetch-space-md);
 		}
 
 		&.active {

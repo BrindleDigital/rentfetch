@@ -30,7 +30,7 @@
 
 		@include mobile {
 			grid-template-columns: 1fr;
-			margin-bottom: var(--rentfetch-space-lg);
+			margin-bottom: var(--rentfetch-space-md);
 		}
 
 		&:last-child {
