@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'RENTFETCH_CACHE_TTL' ) ) {
-	define( 'RENTFETCH_CACHE_TTL', 10 * DAY_IN_SECONDS );
+	define( 'RENTFETCH_CACHE_TTL', DAY_IN_SECONDS );
 }
 
 if ( ! defined( 'RENTFETCH_CACHE_STALE_AFTER' ) ) {

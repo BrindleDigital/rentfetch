@@ -105,6 +105,8 @@
 			display: block;
 			padding-left: 0;
 			padding-right: 0;
+			margin-top: 0;
+			margin-bottom: var(--rentfetch-space-xs);
 			position: relative;
 			white-space: nowrap;
 		}
@@ -119,16 +121,31 @@
 		font-size: var(--rentfetch-font-size-large);
 		line-height: 1.15;
 		color: var(--rentfetch-dark);
+		margin-bottom: var(--rentfetch-space-xs);
+
+		@include mobile {
+			font-size: var(--rentfetch-font-size-medium);
+		}
 	}
 
 	p.availability {
 		font-size: var(--rentfetch-font-size-small);
 		font-style: italic;
+
+		@include mobile {
+			font-size: var(--rentfetch-font-size-smallest);
+			line-height: 1.25;
+		}
 	}
 
 	p.pricing {
 		font-size: var(--rentfetch-font-size-medium);
 		font-weight: bold;
+
+		@include mobile {
+			font-size: var(--rentfetch-font-size-small);
+			line-height: 1.2;
+		}
 
 		.rentfetch-floorplan-rent-lines {
 			display: block;

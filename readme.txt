@@ -106,10 +106,11 @@ Start from your WordPress dashboard.
 = 0.35.5 =
 
 * Only send REST search nonces for logged-in visitors to prevent logged-out public searches from failing WordPress cookie nonce checks behind page caches or CDNs.
+* Reduced search/query transient cache lifetime from 10 days to 1 day while keeping 1-hour stale refresh behavior.
 
 = 0.35.4 =
 
-* Extended search/query transient caching to use a 10-day lifetime with 1-hour stale refresh behavior.
+* Extended search/query transient caching to use a configurable lifetime with 1-hour stale refresh behavior.
 * Added a 500-entry cap for search/query cache combinations, prioritizing cache pre-fetching for the top tracked searches.
 * Added a Performance cache dashboard with HTML/query transient counts, age details, and cache hit-rate history.
 * Added an optional Performance setting to log search cache hits, misses, stale responses, and refresh scheduling in the browser console.

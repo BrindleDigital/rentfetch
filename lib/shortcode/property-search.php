@@ -124,8 +124,8 @@ function rentfetch_propertysearch_filters_dialog() {
 
 		echo '</form>';
 		echo '<footer class="property-search-filters-footer">';
-			echo '<button id="reset">Clear All</button>';
-			echo '<button id="show-properties">Show <span id="properties-found"></span> Places</button>';
+			echo '<button type="button" id="reset">Clear All</button>';
+			echo '<button type="button" id="show-properties">Show <span id="properties-found"></span> Places</button>';
 		echo '</footer>';
 	echo '</dialog>';
 }

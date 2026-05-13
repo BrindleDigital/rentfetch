@@ -1412,11 +1412,17 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 .floorplans-loop .floorplan-content,
 .floorplans-simple-grid .floorplan-content {
-  margin-bottom: -15px;
+  margin-bottom: 0;
 }
 .floorplans-loop .floorplan-details,
 .floorplans-simple-grid .floorplan-details {
   padding: var(--rentfetch-space-md);
+}
+@media (max-width: 600px) {
+  .floorplans-loop .floorplan-details,
+  .floorplans-simple-grid .floorplan-details {
+    padding: var(--rentfetch-space-sm);
+  }
 }
 .floorplans-loop .floorplan-single-image-wrap,
 .floorplans-loop .floorplan-image-slide,
@@ -1464,13 +1470,20 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 .floorplans-loop .floorplan-content p,
 .floorplans-simple-grid .floorplan-content h3,
 .floorplans-simple-grid .floorplan-content p {
-  margin-bottom: var(--rentfetch-space-md);
+  margin-bottom: var(--rentfetch-space-xs);
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 1; /* number of lines to show */
-  line-clamp: 1;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+@media (max-width: 600px) {
+  .floorplans-loop .floorplan-content h3,
+  .floorplans-simple-grid .floorplan-content h3 {
+    font-size: var(--rentfetch-font-size-small);
+    line-height: 1.15;
+  }
 }
 .floorplans-loop .floorplan-attributes,
 .floorplans-simple-grid .floorplan-attributes {
@@ -1486,7 +1499,7 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   line-height: 1.35;
   display: block;
   padding: 0;
-  margin: 0 0 var(--rentfetch-space-md) 0;
+  margin: 0;
   position: relative;
   white-space: nowrap;
 }
@@ -1516,8 +1529,8 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
 }
 .floorplans-loop .floorplan-availability,
 .floorplans-simple-grid .floorplan-availability {
-  margin-top: var(--rentfetch-space-xs);
-  padding-top: var(--rentfetch-space-md);
+  margin-top: var(--rentfetch-space-sm);
+  padding-top: var(--rentfetch-space-sm);
   border-top: 1px solid rgba(0, 0, 0, 0.07);
   display: flex;
   flex-direction: column;
@@ -1530,6 +1543,13 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   font-size: var(--rentfetch-font-size-medium);
   font-weight: bold;
   margin: 0;
+}
+@media (max-width: 600px) {
+  .floorplans-loop p.pricing,
+  .floorplans-simple-grid p.pricing {
+    font-size: var(--rentfetch-font-size-small);
+    line-height: 1.2;
+  }
 }
 .floorplans-loop p.pricing .rentfetch-floorplan-rent-lines,
 .floorplans-simple-grid p.pricing .rentfetch-floorplan-rent-lines {
@@ -1555,6 +1575,13 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   font-size: var(--rentfetch-font-size-small);
   font-style: italic;
   margin: 0;
+}
+@media (max-width: 600px) {
+  .floorplans-loop p.availability,
+  .floorplans-simple-grid p.availability {
+    font-size: var(--rentfetch-font-size-smallest);
+    line-height: 1.25;
+  }
 }
 .floorplans-loop .overlay-link,
 .floorplans-simple-grid .overlay-link {
@@ -1717,6 +1744,8 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   display: block;
   padding-left: 0;
   padding-right: 0;
+  margin-top: 0;
+  margin-bottom: var(--rentfetch-space-xs);
   position: relative;
   white-space: nowrap;
 }
@@ -1728,14 +1757,32 @@ body a.rentfetch-button:hover, body a.rentfetch-button:focus {
   font-size: var(--rentfetch-font-size-large);
   line-height: 1.15;
   color: var(--rentfetch-dark);
+  margin-bottom: var(--rentfetch-space-xs);
+}
+@media (max-width: 600px) {
+  .floorplans-in-archive h4 {
+    font-size: var(--rentfetch-font-size-medium);
+  }
 }
 .floorplans-in-archive p.availability {
   font-size: var(--rentfetch-font-size-small);
   font-style: italic;
 }
+@media (max-width: 600px) {
+  .floorplans-in-archive p.availability {
+    font-size: var(--rentfetch-font-size-smallest);
+    line-height: 1.25;
+  }
+}
 .floorplans-in-archive p.pricing {
   font-size: var(--rentfetch-font-size-medium);
   font-weight: bold;
+}
+@media (max-width: 600px) {
+  .floorplans-in-archive p.pricing {
+    font-size: var(--rentfetch-font-size-small);
+    line-height: 1.2;
+  }
 }
 .floorplans-in-archive p.pricing .rentfetch-floorplan-rent-lines {
   display: block;
@@ -2709,7 +2756,7 @@ dialog#search-filters {
   overflow: hidden;
   position: fixed;
   transform: translateY(100vh) translateZ(0);
-  transition: 0.3s transform ease, 0.3s opacity ease;
+  transition: 0.15s transform ease, 0.15s opacity ease;
   display: block;
   opacity: 0;
 }
@@ -2718,9 +2765,9 @@ dialog#search-filters button.toggle {
 }
 dialog#search-filters::backdrop {
   background-color: transparent;
-  transition: 0.3s background-color ease, 1s -webkit-backdrop-filter ease;
-  transition: 0.3s background-color ease, 1s backdrop-filter ease;
-  transition: 0.3s background-color ease, 1s backdrop-filter ease, 1s -webkit-backdrop-filter ease;
+  transition: 0.15s background-color ease, 0.15s -webkit-backdrop-filter ease;
+  transition: 0.15s background-color ease, 0.15s backdrop-filter ease;
+  transition: 0.15s background-color ease, 0.15s backdrop-filter ease, 0.15s -webkit-backdrop-filter ease;
 }
 dialog#search-filters[open] {
   transform: none;
@@ -4013,6 +4060,11 @@ body.single-floorplans h2 {
 #details .property-details-body .property-main-content {
   min-width: 0;
 }
+@media (max-width: 600px) {
+  #details .property-details-body .property-main-content {
+    order: 2;
+  }
+}
 #details .property-details-body .property-basic-info {
   margin-bottom: var(--rentfetch-space-3xl);
 }
@@ -4034,6 +4086,7 @@ body.single-floorplans h2 {
 }
 @media (max-width: 600px) {
   #details .property-details-body .property-links {
+    order: 1;
     position: static;
   }
 }

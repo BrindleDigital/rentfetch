@@ -140,7 +140,7 @@ function rentfetch_single_properties_parts_details() {
 						$phone         = rentfetch_get_property_phone();
 						$phone_link    = rentfetch_format_phone_number_link( $phone );
 						$email         = rentfetch_get_property_email();
-						$email_link    = rentfetch_get_property_email_link();
+						$email_link    = rentfetch_get_property_email_link( null, 'property-sidebar-email-link' );
 						$location_icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 location-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>';
 						$website_icon  = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 website-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>';
 						$phone_icon    = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 phone-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>';
@@ -167,10 +167,10 @@ function rentfetch_single_properties_parts_details() {
 						if ( $full_location ) {
 							echo '<div class="property-sidebar-item property-sidebar-address">';
 								echo wp_kses( $location_icon, $sidebar_icon_allowed_html );
-								echo '<div class="property-sidebar-item-content">';
+								echo '<div class="property-sidebar-item-content property-sidebar-address-content">';
 									echo '<h3>Address</h3>';
 									printf(
-										'<a href="%s" target="_blank">%s</a>',
+										'<a class="property-sidebar-address-link" href="%s" target="_blank">%s</a>',
 										esc_url( $location_link ),
 										esc_html( $full_location )
 									);
@@ -181,10 +181,10 @@ function rentfetch_single_properties_parts_details() {
 						if ( $property_url ) {
 							echo '<div class="property-sidebar-item property-sidebar-website">';
 								echo wp_kses( $website_icon, $sidebar_icon_allowed_html );
-								echo '<div class="property-sidebar-item-content">';
+								echo '<div class="property-sidebar-item-content property-sidebar-website-content">';
 									echo '<h3>Visit Website</h3>';
 									printf(
-										'<a href="%s" target="%s">%s</a>',
+										'<a class="property-sidebar-website-link" href="%s" target="%s">%s</a>',
 										esc_url( $property_url ),
 										esc_attr( rentfetch_get_link_target( $property_url ) ),
 										esc_html( preg_replace( '#^https?://#', '', untrailingslashit( $property_url ) ) )
@@ -196,10 +196,10 @@ function rentfetch_single_properties_parts_details() {
 						if ( $phone && $phone_link ) {
 							echo '<div class="property-sidebar-item property-sidebar-phone">';
 								echo wp_kses( $phone_icon, $sidebar_icon_allowed_html );
-								echo '<div class="property-sidebar-item-content">';
+								echo '<div class="property-sidebar-item-content property-sidebar-phone-content">';
 									echo '<h3>Phone</h3>';
 									printf(
-										'<a href="tel:%s">%s</a>',
+										'<a class="property-sidebar-phone-link" href="tel:%s">%s</a>',
 										esc_attr( $phone_link ),
 										esc_html( $phone )
 									);
@@ -210,7 +210,7 @@ function rentfetch_single_properties_parts_details() {
 						if ( $email && $email_link ) {
 							echo '<div class="property-sidebar-item property-sidebar-email">';
 								echo wp_kses( $email_icon, $sidebar_icon_allowed_html );
-								echo '<div class="property-sidebar-item-content">';
+								echo '<div class="property-sidebar-item-content property-sidebar-email-content">';
 									echo '<h3>Email</h3>';
 									echo wp_kses_post( $email_link );
 								echo '</div>';
