@@ -4247,11 +4247,8 @@ body.single-floorplans h2 {
 #details .property-details-body .property-links .property-sidebar-actions {
   margin-top: var(--rentfetch-space-lg);
 }
-#details .property-details-body .property-links .property-sidebar-actions .tour-booking-link {
-  display: block;
-  text-align: center;
-  font-weight: 700;
-  text-transform: uppercase;
+#details .property-details-body .property-links .property-sidebar-actions + .tour-link {
+  margin-top: var(--rentfetch-space-xs);
 }
 
 body.admin-bar #details .property-details-body .property-links {
@@ -4264,26 +4261,33 @@ body.admin-bar #details .property-details-body .property-links {
 }
 
 .property-links .property-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rentfetch-space-xs);
   color: var(--rentfetch-dark);
   position: static;
   padding: var(--rentfetch-space-md);
-  line-height: 1;
+  line-height: 1.2;
   margin-bottom: var(--rentfetch-space-xs);
   text-decoration: none;
   background-color: var(--rentfetch-white, #ffffff);
   border: 1px solid var(--rentfetch-black-10-percent, rgba(0, 0, 0, 0.1));
   border-radius: 4px;
+  font-size: var(--rentfetch-font-size-medium);
+  font-weight: 400;
+  text-align: center;
 }
 @media (max-width: 600px) {
   .property-links .property-link {
-    margin-bottom: 0;
+    margin-bottom: var(--rentfetch-space-xs);
   }
 }
 .property-links .property-link svg {
   width: 1.2em;
   height: 1.2em;
-  margin-right: 0.5em;
+  flex: 0 0 auto;
+  margin-right: 0;
   vertical-align: middle;
   display: inline-block;
 }

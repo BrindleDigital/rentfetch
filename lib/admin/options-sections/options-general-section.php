@@ -112,32 +112,35 @@ function rentfetch_settings_general_performance() {
 	?>
 	<div class="header">
 		<h2 class="title">Performance</h2>
-		<p class="description">Configure search result caching and search performance optimization settings.</p>
+		<p class="description">Tune Rent Fetch search caching, cache diagnostics, and database search indexes.</p>
 	</div>
 
 	<div class="row">
 		<div class="section">
 			<label class="label-large">Search Result Caching</label>
-			<p class="description">Cache search results for up to 1 day to improve performance. Cached results older than 1 hour are served immediately and refreshed behind the scenes. Rent Fetch keeps up to 500 search/query cache combinations and prioritizes the top 50 tracked searches used by cache pre-fetching. Results are cached in WordPress transients (Redis/Memcached if configured) and sent with cache headers for CDN/edge caching (Varnish, Fastly, Cloudflare, etc.). Recommended for best performance. Only disable if you need real-time data updates or are troubleshooting cache issues. <em>Note: Disabling this setting prevents future caching but does not purge existing CDN/edge caches. You may need to manually purge your cache (typically through your host or CDN provider) to see immediate changes.</em></p>
+			<p class="description">Stores property and floorplan search results in WordPress transients so repeated searches can skip expensive database queries. Cached results remain available for 1 day; after 1 hour they are treated as stale, served immediately, and refreshed in the background when a public visitor requests them.</p>
+			<p class="description">Rent Fetch tracks up to 500 search/query cache entries. The cache dashboard below separates rendered search HTML from supporting query-result caches, and cache pre-fetching prioritizes the top 50 tracked searches.</p>
 			<ul class="checkboxes">
 				<li>
 					<label for="rentfetch_options_disable_query_caching">
 						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '0' ); ?>>
 						Enable search result caching (recommended)
 					</label>
+					<p class="description">When enabled, public searches can write transient cache entries and receive cache-friendly response headers. Logged-in users can read existing entries, but their searches do not create new cached results. Disable only when troubleshooting cache behavior or when search results must reflect every data change immediately. Disabling clears Rent Fetch transients, but it does not purge any host, CDN, or edge cache.</p>
 				</li>
 				<li>
 					<label for="rentfetch_options_enable_cache_warming">
 						<input type="checkbox" name="rentfetch_options_enable_cache_warming" id="rentfetch_options_enable_cache_warming" <?php checked( get_option( 'rentfetch_options_enable_cache_warming', '0' ), '1' ); ?>>
 						Automatically pre-fetch popular searches every 25 minutes (recommended)
 					</label>
+					<p class="description">Runs the top 50 tracked property and floorplan searches through WP-Cron so common searches are more likely to be cached before visitors request them. Tracked searches are kept for 30 days.</p>
 				</li>
 				<li>
 					<label for="rentfetch_options_enable_cache_console_logging">
 						<input type="checkbox" name="rentfetch_options_enable_cache_console_logging" id="rentfetch_options_enable_cache_console_logging" <?php checked( get_option( 'rentfetch_options_enable_cache_console_logging', '0' ), '1' ); ?>>
 						Show cache hits and misses in the browser console
 					</label>
-					<p class="description">When enabled, frontend property and floorplan searches log transient cache hits, misses, stale responses, and background refresh scheduling in DevTools. This is intended for troubleshooting cache behavior and is off by default.</p>
+					<p class="description">Logs transient cache hits, misses, stale responses, and background refresh scheduling for frontend property and floorplan searches in DevTools. Leave this off unless you are actively debugging cache behavior.</p>
 				</li>
 			</ul>
 
@@ -304,7 +307,7 @@ function rentfetch_settings_general_performance() {
 						}
 
 						html += '</tbody></table>';
-						html += '<p style="color: #646970; font-size: 13px;"><em>Showing the last 14 days of transient cache lookups. Current cache limit: ' + response.data.limit + ' search/query combinations.</em></p>';
+						html += '<p style="color: #646970; font-size: 13px;"><em>Showing the last 14 days of transient cache lookups. Current cache limit: ' + response.data.limit + ' search/query entries.</em></p>';
 						html += '</div>';
 
 						$content.html(html);
@@ -423,11 +426,11 @@ function rentfetch_settings_general_performance() {
 									});
 									
 									html += '</tbody></table>';
-									html += '<p style="padding: 15px; color: #646970; font-size: 13px;"><em>Showing searches that required database queries in the last 30 days. These are candidates for automatic cache warming. Note: Cached searches don\'t appear here until the cache expires and they need to be regenerated.</em></p>';
+									html += '<p style="padding: 15px; color: #646970; font-size: 13px;"><em>Showing the top tracked searches from the last 30 days. Automatic cache pre-fetching uses this list to warm up to 50 popular searches.</em></p>';
 									
 									$container.html(html);
 								} else {
-									$container.html('<p style="color: #646970; padding: 20px;"><em>No search data available yet. Searches will be tracked when they require database queries (not served from cache).</em></p>');
+									$container.html('<p style="color: #646970; padding: 20px;"><em>No search data available yet. Searches will be tracked as visitors use property and floorplan search.</em></p>');
 								}
 							}).fail(function() {
 								$container.html('<p style="color: #d63638;"><em>Error loading popular searches.</em></p>');

@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.35.7
+Stable tag: 0.35.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.35.8 =
+
+* Improved front-end property text search to find matches in property address, city, state, and zipcode without requiring Relevanssi.
+* Kept taxonomy, description, and content area searches out of the default property text search so dedicated filters and short location fields remain the primary matching paths.
+* Normalized single-property sidebar action button styling and spacing for tour-related property links.
 
 = 0.35.7 =
 
