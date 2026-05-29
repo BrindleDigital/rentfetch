@@ -21,6 +21,7 @@ function rentfetch_default_units_admin_columns( $columns ) {
 	$columns = array(
 		'cb'                    => '<input type="checkbox" />',
 		'title'                 => __( 'Title', 'rentfetch' ),
+		'sync_status'           => __( 'Syncing', 'rentfetch' ),
 		'unit_id'               => __( 'Unit ID', 'rentfetch' ),
 		'building_name'         => __( 'Building Name', 'rentfetch' ),
 		'floor_number'          => __( 'Floor Number', 'rentfetch' ),
@@ -187,6 +188,24 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 
 	if ( 'title' === $column ) {
 		echo esc_attr( get_the_title( $post_id ) );
+	}
+
+	if ( 'sync_status' === $column ) {
+		$sync_status = function_exists( 'rentfetch_get_sync_status_class' )
+			? rentfetch_get_sync_status_class( $post_id )
+			: 'sync-gray';
+		$sync_colors = array(
+			'sync-green'  => '#28a745',
+			'sync-yellow' => '#dba617',
+			'sync-orange' => '#d9822b',
+			'sync-red'    => '#dc3545',
+			'sync-gray'   => '#6c757d',
+		);
+		$tooltip = function_exists( 'rentfetch_get_column_sync_tooltip' )
+			? rentfetch_get_column_sync_tooltip( __( 'Units APIs', 'rentfetch' ), array( $post_id ) )
+			: __( 'No sync status available.', 'rentfetch' );
+
+		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $tooltip ) . '" aria-label="' . esc_attr( $tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $sync_status ] ?? '#6c757d' ) . ';">●</span>';
 	}
 	
 	if ( 'unit_source' === $column ) {

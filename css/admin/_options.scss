@@ -428,6 +428,23 @@ form.rent-fetch-options,
 	}
 }
 
+.rentfetch-performance-settings {
+	p.description {
+		color: var(--rentfetch-branding-contrast-2);
+		font-size: 12px;
+		line-height: 1.35;
+		margin-top: 4px;
+	}
+
+	ul.checkboxes {
+		gap: 10px;
+
+		label {
+			font-size: 14px;
+		}
+	}
+}
+
 // .pb-0 {
 // 	padding-bottom: 0 !important;
 // }

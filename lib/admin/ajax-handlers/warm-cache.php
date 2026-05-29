@@ -25,46 +25,62 @@ function rentfetch_ajax_warm_cache() {
 		);
 	}
 
-	// Check if cache warming is enabled.
-	if ( get_option( 'rentfetch_options_enable_cache_warming', '0' ) !== '1' ) {
-		wp_send_json_error(
-			array(
-				'message' => 'Cache warming is disabled. Please enable it in settings first.',
-			)
+	// Warm the cache.
+	$result = rentfetch_warm_popular_searches_batch( 50, 5, ! empty( $_POST['reset_cursor'] ) );
+
+	if ( ! empty( $result['locked'] ) ) {
+		$data = array(
+			'message' => 'Preloading is already running. Try again in a few minutes.',
 		);
+
+		if ( function_exists( 'rentfetch_get_admin_bar_cache_states' ) ) {
+			$data['states'] = rentfetch_get_admin_bar_cache_states();
+		}
+
+		wp_send_json_error( $data );
 	}
 
-	// Warm the cache.
-	$result = rentfetch_warm_popular_searches( 50 );
-
-	if ( $result['warmed'] > 0 ) {
-		wp_send_json_success(
-			array(
-				'message' => sprintf(
-					'Successfully pre-fetched %d popular search(es). %s',
-					$result['warmed'],
-					$result['failed'] > 0 ? sprintf( '(%d failed)', $result['failed'] ) : ''
-				),
-				'warmed'  => $result['warmed'],
-				'failed'  => $result['failed'],
-				'total'   => $result['total'],
-			)
+	if ( $result['total'] > 0 ) {
+		$message = sprintf(
+			'Preloaded %d popular search(es).',
+			$result['warmed']
 		);
-	} elseif ( $result['total'] === 0 ) {
+		if ( $result['failed'] > 0 ) {
+			$message .= sprintf( ' %d failed.', $result['failed'] );
+		}
+
+		$data = array(
+			'message'    => $message,
+			'warmed'     => $result['warmed'],
+			'failed'     => $result['failed'],
+			'total'      => $result['total'],
+			'batch_size' => isset( $result['batch_size'] ) ? (int) $result['batch_size'] : 0,
+			'cursor'     => isset( $result['cursor'] ) ? (int) $result['cursor'] : 0,
+			'next_cursor' => isset( $result['next_cursor'] ) ? (int) $result['next_cursor'] : 0,
+			'errors'     => isset( $result['errors'] ) && is_array( $result['errors'] ) ? $result['errors'] : array(),
+		);
+
+		if ( function_exists( 'rentfetch_get_admin_bar_cache_states' ) ) {
+			$data['states'] = rentfetch_get_admin_bar_cache_states();
+		}
+
 		wp_send_json_success(
-			array(
-				'message' => 'No popular searches found to pre-fetch. Searches will be tracked as users perform them.',
-			)
+			$data
 		);
 	} else {
-		wp_send_json_error(
-			array(
-				'message' => sprintf(
-					'Failed to pre-fetch searches (%d failed).',
-					$result['failed']
-				),
-			)
+		$data = array(
+			'message'    => 'No popular searches found to preload. Searches will be tracked as users perform them.',
+			'warmed'     => 0,
+			'failed'     => 0,
+			'total'      => 0,
+			'batch_size' => 0,
 		);
+
+		if ( function_exists( 'rentfetch_get_admin_bar_cache_states' ) ) {
+			$data['states'] = rentfetch_get_admin_bar_cache_states();
+		}
+
+		wp_send_json_success( $data );
 	}
 }
 add_action( 'wp_ajax_rentfetch_warm_cache', 'rentfetch_ajax_warm_cache' );

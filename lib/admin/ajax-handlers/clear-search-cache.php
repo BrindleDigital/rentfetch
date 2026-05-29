@@ -10,21 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Handle AJAX request to clear search cache
+ * Clear Rent Fetch search/query cache transients.
+ *
+ * @return array Clear result.
  */
-function rentfetch_ajax_clear_search_cache() {
-	// Verify nonce.
-	check_ajax_referer( 'rentfetch_clear_cache', 'nonce' );
-
-	// Check user capabilities.
-	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_send_json_error(
-			array(
-				'message' => 'You do not have permission to perform this action.',
-			)
-		);
-	}
-
+function rentfetch_clear_search_cache_transients() {
 	global $wpdb;
 
 	// Get cache transients (search transients + fees CSV transients).
@@ -75,23 +65,44 @@ function rentfetch_ajax_clear_search_cache() {
 
 		delete_option( 'rentfetch_search_query_cache_registry' );
 		delete_option( 'rentfetch_search_query_cache_stats' );
+		delete_option( 'rentfetch_cache_warming_cursor' );
 
-		wp_send_json_success(
-			array(
-				'message' => sprintf(
-					'Successfully cleared %d cached result(s).',
-					$transient_count
-				),
-				'count'   => $transient_count,
-			)
+		return array(
+			'message' => sprintf(
+				'Successfully cleared %d cached result(s).',
+				$transient_count
+			),
+			'count'   => $transient_count,
 		);
-	} else {
-		wp_send_json_success(
+	}
+
+	return array(
+		'message' => 'No cached results found to clear.',
+		'count'   => 0,
+	);
+}
+
+/**
+ * Handle AJAX request to clear search cache
+ */
+function rentfetch_ajax_clear_search_cache() {
+	// Verify nonce.
+	check_ajax_referer( 'rentfetch_clear_cache', 'nonce' );
+
+	// Check user capabilities.
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error(
 			array(
-				'message' => 'No cached results found to clear.',
-				'count'   => 0,
+				'message' => 'You do not have permission to perform this action.',
 			)
 		);
 	}
+
+	$result = rentfetch_clear_search_cache_transients();
+	if ( function_exists( 'rentfetch_get_admin_bar_cache_states' ) ) {
+		$result['states'] = rentfetch_get_admin_bar_cache_states();
+	}
+
+	wp_send_json_success( $result );
 }
 add_action( 'wp_ajax_rentfetch_clear_search_cache', 'rentfetch_ajax_clear_search_cache' );

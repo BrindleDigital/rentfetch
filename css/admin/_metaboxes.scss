@@ -15,7 +15,8 @@
 	margin: 0 0 30px;
 	gap: 30px;
 
-	&:last-child {
+	&:last-child,
+	&:last-of-type {
 		margin-bottom: 0;
 		padding-bottom: 0;
 		border-bottom: none;
@@ -116,6 +117,165 @@
 	}
 }
 // }
+
+.rf-property-contact-metabox,
+.rf-property-location-metabox {
+	.columns {
+		gap: 14px 16px;
+		padding: 0;
+		margin: 0;
+		border: none;
+		align-items: start;
+
+		& + .columns {
+			margin-top: 14px;
+		}
+
+		.field {
+			min-width: 0;
+		}
+	}
+
+	.field {
+		display: block;
+		padding: 0;
+		margin: 0;
+		border: none;
+	}
+
+	.field label {
+		padding: 0;
+		margin: 0 0 4px;
+		color: #1d2327;
+		font-size: 12px;
+		line-height: 1.25;
+	}
+
+	.field .description {
+		margin: 5px 0 0;
+		font-size: 12px;
+		line-height: 1.35;
+	}
+}
+
+.rf-property-location-metabox {
+	.rf-location-address-fields {
+		@include notmobile {
+			grid-template-columns: minmax(280px, 1.6fr) minmax(150px, 0.8fr) minmax(70px, 0.35fr) minmax(100px, 0.45fr);
+		}
+	}
+
+	.rf-location-coordinate-fields {
+		@include notmobile {
+			grid-template-columns: minmax(150px, 220px) minmax(150px, 220px);
+		}
+	}
+}
+
+.rf-property-contact-metabox {
+	.rf-contact-primary-fields {
+		@include notmobile {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	.rf-contact-link-fields {
+		@include notmobile {
+			grid-template-columns: repeat(2, minmax(260px, 1fr));
+		}
+	}
+}
+
+.rf-property-specials-metabox {
+	.field {
+		display: block;
+		padding: 0;
+		margin: 0 0 14px;
+		border: none;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.field label:not(.rf-toggle-label) {
+		padding: 0;
+		margin: 0 0 5px;
+		color: #1d2327;
+		font-size: 12px;
+		line-height: 1.25;
+	}
+
+	.rf-specials-conditional-field.is-hidden {
+		display: none;
+	}
+
+	.rf-toggle-control {
+		display: inline-block;
+	}
+
+	.rf-toggle-input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.rf-toggle-label {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		width: auto;
+		padding: 0;
+		margin: 0;
+		color: #1d2327;
+		font-weight: 400;
+		cursor: pointer;
+	}
+
+	.rf-toggle-track {
+		position: relative;
+		display: inline-block;
+		width: 38px;
+		height: 20px;
+		flex: 0 0 38px;
+		border-radius: 999px;
+		background-color: #dcdcde;
+		transition: background-color 0.15s ease;
+	}
+
+	.rf-toggle-thumb {
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		background-color: #fff;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+		transition: transform 0.15s ease;
+	}
+
+	.rf-toggle-input:checked + .rf-toggle-label .rf-toggle-track {
+		background-color: #2271b1;
+	}
+
+	.rf-toggle-input:checked + .rf-toggle-label .rf-toggle-thumb {
+		transform: translateX(18px);
+	}
+
+	.rf-toggle-input:focus-visible + .rf-toggle-label .rf-toggle-track {
+		box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
+	}
+
+	.rf-toggle-input:disabled + .rf-toggle-label {
+		opacity: 0.55;
+		cursor: not-allowed;
+	}
+}
 
 /* ==========================================================================
    Galleries container

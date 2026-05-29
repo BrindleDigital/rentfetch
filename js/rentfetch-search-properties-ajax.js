@@ -90,6 +90,14 @@ jQuery(function ($) {
 			key: debug.key,
 			family: debug.family,
 			stale: !!debug.stale,
+			stats: debug.stats || null,
+			cache: {
+				lookupAttempted: !!debug.lookup_attempted,
+				readEnabled: !!debug.read_enabled,
+				writeEnabled: !!debug.write_enabled,
+				writeAttempted: !!debug.write_attempted,
+				writeStored: debug.write_stored,
+			},
 		});
 
 		if (debug.background_refresh_scheduled) {
@@ -121,6 +129,50 @@ jQuery(function ($) {
 				);
 			});
 		}
+
+		if (Array.isArray(debug.writes)) {
+			debug.writes.forEach(function (event) {
+				console.info(
+					'Rent Fetch transient WRITE ' +
+						(event.stored ? 'STORED' : 'FAILED') +
+						': ' +
+						event.description,
+					{
+						key: event.key,
+						family: event.family,
+						valueType: event.value_type,
+						valueSize: event.value_size,
+					}
+				);
+			});
+		}
+
+		if (Array.isArray(debug.prunes)) {
+			debug.prunes.forEach(function (event) {
+				console.info(
+					'Rent Fetch transient PRUNED: ' + event.description,
+					{
+						key: event.key,
+						family: event.family,
+					}
+				);
+			});
+		}
+	}
+
+	function logSearchRequest(queryData) {
+		if (
+			!rentfetchConfig.enableCacheConsoleLogging ||
+			!window.console ||
+			!console.info
+		) {
+			return;
+		}
+
+		console.info('Rent Fetch property search', {
+			query: $.param(queryData),
+			params: queryData,
+		});
 	}
 
 	var dateRangeCache = {};
@@ -185,17 +237,49 @@ jQuery(function ($) {
 		return label;
 	}
 
+	function normalizeQueryParameterName(name) {
+		return String(name || '').replace(/\[[^\]]*\]$/, '');
+	}
+
+	function getManagedQueryParameterNames() {
+		var managedParams = {};
+
+		$filter.add($featuredFilters)
+			.find('input, select, textarea')
+			.each(function () {
+				var name = $(this).attr('name');
+
+				if (name) {
+					managedParams[normalizeQueryParameterName(name)] = true;
+				}
+			});
+
+		return managedParams;
+	}
+
 	function updateURLWithQueryParameters(params) {
 		var url = new URL(window.location.href);
-		var existingParams = {};
+		var managedParams = getManagedQueryParameterNames();
+		var mergedParams = {};
+
 		url.searchParams.forEach(function (value, key) {
-			existingParams[key] = value;
+			var normalizedKey = normalizeQueryParameterName(key);
+
+			if (
+				managedParams[normalizedKey] ||
+				key === 'map_north' ||
+				key === 'map_south' ||
+				key === 'map_east' ||
+				key === 'map_west'
+			) {
+				return;
+			}
+
+			mergedParams[key] = value;
 		});
-		var mergedParams = $.extend({}, existingParams, params);
-		delete mergedParams.map_north;
-		delete mergedParams.map_south;
-		delete mergedParams.map_east;
-		delete mergedParams.map_west;
+
+		$.extend(mergedParams, params);
+
 		var baseUrl = url.origin + url.pathname;
 		var queryString = $.param(mergedParams);
 		var newUrl = baseUrl + (queryString ? '?' + queryString : '');
@@ -233,6 +317,7 @@ jQuery(function ($) {
 		$.each(queryParams, function (key, value) {
 			if (
 				value === '' ||
+				(Array.isArray(value) && !value.length) ||
 				key === 'action' ||
 				key === 'availability' ||
 				key === 'rentfetch_frontend_nonce_field'
@@ -421,6 +506,7 @@ jQuery(function ($) {
 
 		var queryData = $.extend({}, shortcodeAttributes, getQueryParametersFromForm());
 		var requestId = ++latestRequestId;
+		logSearchRequest(queryData);
 
 		if (activeRequest && activeRequest.readyState !== 4) {
 			activeRequest.abort();
@@ -431,6 +517,7 @@ jQuery(function ($) {
 			data: queryData,
 			type: 'GET',
 			dataType: 'json',
+			cache: !rentfetchConfig.enableCacheConsoleLogging,
 			beforeSend: function (xhr) {
 				if (rentfetchConfig.nonce) {
 					xhr.setRequestHeader('X-WP-Nonce', rentfetchConfig.nonce);

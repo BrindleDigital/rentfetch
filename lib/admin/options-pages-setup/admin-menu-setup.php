@@ -10,11 +10,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Get the Rent Fetch dashboard icon SVG.
+ *
+ * @param string $fill Icon fill color.
+ * @return string SVG markup.
+ */
+function rentfetch_get_dashboard_icon_svg( $fill = '#f0f6fc99' ) {
+	static $icon = null;
+
+	if ( null === $icon ) {
+		$icon_path = RENTFETCH_DIR . 'images/rentfetch-dashboard-icon.svg';
+		$icon      = file_exists( $icon_path ) ? file_get_contents( $icon_path ) : '';
+	}
+
+	$fill = sanitize_hex_color( $fill );
+	if ( ! $fill ) {
+		$fill = '#f0f6fc99';
+	}
+
+	return str_replace( '#f0f6fc99', $fill, $icon );
+}
+
+/**
  * Adds Rent Fetch options page to the admin menu.
  */
 function rentfetch_options_page() {
 
-	$menu_icon = 'PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDMuOCAxNTAiPjxwYXRoIGQ9Ik01Ny4zNywxNTBIMjIuODZhNC43Niw0Ljc2LDAsMCwxLTQuNzYtNC43NlYzNC43OEE0Ljc2LDQuNzYsMCwwLDEsMjIuODYsMzBoNTIuMmMxNy44OSwwLDI2LjU4LDcuNjcsMjYuNTgsMjMuNDMsMCw3LTMsMjMuMTMtMzEsMjMuMTNINTguMzJhNC43Niw0Ljc2LDAsMSwxLDAtOS41Mkg3MC42NGMxNC4yNSwwLDIxLjQ4LTQuNTgsMjEuNDgtMTMuNjEsMC04LjgtMi43OS0xMy45LTE3LjA2LTEzLjlIMjcuNjNWMTQwLjQ4aDI1VjEyNS42NWE0Ljc3LDQuNzcsMCwwLDEsOS41MywwdjE5LjU5QTQuNzYsNC43NiwwLDAsMSw1Ny4zNywxNTBabTYzLS4yM2MtMjguNDgsMC0zNy4zMi0xNi42LTQzLjc3LTI4LjcyLTUuMzEtMTAtOC40Ny0xNS4xNi0xNi45MS0xNS4xNmE0Ljc2LDQuNzYsMCwwLDEtLjA1LTkuNTJDODkuMzEsOTYsMTAyLjE4LDkwLDEwMi4zLDg5LjkzbC4yMS0uMWMxNS4wOS02LjQ5LDIyLjExLTE3LjU4LDIyLjExLTM0Ljg5LDAtMzEuNDEtMTYuODYtNDUuNDItNTQuNjYtNDUuNDJINC43NkE0Ljc2LDQuNzYsMCwwLDEsNC43NiwwSDcwYzIxLjI4LDAsMzYuODMsNC4zMiw0Ny41NSwxMy4xOSwxMSw5LjE0LDE2LjYzLDIzLjE5LDE2LjYzLDQxLjc1LDAsMjEtOS4zNCwzNS42My0yNy43Nyw0My42LTEuMy42MS0xMC4xOCw0LjUzLTI4LjY1LDYuMzlBNjcuMiw2Ny4yLDAsMCwxLDg1LDExNi41OGM2LjQ4LDEyLjE3LDEyLjYxLDIzLjY3LDM1LjM3LDIzLjY3YTg4LjU4LDg4LjU4LDAsMCwwLDEzLjYzLS45MWwtMS40My0xOS4xNWgwYTIxLjUzLDIxLjUzLDAsMCwxLTE1LjA5LTUuNyw0Ljc2LDQuNzYsMCwwLDEsNi40LTcuMDYsMTEuODksMTEuODksMCwwLDAsOC42OSwzLjIzLDIwLjA5LDIwLjA5LDAsMCwwLDMuNDktLjMzLDQuNzgsNC43OCwwLDAsMSw1LjY3LDQuMzJsMi4xLDI4LjEyYTQuNzcsNC43NywwLDAsMS0zLjI1LDQuODdDMTM5Ljg5LDE0Ny44NiwxMzMuNzYsMTQ5Ljc3LDEyMC4zNSwxNDkuNzdaIiBmaWxsPSIjZjBmNmZjOTkiLz48L3N2Zz4=';
+	$menu_icon = base64_encode( rentfetch_get_dashboard_icon_svg() );
 
 	// Add Rent Fetch options page to the admin menu.
 	add_menu_page(

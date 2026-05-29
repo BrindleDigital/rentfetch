@@ -60,6 +60,26 @@ function rentfetch_sanitize_search_log_params( $params ) {
 }
 
 /**
+ * Get request parameters that should participate in search behavior/tracking.
+ *
+ * jQuery adds "_" when AJAX cache-busting is enabled for diagnostics. That
+ * parameter should not change tracked searches or leak into filter globals.
+ *
+ * @param WP_REST_Request $request The REST request.
+ * @return array
+ */
+function rentfetch_get_behavioral_search_request_params( $request ) {
+	$params = $request instanceof WP_REST_Request ? $request->get_params() : array();
+
+	unset(
+		$params['_'],
+		$params['rentfetch_cache_debug_request']
+	);
+
+	return $params;
+}
+
+/**
  * Log failed search requests to the PHP/WordPress debug log.
  *
  * @param string          $search_type Search type.
@@ -149,17 +169,18 @@ function rentfetch_rest_search_floorplans_safe( $request ) {
  */
 function rentfetch_rest_search_properties( $request ) {
 	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching' ) !== '1';
-	$can_write_markup_cache = $can_read_markup_cache && ! is_user_logged_in();
+	$can_write_markup_cache = $can_read_markup_cache && ( ! is_user_logged_in() || ! empty( $GLOBALS['rentfetch_force_cache_write'] ) );
+	$request_params         = rentfetch_get_behavioral_search_request_params( $request );
 
 	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
 		$skip_tracking = $request->get_param( 'skip_tracking' ) === true || $request->get_param( 'skip_tracking' ) === 'true';
-		rentfetch_track_search( 'properties', $request->get_params(), $skip_tracking );
+		rentfetch_track_search( 'properties', $request_params, $skip_tracking );
 	}
 
 	// Populate $_POST with request parameters so existing filter functions work
 	// This allows all the filter hooks that check $_POST to function correctly
-	$_POST = array_merge( $_POST, $request->get_params() );
+	$_POST = array_merge( $_POST, $request_params );
 
 	// Rebuild floorplan aggregates after request params are merged so property-card
 	// pricing/availability reflects active floorplan filters (beds, baths, price, etc).
@@ -275,7 +296,17 @@ function rentfetch_rest_search_properties( $request ) {
 					'count'      => substr_count( $cached_markup['html'], 'class="property' ),
 					'cached' => true,
 					'stale'  => $cache_is_stale,
-					'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'hit', $cache_is_stale, $background_refresh_scheduled ),
+					'cache_debug' => rentfetch_get_cache_debug_metadata(
+						$cache_key,
+						'hit',
+						$cache_is_stale,
+						$background_refresh_scheduled,
+						array(
+							'lookup_attempted' => true,
+							'read_enabled'     => $can_read_markup_cache,
+							'write_enabled'    => $can_write_markup_cache,
+						)
+					),
 				)
 			);
 			if ( $can_write_markup_cache ) {
@@ -293,8 +324,9 @@ function rentfetch_rest_search_properties( $request ) {
 	$results_data = rentfetch_render_property_query_results_data( $property_args );
 
 	// Cache the results
+	$cache_write_stored = null;
 	if ( $can_write_markup_cache ) {
-		rentfetch_set_cache_transient( $cache_key, $results_data );
+		$cache_write_stored = rentfetch_set_cache_transient( $cache_key, $results_data );
 	}
 
 	$response = rest_ensure_response(
@@ -304,7 +336,19 @@ function rentfetch_rest_search_properties( $request ) {
 			'count'      => substr_count( $results_data['html'], 'class="property' ),
 			'cached' => false,
 			'stale'  => false,
-			'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'miss' ),
+			'cache_debug' => rentfetch_get_cache_debug_metadata(
+				$cache_key,
+				'miss',
+				false,
+				false,
+				array(
+					'lookup_attempted' => $can_read_markup_cache,
+					'read_enabled'     => $can_read_markup_cache,
+					'write_enabled'    => $can_write_markup_cache,
+					'write_attempted'  => $can_write_markup_cache,
+					'write_stored'     => $cache_write_stored,
+				)
+			),
 		)
 	);
 
@@ -332,17 +376,18 @@ function rentfetch_rest_search_properties( $request ) {
  */
 function rentfetch_rest_search_floorplans( $request ) {
 	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching' ) !== '1';
-	$can_write_markup_cache = $can_read_markup_cache && ! is_user_logged_in();
+	$can_write_markup_cache = $can_read_markup_cache && ( ! is_user_logged_in() || ! empty( $GLOBALS['rentfetch_force_cache_write'] ) );
+	$request_params         = rentfetch_get_behavioral_search_request_params( $request );
 
 	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {
 		$skip_tracking = $request->get_param( 'skip_tracking' ) === true || $request->get_param( 'skip_tracking' ) === 'true';
-		rentfetch_track_search( 'floorplans', $request->get_params(), $skip_tracking );
+		rentfetch_track_search( 'floorplans', $request_params, $skip_tracking );
 	}
 
 	// Populate $_POST with request parameters so existing filter functions work
 	// This allows all the filter hooks that check $_POST to function correctly
-	$_POST = array_merge( $_POST, $request->get_params() );
+	$_POST = array_merge( $_POST, $request_params );
 
 	// Get shortcode attributes from request parameters
 	$atts = array();
@@ -388,7 +433,17 @@ function rentfetch_rest_search_floorplans( $request ) {
 					'count' => substr_count( $cached_markup, 'class="floorplan' ),
 					'cached' => true,
 					'stale'  => $cache_is_stale,
-					'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'hit', $cache_is_stale, $background_refresh_scheduled ),
+					'cache_debug' => rentfetch_get_cache_debug_metadata(
+						$cache_key,
+						'hit',
+						$cache_is_stale,
+						$background_refresh_scheduled,
+						array(
+							'lookup_attempted' => true,
+							'read_enabled'     => $can_read_markup_cache,
+							'write_enabled'    => $can_write_markup_cache,
+						)
+					),
 				)
 			);
 			if ( $can_write_markup_cache ) {
@@ -406,8 +461,9 @@ function rentfetch_rest_search_floorplans( $request ) {
 	$markup = rentfetch_render_floorplan_query_results( $floorplan_args );
 
 	// Cache the results
+	$cache_write_stored = null;
 	if ( $can_write_markup_cache ) {
-		rentfetch_set_cache_transient( $cache_key, $markup );
+		$cache_write_stored = rentfetch_set_cache_transient( $cache_key, $markup );
 	}
 
 	$response = rest_ensure_response(
@@ -416,7 +472,19 @@ function rentfetch_rest_search_floorplans( $request ) {
 			'count' => substr_count( $markup, 'class="floorplan' ),
 			'cached' => false,
 			'stale'  => false,
-			'cache_debug' => rentfetch_get_cache_debug_metadata( $cache_key, 'miss' ),
+			'cache_debug' => rentfetch_get_cache_debug_metadata(
+				$cache_key,
+				'miss',
+				false,
+				false,
+				array(
+					'lookup_attempted' => $can_read_markup_cache,
+					'read_enabled'     => $can_read_markup_cache,
+					'write_enabled'    => $can_write_markup_cache,
+					'write_attempted'  => $can_write_markup_cache,
+					'write_stored'     => $cache_write_stored,
+				)
+			),
 		)
 	);
 

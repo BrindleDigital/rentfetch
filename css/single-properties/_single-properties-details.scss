@@ -1,4 +1,72 @@
 #details {
+	&:has(.property-specials-callout) {
+		padding-top: var(--rentfetch-property-specials-section-gap);
+	}
+
+	.property-specials-callout {
+		display: grid;
+		grid-template-columns: var(--rentfetch-property-specials-icon-size) minmax(0, 1fr);
+		gap: var(--rentfetch-space-md);
+		align-items: start;
+		padding: var(--rentfetch-property-specials-padding-block) var(--rentfetch-property-specials-padding-inline);
+		margin-bottom: var(--rentfetch-property-specials-section-gap);
+		border: 1px solid var(--rentfetch-property-specials-border);
+		border-radius: var(--rentfetch-border-radius);
+		background-color: var(--rentfetch-property-specials-background);
+
+		@include mobile {
+			grid-template-columns: 1fr;
+			gap: var(--rentfetch-space-sm);
+		}
+
+		.property-specials-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: var(--rentfetch-property-specials-icon-size);
+			height: var(--rentfetch-property-specials-icon-size);
+			border-radius: var(--rentfetch-border-radius);
+			background-color: var(--rentfetch-property-specials-icon-background);
+			color: var(--rentfetch-property-specials-icon-color);
+			line-height: 0;
+
+			@include mobile {
+				display: none;
+			}
+
+			svg {
+				display: block;
+				width: 1.45em;
+				height: 1.45em;
+				fill: currentColor;
+				stroke: none;
+			}
+		}
+
+		.property-specials-heading {
+			margin: 0;
+			color: var(--rentfetch-property-specials-heading-color);
+			font-size: var(--rentfetch-property-specials-heading-font-size);
+			font-weight: 700;
+			line-height: 1.25;
+		}
+
+		.property-specials-content {
+			margin-top: var(--rentfetch-space-xs);
+			color: var(--rentfetch-property-specials-content-color);
+			font-size: var(--rentfetch-property-specials-content-font-size);
+			line-height: 1.45;
+
+			p {
+				margin: 0 0 var(--rentfetch-space-2xs);
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+
 	.property-details-header {
 		display: flex;
 		justify-content: space-between;

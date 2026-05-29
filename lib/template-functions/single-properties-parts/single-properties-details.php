@@ -35,6 +35,8 @@ function rentfetch_single_properties_parts_details() {
 			$sqrft                = true === $maybe_do_details ? rentfetch_get_property_square_feet() : null;
 
 			if ( true === $maybe_do_details ) {
+				rentfetch_property_specials_callout_from_meta();
+
 				echo '<div class="property-details-header">';
 					echo '<div class="property-details-basic-info">';
 
@@ -141,10 +143,12 @@ function rentfetch_single_properties_parts_details() {
 						$phone_link    = rentfetch_format_phone_number_link( $phone );
 						$email         = rentfetch_get_property_email();
 						$email_link    = rentfetch_get_property_email_link( null, 'property-sidebar-email-link' );
+						$resident_portal_url = rentfetch_get_property_resident_portal_url();
 						$location_icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 location-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>';
 						$website_icon  = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 website-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>';
 						$phone_icon    = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 phone-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>';
 						$email_icon    = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 email-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>';
+						$resident_portal_icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 resident-portal-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 7.5a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 20.25a7.5 7.5 0 0 1 15 0" /></svg>';
 						$sidebar_icon_allowed_html = array_merge(
 							wp_kses_allowed_html( 'post' ),
 							array(
@@ -213,6 +217,21 @@ function rentfetch_single_properties_parts_details() {
 								echo '<div class="property-sidebar-item-content property-sidebar-email-content">';
 									echo '<h3>Email</h3>';
 									echo wp_kses_post( $email_link );
+								echo '</div>';
+							echo '</div>';
+						}
+
+						if ( $resident_portal_url ) {
+							echo '<div class="property-sidebar-item property-sidebar-resident-portal">';
+								echo wp_kses( $resident_portal_icon, $sidebar_icon_allowed_html );
+								echo '<div class="property-sidebar-item-content property-sidebar-resident-portal-content">';
+									echo '<h3>Resident Portal</h3>';
+									printf(
+										'<a class="property-sidebar-resident-portal-link" href="%s" target="%s">%s</a>',
+										esc_url( $resident_portal_url ),
+										esc_attr( rentfetch_get_link_target( $resident_portal_url ) ),
+										esc_html( preg_replace( '#^https?://#', '', untrailingslashit( $resident_portal_url ) ) )
+									);
 								echo '</div>';
 							echo '</div>';
 						}

@@ -115,11 +115,11 @@ function rentfetch_settings_general_performance() {
 		<p class="description">Tune Rent Fetch search caching, cache diagnostics, and database search indexes.</p>
 	</div>
 
-	<div class="row">
+	<div class="row rentfetch-performance-settings">
 		<div class="section">
 			<label class="label-large">Search Result Caching</label>
 			<p class="description">Stores property and floorplan search results in WordPress transients so repeated searches can skip expensive database queries. Cached results remain available for 1 day; after 1 hour they are treated as stale, served immediately, and refreshed in the background when a public visitor requests them.</p>
-			<p class="description">Rent Fetch tracks up to 500 search/query cache entries. The cache dashboard below separates rendered search HTML from supporting query-result caches, and cache pre-fetching prioritizes the top 50 tracked searches.</p>
+			<p class="description">Rent Fetch tracks up to 500 search/query cache entries. The cache dashboard below separates rendered search HTML from supporting query-result caches, and cache preloading prioritizes the top 50 tracked searches without trying to rebuild everything at once.</p>
 			<ul class="checkboxes">
 				<li>
 					<label for="rentfetch_options_disable_query_caching">
@@ -131,9 +131,9 @@ function rentfetch_settings_general_performance() {
 				<li>
 					<label for="rentfetch_options_enable_cache_warming">
 						<input type="checkbox" name="rentfetch_options_enable_cache_warming" id="rentfetch_options_enable_cache_warming" <?php checked( get_option( 'rentfetch_options_enable_cache_warming', '0' ), '1' ); ?>>
-						Automatically pre-fetch popular searches every 25 minutes (recommended)
+						Automatically preload popular searches every 25 minutes (recommended)
 					</label>
-					<p class="description">Runs the top 50 tracked property and floorplan searches through WP-Cron so common searches are more likely to be cached before visitors request them. Tracked searches are kept for 30 days.</p>
+					<p class="description">Runs tracked property and floorplan searches through WP-Cron so common searches are more likely to be cached before visitors request them. Tracked searches are kept for 30 days.</p>
 				</li>
 				<li>
 					<label for="rentfetch_options_enable_cache_console_logging">
@@ -146,7 +146,7 @@ function rentfetch_settings_general_performance() {
 
 			<p>
 				<button type="button" class="button" id="rentfetch-clear-cache">Clear Search Cache</button>
-				<button type="button" class="button" id="rentfetch-warm-cache">Pre-fetch Popular Searches</button>
+				<button type="button" class="button" id="rentfetch-warm-cache">Preload Popular Searches</button>
 				<span id="rentfetch-cache-status" style="margin-left: 10px;"></span>
 			</p>
 
@@ -360,28 +360,77 @@ function rentfetch_settings_general_performance() {
 					
 					var $button = $(this);
 					var $status = $('#rentfetch-cache-status');
+					var progress = {
+						total: 0,
+						processed: 0,
+						warmed: 0,
+						failed: 0,
+						steps: 0
+					};
 					
-					$button.prop('disabled', true).text('Pre-fetching...');
-					$status.html('<span style="color: #f0b849;">⏳ Pre-fetching popular searches... this may take a moment.</span>');
+					$button.prop('disabled', true).text('Preloading...');
+					$status.html('<span style="color: #f0b849;">Starting preload...</span>');
 					
-					$.post(ajaxurl, {
-						action: 'rentfetch_warm_cache',
-						nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_warm_cache' ) ); ?>'
-					}, function(response) {
-						$button.prop('disabled', false).text('Pre-fetch Popular Searches');
-						
-						if (response.success) {
-							$status.html('<span style="color: #46b450;">✓ ' + response.data.message + '</span>');
+					function runPreloadBatch(resetCursor) {
+						var request = {
+							action: 'rentfetch_warm_cache',
+							nonce: '<?php echo esc_js( wp_create_nonce( 'rentfetch_warm_cache' ) ); ?>'
+						};
+
+						if (resetCursor) {
+							request.reset_cursor = '1';
+						}
+
+						$.post(ajaxurl, request, function(response) {
+							var data = response && response.data ? response.data : {};
+							var batchSize = parseInt(data.batch_size || 0, 10);
+
+							if (!response.success) {
+								$button.prop('disabled', false).text('Preload Popular Searches');
+								$status.html('<span style="color: #dc3232;">✗ ' + (data.message || 'Preload failed.') + '</span>');
+								return;
+							}
+
+							if (!data.total) {
+								$button.prop('disabled', false).text('Preload Popular Searches');
+								$status.html('<span style="color: #46b450;">✓ ' + (data.message || 'No popular searches found to preload.') + '</span>');
+								setTimeout(function() {
+									$status.html('');
+								}, 3000);
+								return;
+							}
+
+							progress.total = parseInt(data.total || progress.total, 10);
+							progress.processed += batchSize;
+							progress.warmed += parseInt(data.warmed || 0, 10);
+							progress.failed += parseInt(data.failed || 0, 10);
+							progress.steps += 1;
+							if (data.errors && data.errors.length && window.console && window.console.warn) {
+								window.console.warn('RentFetch preload failures', data.errors);
+							}
+
+							if (progress.processed > progress.total) {
+								progress.processed = progress.total;
+							}
+
+							if (progress.processed < progress.total && batchSize > 0 && progress.steps < 100) {
+								$status.html('<span style="color: #f0b849;">Preloaded ' + progress.processed + ' of ' + progress.total + ' popular searches...</span>');
+								runPreloadBatch(false);
+								return;
+							}
+
+							$button.prop('disabled', false).text('Preload Popular Searches');
+							$status.html('<span style="color: #46b450;">✓ Preload complete. ' + progress.warmed + ' loaded' + (progress.failed ? ', ' + progress.failed + ' failed' : '') + '.</span>');
 							setTimeout(function() {
 								$status.html('');
 							}, 3000);
-						} else {
-							$status.html('<span style="color: #dc3232;">✗ ' + response.data.message + '</span>');
-						}
-					}).fail(function() {
-						$button.prop('disabled', false).text('Pre-fetch Popular Searches');
-						$status.html('<span style="color: #dc3232;">✗ Error: Request failed. Please try again.</span>');
-					});
+						}).fail(function() {
+							$button.prop('disabled', false).text('Preload Popular Searches');
+							$status.html('<span style="color: #dc3232;">✗ Error: Request failed. Please try again.</span>');
+						});
+					}
+
+					runPreloadBatch(true);
 				});
 
 				// Toggle popular searches accordion
@@ -426,7 +475,7 @@ function rentfetch_settings_general_performance() {
 									});
 									
 									html += '</tbody></table>';
-									html += '<p style="padding: 15px; color: #646970; font-size: 13px;"><em>Showing the top tracked searches from the last 30 days. Automatic cache pre-fetching uses this list to warm up to 50 popular searches.</em></p>';
+									html += '<p style="padding: 15px; color: #646970; font-size: 13px;"><em>Showing the top tracked searches from the last 30 days. Automatic cache preloading uses this list to warm up to 50 popular searches.</em></p>';
 									
 									$container.html(html);
 								} else {
@@ -558,6 +607,9 @@ function rentfetch_save_settings_general_data_sync() {
 	// Radio field.
 	if ( isset( $_POST['rentfetch_options_data_sync'] ) ) {
 		$options_data_sync = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_data_sync'] ) );
+		if ( ! in_array( $options_data_sync, array( 'nosync', 'updatesync' ), true ) ) {
+			$options_data_sync = 'nosync';
+		}
 		update_option( 'rentfetch_options_data_sync', $options_data_sync );
 	}
 

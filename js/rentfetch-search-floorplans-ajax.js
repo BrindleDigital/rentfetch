@@ -84,6 +84,14 @@ jQuery(function ($) {
 			key: debug.key,
 			family: debug.family,
 			stale: !!debug.stale,
+			stats: debug.stats || null,
+			cache: {
+				lookupAttempted: !!debug.lookup_attempted,
+				readEnabled: !!debug.read_enabled,
+				writeEnabled: !!debug.write_enabled,
+				writeAttempted: !!debug.write_attempted,
+				writeStored: debug.write_stored,
+			},
 		});
 
 		if (debug.background_refresh_scheduled) {
@@ -115,16 +123,88 @@ jQuery(function ($) {
 				);
 			});
 		}
+
+		if (Array.isArray(debug.writes)) {
+			debug.writes.forEach(function (event) {
+				console.info(
+					'Rent Fetch transient WRITE ' +
+						(event.stored ? 'STORED' : 'FAILED') +
+						': ' +
+						event.description,
+					{
+						key: event.key,
+						family: event.family,
+						valueType: event.value_type,
+						valueSize: event.value_size,
+					}
+				);
+			});
+		}
+
+		if (Array.isArray(debug.prunes)) {
+			debug.prunes.forEach(function (event) {
+				console.info(
+					'Rent Fetch transient PRUNED: ' + event.description,
+					{
+						key: event.key,
+						family: event.family,
+					}
+				);
+			});
+		}
+	}
+
+	function logSearchRequest(queryData) {
+		if (
+			!rentfetchConfig.enableCacheConsoleLogging ||
+			!window.console ||
+			!console.info
+		) {
+			return;
+		}
+
+		console.info('Rent Fetch floorplan search', {
+			query: $.param(queryData),
+			params: queryData,
+		});
+	}
+
+	function normalizeQueryParameterName(name) {
+		return String(name || '').replace(/\[[^\]]*\]$/, '');
+	}
+
+	function getManagedQueryParameterNames() {
+		var managedParams = {};
+
+		$filter.add($featuredFilters)
+			.find('input, select, textarea')
+			.each(function () {
+				var name = $(this).attr('name');
+
+				if (name) {
+					managedParams[normalizeQueryParameterName(name)] = true;
+				}
+			});
+
+		return managedParams;
 	}
 
 	// Function to update URL with query parameters
 	function updateURLWithQueryParameters(params) {
 		var url = new URL(window.location.href);
-		var existingParams = {};
+		var managedParams = getManagedQueryParameterNames();
+		var mergedParams = {};
+
 		url.searchParams.forEach(function (value, key) {
-			existingParams[key] = value;
+			if (managedParams[normalizeQueryParameterName(key)]) {
+				return;
+			}
+
+			mergedParams[key] = value;
 		});
-		var mergedParams = $.extend({}, existingParams, params);
+
+		$.extend(mergedParams, params);
+
 		var baseUrl = url.origin + url.pathname;
 		var queryString = $.param(mergedParams);
 		var newUrl = baseUrl + (queryString ? '?' + queryString : '');
@@ -163,6 +243,7 @@ jQuery(function ($) {
 		$.each(queryParams, function (key, value) {
 			if (
 				value === '' || // Exclude empty values
+				(Array.isArray(value) && !value.length) ||
 				key === 'action' || // Exclude specific parameters
 				key === 'rentfetch_frontend_nonce_field'
 			) {
@@ -405,12 +486,14 @@ jQuery(function ($) {
 
 		// Merge with shortcode attributes
 		var queryData = $.extend({}, shortcodeAttributes, formData);
+		logSearchRequest(queryData);
 
 		$.ajax({
 			url: restUrl,
 			data: queryData,
 			type: 'GET',
 			dataType: 'json',
+			cache: !rentfetchConfig.enableCacheConsoleLogging,
 			beforeSend: function (xhr) {
 				if (rentfetchConfig.nonce) {
 					xhr.setRequestHeader('X-WP-Nonce', rentfetchConfig.nonce);

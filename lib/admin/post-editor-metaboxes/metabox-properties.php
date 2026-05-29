@@ -35,6 +35,15 @@ function rentfetch_register_properties_details_metabox() {
 	);
 
 	add_meta_box(
+		'rentfetch_properties_specials', // ID of the metabox.
+		'Property Specials', // Title of the metabox.
+		'rentfetch_properties_specials_metabox_callback', // Callback function to render the metabox.
+		'properties', // Post type to add the metabox to.
+		'normal', // Priority of the metabox.
+		'default' // Context of the metabox.
+	);
+
+	add_meta_box(
 		'rentfetch_properties_contact', // ID of the metabox.
 		'Property Contact Information', // Title of the metabox.
 		'rentfetch_properties_contact_metabox_callback', // Callback function to render the metabox.
@@ -228,9 +237,9 @@ function rentfetch_properties_identifiers_metabox_callback( $post ) {
 function rentfetch_properties_location_metabox_callback( $post ) {
 	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
 	?>
-	<div class="rf-metabox rf-metabox-properties">
+	<div class="rf-metabox rf-metabox-properties rf-property-location-metabox">
 		
-		<div class="columns columns-4">
+		<div class="columns columns-4 rf-location-address-fields">
 		
 			<?php
 			// * Property Address
@@ -290,7 +299,7 @@ function rentfetch_properties_location_metabox_callback( $post ) {
 		
 		</div>
 		
-		<div class="columns columns-2">
+		<div class="columns columns-2 rf-location-coordinate-fields">
 		
 			<?php
 			// * Property Latitude
@@ -337,9 +346,9 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
 	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
 	?>
-	<div class="rf-metabox rf-metabox-properties">
+	<div class="rf-metabox rf-metabox-properties rf-property-contact-metabox">
 		
-		<div class="columns columns-2">
+		<div class="columns columns-2 rf-contact-primary-fields">
 			
 			<?php
 			// * Property Email
@@ -371,7 +380,7 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 			
 		</div>
 		
-		<div class="columns columns-3">
+		<div class="columns columns-4 rf-contact-link-fields">
 			
 			<?php
 			// * Property URL
@@ -399,6 +408,19 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 				<div class="column">
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="url_override" name="url_override" value="<?php echo esc_attr( $url ); ?>">
 					<p class="description">Some APIs don't allow for full control. Override the synced URL here.</p>
+				</div>
+			</div>
+
+			<?php
+			// * Resident Portal Link
+			$resident_portal_url = get_post_meta( $post->ID, 'resident_portal_url', true );
+			?>
+			<div class="field">
+				<div class="column">
+					<label for="resident_portal_url">Resident Portal Link</label>
+				</div>
+				<div class="column">
+					<input type="text" id="resident_portal_url" name="resident_portal_url" value="<?php echo esc_attr( $resident_portal_url ); ?>">
 				</div>
 			</div>
 			
@@ -527,35 +549,6 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		</div>
 
 		<?php
-		// * Has Specials
-		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
-		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="has_specials">Has Specials</label>
-			</div>
-			<div class="column">
-				<input type="checkbox" <?php echo esc_attr( $disabled ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
-			</div>
-		</div>
-		
-		<?php
-		// * Specials override text
-		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
-		?>
-		<div class="field">
-			<div class="column">
-				<label for="specials_override_text">Specials Override Text</label>
-				<p class="description">Manually customize the specials text displayed. This will not sync with any specials in your PMS and will override what's in the PMS.</p>
-			</div>
-			<div class="column">
-				<input type="text" id="specials_override_text" name="specials_override_text" maxlength="25" value="<?php echo esc_attr( $specials_override_text ); ?>">
-				<p class="description"><em>Maximum 25 characters</em></p>
-			</div>
-		</div>
-				
-		<?php
 		// * Property Pets
 		// $pets = get_post_meta( $post->ID, 'pets', true );
 		?>
@@ -601,6 +594,78 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 }
 
 /**
+ * Properties specials metabox callback
+ *
+ * @param object $post The post object.
+ *
+ * @return void.
+ */
+function rentfetch_properties_specials_metabox_callback( $post ) {
+	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
+	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
+	?>
+	<div class="rf-metabox rf-metabox-properties rf-property-specials-metabox">
+		<?php
+		// * Has Specials
+		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
+		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
+		?>
+		<div class="field">
+			<div class="rf-toggle-control">
+				<input class="rf-toggle-input" type="checkbox" <?php echo esc_attr( $disabled ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
+				<label class="rf-toggle-label" for="has_specials">
+					<span class="rf-toggle-track" aria-hidden="true"><span class="rf-toggle-thumb"></span></span>
+					<span class="rf-toggle-text">Show specials for this property</span>
+				</label>
+			</div>
+		</div>
+
+		<?php
+		// * Specials heading
+		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
+		$specials_content       = get_post_meta( $post->ID, 'specials_content', true );
+		$conditional_class      = $has_specials ? '' : ' hidden is-hidden';
+		$conditional_hidden     = $has_specials ? '' : ' hidden';
+		?>
+		<div class="field rf-specials-conditional-field<?php echo esc_attr( $conditional_class ); ?>"<?php echo esc_attr( $conditional_hidden ); ?>>
+			<label for="specials_override_text">Specials Heading</label>
+			<input type="text" id="specials_override_text" name="specials_override_text" maxlength="25" value="<?php echo esc_attr( $specials_override_text ); ?>">
+		</div>
+
+		<div class="field rf-specials-conditional-field<?php echo esc_attr( $conditional_class ); ?>"<?php echo esc_attr( $conditional_hidden ); ?>>
+			<label for="specials_content">Specials Content</label>
+			<textarea id="specials_content" name="specials_content" rows="3"><?php echo esc_textarea( $specials_content ); ?></textarea>
+		</div>
+	</div>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			var metabox = document.querySelector('.rf-property-specials-metabox');
+			var toggle = metabox ? metabox.querySelector('#has_specials') : null;
+			var conditionalFields = metabox ? metabox.querySelectorAll('.rf-specials-conditional-field') : [];
+
+			if (!toggle || !conditionalFields.length) {
+				return;
+			}
+
+			function updateSpecialsFields() {
+				conditionalFields.forEach(function(field) {
+					var shouldHide = !toggle.checked;
+					field.hidden = shouldHide;
+					field.classList.toggle('hidden', shouldHide);
+					field.classList.toggle('is-hidden', shouldHide);
+					field.style.display = shouldHide ? 'none' : '';
+				});
+			}
+
+			toggle.addEventListener('change', updateSpecialsFields);
+			toggle.addEventListener('click', updateSpecialsFields);
+			updateSpecialsFields();
+		});
+	</script>
+	<?php
+}
+
+/**
  * Get sync status color class based on API response timestamps
  *
  * @param int $post_id The post ID to check
@@ -609,8 +674,12 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 function rentfetch_get_sync_status_class( $post_id ) {
 	$sync_state = rentfetch_get_last_synced_state( $post_id );
 
-	if ( in_array( $sync_state['state'], array( 'failed', 'partial' ), true ) ) {
+	if ( 'failed' === $sync_state['state'] ) {
 		return 'sync-red';
+	}
+
+	if ( 'partial' === $sync_state['state'] ) {
+		return 'sync-orange';
 	}
 
 	if ( 'synced' !== $sync_state['state'] || $sync_state['timestamp'] <= 0 ) {
@@ -1271,45 +1340,48 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 			
 			// Handle CSV file upload via Media Library
 			var csvMediaFrame;
-			document.getElementById('property_fees_csv_upload_btn').addEventListener('click', function(e) {
-				e.preventDefault();
-				
-				// If the frame already exists, reopen it
-				if (csvMediaFrame) {
+			var propertyFeesCsvUploadButton = document.getElementById('property_fees_csv_upload_btn');
+			if (propertyFeesCsvUploadButton) {
+				propertyFeesCsvUploadButton.addEventListener('click', function(e) {
+					e.preventDefault();
+
+					// If the frame already exists, reopen it
+					if (csvMediaFrame) {
+						csvMediaFrame.open();
+						return;
+					}
+
+					// Create a new media frame
+					csvMediaFrame = wp.media({
+						title: 'Select or Upload CSV File',
+						button: {
+							text: 'Use this CSV'
+						},
+						multiple: false,
+						library: {
+							type: ['text/csv', 'application/vnd.ms-excel', 'text/plain']
+						}
+					});
+
+					// Open to upload tab by default
+					csvMediaFrame.on('open', function() {
+						// Switch to upload tab if no file is preselected
+						if (csvMediaFrame.uploader && csvMediaFrame.uploader.uploader) {
+							csvMediaFrame.content.mode('upload');
+						}
+					});
+
+					// When a file is selected
+					csvMediaFrame.on('select', function() {
+						var attachment = csvMediaFrame.state().get('selection').first().toJSON();
+						document.getElementById('property_fees_csv_url').value = attachment.url;
+						// Trigger validation of the new URL
+						jQuery('#property_fees_csv_url').trigger('change');
+					});
+
 					csvMediaFrame.open();
-					return;
-				}
-				
-				// Create a new media frame
-				csvMediaFrame = wp.media({
-					title: 'Select or Upload CSV File',
-					button: {
-						text: 'Use this CSV'
-					},
-					multiple: false,
-					library: {
-						type: ['text/csv', 'application/vnd.ms-excel', 'text/plain']
-					}
 				});
-				
-				// Open to upload tab by default
-				csvMediaFrame.on('open', function() {
-					// Switch to upload tab if no file is preselected
-					if (csvMediaFrame.uploader && csvMediaFrame.uploader.uploader) {
-						csvMediaFrame.content.mode('upload');
-					}
-				});
-				
-				// When a file is selected
-				csvMediaFrame.on('select', function() {
-					var attachment = csvMediaFrame.state().get('selection').first().toJSON();
-					document.getElementById('property_fees_csv_url').value = attachment.url;
-					// Trigger validation of the new URL
-					jQuery('#property_fees_csv_url').trigger('change');
-				});
-				
-				csvMediaFrame.open();
-			});
+			}
 		});
 	</script>";
 }
@@ -1328,6 +1400,99 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 	$property_fees_data = get_post_meta( $post->ID, 'property_fees_data', true );
 	if ( ! is_array( $property_fees_data ) ) {
 		$property_fees_data = array();
+	}
+
+	$api_fees_payload = function_exists( 'rentfetch_get_yardi_synced_property_lease_fees_payload' )
+		? rentfetch_get_yardi_synced_property_lease_fees_payload( $post->ID )
+		: null;
+
+	if ( is_array( $api_fees_payload ) ) {
+		$api_fees_data = function_exists( 'rentfetch_get_yardi_api_property_fees_data' )
+			? rentfetch_get_yardi_api_property_fees_data( $post->ID )
+			: array();
+
+		$api_fees_preview_markup = '';
+		if ( ! empty( $api_fees_data ) && function_exists( 'rentfetch_get_property_fees_markup' ) ) {
+			$api_fees_preview_markup = rentfetch_get_property_fees_markup( wp_json_encode( $api_fees_data ) );
+		}
+		?>
+		<div class="rf-metabox rf-metabox-properties">
+			<div class="field">
+				<div class="column">
+					<label>Synced API Fees Preview</label>
+					<p class="description">Fees for this property are coming from the synced lease-fees API. Property-level CSV, manual fee totals, manual entries, and embed-code settings are hidden while API fees are available.</p>
+				</div>
+				<div class="column">
+					<?php if ( ! empty( trim( (string) $api_fees_preview_markup ) ) ) : ?>
+						<div class="rentfetch-admin-effective-fees-preview" style="border: 1px solid #dcdcde; background: #fff; padding: 12px; max-width: 760px;">
+							<?php echo $api_fees_preview_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</div>
+					<?php else : ?>
+						<p class="description">API fees are available, but no preview markup could be generated.</p>
+					<?php endif; ?>
+				</div>
+			</div>
+
+			<style>
+				.rentfetch-admin-effective-fees-preview h3 {
+					margin: 1.5rem 0 0.75rem;
+					font-size: 13px;
+					line-height: 1.4;
+				}
+
+				.rentfetch-admin-effective-fees-preview h3:first-of-type {
+					margin-top: 0;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table {
+					width: 100%;
+					max-width: 760px;
+					border-collapse: collapse;
+					table-layout: fixed;
+					margin: 0 0 1.5rem;
+					font-size: 13px;
+					line-height: 1.45;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table td {
+					padding: 4px 8px;
+					vertical-align: top;
+					border: 0;
+					border-bottom: 1px solid #f0f0f1;
+					word-break: break-word;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table tr:last-child td {
+					border-bottom: 0;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table td:first-child {
+					padding-left: 0;
+					font-weight: 500;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table td:nth-child(2) {
+					white-space: nowrap;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table td:nth-child(3) {
+					padding-right: 0;
+					text-align: right;
+					color: #50575e;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table .fee-price {
+					font-weight: 600;
+				}
+
+				.rentfetch-admin-effective-fees-preview .property-fees-table .fee-frequency,
+				.rentfetch-admin-effective-fees-preview .property-fees-table .fee-notes {
+					color: #50575e;
+				}
+			</style>
+		</div>
+		<?php
+		return;
 	}
 	
 	?>
@@ -1941,6 +2106,10 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'url_override', esc_url_raw( wp_unslash( $_POST['url_override'] ) ) );
 	}
 
+	if ( isset( $_POST['resident_portal_url'] ) ) {
+		update_post_meta( $post_id, 'resident_portal_url', esc_url_raw( wp_unslash( $_POST['resident_portal_url'] ) ) );
+	}
+
 	if ( isset( $_POST['tour_booking_link'] ) ) {
 		update_post_meta( $post_id, 'tour_booking_link', sanitize_text_field( wp_unslash( $_POST['tour_booking_link'] ) ) );
 	}
@@ -2112,7 +2281,13 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 	}
 
 	if ( isset( $_POST['specials_override_text'] ) ) {
-		update_post_meta( $post_id, 'specials_override_text', sanitize_text_field( wp_unslash( $_POST['specials_override_text'] ) ) );
+		$specials_heading = sanitize_text_field( wp_unslash( $_POST['specials_override_text'] ) );
+		$specials_heading = function_exists( 'mb_substr' ) ? mb_substr( $specials_heading, 0, 25 ) : substr( $specials_heading, 0, 25 );
+		update_post_meta( $post_id, 'specials_override_text', $specials_heading );
+	}
+
+	if ( isset( $_POST['specials_content'] ) ) {
+		update_post_meta( $post_id, 'specials_content', sanitize_textarea_field( wp_unslash( $_POST['specials_content'] ) ) );
 	}
 
 	if ( isset( $_POST['video'] ) ) {

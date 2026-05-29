@@ -16,6 +16,18 @@ html {
 	--rentfetch-dark: #000000;
 	--rentfetch-accent-specials-background: #ffebb1;
 	--rentfetch-accent-specials-star: #fbbc00;
+	--rentfetch-property-specials-background: var(--rentfetch-accent-light);
+	--rentfetch-property-specials-border: color-mix(in srgb, var(--rentfetch-accent) 20%, transparent);
+	--rentfetch-property-specials-icon-background: var(--rentfetch-accent);
+	--rentfetch-property-specials-icon-color: var(--rentfetch-white);
+	--rentfetch-property-specials-heading-color: var(--rentfetch-accent);
+	--rentfetch-property-specials-content-color: var(--rentfetch-accent);
+	--rentfetch-property-specials-heading-font-size: var(--rentfetch-font-size-medium);
+	--rentfetch-property-specials-content-font-size: var(--rentfetch-font-size-small);
+	--rentfetch-property-specials-icon-size: 48px;
+	--rentfetch-property-specials-padding-block: var(--rentfetch-space-md);
+	--rentfetch-property-specials-padding-inline: var(--rentfetch-space-lg);
+	--rentfetch-property-specials-section-gap: var(--rentfetch-space-xl);
 	--rentfetch-accent: #086ddb;
 	--rentfetch-accent-active: #1f88fa;
 	--rentfetch-accent-light: #f1f6fb;

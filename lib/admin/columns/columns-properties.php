@@ -49,6 +49,56 @@ function rentfetch_default_properties_admin_columns( $columns ) {
 add_filter( 'manage_properties_posts_columns', 'rentfetch_default_properties_admin_columns' );
 
 /**
+ * Filter synced content lists to records that need attention.
+ *
+ * @param WP_Query $query Main admin query.
+ * @return void
+ */
+function rentfetch_filter_admin_sync_status_query( $query ) {
+	if ( ! is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+
+	$post_type = $query->get( 'post_type' );
+	if ( ! in_array( $post_type, array( 'properties', 'floorplans', 'units' ), true ) ) {
+		return;
+	}
+
+	$sync_status_filter = isset( $_GET['rentfetch_sync_status'] )
+		? sanitize_key( wp_unslash( $_GET['rentfetch_sync_status'] ) )
+		: '';
+
+	if ( 'needs_attention' !== $sync_status_filter ) {
+		return;
+	}
+
+	global $wpdb;
+
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$post_ids = $wpdb->get_col(
+		$wpdb->prepare(
+			"SELECT ID FROM {$wpdb->posts} WHERE post_type = %s AND post_status != 'trash'",
+			$post_type
+		)
+	);
+
+	$needs_attention_ids = array();
+	foreach ( $post_ids as $post_id ) {
+		$status = function_exists( 'rentfetch_get_sync_status_class' )
+			? rentfetch_get_sync_status_class( (int) $post_id )
+			: 'sync-gray';
+
+		if ( 'sync-green' !== $status ) {
+			$needs_attention_ids[] = (int) $post_id;
+		}
+	}
+
+	$query->set( 'post__in', ! empty( $needs_attention_ids ) ? $needs_attention_ids : array( 0 ) );
+	$query->set( 'orderby', 'post__in' );
+}
+add_action( 'pre_get_posts', 'rentfetch_filter_admin_sync_status_query' );
+
+/**
  * Get the overall sync status from an array of individual statuses.
  *
  * @param array $statuses Array of sync status classes.
@@ -60,7 +110,8 @@ function rentfetch_get_overall_sync_status( $statuses ) {
 	}
 
 	$priorities = array(
-		'sync-red'    => 4,
+		'sync-red'    => 5,
+		'sync-orange' => 4,
 		'sync-yellow' => 3,
 		'sync-green'  => 2,
 		'sync-gray'   => 1,
@@ -78,6 +129,262 @@ function rentfetch_get_overall_sync_status( $statuses ) {
 
 	return $worst_status;
 }
+
+/**
+ * Get a display label for a sync endpoint.
+ *
+ * @param string $endpoint Endpoint key.
+ * @return string
+ */
+function rentfetch_get_sync_endpoint_label( $endpoint ) {
+	$labels = array(
+		'properties_api'                  => __( 'Properties', 'rentfetch' ),
+		'property_images_api'             => __( 'Images', 'rentfetch' ),
+		'lease_fees_api'                  => __( 'Fees', 'rentfetch' ),
+		'floorplans_api'                  => __( 'Floor plans', 'rentfetch' ),
+		'unit_types_api'                  => __( 'Plans', 'rentfetch' ),
+		'apartmentavailability_api'       => __( 'Units', 'rentfetch' ),
+		'units_api'                       => __( 'Units', 'rentfetch' ),
+		'getMitsPropertyUnits'            => __( 'Property units', 'rentfetch' ),
+		'getUnitsAvailabilityAndPricing'  => __( 'Availability', 'rentfetch' ),
+	);
+
+	return isset( $labels[ $endpoint ] ) ? $labels[ $endpoint ] : ucwords( str_replace( '_', ' ', (string) $endpoint ) );
+}
+
+/**
+ * Get the endpoint-level sync status map for a post.
+ *
+ * @param int $post_id Post ID.
+ * @return array
+ */
+function rentfetch_get_column_sync_status_map( $post_id ) {
+	if ( function_exists( 'rfs_prune_sync_status_to_registry' ) ) {
+		$sync_status = rfs_prune_sync_status_to_registry( $post_id );
+		return is_array( $sync_status ) ? $sync_status : array();
+	}
+
+	if ( function_exists( 'rfs_get_sync_status_map' ) ) {
+		$sync_status = rfs_get_sync_status_map( $post_id );
+		return is_array( $sync_status ) ? $sync_status : array();
+	}
+
+	$sync_status = get_post_meta( $post_id, 'sync_status', true );
+	return is_array( $sync_status ) ? $sync_status : array();
+}
+
+/**
+ * Get a readable endpoint state for tooltip text.
+ *
+ * @param array $endpoint_state Endpoint state data.
+ * @return string
+ */
+function rentfetch_get_column_endpoint_state_label( $endpoint_state ) {
+	if ( ! is_array( $endpoint_state ) ) {
+		return __( 'unknown', 'rentfetch' );
+	}
+
+	$state = isset( $endpoint_state['state'] ) ? (string) $endpoint_state['state'] : 'unknown';
+
+	if ( 'success' === $state ) {
+		return __( 'worked', 'rentfetch' );
+	}
+
+	if ( 'partial' === $state ) {
+		return __( 'no data returned', 'rentfetch' );
+	}
+
+	if ( 'failed' === $state ) {
+		return __( 'failed', 'rentfetch' );
+	}
+
+	return $state;
+}
+
+/**
+ * Build the hover tooltip for a sync status dot.
+ *
+ * @param string $heading Heading for the tooltip.
+ * @param array  $posts   Posts represented by the dot.
+ * @return string
+ */
+function rentfetch_get_column_sync_tooltip( $heading, $posts ) {
+	$lines = array( $heading );
+	$posts = array_values( array_filter( (array) $posts ) );
+
+	if ( empty( $posts ) ) {
+		$lines[] = __( 'No synced records found.', 'rentfetch' );
+		return implode( "\n", $lines );
+	}
+
+	$endpoint_summary = array();
+	$no_status_count  = 0;
+
+	foreach ( $posts as $post ) {
+		$post_id = is_object( $post ) && isset( $post->ID ) ? (int) $post->ID : (int) $post;
+		if ( $post_id <= 0 ) {
+			continue;
+		}
+
+		$sync_status = rentfetch_get_column_sync_status_map( $post_id );
+
+		if ( empty( $sync_status ) ) {
+			++$no_status_count;
+			continue;
+		}
+
+		foreach ( $sync_status as $endpoint => $endpoint_state ) {
+			$endpoint_label = rentfetch_get_sync_endpoint_label( $endpoint );
+			$state_label    = rentfetch_get_column_endpoint_state_label( $endpoint_state );
+
+			if ( ! isset( $endpoint_summary[ $endpoint_label ] ) ) {
+				$endpoint_summary[ $endpoint_label ] = array();
+			}
+
+			if ( ! isset( $endpoint_summary[ $endpoint_label ][ $state_label ] ) ) {
+				$endpoint_summary[ $endpoint_label ][ $state_label ] = 0;
+			}
+
+			++$endpoint_summary[ $endpoint_label ][ $state_label ];
+		}
+	}
+
+	foreach ( $endpoint_summary as $endpoint_label => $states ) {
+		$state_parts = array();
+		foreach ( $states as $state_label => $count ) {
+			$state_parts[] = 1 === (int) count( $posts )
+				? $state_label
+				: sprintf( '%s %s', number_format_i18n( $count ), $state_label );
+		}
+
+		$lines[] = sprintf( '%s: %s', $endpoint_label, implode( ', ', $state_parts ) );
+	}
+
+	if ( $no_status_count > 0 ) {
+		$lines[] = 1 === $no_status_count
+			? __( 'No API status', 'rentfetch' )
+			: sprintf( __( '%s records with no API status', 'rentfetch' ), number_format_i18n( $no_status_count ) );
+	}
+
+	return implode( "\n", $lines );
+}
+
+/**
+ * Print instant sync-dot tooltip styles for admin list tables.
+ *
+ * @return void
+ */
+function rentfetch_admin_sync_dot_tooltip_styles() {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( ! $screen || ! in_array( $screen->post_type, array( 'properties', 'floorplans', 'units' ), true ) ) {
+		return;
+	}
+	?>
+	<style>
+		.wp-list-table .rentfetch-sync-dot {
+			cursor: pointer;
+			display: inline-block;
+			font-size: 16px;
+			line-height: 1;
+		}
+
+		#rentfetch-sync-dot-tooltip {
+			background: #1d2327;
+			border-radius: 3px;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+			box-sizing: border-box;
+			color: #fff;
+			display: none;
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 1.35;
+			max-width: 360px;
+			min-width: 220px;
+			padding: 8px 10px;
+			pointer-events: none;
+			position: fixed;
+			text-align: left;
+			white-space: pre-line;
+			z-index: 100000;
+		}
+	</style>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			var tooltip = document.getElementById('rentfetch-sync-dot-tooltip');
+
+			if (!tooltip) {
+				tooltip = document.createElement('div');
+				tooltip.id = 'rentfetch-sync-dot-tooltip';
+				tooltip.setAttribute('role', 'tooltip');
+				document.body.appendChild(tooltip);
+			}
+
+			function positionTooltip(dot) {
+				var rect = dot.getBoundingClientRect();
+				var tooltipRect = tooltip.getBoundingClientRect();
+				var viewportWidth = document.documentElement.clientWidth;
+				var top = rect.bottom + 8;
+				var left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+
+				if (left < 8) {
+					left = 8;
+				}
+
+				if (left + tooltipRect.width > viewportWidth - 8) {
+					left = viewportWidth - tooltipRect.width - 8;
+				}
+
+				tooltip.style.left = left + 'px';
+				tooltip.style.top = top + 'px';
+			}
+
+			function showTooltip(dot) {
+				var text = dot.getAttribute('data-tooltip');
+
+				if (!text) {
+					return;
+				}
+
+				tooltip.textContent = text;
+				tooltip.style.display = 'block';
+				positionTooltip(dot);
+			}
+
+			function hideTooltip() {
+				tooltip.style.display = 'none';
+			}
+
+			document.addEventListener('mouseenter', function(event) {
+				if (event.target.matches('.rentfetch-sync-dot')) {
+					showTooltip(event.target);
+				}
+			}, true);
+
+			document.addEventListener('focusin', function(event) {
+				if (event.target.matches('.rentfetch-sync-dot')) {
+					showTooltip(event.target);
+				}
+			});
+
+			document.addEventListener('mouseleave', function(event) {
+				if (event.target.matches('.rentfetch-sync-dot')) {
+					hideTooltip();
+				}
+			}, true);
+
+			document.addEventListener('focusout', function(event) {
+				if (event.target.matches('.rentfetch-sync-dot')) {
+					hideTooltip();
+				}
+			});
+
+			window.addEventListener('scroll', hideTooltip, true);
+			window.addEventListener('resize', hideTooltip);
+		});
+	</script>
+	<?php
+}
+add_action( 'admin_head', 'rentfetch_admin_sync_dot_tooltip_styles' );
 
 /**
  * Set up the content for the admin columns.
@@ -150,15 +457,20 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 		// Colors
 		$sync_colors = array(
 			'sync-green'  => '#28a745',
-			'sync-yellow' => '#856404',
+			'sync-yellow' => '#dba617',
+			'sync-orange' => '#d9822b',
 			'sync-red'    => '#dc3545',
 			'sync-gray'   => '#6c757d',
 		);
+
+		$property_tooltip  = rentfetch_get_column_sync_tooltip( __( 'Properties APIs', 'rentfetch' ), array( $post_id ) );
+		$floorplan_tooltip = rentfetch_get_column_sync_tooltip( __( 'Floor plans APIs', 'rentfetch' ), $floorplans );
+		$unit_tooltip      = rentfetch_get_column_sync_tooltip( __( 'Units APIs', 'rentfetch' ), $units );
 		
 		// Output
-		echo '<span style="color: ' . esc_attr( $sync_colors[ $property_sync ] ?? '#6c757d' ) . '; font-size: 16px;">●</span> ';
-		echo '<span style="color: ' . esc_attr( $sync_colors[ $floorplan_sync ] ?? '#6c757d' ) . '; font-size: 16px;">●</span> ';
-		echo '<span style="color: ' . esc_attr( $sync_colors[ $unit_sync ] ?? '#6c757d' ) . '; font-size: 16px;">●</span>';
+		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $property_tooltip ) . '" aria-label="' . esc_attr( $property_tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $property_sync ] ?? '#6c757d' ) . ';">●</span> ';
+		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $floorplan_tooltip ) . '" aria-label="' . esc_attr( $floorplan_tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $floorplan_sync ] ?? '#6c757d' ) . ';">●</span> ';
+		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $unit_tooltip ) . '" aria-label="' . esc_attr( $unit_tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $unit_sync ] ?? '#6c757d' ) . ';">●</span>';
 		
 	}
 

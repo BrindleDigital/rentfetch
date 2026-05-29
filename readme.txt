@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.35.9
+Stable tag: 0.36.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,26 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.36.2 =
+
+* Added property specials controls with a dedicated heading, content field, and single-property banner output.
+* Added a resident portal link field for properties and displayed it on single property pages.
+* Improved property editor metabox layouts and API fee preview behavior.
+
+= 0.36.1 =
+
+* Added a resident portal link field for properties and displayed it on single property pages.
+* Improved the property contact and location metabox layouts in the property editor.
+* Show synced API property fees as a read-only preview when authoritative API fee data is available.
+
+= 0.36.0 =
+
+* Added a compact RentFetch admin bar dropdown with content counts, sync status summaries, cache controls, and performance links.
+* Added admin sync status dots, instant tooltips, and status filtering for properties, floor plans, and units.
+* Improved search cache controls with clearer cache/preload status, one-click clearing, and full popular-search preloading.
+* Improved search cache statistics so administrator and logged-in requests do not inflate public cache hit/miss tracking.
+* Refined performance settings and admin UI spacing, headings, links, toggles, and dropdown styling.
 
 = 0.35.9 =
 

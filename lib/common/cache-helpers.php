@@ -104,6 +104,51 @@ function rentfetch_describe_search_query_cache_key( $key ) {
 }
 
 /**
+ * Get the reason this request should not contribute to persistent cache stats.
+ *
+ * Admin/editor traffic and cache warming are operational activity, not visitor
+ * behavior, so they should not skew the dashboard hit/miss history.
+ *
+ * @return string Empty string when stats should be recorded.
+ */
+function rentfetch_get_search_query_cache_stats_skip_reason() {
+	if ( ! empty( $GLOBALS['rentfetch_force_cache_write'] ) || ! empty( $GLOBALS['rentfetch_refreshing_cache'] ) ) {
+		return 'cache_warming_or_refresh';
+	}
+
+	if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+		return 'administrator';
+	}
+
+	return '';
+}
+
+/**
+ * Determine whether this request should contribute to persistent cache stats.
+ *
+ * @return bool
+ */
+function rentfetch_should_record_search_query_cache_stats() {
+	$metadata = rentfetch_get_search_query_cache_stats_recording_metadata();
+
+	return ! empty( $metadata['recorded'] );
+}
+
+/**
+ * Build metadata about whether the current request can record cache stats.
+ *
+ * @return array
+ */
+function rentfetch_get_search_query_cache_stats_recording_metadata() {
+	$skip_reason = rentfetch_get_search_query_cache_stats_skip_reason();
+
+	return array(
+		'recorded'    => '' === $skip_reason,
+		'skip_reason' => $skip_reason,
+	);
+}
+
+/**
  * Record a search/query transient cache lookup.
  *
  * @param string $key    Transient key.
@@ -125,6 +170,10 @@ function rentfetch_record_search_query_cache_event( $key, $is_hit ) {
 		'family'      => rentfetch_get_search_query_cache_family( $key ),
 		'status'      => $is_hit ? 'hit' : 'miss',
 	);
+
+	if ( ! rentfetch_should_record_search_query_cache_stats() ) {
+		return;
+	}
 
 	$stats = get_option( 'rentfetch_search_query_cache_stats', array() );
 	if ( ! is_array( $stats ) ) {
@@ -160,6 +209,107 @@ function rentfetch_record_search_query_cache_event( $key, $is_hit ) {
 }
 
 /**
+ * Determine whether cache diagnostics should be collected.
+ *
+ * @return bool
+ */
+function rentfetch_cache_diagnostics_enabled() {
+	return ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || get_option( 'rentfetch_options_enable_cache_console_logging', '0' ) === '1';
+}
+
+/**
+ * Record a search/query transient cache write during the current request.
+ *
+ * @param string $key    Transient key.
+ * @param bool   $stored Whether WordPress reported the transient was stored.
+ * @param mixed  $value  Stored value.
+ * @return void
+ */
+function rentfetch_record_search_query_cache_write_event( $key, $stored, $value ) {
+	if ( ! rentfetch_cache_diagnostics_enabled() ) {
+		return;
+	}
+
+	if ( ! rentfetch_is_search_query_cache_key( $key ) ) {
+		return;
+	}
+
+	if ( ! isset( $GLOBALS['rentfetch_cache_write_events'] ) || ! is_array( $GLOBALS['rentfetch_cache_write_events'] ) ) {
+		$GLOBALS['rentfetch_cache_write_events'] = array();
+	}
+
+	$GLOBALS['rentfetch_cache_write_events'][] = array(
+		'key'         => $key,
+		'description' => rentfetch_describe_search_query_cache_key( $key ),
+		'family'      => rentfetch_get_search_query_cache_family( $key ),
+		'stored'      => (bool) $stored,
+		'value_type'  => gettype( $value ),
+		'value_size'  => strlen( maybe_serialize( $value ) ),
+	);
+}
+
+/**
+ * Record a search/query transient prune during the current request.
+ *
+ * @param string $key Transient key.
+ * @return void
+ */
+function rentfetch_record_search_query_cache_prune_event( $key ) {
+	if ( ! rentfetch_cache_diagnostics_enabled() ) {
+		return;
+	}
+
+	if ( ! rentfetch_is_search_query_cache_key( $key ) ) {
+		return;
+	}
+
+	if ( ! isset( $GLOBALS['rentfetch_cache_prune_events'] ) || ! is_array( $GLOBALS['rentfetch_cache_prune_events'] ) ) {
+		$GLOBALS['rentfetch_cache_prune_events'] = array();
+	}
+
+	$GLOBALS['rentfetch_cache_prune_events'][] = array(
+		'key'         => $key,
+		'description' => rentfetch_describe_search_query_cache_key( $key ),
+		'family'      => rentfetch_get_search_query_cache_family( $key ),
+	);
+}
+
+/**
+ * Log failed cache writes while cache diagnostics are enabled.
+ *
+ * @param string $key    Transient key.
+ * @param mixed  $value  Stored value.
+ * @return void
+ */
+function rentfetch_maybe_log_failed_cache_write( $key, $value ) {
+	if ( ! rentfetch_is_search_query_cache_key( $key ) ) {
+		return;
+	}
+
+	if ( ! rentfetch_cache_diagnostics_enabled() ) {
+		return;
+	}
+
+	global $wpdb;
+
+	error_log(
+		wp_json_encode(
+			array(
+				'source'       => 'rentfetch_cache_write',
+				'key'          => $key,
+				'description'  => rentfetch_describe_search_query_cache_key( $key ),
+				'family'       => rentfetch_get_search_query_cache_family( $key ),
+				'value_type'   => gettype( $value ),
+				'value_size'   => strlen( maybe_serialize( $value ) ),
+				'db_error'     => isset( $wpdb ) ? $wpdb->last_error : '',
+				'logged_in'    => is_user_logged_in(),
+				'cache_option' => get_option( 'rentfetch_options_disable_query_caching', '0' ),
+			)
+		)
+	);
+}
+
+/**
  * Track a search/query cache key for pruning.
  *
  * @param string $key Transient key.
@@ -184,6 +334,11 @@ function rentfetch_register_search_query_cache_key( $key ) {
 
 	$registry[ $key ]['last_set_at'] = $now;
 	$registry[ $key ]['priority']    = ! empty( $registry[ $key ]['priority'] ) || ! empty( $GLOBALS['rentfetch_prioritize_search_query_cache'] );
+
+	if ( ! isset( $GLOBALS['rentfetch_recently_stored_cache_keys'] ) || ! is_array( $GLOBALS['rentfetch_recently_stored_cache_keys'] ) ) {
+		$GLOBALS['rentfetch_recently_stored_cache_keys'] = array();
+	}
+	$GLOBALS['rentfetch_recently_stored_cache_keys'][ $key ] = true;
 
 	update_option( 'rentfetch_search_query_cache_registry', $registry, false );
 	rentfetch_prune_search_query_cache_registry( $registry );
@@ -212,6 +367,13 @@ function rentfetch_prune_search_query_cache_registry( $registry = null ) {
 	uasort(
 		$registry,
 		function( $a, $b ) {
+			$a_last_set = (int) ( $a['last_set_at'] ?? 0 );
+			$b_last_set = (int) ( $b['last_set_at'] ?? 0 );
+
+			if ( $a_last_set !== $b_last_set ) {
+				return $a_last_set - $b_last_set;
+			}
+
 			$a_priority = ! empty( $a['priority'] ) ? 1 : 0;
 			$b_priority = ! empty( $b['priority'] ) ? 1 : 0;
 
@@ -219,15 +381,23 @@ function rentfetch_prune_search_query_cache_registry( $registry = null ) {
 				return $a_priority - $b_priority;
 			}
 
-			return (int) ( $a['last_set_at'] ?? 0 ) - (int) ( $b['last_set_at'] ?? 0 );
+			return 0;
 		}
 	);
 
 	$delete_count = count( $registry ) - $limit;
 	$deleted      = 0;
+	$protected    = isset( $GLOBALS['rentfetch_recently_stored_cache_keys'] ) && is_array( $GLOBALS['rentfetch_recently_stored_cache_keys'] )
+		? $GLOBALS['rentfetch_recently_stored_cache_keys']
+		: array();
 
 	foreach ( array_keys( $registry ) as $key ) {
+		if ( isset( $protected[ $key ] ) ) {
+			continue;
+		}
+
 		delete_transient( $key );
+		rentfetch_record_search_query_cache_prune_event( $key );
 		unset( $registry[ $key ] );
 		++$deleted;
 
@@ -391,15 +561,50 @@ function rentfetch_get_cache_debug_events() {
 }
 
 /**
+ * Get cache write events recorded during the current request.
+ *
+ * @return array
+ */
+function rentfetch_get_cache_debug_write_events() {
+	return isset( $GLOBALS['rentfetch_cache_write_events'] ) && is_array( $GLOBALS['rentfetch_cache_write_events'] )
+		? $GLOBALS['rentfetch_cache_write_events']
+		: array();
+}
+
+/**
+ * Get cache prune events recorded during the current request.
+ *
+ * @return array
+ */
+function rentfetch_get_cache_debug_prune_events() {
+	return isset( $GLOBALS['rentfetch_cache_prune_events'] ) && is_array( $GLOBALS['rentfetch_cache_prune_events'] )
+		? $GLOBALS['rentfetch_cache_prune_events']
+		: array();
+}
+
+/**
  * Build response metadata for a specific transient cache lookup.
  *
  * @param string $key                          Transient key.
  * @param string $status                       hit|miss.
  * @param bool   $is_stale                     Whether the hit was stale.
  * @param bool   $background_refresh_scheduled Whether a background refresh was scheduled.
+ * @param array  $context                      Additional cache context.
  * @return array
  */
-function rentfetch_get_cache_debug_metadata( $key, $status, $is_stale = false, $background_refresh_scheduled = false ) {
+function rentfetch_get_cache_debug_metadata( $key, $status, $is_stale = false, $background_refresh_scheduled = false, $context = array() ) {
+	$metadata = array(
+		'lookup_attempted' => true,
+		'read_enabled'     => true,
+		'write_enabled'    => false,
+		'write_attempted'  => false,
+		'write_stored'     => null,
+	);
+
+	if ( is_array( $context ) ) {
+		$metadata = array_merge( $metadata, $context );
+	}
+
 	return array(
 		'key'                          => $key,
 		'description'                  => rentfetch_describe_search_query_cache_key( $key ),
@@ -407,7 +612,15 @@ function rentfetch_get_cache_debug_metadata( $key, $status, $is_stale = false, $
 		'status'                       => $status,
 		'stale'                        => (bool) $is_stale,
 		'background_refresh_scheduled' => (bool) $background_refresh_scheduled,
+		'lookup_attempted'             => (bool) $metadata['lookup_attempted'],
+		'read_enabled'                 => (bool) $metadata['read_enabled'],
+		'write_enabled'                => (bool) $metadata['write_enabled'],
+		'write_attempted'              => (bool) $metadata['write_attempted'],
+		'write_stored'                 => null === $metadata['write_stored'] ? null : (bool) $metadata['write_stored'],
+		'stats'                        => rentfetch_get_search_query_cache_stats_recording_metadata(),
 		'events'                       => rentfetch_get_cache_debug_events(),
+		'writes'                       => rentfetch_get_cache_debug_write_events(),
+		'prunes'                       => rentfetch_get_cache_debug_prune_events(),
 	);
 }
 
@@ -419,19 +632,22 @@ function rentfetch_get_cache_debug_metadata( $key, $status, $is_stale = false, $
  * @return bool
  */
 function rentfetch_set_cache_transient( $key, $value ) {
-	if ( is_user_logged_in() ) {
+	if ( is_user_logged_in() && empty( $GLOBALS['rentfetch_force_cache_write'] ) ) {
 		return false;
 	}
 
-	$stored = set_transient(
-		$key,
-		array(
-			'rentfetch_cache_version' => 1,
-			'generated_at'           => time(),
-			'value'                  => $value,
-		),
-		RENTFETCH_CACHE_TTL
+	$payload = array(
+		'rentfetch_cache_version' => 1,
+		'generated_at'           => time(),
+		'value'                  => $value,
 	);
+
+	$stored = set_transient( $key, $payload, RENTFETCH_CACHE_TTL );
+	rentfetch_record_search_query_cache_write_event( $key, $stored, $payload );
+
+	if ( ! $stored ) {
+		rentfetch_maybe_log_failed_cache_write( $key, $payload );
+	}
 
 	if ( $stored ) {
 		rentfetch_register_search_query_cache_key( $key );
