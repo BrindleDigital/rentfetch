@@ -105,7 +105,7 @@ Start from your WordPress dashboard.
 
 = 0.36.4 =
 
-* Clear cached Rent Fetch Sync API bootstrap error state when sync settings are saved.
+* Clear cached Rent Fetch Sync API bootstrap error state when sync settings are saved, including any stale refresh lock.
 
 = 0.36.3 =
 
