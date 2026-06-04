@@ -496,18 +496,48 @@ function rentfetch_get_admin_bar_content_row_title( $row ) {
 		'label'  => 'No sync data',
 	);
 	$sync_label = (string) ( $sync['label'] ?? 'No sync data' );
+	$sync_status = (string) ( $sync['status'] ?? 'gray' );
+	$count       = (int) ( $row['count'] ?? 0 );
+	$label       = (string) ( $row['label'] ?? '' );
+	$singular_labels = array(
+		'properties'  => 'property',
+		'floor plans' => 'floor plan',
+		'units'       => 'unit',
+	);
+
+	if ( 1 === $count && isset( $singular_labels[ $label ] ) ) {
+		$label = $singular_labels[ $label ];
+	}
+
 	$overview_url = '' !== $post_type ? admin_url( 'edit.php?post_type=' . $post_type ) : '#';
 	$status_url   = '' !== $post_type ? add_query_arg( 'rentfetch_sync_status', 'needs_attention', $overview_url ) : '#';
+	$sync_markup  = sprintf(
+		'<span class="rentfetch-cache-dot is-%1$s" aria-hidden="true"></span><span class="rentfetch-admin-bar-count-sync-label">%2$s</span>',
+		esc_attr( $sync_status ),
+		esc_html( $sync_label )
+	);
+
+	if ( 'green' === $sync_status || 'Sync off' === $sync_label ) {
+		$status_markup = sprintf(
+			'<span class="rentfetch-admin-bar-count-sync is-static" title="%1$s" aria-label="%1$s">%2$s</span>',
+			esc_attr( $sync_label ),
+			$sync_markup
+		);
+	} else {
+		$status_markup = sprintf(
+			'<a class="rentfetch-admin-bar-count-sync" href="%1$s" title="%2$s" aria-label="%2$s">%3$s</a>',
+			esc_url( $status_url ),
+			esc_attr( $sync_label ),
+			$sync_markup
+		);
+	}
 
 	return sprintf(
-		'<span class="rentfetch-admin-bar-count-line"><a class="rentfetch-admin-bar-count-label-link" href="%1$s"><span class="rentfetch-admin-bar-count-label">%2$s %3$s</span></a><a class="rentfetch-admin-bar-count-sync" href="%4$s" title="%5$s" aria-label="%5$s"><span class="rentfetch-cache-dot is-%6$s" aria-hidden="true"></span>%7$s</a></span>',
+		'<span class="rentfetch-admin-bar-count-line"><a class="rentfetch-admin-bar-count-label-link" href="%1$s"><span class="rentfetch-admin-bar-count-label">%2$s %3$s</span></a>%4$s</span>',
 		esc_url( $overview_url ),
-		esc_html( number_format_i18n( (int) ( $row['count'] ?? 0 ) ) ),
-		esc_html( (string) ( $row['label'] ?? '' ) ),
-		esc_url( $status_url ),
-		esc_attr( $sync_label ),
-		esc_attr( $sync['status'] ?? 'gray' ),
-		esc_html( $sync_label )
+		esc_html( number_format_i18n( $count ) ),
+		esc_html( $label ),
+		$status_markup
 	);
 }
 
@@ -567,6 +597,7 @@ function rentfetch_get_admin_bar_title() {
  */
 function rentfetch_get_admin_bar_panel_markup( $content, $states, $show_performance ) {
 	$settings_url = admin_url( 'admin.php?page=rentfetch-options&tab=general&section=performance' );
+	$sync_panel_is_registered = has_action( 'rentfetch_admin_bar_panel_after_content', 'rfs_render_accelerated_sync_admin_bar_panel' );
 
 	ob_start();
 	?>
@@ -593,6 +624,22 @@ function rentfetch_get_admin_bar_panel_markup( $content, $states, $show_performa
 		<?php endif; ?>
 
 		<?php do_action( 'rentfetch_admin_bar_panel_after_content', $content ); ?>
+
+		<?php if ( ! $sync_panel_is_registered && function_exists( 'rfs_get_accelerated_sync_status_title' ) ) : ?>
+			<?php $sync_status_title = rfs_get_accelerated_sync_status_title(); ?>
+			<?php
+			$sync_status_is_empty = '' === $sync_status_title;
+			if ( '' === $sync_status_title ) {
+				$sync_status_title = '<span class="rfs-accelerated-sync-status is-empty"><span class="rfs-accelerated-sync-message"></span><span class="rfs-accelerated-sync-current"></span></span>';
+			}
+			?>
+			<div id="wp-admin-bar-rentfetch-sync-section" class="rentfetch-admin-bar-section rentfetch-admin-bar-sync-section">
+				<?php echo wp_kses_post( rentfetch_get_admin_bar_section_title( 'Sync' ) ); ?>
+			</div>
+			<div id="wp-admin-bar-rentfetch-sync-status" class="<?php echo esc_attr( $sync_status_is_empty ? 'rentfetch-admin-bar-sync-status is-empty' : 'rentfetch-admin-bar-sync-status' ); ?>">
+				<?php echo wp_kses_post( $sync_status_title ); ?>
+			</div>
+		<?php endif; ?>
 
 		<?php if ( $show_performance ) : ?>
 			<div id="wp-admin-bar-rentfetch-performance-section" class="rentfetch-admin-bar-section rentfetch-admin-bar-performance-section">
@@ -873,14 +920,18 @@ function rentfetch_admin_bar_cache_controls_styles() {
 			white-space: normal;
 		}
 
+		#wpadminbar #wp-admin-bar-rentfetch-sync-status.is-empty {
+			display: none;
+		}
+
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-content-row {
 			color: #a7aaad;
-			font-size: 11px;
+			font-size: 10px;
 			height: auto;
-			line-height: 1.15;
+			line-height: 1.2;
 			min-width: 220px;
-			padding-bottom: 3px;
-			padding-top: 1px;
+			padding-bottom: 1px;
+			padding-top: 0;
 			white-space: normal;
 			width: 100%;
 		}
@@ -904,7 +955,7 @@ function rentfetch_admin_bar_cache_controls_styles() {
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-line {
 			display: grid;
 			grid-template-columns: minmax(0, 1fr);
-			row-gap: 2px;
+			row-gap: 1px;
 			width: 100%;
 		}
 
@@ -912,10 +963,10 @@ function rentfetch_admin_bar_cache_controls_styles() {
 			border-radius: 2px;
 			color: #a7aaad;
 			display: inline-block;
-			line-height: 1.25;
+			line-height: 1.15;
 			max-width: 100%;
 			min-width: 0;
-			padding: 1px 2px;
+			padding: 0 2px;
 			width: auto;
 		}
 
@@ -933,27 +984,39 @@ function rentfetch_admin_bar_cache_controls_styles() {
 			white-space: nowrap;
 		}
 
-		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-panel a.rentfetch-admin-bar-count-sync {
+		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-sync {
 			align-items: center;
 			border-radius: 2px;
 			color: #a7aaad;
 			display: inline-flex;
-			flex-wrap: wrap;
-			font-size: 11px;
-			gap: 5px;
-			line-height: 1.2;
-			margin-left: 10px;
-			margin-top: 2px;
-			max-width: calc(100% - 10px);
+			flex-wrap: nowrap;
+			font-size: 9px;
+			gap: 4px;
+			line-height: 1.05;
+			margin-left: 8px;
+			margin-top: 0;
+			max-width: calc(100% - 8px);
 			min-width: 0;
 			overflow-wrap: anywhere;
-			padding: 1px 2px;
+			padding: 0 2px;
 			text-align: left;
-			text-decoration: underline;
-			text-underline-offset: 2px;
 			white-space: normal;
 			width: fit-content;
 			word-break: normal;
+		}
+
+		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-sync-label {
+			min-width: 0;
+			overflow-wrap: anywhere;
+		}
+
+		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-panel a.rentfetch-admin-bar-count-sync .rentfetch-admin-bar-count-sync-label {
+			text-decoration: underline;
+			text-underline-offset: 2px;
+		}
+
+		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-sync.is-static {
+			cursor: default;
 		}
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-panel a.rentfetch-admin-bar-count-sync:hover,
@@ -964,7 +1027,9 @@ function rentfetch_admin_bar_cache_controls_styles() {
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-sync .rentfetch-cache-dot {
 			flex: 0 0 auto;
+			height: 7px;
 			margin-left: 0;
+			width: 7px;
 		}
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-cache-details {
@@ -1104,8 +1169,8 @@ function rentfetch_admin_bar_cache_controls_script() {
 		),
 	);
 	$content          = rentfetch_get_admin_bar_content_summary();
-	$show_performance = isset( $content['counts']['properties'] ) && (int) $content['counts']['properties'] > 5;
-	$states           = $show_performance ? rentfetch_get_admin_bar_cache_states() : array();
+	$show_performance = true;
+	$states           = rentfetch_get_admin_bar_cache_states();
 	?>
 	<template id="rentfetch-admin-bar-panel-template">
 		<?php echo rentfetch_get_admin_bar_panel_markup( $content, $states, $show_performance ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
