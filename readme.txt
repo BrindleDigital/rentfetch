@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.36.3
+Stable tag: 0.36.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,11 +103,20 @@ Start from your WordPress dashboard.
 
 == Changelog ==
 
+= 0.36.4 =
+
+* Clear cached Rent Fetch Sync API bootstrap error state when sync settings are saved.
+
 = 0.36.3 =
 
+* Prevented empty property and floorplan search results from being stored in Rent Fetch search/query transients.
+* Treated existing empty search/query cache entries as misses so they do not continue serving zero-result searches while they age out.
+* Prevented all-unavailable floorplan aggregates and rendered property/floorplan results from being cached when no result has positive availability.
+* Always show RentFetch admin bar cache controls, including on sites with five or fewer properties.
 * Refined the RentFetch admin bar dropdown with tighter content spacing, corrected singular count labels, and clearer sync status display.
 * Kept healthy sync summaries visible as non-clickable text so administrators do not land on empty needs-attention lists.
 * Improved admin bar sync status rendering so inactive status rows do not take up space.
+* Updated the admin documentation menu link to point to the Rent Fetch getting started docs.
 
 = 0.36.2 =
 

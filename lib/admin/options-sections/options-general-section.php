@@ -759,6 +759,7 @@ function rentfetch_save_settings_general_data_sync() {
 
 	// * When we save this particular batch of settings, we want to always clear the transient that holds the API info.
 	delete_transient( 'rentfetch_api_info' );
+	delete_transient( 'rentfetch_api_info_error' );
 }
 
 /**

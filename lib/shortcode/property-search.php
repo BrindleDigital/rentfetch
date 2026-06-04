@@ -270,8 +270,9 @@ function rentfetch_render_property_query_results_data( $property_args ) {
 	}
 
 	return array(
-		'html'       => ob_get_clean(),
-		'map_points' => $map_points,
+		'html'         => ob_get_clean(),
+		'map_points'   => $map_points,
+		'result_count' => count( $map_points ),
 	);
 }
 

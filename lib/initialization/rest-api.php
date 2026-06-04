@@ -279,6 +279,7 @@ function rentfetch_rest_search_properties( $request ) {
 		$cached_markup = rentfetch_get_cache_transient( $cache_key, $cache_is_stale );
 		if ( false !== $cached_markup && is_array( $cached_markup ) ) {
 			$background_refresh_scheduled = false;
+			$cached_result_count          = rentfetch_count_markup_cache_results( $cache_key, $cached_markup );
 			if ( $cache_is_stale && $can_write_markup_cache ) {
 				$background_refresh_scheduled = true;
 				rentfetch_refresh_cache_after_response(
@@ -293,7 +294,7 @@ function rentfetch_rest_search_properties( $request ) {
 				array(
 					'html'       => $cached_markup['html'],
 					'map_points' => isset( $cached_markup['map_points'] ) && is_array( $cached_markup['map_points'] ) ? $cached_markup['map_points'] : array(),
-					'count'      => substr_count( $cached_markup['html'], 'class="property' ),
+					'count'      => null !== $cached_result_count ? $cached_result_count : substr_count( $cached_markup['html'], 'class="property' ),
 					'cached' => true,
 					'stale'  => $cache_is_stale,
 					'cache_debug' => rentfetch_get_cache_debug_metadata(
@@ -322,6 +323,7 @@ function rentfetch_rest_search_properties( $request ) {
 
 	// Render the results
 	$results_data = rentfetch_render_property_query_results_data( $property_args );
+	$result_count = rentfetch_count_markup_cache_results( $cache_key, $results_data );
 
 	// Cache the results
 	$cache_write_stored = null;
@@ -333,7 +335,7 @@ function rentfetch_rest_search_properties( $request ) {
 		array(
 			'html'       => $results_data['html'],
 			'map_points' => $results_data['map_points'],
-			'count'      => substr_count( $results_data['html'], 'class="property' ),
+			'count'      => null !== $result_count ? $result_count : substr_count( $results_data['html'], 'class="property' ),
 			'cached' => false,
 			'stale'  => false,
 			'cache_debug' => rentfetch_get_cache_debug_metadata(
@@ -417,6 +419,7 @@ function rentfetch_rest_search_floorplans( $request ) {
 		$cached_markup = rentfetch_get_cache_transient( $cache_key, $cache_is_stale );
 		if ( false !== $cached_markup && is_string( $cached_markup ) ) {
 			$background_refresh_scheduled = false;
+			$cached_result_count          = rentfetch_count_markup_cache_results( $cache_key, $cached_markup );
 			if ( $cache_is_stale && $can_write_markup_cache ) {
 				$background_refresh_scheduled = true;
 				rentfetch_refresh_cache_after_response(
@@ -430,7 +433,7 @@ function rentfetch_rest_search_floorplans( $request ) {
 			$response = rest_ensure_response(
 				array(
 					'html'  => $cached_markup,
-					'count' => substr_count( $cached_markup, 'class="floorplan' ),
+					'count' => null !== $cached_result_count ? $cached_result_count : substr_count( $cached_markup, 'class="floorplan' ),
 					'cached' => true,
 					'stale'  => $cache_is_stale,
 					'cache_debug' => rentfetch_get_cache_debug_metadata(
@@ -459,6 +462,7 @@ function rentfetch_rest_search_floorplans( $request ) {
 
 	// Render the results
 	$markup = rentfetch_render_floorplan_query_results( $floorplan_args );
+	$result_count = rentfetch_count_markup_cache_results( $cache_key, $markup );
 
 	// Cache the results
 	$cache_write_stored = null;
@@ -469,7 +473,7 @@ function rentfetch_rest_search_floorplans( $request ) {
 	$response = rest_ensure_response(
 		array(
 			'html'  => $markup,
-			'count' => substr_count( $markup, 'class="floorplan' ),
+			'count' => null !== $result_count ? $result_count : substr_count( $markup, 'class="floorplan' ),
 			'cached' => false,
 			'stale'  => false,
 			'cache_debug' => rentfetch_get_cache_debug_metadata(

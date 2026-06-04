@@ -345,6 +345,42 @@ function rentfetch_register_search_query_cache_key( $key ) {
 }
 
 /**
+ * Remove a search/query cache key from the bounded cache registry.
+ *
+ * @param string $key Transient key.
+ * @return void
+ */
+function rentfetch_unregister_search_query_cache_key( $key ) {
+	if ( ! rentfetch_is_search_query_cache_key( $key ) ) {
+		return;
+	}
+
+	$registry = get_option( 'rentfetch_search_query_cache_registry', array() );
+	if ( ! is_array( $registry ) || ! isset( $registry[ $key ] ) ) {
+		return;
+	}
+
+	unset( $registry[ $key ] );
+	update_option( 'rentfetch_search_query_cache_registry', $registry, false );
+}
+
+/**
+ * Delete an empty search/query cache entry.
+ *
+ * @param string $key Transient key.
+ * @return void
+ */
+function rentfetch_delete_empty_search_query_cache_entry( $key ) {
+	if ( ! rentfetch_is_search_query_cache_key( $key ) ) {
+		return;
+	}
+
+	delete_transient( $key );
+	rentfetch_unregister_search_query_cache_key( $key );
+	rentfetch_record_search_query_cache_prune_event( $key );
+}
+
+/**
  * Keep the search/query cache registry at or below the configured limit.
  *
  * @param array|null $registry Existing registry.
@@ -625,6 +661,161 @@ function rentfetch_get_cache_debug_metadata( $key, $status, $is_stale = false, $
 }
 
 /**
+ * Count rendered posts in cached search markup.
+ *
+ * @param string $key   Transient key.
+ * @param mixed  $value Cached value.
+ * @return int|null Result count, or null when the value is not rendered markup.
+ */
+function rentfetch_count_markup_cache_results( $key, $value ) {
+	if ( 0 === strpos( $key, 'rentfetch_propertysearch_markup_' ) ) {
+		if ( is_array( $value ) && isset( $value['result_count'] ) ) {
+			return max( 0, (int) $value['result_count'] );
+		}
+
+		if ( is_array( $value ) && isset( $value['map_points'] ) && is_array( $value['map_points'] ) ) {
+			return count( $value['map_points'] );
+		}
+
+		$html = is_array( $value ) && isset( $value['html'] ) ? $value['html'] : $value;
+		if ( is_string( $html ) ) {
+			return (int) preg_match_all( '/<div\s+class="[^"]*\btype-properties\b/', $html );
+		}
+
+		return null;
+	}
+
+	if ( 0 === strpos( $key, 'rentfetch_floorplansearch_markup_' ) ) {
+		if ( is_array( $value ) && isset( $value['result_count'] ) ) {
+			return max( 0, (int) $value['result_count'] );
+		}
+
+		$html = is_array( $value ) && isset( $value['html'] ) ? $value['html'] : $value;
+		if ( is_string( $html ) ) {
+			return (int) preg_match_all( '/<div\s+class="[^"]*\btype-floorplans\b/', $html );
+		}
+
+		return null;
+	}
+
+	return null;
+}
+
+/**
+ * Determine whether cached search markup contains any available result cards.
+ *
+ * @param string $key   Transient key.
+ * @param mixed  $value Cached value.
+ * @return bool|null Whether availability was found, or null when not markup.
+ */
+function rentfetch_markup_cache_has_positive_availability( $key, $value ) {
+	if ( 0 !== strpos( $key, 'rentfetch_propertysearch_markup_' ) && 0 !== strpos( $key, 'rentfetch_floorplansearch_markup_' ) ) {
+		return null;
+	}
+
+	$html = is_array( $value ) && isset( $value['html'] ) ? $value['html'] : $value;
+	if ( ! is_string( $html ) ) {
+		return null;
+	}
+
+	return false !== strpos( $html, 'has-units-available' );
+}
+
+/**
+ * Determine whether a cached floorplan aggregate has positive availability.
+ *
+ * @param string $key   Transient key.
+ * @param mixed  $value Cached value.
+ * @return bool|null Whether availability was found, or null when not an aggregate.
+ */
+function rentfetch_floorplan_aggregate_cache_has_positive_availability( $key, $value ) {
+	if ( 0 !== strpos( $key, 'rentfetch_floorplans_array_sql_' ) ) {
+		return null;
+	}
+
+	if ( ! is_array( $value ) ) {
+		return null;
+	}
+
+	foreach ( $value as $floorplan_group ) {
+		if ( ! is_array( $floorplan_group ) ) {
+			continue;
+		}
+
+		if ( isset( $floorplan_group['availability'] ) && (int) $floorplan_group['availability'] > 0 ) {
+			return true;
+		}
+
+		if ( isset( $floorplan_group['available_units'] ) && is_array( $floorplan_group['available_units'] ) ) {
+			foreach ( $floorplan_group['available_units'] as $available_units ) {
+				if ( (int) $available_units > 0 ) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Determine whether a cached value represents an empty result set.
+ *
+ * Empty search and query results are cheap to become stale and expensive when
+ * they hide newly synced availability, so do not persist them.
+ *
+ * @param string $key   Transient key.
+ * @param mixed  $value Cached value.
+ * @return bool
+ */
+function rentfetch_cache_value_is_empty_result( $key, $value ) {
+	if ( ! rentfetch_is_search_query_cache_key( $key ) ) {
+		return false;
+	}
+
+	$markup_count = rentfetch_count_markup_cache_results( $key, $value );
+	if ( null !== $markup_count ) {
+		if ( $markup_count <= 0 ) {
+			return true;
+		}
+
+		$markup_has_availability = rentfetch_markup_cache_has_positive_availability( $key, $value );
+		if ( null !== $markup_has_availability ) {
+			return ! $markup_has_availability;
+		}
+
+		return false;
+	}
+
+	$markup_has_availability = rentfetch_markup_cache_has_positive_availability( $key, $value );
+	if ( null !== $markup_has_availability ) {
+		return ! $markup_has_availability;
+	}
+
+	$aggregate_has_availability = rentfetch_floorplan_aggregate_cache_has_positive_availability( $key, $value );
+	if ( null !== $aggregate_has_availability ) {
+		return ! $aggregate_has_availability;
+	}
+
+	if ( is_array( $value ) && empty( $value ) ) {
+		return true;
+	}
+
+	return false === $value;
+}
+
+/**
+ * Determine whether a value should be stored in the Rent Fetch cache.
+ *
+ * @param string $key   Transient key.
+ * @param mixed  $value Value to cache.
+ * @return bool
+ */
+function rentfetch_should_store_cache_transient( $key, $value ) {
+	return ! rentfetch_cache_value_is_empty_result( $key, $value );
+}
+
+/**
  * Store a Rent Fetch cache value with metadata.
  *
  * @param string $key   Transient key.
@@ -633,6 +824,12 @@ function rentfetch_get_cache_debug_metadata( $key, $status, $is_stale = false, $
  */
 function rentfetch_set_cache_transient( $key, $value ) {
 	if ( is_user_logged_in() && empty( $GLOBALS['rentfetch_force_cache_write'] ) ) {
+		return false;
+	}
+
+	if ( ! rentfetch_should_store_cache_transient( $key, $value ) ) {
+		rentfetch_delete_empty_search_query_cache_entry( $key );
+		rentfetch_record_search_query_cache_write_event( $key, false, $value );
 		return false;
 	}
 
@@ -679,13 +876,25 @@ function rentfetch_get_cache_transient( $key, &$is_stale = false ) {
 		return false;
 	}
 
-	rentfetch_record_search_query_cache_event( $key, true );
-
 	if ( is_array( $cached ) && isset( $cached['rentfetch_cache_version'], $cached['generated_at'] ) && array_key_exists( 'value', $cached ) ) {
+		if ( ! rentfetch_should_store_cache_transient( $key, $cached['value'] ) ) {
+			rentfetch_delete_empty_search_query_cache_entry( $key );
+			rentfetch_record_search_query_cache_event( $key, false );
+			return false;
+		}
+
+		rentfetch_record_search_query_cache_event( $key, true );
 		$is_stale = ( time() - (int) $cached['generated_at'] ) > RENTFETCH_CACHE_STALE_AFTER;
 		return $cached['value'];
 	}
 
+	if ( ! rentfetch_should_store_cache_transient( $key, $cached ) ) {
+		rentfetch_delete_empty_search_query_cache_entry( $key );
+		rentfetch_record_search_query_cache_event( $key, false );
+		return false;
+	}
+
+	rentfetch_record_search_query_cache_event( $key, true );
 	$is_stale = true;
 	return $cached;
 }
