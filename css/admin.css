@@ -1203,10 +1203,12 @@ form.rent-fetch-options .white-box p.subhed,
 }
 form.rent-fetch-options input[type=text],
 form.rent-fetch-options input[type=url],
+form.rent-fetch-options input[type=password],
 form.rent-fetch-options input[type=number],
 form.rent-fetch-options select,
 .shortcodes-container input[type=text],
 .shortcodes-container input[type=url],
+.shortcodes-container input[type=password],
 .shortcodes-container input[type=number],
 .shortcodes-container select {
   background: white;
