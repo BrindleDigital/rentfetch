@@ -322,6 +322,7 @@ add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_website_bu
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_phone_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_contact_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_tour_booking_button' );
+add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_apply_online_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_tour_button' );
 add_action( 'rentfetch_do_single_property_links', 'rentfetch_property_office_hours_button' );
 
@@ -1063,6 +1064,69 @@ function rentfetch_property_tour_booking_button( $property_id = null ) {
 			),
 		) );
 		echo wp_kses( rentfetch_get_property_tour_booking_button( $property_id ), $allowed_html );
+	}
+}
+
+// * PROPERTY APPLY ONLINE BUTTON.
+
+/**
+ * Get the property apply online URL.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return string The property apply online URL.
+ */
+function rentfetch_get_property_apply_online_url( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+		if ( ! $post_id ) {
+			return '';
+		}
+	} else {
+		$post_id = get_the_ID();
+	}
+
+	$url = get_post_meta( $post_id, 'apply_online_url', true );
+
+	return esc_url( apply_filters( 'rentfetch_filter_property_apply_online_url', $url ) );
+}
+
+/**
+ * Get the property apply online button.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @param string $class Optional additional CSS class.
+ * @return string|null The property apply online button.
+ */
+function rentfetch_get_property_apply_online_button( $property_id = null, $class = '' ) {
+	$url     = rentfetch_get_property_apply_online_url( $property_id );
+	$target  = rentfetch_get_link_target( $url );
+	$classes = 'apply-online-link property-link property-link-highlight';
+
+	if ( ! empty( $class ) ) {
+		$classes .= ' ' . esc_attr( $class );
+	}
+
+	$tracking_attrs       = rentfetch_get_tracking_data_attributes( 'rentfetch_applyonline_click', rentfetch_get_property_tracking_context( $property_id ) );
+	$apply_online_button = sprintf( '<a class="%s" href="%s" target="%s"%s>Apply Online</a>', esc_attr( $classes ), esc_url( $url ), esc_attr( $target ), $tracking_attrs );
+
+	if ( $url ) {
+		return apply_filters( 'rentfetch_filter_property_apply_online_button', $apply_online_button, $property_id, $class );
+	}
+
+	return null;
+}
+
+/**
+ * Echo the property apply online button.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return void.
+ */
+function rentfetch_property_apply_online_button( $property_id = null ) {
+	$button = rentfetch_get_property_apply_online_button( $property_id );
+
+	if ( $button ) {
+		echo wp_kses_post( $button );
 	}
 }
 
@@ -2317,6 +2381,33 @@ function rentfetch_default_property_specials_label( $specials ) {
 add_filter( 'rentfetch_filter_property_specials', 'rentfetch_default_property_specials_label', 10, 1 );
 
 /**
+ * Check whether property specials are currently inside their optional date window.
+ *
+ * @param int $post_id Property post ID.
+ * @return bool Whether the specials should be shown based on date settings.
+ */
+function rentfetch_property_specials_are_active_by_date( $post_id ) {
+	$start_date = get_post_meta( $post_id, 'specials_start_date', true );
+	$end_date   = get_post_meta( $post_id, 'specials_end_date', true );
+
+	if ( ! $start_date && ! $end_date ) {
+		return true;
+	}
+
+	$today = current_time( 'Y-m-d' );
+
+	if ( $start_date && $today < $start_date ) {
+		return false;
+	}
+
+	if ( $end_date && $today > $end_date ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * Get property specials based on property-level meta fields (similar to floorplan specials).
  *
  * @param string $property_id Optional property_id meta value.
@@ -2340,6 +2431,10 @@ function rentfetch_get_property_specials_from_meta( $property_id = null ) {
 	$specials_override_text = function_exists( 'mb_substr' ) ? mb_substr( $specials_override_text, 0, 25 ) : substr( $specials_override_text, 0, 25 );
 
 	if ( ! $has_specials ) {
+		return apply_filters( 'rentfetch_filter_property_specials_from_meta', null );
+	}
+
+	if ( ! rentfetch_property_specials_are_active_by_date( $post_id ) ) {
 		return apply_filters( 'rentfetch_filter_property_specials_from_meta', null );
 	}
 	
@@ -2407,6 +2502,10 @@ function rentfetch_get_property_specials_content_from_meta( $property_id = null 
 		return null;
 	}
 
+	if ( ! rentfetch_property_specials_are_active_by_date( $post_id ) ) {
+		return null;
+	}
+
 	$specials_content = get_post_meta( $post_id, 'specials_content', true );
 	$specials_content = sanitize_textarea_field( $specials_content );
 
@@ -2436,6 +2535,10 @@ function rentfetch_get_property_specials_callout_from_meta( $property_id = null 
 	$has_specials = get_post_meta( $post_id, 'has_specials', true );
 
 	if ( ! $has_specials ) {
+		return null;
+	}
+
+	if ( ! rentfetch_property_specials_are_active_by_date( $post_id ) ) {
 		return null;
 	}
 
@@ -2972,7 +3075,7 @@ function rentfetch_get_cached_fees_csv_content( $csv_url ) {
 	}
 
 	$cache_key      = rentfetch_get_fees_csv_cache_key( $csv_url );
-	$disable_caches = get_option( 'rentfetch_options_disable_query_caching' ) === '1';
+	$disable_caches = get_option( 'rentfetch_options_disable_query_caching', '1' ) === '1';
 
 	if ( ! $disable_caches && $cache_key ) {
 		$cached_content = get_transient( $cache_key );

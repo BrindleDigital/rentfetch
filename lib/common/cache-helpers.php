@@ -303,7 +303,7 @@ function rentfetch_maybe_log_failed_cache_write( $key, $value ) {
 				'value_size'   => strlen( maybe_serialize( $value ) ),
 				'db_error'     => isset( $wpdb ) ? $wpdb->last_error : '',
 				'logged_in'    => is_user_logged_in(),
-				'cache_option' => get_option( 'rentfetch_options_disable_query_caching', '0' ),
+				'cache_option' => get_option( 'rentfetch_options_disable_query_caching', '1' ),
 			)
 		)
 	);
@@ -929,7 +929,7 @@ function rentfetch_refresh_cache_after_response( $key, $callback ) {
 			}
 
 			foreach ( $callbacks as $callback ) {
-				if ( get_option( 'rentfetch_options_disable_query_caching' ) === '1' ) {
+				if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) === '1' ) {
 					continue;
 				}
 

@@ -437,6 +437,20 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="tour_booking_link" name="tour_booking_link" value="<?php echo esc_attr( $tour_booking_link ); ?>">
 				</div>
 			</div>
+
+			<?php
+			// * Apply Online Link
+			$apply_online_url = get_post_meta( $post->ID, 'apply_online_url', true );
+			$disabled         = in_array( 'apply_online_url', $array_disabled_fields, true ) ? 'disabled' : '';
+			?>
+			<div class="field">
+				<div class="column">
+					<label for="apply_online_url">Apply Online Link</label>
+				</div>
+				<div class="column">
+					<input type="text" <?php echo esc_attr( $disabled ); ?> id="apply_online_url" name="apply_online_url" value="<?php echo esc_attr( $apply_online_url ); ?>">
+				</div>
+			</div>
 			
 		</div>
 		
@@ -602,6 +616,10 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
  */
 function rentfetch_properties_specials_metabox_callback( $post ) {
 	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
+	wp_enqueue_script( 'jquery' );
+	wp_enqueue_script( 'rentfetch-flatpickr-script' );
+	wp_enqueue_script( 'rentfetch-metabox-properties' );
+	wp_enqueue_style( 'rentfetch-flatpickr-style' );
 	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
 	?>
 	<div class="rf-metabox rf-metabox-properties rf-property-specials-metabox">
@@ -624,6 +642,8 @@ function rentfetch_properties_specials_metabox_callback( $post ) {
 		// * Specials heading
 		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
 		$specials_content       = get_post_meta( $post->ID, 'specials_content', true );
+		$specials_start_date    = get_post_meta( $post->ID, 'specials_start_date', true );
+		$specials_end_date      = get_post_meta( $post->ID, 'specials_end_date', true );
 		$conditional_class      = $has_specials ? '' : ' hidden is-hidden';
 		$conditional_hidden     = $has_specials ? '' : ' hidden';
 		?>
@@ -635,6 +655,31 @@ function rentfetch_properties_specials_metabox_callback( $post ) {
 		<div class="field rf-specials-conditional-field<?php echo esc_attr( $conditional_class ); ?>"<?php echo esc_attr( $conditional_hidden ); ?>>
 			<label for="specials_content">Specials Content</label>
 			<textarea id="specials_content" name="specials_content" rows="3"><?php echo esc_textarea( $specials_content ); ?></textarea>
+		</div>
+
+		<div class="field rf-specials-conditional-field rf-specials-date-range<?php echo esc_attr( $conditional_class ); ?>"<?php echo esc_attr( $conditional_hidden ); ?>>
+			<label for="specials_date_range">Specials Date Range</label>
+			<div class="rf-specials-date-mode" aria-label="Specials date mode">
+				<label>
+					<input type="radio" name="specials_date_mode" value="range" checked>
+					<span>Range</span>
+				</label>
+				<label>
+					<input type="radio" name="specials_date_mode" value="start">
+					<span>Starts on</span>
+				</label>
+				<label>
+					<input type="radio" name="specials_date_mode" value="end">
+					<span>Ends on</span>
+				</label>
+			</div>
+			<div class="rf-specials-date-input-wrap">
+				<span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span>
+				<input type="text" id="specials_date_range" class="rf-specials-date-range-input" value="" placeholder="Always active" readonly>
+			</div>
+			<input type="hidden" id="specials_start_date" name="specials_start_date" value="<?php echo esc_attr( $specials_start_date ); ?>">
+			<input type="hidden" id="specials_end_date" name="specials_end_date" value="<?php echo esc_attr( $specials_end_date ); ?>">
+			<button type="button" class="rf-specials-date-clear">Clear dates</button>
 		</div>
 	</div>
 	<script>
@@ -2114,6 +2159,10 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'tour_booking_link', sanitize_text_field( wp_unslash( $_POST['tour_booking_link'] ) ) );
 	}
 
+	if ( isset( $_POST['apply_online_url'] ) ) {
+		update_post_meta( $post_id, 'apply_online_url', esc_url_raw( wp_unslash( $_POST['apply_online_url'] ) ) );
+	}
+
 	if ( isset( $_POST['office_hours'] ) && is_array( $_POST['office_hours'] ) ) {
 		$office_hours = array();
 		$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
@@ -2288,6 +2337,33 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 	if ( isset( $_POST['specials_content'] ) ) {
 		update_post_meta( $post_id, 'specials_content', sanitize_textarea_field( wp_unslash( $_POST['specials_content'] ) ) );
+	}
+
+	$specials_date_fields = array(
+		'specials_start_date',
+		'specials_end_date',
+	);
+
+	foreach ( $specials_date_fields as $specials_date_field ) {
+		if ( ! isset( $_POST[ $specials_date_field ] ) ) {
+			continue;
+		}
+
+		$specials_date = sanitize_text_field( wp_unslash( $_POST[ $specials_date_field ] ) );
+
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $specials_date ) ) {
+			update_post_meta( $post_id, $specials_date_field, $specials_date );
+		} else {
+			delete_post_meta( $post_id, $specials_date_field );
+		}
+	}
+
+	$specials_start_date = get_post_meta( $post_id, 'specials_start_date', true );
+	$specials_end_date   = get_post_meta( $post_id, 'specials_end_date', true );
+
+	if ( $specials_start_date && $specials_end_date && $specials_start_date > $specials_end_date ) {
+		update_post_meta( $post_id, 'specials_start_date', $specials_end_date );
+		update_post_meta( $post_id, 'specials_end_date', $specials_start_date );
 	}
 
 	if ( isset( $_POST['video'] ) ) {

@@ -7,12 +7,16 @@
 		display: grid;
 		grid-template-columns: var(--rentfetch-property-specials-icon-size) minmax(0, 1fr);
 		gap: var(--rentfetch-space-md);
-		align-items: start;
+		align-items: center;
 		padding: var(--rentfetch-property-specials-padding-block) var(--rentfetch-property-specials-padding-inline);
 		margin-bottom: var(--rentfetch-property-specials-section-gap);
 		border: 1px solid var(--rentfetch-property-specials-border);
 		border-radius: var(--rentfetch-border-radius);
 		background-color: var(--rentfetch-property-specials-background);
+
+		&:has(.property-specials-content) {
+			align-items: start;
+		}
 
 		@include mobile {
 			grid-template-columns: 1fr;
@@ -439,6 +443,20 @@ body.admin-bar {
 			margin-right: 0;
 			vertical-align: middle;
 			display: inline-block;
+		}
+
+		&.property-link-highlight {
+			background-color: var(--rentfetch-accent);
+			border-color: var(--rentfetch-accent);
+			color: var(--rentfetch-white);
+			font-weight: 700;
+
+			&:hover,
+			&:focus {
+				background-color: var(--rentfetch-accent-active);
+				border-color: var(--rentfetch-accent-active);
+				color: var(--rentfetch-white);
+			}
 		}
 	}
 }

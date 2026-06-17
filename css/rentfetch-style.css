@@ -717,6 +717,91 @@ body.toplevel_page_rentfetch-options #wpcontent {
 .rf-property-specials-metabox .rf-specials-conditional-field.is-hidden {
   display: none;
 }
+.rf-property-specials-metabox .rf-specials-date-range {
+  max-width: 360px;
+}
+.rf-property-specials-metabox .rf-specials-date-mode {
+  display: flex;
+  flex-wrap: wrap;
+  -moz-column-gap: 16px;
+       column-gap: 16px;
+  row-gap: 6px;
+  margin: 0 0 8px;
+}
+.rf-property-specials-metabox .rf-specials-date-mode label {
+  width: auto;
+  padding: 0;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.rf-property-specials-metabox .rf-specials-date-mode input {
+  margin: 0 2px 0 0;
+}
+.rf-property-specials-metabox .rf-specials-date-mode span {
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.rf-property-specials-metabox .field .rf-specials-date-mode label:not(.rf-toggle-label) {
+  display: inline-flex;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.rf-property-specials-metabox .rf-specials-date-input-wrap {
+  position: relative;
+}
+.rf-property-specials-metabox .rf-specials-date-input-wrap .dashicons {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  color: #646970;
+  font-size: 18px;
+  line-height: 18px;
+  pointer-events: none;
+}
+.rf-property-specials-metabox .rf-specials-date-range-input {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 38px;
+  padding-left: 36px;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+.rf-property-specials-metabox .rf-specials-date-range-input::-moz-placeholder {
+  color: #646970;
+}
+.rf-property-specials-metabox .rf-specials-date-range-input::placeholder {
+  color: #646970;
+}
+.rf-property-specials-metabox .rf-specials-date-clear {
+  display: inline-block;
+  padding: 0;
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: #2271b1;
+  line-height: 1.4;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.rf-property-specials-metabox .rf-specials-date-clear:hover, .rf-property-specials-metabox .rf-specials-date-clear:focus {
+  color: #135e96;
+}
 .rf-property-specials-metabox .rf-toggle-control {
   display: inline-block;
 }
@@ -773,6 +858,17 @@ body.toplevel_page_rentfetch-options #wpcontent {
 .rf-property-specials-metabox .rf-toggle-input:disabled + .rf-toggle-label {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.rf-specials-flatpickr-calendar {
+  font-size: 14px;
+}
+.rf-specials-flatpickr-calendar .flatpickr-current-month,
+.rf-specials-flatpickr-calendar .flatpickr-current-month .cur-month,
+.rf-specials-flatpickr-calendar .flatpickr-current-month input.cur-year {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
 }
 
 /* ==========================================================================
@@ -4141,12 +4237,15 @@ body.single-floorplans h2 {
   display: grid;
   grid-template-columns: var(--rentfetch-property-specials-icon-size) minmax(0, 1fr);
   gap: var(--rentfetch-space-md);
-  align-items: start;
+  align-items: center;
   padding: var(--rentfetch-property-specials-padding-block) var(--rentfetch-property-specials-padding-inline);
   margin-bottom: var(--rentfetch-property-specials-section-gap);
   border: 1px solid var(--rentfetch-property-specials-border);
   border-radius: var(--rentfetch-border-radius);
   background-color: var(--rentfetch-property-specials-background);
+}
+#details .property-specials-callout:has(.property-specials-content) {
+  align-items: start;
 }
 @media (max-width: 600px) {
   #details .property-specials-callout {
@@ -4516,6 +4615,17 @@ body.admin-bar #details .property-details-body .property-links {
   margin-right: 0;
   vertical-align: middle;
   display: inline-block;
+}
+.property-links .property-link.property-link-highlight {
+  background-color: var(--rentfetch-accent);
+  border-color: var(--rentfetch-accent);
+  color: var(--rentfetch-white);
+  font-weight: 700;
+}
+.property-links .property-link.property-link-highlight:hover, .property-links .property-link.property-link-highlight:focus {
+  background-color: var(--rentfetch-accent-active);
+  border-color: var(--rentfetch-accent-active);
+  color: var(--rentfetch-white);
 }
 
 .property-link svg {

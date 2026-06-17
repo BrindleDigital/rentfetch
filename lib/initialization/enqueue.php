@@ -133,6 +133,10 @@ function rentfetch_enqueue_in_admin_metabox_properties() {
 	// WordPress doesn't include any jQuery UI styles by default, so we need to include them.
 	wp_register_style( 'rentfetch-jquery-style', RENTFETCH_PATH . 'vendor/jquery-theme-smoothness/jquery-ui.css', array(), RENTFETCH_VERSION );
 
+	// Flatpickr (MIT license): https://flatpickr.js.org/.
+	wp_register_style( 'rentfetch-flatpickr-style', RENTFETCH_PATH . 'vendor/flatpickr/flatpickr.min.css', array(), RENTFETCH_VERSION );
+	wp_register_script( 'rentfetch-flatpickr-script', RENTFETCH_PATH . 'vendor/flatpickr/flatpickr.min.js', array(), RENTFETCH_VERSION, true );
+
 	// Admin options page scripts.
 	wp_register_script( 'rentfetch-options-floorplan-buttons', RENTFETCH_PATH . 'js/rentfetch-options-floorplan-buttons.js', array( 'jquery' ), RENTFETCH_VERSION, true );
 	wp_register_script( 'rentfetch-options-documentation-submenu', RENTFETCH_PATH . 'js/rentfetch-options-documentation-submenu.js', array( 'jquery' ), RENTFETCH_VERSION, true );

@@ -16,7 +16,7 @@ function rentfetch_settings_set_defaults_general() {
 
 	// Add option if it doesn't exist.
 	add_option( 'rentfetch_options_data_sync', 'nosync' );
-	add_option( 'rentfetch_options_disable_query_caching', '0' );
+	add_option( 'rentfetch_options_disable_query_caching', '1' );
 	add_option( 'rentfetch_options_enable_search_indexes', '1' );
 	add_option( 'rentfetch_options_enable_cache_warming', '0' );
 	add_option( 'rentfetch_options_enable_cache_console_logging', '0' );
@@ -123,7 +123,7 @@ function rentfetch_settings_general_performance() {
 			<ul class="checkboxes">
 				<li>
 					<label for="rentfetch_options_disable_query_caching">
-						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching' ), '0' ); ?>>
+						<input type="checkbox" name="rentfetch_options_disable_query_caching" id="rentfetch_options_disable_query_caching" <?php checked( get_option( 'rentfetch_options_disable_query_caching', '1' ), '0' ); ?>>
 						Enable search result caching (recommended)
 					</label>
 					<p class="description">When enabled, public searches can write transient cache entries and receive cache-friendly response headers. Logged-in users can read existing entries, but their searches do not create new cached results. Disable only when troubleshooting cache behavior or when search results must reflect every data change immediately. Disabling clears Rent Fetch transients, but it does not purge any host, CDN, or edge cache.</p>

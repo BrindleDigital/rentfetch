@@ -228,7 +228,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 
 	$transient_key = 'rentfetch_date_search_' . md5( serialize( $selected ) );
 	$floorplan_ids = false;
-	if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+	if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 		$floorplan_ids = rentfetch_get_cache_transient( $transient_key );
 	}
 
@@ -295,7 +295,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 		}
 
 		$floorplan_ids = array_unique( array_map( 'intval', $floorplan_ids ) );
-		if ( get_option( 'rentfetch_options_disable_query_caching' ) !== '1' ) {
+		if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 			rentfetch_set_cache_transient( $transient_key, $floorplan_ids );
 		}
 	}

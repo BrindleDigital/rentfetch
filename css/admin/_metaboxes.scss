@@ -210,6 +210,100 @@
 		display: none;
 	}
 
+	.rf-specials-date-range {
+		max-width: 360px;
+	}
+
+	.rf-specials-date-mode {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 16px;
+		row-gap: 6px;
+		margin: 0 0 8px;
+
+		label {
+			width: auto;
+			padding: 0;
+			color: inherit;
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			margin: 0;
+			font-size: inherit;
+			font-weight: 400;
+			line-height: 1.4;
+		}
+
+		input {
+			margin: 0 2px 0 0;
+		}
+
+		span {
+			line-height: 1.5;
+			white-space: nowrap;
+			cursor: pointer;
+		}
+	}
+
+	.field .rf-specials-date-mode label:not(.rf-toggle-label) {
+		display: inline-flex;
+		width: auto;
+		padding: 0;
+		margin: 0;
+		font-size: inherit;
+		font-weight: 400;
+		line-height: 1.4;
+	}
+
+	.rf-specials-date-input-wrap {
+		position: relative;
+
+		.dashicons {
+			position: absolute;
+			top: 50%;
+			left: 10px;
+			width: 18px;
+			height: 18px;
+			margin-top: -9px;
+			color: #646970;
+			font-size: 18px;
+			line-height: 18px;
+			pointer-events: none;
+		}
+	}
+
+	.rf-specials-date-range-input {
+		display: block;
+		width: 100%;
+		max-width: none;
+		min-height: 38px;
+		padding-left: 36px;
+		background-color: #fff;
+		font-size: 14px;
+		cursor: pointer;
+		
+		&::placeholder {
+			color: #646970;
+		}
+	}
+
+	.rf-specials-date-clear {
+		display: inline-block;
+		padding: 0;
+		margin-top: 8px;
+		border: 0;
+		background: transparent;
+		color: #2271b1;
+		line-height: 1.4;
+		text-decoration: underline;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			color: #135e96;
+		}
+	}
+
 	.rf-toggle-control {
 		display: inline-block;
 	}
@@ -274,6 +368,18 @@
 	.rf-toggle-input:disabled + .rf-toggle-label {
 		opacity: 0.55;
 		cursor: not-allowed;
+	}
+}
+
+.rf-specials-flatpickr-calendar {
+	font-size: 14px;
+
+	.flatpickr-current-month,
+	.flatpickr-current-month .cur-month,
+	.flatpickr-current-month input.cur-year {
+		font-size: 16px;
+		font-weight: 400;
+		line-height: 1.2;
 	}
 }
 

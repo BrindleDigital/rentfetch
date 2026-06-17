@@ -238,9 +238,10 @@ function rentfetch_single_properties_parts_details() {
 
 						rentfetch_property_office_hours_button();
 
-						if ( rentfetch_get_property_tour_booking_url() ) {
+						if ( rentfetch_get_property_apply_online_url() || rentfetch_get_property_tour_booking_url() ) {
 							echo '<div class="property-sidebar-actions">';
 								rentfetch_property_tour_booking_button();
+								rentfetch_property_apply_online_button();
 							echo '</div>';
 						}
 

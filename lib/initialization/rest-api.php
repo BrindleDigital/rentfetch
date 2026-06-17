@@ -168,7 +168,7 @@ function rentfetch_rest_search_floorplans_safe( $request ) {
  * @return WP_REST_Response
  */
 function rentfetch_rest_search_properties( $request ) {
-	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching' ) !== '1';
+	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1';
 	$can_write_markup_cache = $can_read_markup_cache && ( ! is_user_logged_in() || ! empty( $GLOBALS['rentfetch_force_cache_write'] ) );
 	$request_params         = rentfetch_get_behavioral_search_request_params( $request );
 
@@ -377,7 +377,7 @@ function rentfetch_rest_search_properties( $request ) {
  * @return WP_REST_Response
  */
 function rentfetch_rest_search_floorplans( $request ) {
-	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching' ) !== '1';
+	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1';
 	$can_write_markup_cache = $can_read_markup_cache && ( ! is_user_logged_in() || ! empty( $GLOBALS['rentfetch_force_cache_write'] ) );
 	$request_params         = rentfetch_get_behavioral_search_request_params( $request );
 

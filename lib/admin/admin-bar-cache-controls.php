@@ -434,7 +434,7 @@ function rentfetch_get_admin_bar_cache_counts() {
 function rentfetch_get_admin_bar_cache_states() {
 	$counts = rentfetch_get_admin_bar_cache_counts();
 	$states = array(
-		'query_caching' => get_option( 'rentfetch_options_disable_query_caching', '0' ) !== '1',
+		'query_caching' => get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1',
 		'auto_preload'  => get_option( 'rentfetch_options_enable_cache_warming', '0' ) === '1',
 		'counts'        => $counts,
 	);
@@ -712,7 +712,7 @@ function rentfetch_ajax_toggle_cache_option() {
 	$option = isset( $_POST['option'] ) ? sanitize_key( wp_unslash( $_POST['option'] ) ) : '';
 
 	if ( 'query_caching' === $option ) {
-		$is_enabled = get_option( 'rentfetch_options_disable_query_caching', '0' ) !== '1';
+		$is_enabled = get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1';
 		$new_value  = $is_enabled ? '1' : '0';
 		update_option( 'rentfetch_options_disable_query_caching', $new_value );
 
