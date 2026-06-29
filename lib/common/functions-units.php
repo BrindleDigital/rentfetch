@@ -196,6 +196,54 @@ function rentfetch_unit_pricing() {
 	}
 }
 
+// * Square feet
+
+/**
+ * Get the unit square footage label.
+ *
+ * @return string The unit square footage label.
+ */
+function rentfetch_get_unit_square_feet_label() {
+	return apply_filters( 'rentfetch_unit_square_feet_label', 'sq. ft.' );
+}
+
+/**
+ * Get the unit square footage heading label.
+ *
+ * @return string The unit square footage heading label.
+ */
+function rentfetch_get_unit_square_feet_heading_label() {
+	return apply_filters( 'rentfetch_unit_square_feet_heading_label', 'Square Feet' );
+}
+
+/**
+ * Get the unit square footage.
+ *
+ * @return string|null The formatted unit square footage, or null when unavailable.
+ */
+function rentfetch_get_unit_square_feet() {
+	$square_feet = (int) get_post_meta( get_the_ID(), 'sqrft', true );
+
+	if ( $square_feet < 1 ) {
+		return apply_filters( 'rentfetch_filter_unit_square_feet', null, $square_feet );
+	}
+
+	return apply_filters( 'rentfetch_filter_unit_square_feet', number_format( $square_feet ), $square_feet );
+}
+
+/**
+ * Output the unit square footage.
+ *
+ * @return void
+ */
+function rentfetch_unit_square_feet() {
+	$square_feet = rentfetch_get_unit_square_feet();
+
+	if ( $square_feet ) {
+		echo esc_html( $square_feet );
+	}
+}
+
 // * Deposit
 
 /**

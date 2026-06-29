@@ -823,6 +823,24 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 		$columns[] = 'availability_date';
 	}
 
+	// * Square feet.
+	// Add the square footage column only when at least one unit has a positive unit-level square footage value.
+	$args_square_feet      = $args;
+	$args_square_feet_meta = array(
+		'key'     => 'sqrft',
+		'value'   => 0,
+		'compare' => '>',
+		'type'    => 'NUMERIC',
+	);
+
+	$args_square_feet['meta_query'][] = $args_square_feet_meta;
+
+	$posts_square_feet = get_posts( $args_square_feet );
+
+	if ( is_array( $posts_square_feet ) && count( $posts_square_feet ) > 0 ) {
+		$columns[] = 'sqrft';
+	}
+
 	// * Amenities.
 	// We need to add an array to args that looks for 'amenities' in the meta key and makes sure the value is non-empty and not an empty array
 
@@ -948,7 +966,8 @@ function rentfetch_floorplan_unit_table() {
 	);
 
 	$args    = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
-	$columns = rentfetch_floorplan_unit_display_get_columns( $args );
+	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
+	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
 
 	// The Query.
 	$units_table_query = new WP_Query( $args );
@@ -965,10 +984,14 @@ function rentfetch_floorplan_unit_table() {
 				
 				if ( in_array( 'title', $columns, true ) ) {
 					echo '<th class="unit-title">Apt #</th>';
-				
 				}
+
 				if ( in_array( 'floor_number', $columns, true ) ) {
 					echo '<th class="building-floor-number">Floor</th>';
+				}
+
+				if ( in_array( 'sqrft', $columns, true ) ) {
+					printf( '<th class="unit-sqrft">%s</th>', esc_html( $square_feet_label ) );
 				}
 
 				if ( in_array( 'pricing', $columns, true ) ) {
@@ -1001,6 +1024,7 @@ function rentfetch_floorplan_unit_table() {
 				$title             = rentfetch_get_unit_title();
 				$building_name     = rentfetch_get_unit_building_name();
 				$floor_number      = rentfetch_get_unit_floor_number();
+				$square_feet       = rentfetch_get_unit_square_feet();
 				$pricing           = rentfetch_get_unit_pricing();
 				$deposit           = rentfetch_get_unit_deposit();
 				$availability_date = rentfetch_get_unit_availability_date();
@@ -1019,6 +1043,10 @@ function rentfetch_floorplan_unit_table() {
 					
 					if ( in_array( 'floor_number', $columns, true ) ) {
 						printf( '<td class="unit-floor-number">%s</td>', esc_html( $floor_number ) );
+					}
+
+					if ( in_array( 'sqrft', $columns, true ) ) {
+						printf( '<td class="unit-sqrft">%s</td>', $square_feet ? esc_html( $square_feet ) : '' );
 					}
 
 					if ( in_array( 'pricing', $columns, true ) ) {
@@ -1083,7 +1111,9 @@ function rentfetch_floorplan_unit_list() {
 		),
 	);
 
-	$args = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+	$args    = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
+	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
 
 	// The Query.
 	$units_list_query = new WP_Query( $args );
@@ -1100,6 +1130,7 @@ function rentfetch_floorplan_unit_list() {
 			$title             = rentfetch_get_unit_title();
 			$building_name     = rentfetch_get_unit_building_name();
 			$floor_number      = rentfetch_get_unit_floor_number();
+			$square_feet       = rentfetch_get_unit_square_feet();
 			$pricing           = rentfetch_get_unit_pricing();
 			$deposit           = rentfetch_get_unit_deposit();
 			$availability_date = rentfetch_get_unit_availability_date();
@@ -1122,6 +1153,10 @@ function rentfetch_floorplan_unit_list() {
 					
 					if ( $floor_number ) {
 						printf( '<li class="unit-floor-number"><span class="label">Floor number:</span> %s</li>', esc_html( $floor_number ) );
+					}
+
+					if ( in_array( 'sqrft', $columns, true ) && $square_feet ) {
+						printf( '<li class="unit-sqrft"><span class="label">%s:</span> %s</li>', esc_html( $square_feet_label ), esc_html( $square_feet ) );
 					}
 					
 					if ( $deposit && 'Please inquire' !== $deposit ) {
