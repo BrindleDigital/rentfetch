@@ -10,6 +10,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Determine whether property fees should be shown on the frontend.
+ *
+ * Missing options default to enabled so existing installs continue showing fees.
+ *
+ * @return bool
+ */
+function rentfetch_should_show_property_fees() {
+	$show_property_fees = get_option( 'rentfetch_options_show_property_fees', '1' );
+	$should_show        = ( '0' !== (string) $show_property_fees );
+
+	return (bool) apply_filters( 'rentfetch_filter_should_show_property_fees', $should_show );
+}
+
+/**
  * Helper function to get the WordPress post ID from a property_id meta value.
  *
  * @param string $property_id The property_id meta value.
@@ -1976,6 +1990,10 @@ function rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $pr
  * @return float The monthly required total fees.
  */
 function rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id = null ) {
+	if ( ! rentfetch_should_show_property_fees() ) {
+		return 0.0;
+	}
+
 	$property_total = null;
 
 	if ( $property_post_id ) {
@@ -2019,6 +2037,11 @@ function rentfetch_get_effective_monthly_required_fees_preview_context_for_prope
 		'detail_value'  => '',
 		'description'   => 'No synced API fees, property-level monthly fees, or global monthly fees are currently affecting frontend pricing.',
 	);
+
+	if ( ! rentfetch_should_show_property_fees() ) {
+		$empty_context['description'] = 'Property fees are globally disabled, so no fee totals are currently affecting frontend pricing.';
+		return $empty_context;
+	}
 
 	if ( $property_post_id <= 0 ) {
 		return $empty_context;
@@ -2802,6 +2825,10 @@ function rentfetch_get_property_fees_display_source_context( $property_id_or_pos
 		'source_label' => 'No active fees source',
 	);
 
+	if ( ! rentfetch_should_show_property_fees() ) {
+		return $context;
+	}
+
 	if ( $post_id ) {
 		$api_fees_payload    = rentfetch_get_yardi_synced_property_lease_fees_payload( $post_id );
 		$api_fees_data       = rentfetch_get_yardi_api_property_fees_data( $post_id );
@@ -2885,6 +2912,9 @@ function rentfetch_get_property_fees_display_source_context( $property_id_or_pos
  * @return string The property fees embed code.
  */
 function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
+	if ( ! rentfetch_should_show_property_fees() ) {
+		return '';
+	}
 	
 	// Figure out the post ID to use for getting the fees.
 	$post_id = null;
@@ -3232,6 +3262,9 @@ function rentfetch_get_property_fee_tooltip_html( $fee ) {
 }
 
 function rentfetch_get_property_fees_markup( $property_fees_json ) {
+	if ( ! rentfetch_should_show_property_fees() ) {
+		return '';
+	}
 	
 	// Start output buffering
 	ob_start();

@@ -50,6 +50,7 @@ function rentfetch_settings_set_defaults_properties() {
 	add_option( 'rentfetch_options_google_maps_default_longitude', -104.9903 );
 
 	// Global property fees defaults.
+	add_option( 'rentfetch_options_show_property_fees', '1' );
 	add_option( 'rentfetch_options_global_property_fees_data', array() );
 	add_option( 'rentfetch_options_global_property_fees_json_url', '' );
 	add_option( 'rentfetch_options_global_property_fees_embed', '' );
@@ -603,6 +604,22 @@ function rentfetch_settings_properties_global_property_fees() {
 		<h2 class="title">Property Fees</h2>
 		<p class="description">Set global fallback fees that will be used when property-specific fees are not available (you can set individual fees when editing each property as well).</p>
 	</div>
+	<div class="row">
+		<div class="section">
+			<label for="rentfetch_options_show_property_fees">Show Fees</label>
+			<p class="description">Globally controls whether fee details and fee-inclusive pricing are shown on the frontend.</p>
+		</div>
+		<div class="section">
+			<ul class="checkboxes">
+				<li>
+					<label for="rentfetch_options_show_property_fees">
+						<input type="checkbox" name="rentfetch_options_show_property_fees" id="rentfetch_options_show_property_fees" value="1" <?php checked( '0' !== (string) get_option( 'rentfetch_options_show_property_fees', '1' ) ); ?>>
+						Show property fees
+					</label>
+				</li>
+			</ul>
+		</div>
+	</div>
 	<div class="row rentfetch-global-fees-csv-and-total-row" data-rentfetch-renderer="global-fees-v2-combined-row">
 		<div class="section rentfetch-global-fees-csv-section">
 				<label for="rentfetch_options_global_property_fees_csv">OPTION 1: CSV Upload or Link</label>
@@ -919,6 +936,9 @@ function rentfetch_save_settings_global_property_fees() {
 	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
 		die( 'Security check failed' );
 	}
+
+	$show_property_fees = isset( $_POST['rentfetch_options_show_property_fees'] ) ? '1' : '0';
+	update_option( 'rentfetch_options_show_property_fees', $show_property_fees );
 
 	// JSON data
 	if ( isset( $_POST['rentfetch_options_global_property_fees_data'] ) ) {
