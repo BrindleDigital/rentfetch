@@ -602,6 +602,7 @@ function rentfetch_save_settings_general_data_sync() {
 	if ( function_exists( 'as_unschedule_all_actions' ) ) {
 		as_unschedule_all_actions( 'rfs_do_sync' );
 		as_unschedule_all_actions( 'rfs_yardi_do_delete_orphans' );
+		as_unschedule_all_actions( 'rfs_engrain_do_delete_orphans' );
 	}
 
 	// Radio field.
@@ -677,6 +678,22 @@ function rentfetch_save_settings_general_data_sync() {
 	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) ) {
 		$options_yardi_integration_creds_yardi_password = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) );
 		update_option( 'rentfetch_options_yardi_integration_creds_yardi_password', $options_yardi_integration_creds_yardi_password );
+	}
+
+	// Engrain API key.
+	if ( isset( $_POST['rentfetch_options_engrain_integration_creds_engrain_api_key'] ) ) {
+		update_option(
+			'rentfetch_options_engrain_integration_creds_engrain_api_key',
+			sanitize_text_field( wp_unslash( $_POST['rentfetch_options_engrain_integration_creds_engrain_api_key'] ) )
+		);
+	}
+
+	// Engrain asset IDs.
+	if ( isset( $_POST['rentfetch_options_engrain_integration_creds_engrain_asset_ids'] ) ) {
+		$raw_asset_ids = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_engrain_integration_creds_engrain_asset_ids'] ) );
+		$asset_ids     = preg_split( '/[\s,]+/', $raw_asset_ids, -1, PREG_SPLIT_NO_EMPTY );
+		$asset_ids     = array_values( array_unique( array_filter( array_map( 'sanitize_text_field', $asset_ids ) ) ) );
+		update_option( 'rentfetch_options_engrain_integration_creds_engrain_asset_ids', implode( ', ', $asset_ids ) );
 	}
 
 	// Text field.

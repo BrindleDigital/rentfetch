@@ -244,30 +244,36 @@ function rentfetch_get_connected_property_post_id_for_floorplan( $floorplan_post
 }
 
 /**
- * Get property-level monthly required total fees for a floorplan.
+ * Get all fixed monthly required fees applicable to a floorplan.
  *
- * Fees for floorplan pricing come from the related property's stored fee total only.
+ * Includes related property fees plus provider-normalized floorplan fees.
  *
  * @param int|null $floorplan_post_id Optional floorplan post ID.
  * @return float
  */
 function rentfetch_get_floorplan_property_monthly_required_fees_total( $floorplan_post_id = null ) {
+	if ( ! $floorplan_post_id ) {
+		$floorplan_post_id = get_the_ID();
+	}
+	$scoped_total = function_exists( 'rentfetch_get_synced_scoped_monthly_required_fee_total' )
+		? rentfetch_get_synced_scoped_monthly_required_fee_total( $floorplan_post_id )
+		: 0.0;
 	$property_post_id = rentfetch_get_connected_property_post_id_for_floorplan( $floorplan_post_id );
 	if ( ! $property_post_id ) {
-		return 0.0;
+		return $scoped_total;
 	}
 
 	if ( function_exists( 'rentfetch_get_effective_monthly_required_total_fees_for_property' ) ) {
 		$effective_total = rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id );
 		if ( is_numeric( $effective_total ) && (float) $effective_total > 0 ) {
-			return (float) $effective_total;
+			return (float) $effective_total + $scoped_total;
 		}
-		return 0.0;
+		return $scoped_total;
 	}
 
 	$property_raw = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
 	if ( '' === (string) $property_raw ) {
-		return 0.0;
+		return $scoped_total;
 	}
 
 	$property_total = null;
@@ -278,10 +284,10 @@ function rentfetch_get_floorplan_property_monthly_required_fees_total( $floorpla
 	}
 
 	if ( null === $property_total || $property_total <= 0 ) {
-		return 0.0;
+		return $scoped_total;
 	}
 
-	return (float) $property_total;
+	return (float) $property_total + $scoped_total;
 }
 
 /**
@@ -319,8 +325,23 @@ function rentfetch_get_floorplan_pricing() {
 		return apply_filters( 'rentfetch_filter_floorplan_pricing', null, $minimum_rent, $maximum_rent );
 	}
 
-	$monthly_required_fees = rentfetch_get_floorplan_property_monthly_required_fees_total( get_the_ID() );
-	if ( $monthly_required_fees > 0 ) {
+	$total_monthly_price = rentfetch_format_floorplan_rent_display(
+		get_post_meta( get_the_ID(), 'minimum_total_monthly_price', true ),
+		get_post_meta( get_the_ID(), 'maximum_total_monthly_price', true ),
+		$price_display
+	);
+	if ( $total_monthly_price ) {
+		$tooltip_markup = function_exists( 'rentfetch_get_total_monthly_leasing_pricing_tooltip_markup' ) ? rentfetch_get_total_monthly_leasing_pricing_tooltip_markup() : '';
+		$rent_range     = sprintf(
+			'<span class="rentfetch-floorplan-rent-lines"><span class="rentfetch-floorplan-rent-with-fees"><span class="rentfetch-pricing-with-tooltip">%1$s/mo%3$s</span></span><span class="rentfetch-floorplan-base-rent">%2$s base rent</span></span>',
+			esc_html( $total_monthly_price ),
+			esc_html( $base_rent ),
+			$tooltip_markup
+		);
+	} else {
+		$monthly_required_fees = rentfetch_get_floorplan_property_monthly_required_fees_total( get_the_ID() );
+	}
+	if ( ! $total_monthly_price && $monthly_required_fees > 0 ) {
 		$minimum_rent_with_fees = $minimum_rent_value + $monthly_required_fees;
 		$maximum_rent_with_fees = $maximum_rent_value + $monthly_required_fees;
 		$including_fees_rent    = rentfetch_format_floorplan_rent_display( $minimum_rent_with_fees, $maximum_rent_with_fees, $price_display );
@@ -332,7 +353,7 @@ function rentfetch_get_floorplan_pricing() {
 			esc_html( $base_rent ),
 			$tooltip_markup
 		);
-	} else {
+	} elseif ( ! $total_monthly_price ) {
 		$rent_range = sprintf(
 			'<span class="rentfetch-floorplan-rent-lines"><span class="rentfetch-floorplan-rent-with-fees">%1$s/mo</span></span>',
 			esc_html( $base_rent )

@@ -15,12 +15,12 @@
  * @return void
  */
 function rentfetch_properties_fees_metabox_callback( $post ) {
-	$api_fees_payload = function_exists( 'rentfetch_get_yardi_synced_property_lease_fees_payload' )
-		? rentfetch_get_yardi_synced_property_lease_fees_payload( $post->ID )
+	$synced_fee_context = function_exists( 'rentfetch_get_synced_property_fee_context' )
+		? rentfetch_get_synced_property_fee_context( $post->ID )
 		: null;
 	?>
 	<div class="rf-metabox rf-metabox-properties">
-		<?php if ( is_array( $api_fees_payload ) ) : ?>
+		<?php if ( is_array( $synced_fee_context ) ) : ?>
 			<?php rentfetch_render_property_editor_lazy_fragment( 'fees-preview', $post->ID ); ?>
 			<?php return; ?>
 		<?php endif; ?>

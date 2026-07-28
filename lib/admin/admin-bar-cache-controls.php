@@ -67,6 +67,13 @@ function rentfetch_admin_bar_is_partial_sync_endpoint( $endpoint ) {
 		array(
 			'property_images_api',
 			'lease_fees_api',
+			'engrain_pricing_api',
+			'engrain_all_in_pricing_api',
+			'engrain_galleries_api',
+			'engrain_unit_descriptions_api',
+			'engrain_marker_descriptions_api',
+			'engrain_expenses_api',
+			'engrain_pricing_disclaimers_api',
 		),
 		true
 	);

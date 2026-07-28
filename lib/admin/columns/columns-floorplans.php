@@ -294,6 +294,8 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 			$floorplan_images = rentfetch_get_floorplan_images_rentmanager();
 		} elseif ( 'entrata' === $floorplan_source ) {
 			$floorplan_images = rentfetch_get_floorplan_images_entrata();
+		} elseif ( 'engrain' === $floorplan_source ) {
+			$floorplan_images = rentfetch_get_floorplan_images_engrain();
 		}
 
 		if ( is_array( $floorplan_images ) && array( '' ) !== $floorplan_images ) {

@@ -23,6 +23,8 @@ function rentfetch_unit_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_rentmanager', $array_fields, $post_id );
 	} elseif ( 'entrata' === $unit_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_entrata', $array_fields, $post_id );
+	} elseif ( 'engrain' === $unit_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_engrain', $array_fields, $post_id );
 	}
 
 	if ( !empty( $unit_source ) ) {
@@ -89,6 +91,36 @@ function rentfetch_unit_syncing_fields_entrata( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_unit_syncing_fields_entrata', 'rentfetch_unit_syncing_fields_entrata', 10, 2 );
+
+/**
+ * Get shared unit fields synchronized by Engrain.
+ *
+ * @param array $array_fields Existing fields.
+ * @param int   $post_id Unit post ID.
+ * @return array
+ */
+function rentfetch_unit_syncing_fields_engrain( $array_fields, $post_id ) {
+	return array(
+		'title',
+		'property_id',
+		'floorplan_id',
+		'unit_id',
+		'unit_number',
+		'apply_online_url',
+		'availability_date',
+		'amenities',
+		'baths',
+		'beds',
+		'deposit',
+		'maximum_rent',
+		'maximum_total_monthly_price',
+		'minimum_rent',
+		'minimum_total_monthly_price',
+		'specials',
+		'sqrft',
+	);
+}
+add_filter( 'rentfetch_filter_unit_syncing_fields_engrain', 'rentfetch_unit_syncing_fields_engrain', 10, 2 );
 
 /**
  * Filter the syncing fields for the floorplans for the Yardi API
