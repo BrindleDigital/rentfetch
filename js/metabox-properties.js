@@ -156,32 +156,164 @@ jQuery(document).ready(function ($) {
 
 	function updateLink() {
 		var propertyId = $('#property_id').val();
-		var floorplanLink =
-			'/wp-admin/edit.php?ac-actions-form=1&orderby=607b962c381064&order=asc&post_status=all&post_type=floorplans&layout=6048fca7a7894&action=-1&paged=1&action2=-1';
-		var unitLink =
-			'/wp-admin/edit.php?ac-actions-form=1&orderby=607b962c381064&order=asc&post_status=all&post_type=units&layout=6048fca7a7894&action=-1&paged=1&action2=-1';
+		$('[data-rf-related-record-links] a[data-base-url]').each(
+			function () {
+				var url = new URL($(this).data('base-url'), window.location.href);
+				if (propertyId) {
+					url.searchParams.set('s', propertyId);
+				} else {
+					url.searchParams.delete('s');
+				}
+				this.href = url.toString();
+			}
+		);
+	}
 
-		if (propertyId) {
-			floorplanLink += '&s=' + propertyId;
-			unitLink += '&s=' + propertyId;
+	function initPropertyIdentity() {
+		var $identity = $('[data-rf-property-identity]');
+		var $propertyId = $identity.find('#property_id');
+		var $propertyIdConfirmed = $identity.find(
+			'[data-rf-property-id-confirmed]'
+		);
+		var $propertySource = $identity.find('#property_source');
+		var $propertySourceConfirmed = $identity.find(
+			'[data-rf-property-source-confirmed]'
+		);
+		var propertyIdDialog = document.querySelector(
+			'[data-rf-property-id-dialog]'
+		);
+		var propertySourceDialog = document.querySelector(
+			'[data-rf-property-source-dialog]'
+		);
+
+		if (!$identity.length || !$propertyId.length) {
+			return;
 		}
 
-		$('#view-related-floorplans').html(
-			'<a href="' +
-				floorplanLink +
-				'" target="_blank">View Related Floorplans</a>'
+		function unlockPropertyId() {
+			$propertyId.prop('readonly', false).removeAttr('aria-readonly aria-haspopup');
+			$propertyIdConfirmed.val('1');
+			$propertyId.trigger('focus').trigger('select');
+		}
+
+		function unlockPropertySource() {
+			$propertySource.removeAttr('aria-readonly aria-haspopup');
+			$propertySourceConfirmed.val('1');
+			$propertySource.trigger('focus');
+		}
+
+		function openConfirmation(dialog, fallbackMessage, onConfirm) {
+			if (dialog && 'function' === typeof dialog.showModal) {
+				dialog.showModal();
+				return;
+			}
+
+			if (window.confirm(fallbackMessage)) {
+				onConfirm();
+			}
+		}
+
+		function bindConfirmation(dialog, onConfirm) {
+			if (!dialog) {
+				return;
+			}
+
+			var cancelButton = dialog.querySelector(
+				'[data-rf-dialog-cancel]'
+			);
+			var confirmButton = dialog.querySelector(
+				'[data-rf-dialog-confirm]'
+			);
+
+			if (cancelButton) {
+				cancelButton.addEventListener('click', function () {
+					dialog.close();
+				});
+			}
+
+			if (confirmButton) {
+				confirmButton.addEventListener('click', function () {
+					dialog.close();
+					onConfirm();
+				});
+			}
+		}
+
+		bindConfirmation(propertyIdDialog, unlockPropertyId);
+		bindConfirmation(propertySourceDialog, unlockPropertySource);
+
+		function bindProtectedField($field, $confirmed, dialog, fallbackMessage, unlock, requiresConfirmation) {
+			if (!$field.length || !requiresConfirmation) {
+				return;
+			}
+
+			function requestUnlock(event) {
+				if ('1' === $confirmed.val()) {
+					return;
+				}
+
+				event.preventDefault();
+				$field.trigger('blur');
+				openConfirmation(dialog, fallbackMessage, unlock);
+			}
+
+			$field.on('pointerdown click', requestUnlock);
+			$field.on('keydown', function (event) {
+				if ('Enter' === event.key || ' ' === event.key || 'ArrowDown' === event.key || 'ArrowUp' === event.key) {
+					requestUnlock(event);
+				}
+			});
+		}
+
+		bindProtectedField(
+			$propertyId,
+			$propertyIdConfirmed,
+			propertyIdDialog,
+			'Changing this identifier can disconnect the property from its floor plans, units, or synced API data. Continue only if you understand the consequences.',
+			unlockPropertyId,
+			Boolean($propertyId.val())
 		);
-		$('#view-related-units').html(
-			'<a href="' + unitLink + '" target="_blank">View Related Units</a>'
+
+		bindProtectedField(
+			$propertySource,
+			$propertySourceConfirmed,
+			propertySourceDialog,
+			'Changing the property source can affect syncing and which fields are controlled by an integration. Continue only if you understand the consequences.',
+			unlockPropertySource,
+			true
 		);
+
+		[propertyIdDialog, propertySourceDialog].forEach(function (dialog) {
+			if (dialog) {
+				dialog.addEventListener('click', function (event) {
+					if (event.target === dialog) {
+						dialog.close();
+					}
+				});
+				dialog.addEventListener('cancel', function (event) {
+					event.preventDefault();
+					dialog.close();
+				});
+			}
+		});
 	}
 
 	// On load.
 	updateLink();
+	initPropertyIdentity();
 	initSpecialsDateRange();
 
 	// On change.
-	$('#property_id').on('change', function () {
+	$('#property_id').on('input change', function () {
 		updateLink();
 	});
+
+	document.addEventListener(
+		'rentfetch:property-tab-content-loaded',
+		function (event) {
+			if (event.detail && 'diagnostics' === event.detail.tabId) {
+				updateLink();
+			}
+		}
+	);
 });

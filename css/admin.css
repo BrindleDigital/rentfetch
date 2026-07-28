@@ -793,13 +793,13 @@ body.toplevel_page_rentfetch-options #wpcontent {
   margin-top: 8px;
   border: 0;
   background: transparent;
-  color: #2271b1;
+  color: var(--wp-admin-theme-color, #2271b1);
   line-height: 1.4;
   text-decoration: underline;
   cursor: pointer;
 }
 .rf-property-specials-metabox .rf-specials-date-clear:hover, .rf-property-specials-metabox .rf-specials-date-clear:focus {
-  color: #135e96;
+  color: var(--wp-admin-theme-color-darker-10, #135e96);
 }
 .rf-property-specials-metabox .rf-toggle-control {
   display: inline-block;
@@ -846,19 +846,719 @@ body.toplevel_page_rentfetch-options #wpcontent {
   transition: transform 0.15s ease;
 }
 .rf-property-specials-metabox .rf-toggle-input:checked + .rf-toggle-label .rf-toggle-track {
-  background-color: #2271b1;
+  background-color: var(--wp-admin-theme-color, #2271b1);
 }
 .rf-property-specials-metabox .rf-toggle-input:checked + .rf-toggle-label .rf-toggle-thumb {
   transform: translateX(18px);
 }
 .rf-property-specials-metabox .rf-toggle-input:focus-visible + .rf-toggle-label .rf-toggle-track {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2271b1;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--wp-admin-theme-color, #2271b1);
 }
 .rf-property-specials-metabox .rf-toggle-input:disabled + .rf-toggle-label {
   opacity: 0.55;
   cursor: not-allowed;
 }
 
+.rf-property-identity {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-end;
+  margin: 18px 0 24px;
+}
+
+.rf-property-identity-item {
+  min-width: 0;
+}
+.rf-property-identity-item.rf-property-identity-source {
+  min-width: 190px;
+}
+.rf-property-identity-item.rf-property-identity-id {
+  min-width: 280px;
+}
+
+.rf-property-identity-label {
+  display: block;
+  margin: 0;
+  color: #50575e;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.rf-property-identity-label-row {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  min-height: 18px;
+  margin-bottom: 4px;
+}
+
+.rf-property-identity-control {
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+}
+.rf-property-identity-control input,
+.rf-property-identity-control select {
+  box-sizing: border-box;
+  height: 40px;
+  min-width: 190px;
+  max-width: 360px;
+  color: #1d2327;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+}
+.rf-property-identity-control input[readonly],
+.rf-property-identity-control select[aria-readonly=true] {
+  border-color: #c3c4c7;
+  background-color: #f0f0f1;
+  color: #646970;
+  cursor: pointer;
+}
+
+.rf-property-identity-help {
+  position: relative;
+  display: inline-flex;
+}
+
+.rf-property-identity-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #646970;
+  cursor: help;
+}
+.rf-property-identity-info .dashicons {
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+  line-height: 15px;
+}
+
+.rf-property-identity-tooltip {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 7px);
+  left: -8px;
+  visibility: hidden;
+  width: min(310px, 70vw);
+  padding: 9px 11px;
+  border-radius: 2px;
+  background: #1d2327;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  opacity: 0;
+  transform: translateY(-3px);
+}
+
+.rf-property-identity-help:hover .rf-property-identity-tooltip,
+.rf-property-identity-help:focus-within .rf-property-identity-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rf-confirmation-dialog {
+  box-sizing: border-box;
+  width: min(520px, 100% - 32px);
+  max-width: 520px;
+  padding: 0 !important;
+  border: 1px solid #8c8f94;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+.rf-confirmation-dialog::backdrop {
+  background: rgba(29, 35, 39, 0.55);
+}
+
+.rf-confirmation-dialog-header {
+  padding: 22px 24px 0;
+}
+.rf-confirmation-dialog-header p {
+  margin: 0;
+  color: #1d2327;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+#poststuff .rf-confirmation-dialog-header h2 {
+  margin: 0 0 18px;
+  padding: 0;
+  color: #1d2327;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.rf-confirmation-dialog-body {
+  padding: 0 24px 22px;
+}
+.rf-confirmation-dialog-body p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.rf-confirmation-dialog-warning {
+  margin-top: 12px !important;
+  padding: 10px 12px;
+  border-left: 3px solid #dba617;
+  background: #fcf9e8;
+}
+
+.rf-confirmation-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 24px;
+  border-top: 1px solid #dcdcde;
+  background: #f6f7f7;
+}
+.rf-confirmation-dialog-actions .button {
+  min-height: 32px;
+  margin: 0;
+  border-radius: 3px;
+}
+
+.rf-property-editor {
+  background: #fff;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  margin: 10px 0 20px;
+}
+.rf-property-editor.is-ready .rf-property-editor-panel:not(.is-active) {
+  display: none;
+}
+
+.rf-property-editor-tabs-wrap {
+  position: relative;
+  overflow: hidden;
+  background: #f6f7f7;
+  border-bottom: 1px solid #c3c4c7;
+  padding: 8px;
+}
+
+.rf-property-editor-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.rf-property-editor-tab {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 9px 14px;
+  margin: 0;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: #50575e;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+.rf-property-editor-tab:hover, .rf-property-editor-tab:focus-visible {
+  border-color: var(--wp-admin-theme-color, #2271b1);
+  background: #fff;
+  color: var(--wp-admin-theme-color, #2271b1);
+}
+.rf-property-editor-tab:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+.rf-property-editor-tab.is-active, .rf-property-editor-tab[aria-selected=true], .rf-property-editor-tab.is-active:hover, .rf-property-editor-tab[aria-selected=true]:hover {
+  border-color: var(--wp-admin-theme-color, #2271b1);
+  background: var(--wp-admin-theme-color, #2271b1);
+  box-shadow: none;
+  color: #fff;
+}
+.rf-property-editor-tab[data-rf-property-tab=diagnostics] {
+  margin-left: auto;
+}
+
+.rf-property-editor-panels {
+  min-width: 0;
+}
+
+.rf-property-editor-panel {
+  padding: 24px;
+}
+.rf-property-editor-panel[hidden] {
+  display: none;
+}
+
+.rf-property-editor-section {
+  min-width: 0;
+}
+.rf-property-editor-section + .rf-property-editor-section {
+  padding-top: 24px;
+  margin-top: 24px;
+  border-top: 1px solid #dcdcde;
+}
+.rf-property-editor-section > .rf-metabox {
+  padding: 0;
+}
+
+.rf-property-editor-section-title {
+  margin: 0 0 18px;
+  color: #1d2327;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.rf-property-editor-lazy {
+  min-height: 44px;
+}
+
+.rf-property-editor-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #646970;
+}
+.rf-property-editor-loading::before {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #c3c4c7;
+  border-top-color: var(--wp-admin-theme-color, #2271b1);
+  border-radius: 50%;
+  content: "";
+  animation: rf-property-editor-spin 0.7s linear infinite;
+}
+
+@keyframes rf-property-editor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.rf-property-lazy-editor {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#rf-property-editor-panel-diagnostics .rf-property-editor-section + .rf-property-editor-section {
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top-width: 2px;
+}
+#rf-property-editor-panel-diagnostics .rf-metabox-api-response > .api-response {
+  padding: 18px;
+  border: 1px solid #dcdcde;
+  background: #f6f7f7;
+}
+#rf-property-editor-panel-diagnostics .rf-metabox-api-response > .api-response + .api-response {
+  margin-top: 16px;
+}
+
+/* Property hierarchy. */
+.rentfetch-hierarchy {
+  margin: 10px 0;
+}
+.rentfetch-hierarchy .property-container,
+.rentfetch-hierarchy .floorplan-container {
+  position: relative;
+  padding: 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 3px;
+  background: #fafafa;
+}
+.rentfetch-hierarchy .property-container {
+  margin-bottom: 15px;
+}
+.rentfetch-hierarchy .property-info-content {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+.rentfetch-hierarchy .property-info-content a {
+  pointer-events: auto;
+}
+.rentfetch-hierarchy .hierarchy-property-info,
+.rentfetch-hierarchy .hierarchy-item.floorplan {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  text-decoration: none;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.rentfetch-hierarchy .hierarchy-property-info:hover,
+.rentfetch-hierarchy .hierarchy-property-info.highlighted {
+  box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #2271b1);
+}
+.rentfetch-hierarchy .floorplans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+}
+.rentfetch-hierarchy .floorplan-container.faded {
+  opacity: 0.5;
+}
+.rentfetch-hierarchy .floorplan-header {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 10px;
+  pointer-events: none;
+}
+.rentfetch-hierarchy .floorplan-title {
+  margin-bottom: 4px;
+}
+.rentfetch-hierarchy .floorplan-title a {
+  position: relative;
+  z-index: 4;
+  font-weight: inherit;
+  text-decoration: none;
+  pointer-events: auto;
+}
+.rentfetch-hierarchy .floorplan-title a:hover {
+  text-decoration: underline;
+}
+.rentfetch-hierarchy .hierarchy-item.floorplan {
+  z-index: 1;
+}
+.rentfetch-hierarchy .hierarchy-item.floorplan:hover, .rentfetch-hierarchy .hierarchy-item.floorplan.highlighted {
+  background-color: rgba(34, 113, 177, 0.08);
+  box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.35);
+}
+.rentfetch-hierarchy .floorplan-details {
+  margin-bottom: 2px;
+  color: #646970;
+  font-size: 12px;
+}
+.rentfetch-hierarchy .floorplan-units-count {
+  margin-bottom: 5px;
+  color: #787c82;
+  font-size: 11px;
+}
+.rentfetch-hierarchy .floorplan-units-count.partial-availability {
+  color: #b32d2e;
+  font-weight: 700;
+}
+.rentfetch-hierarchy .units-grid {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+.rentfetch-hierarchy .units-hidden:not([hidden]) {
+  display: contents;
+}
+.rentfetch-hierarchy .hierarchy-item.unit {
+  position: relative;
+  display: block;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background: #f9f9f9;
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.rentfetch-hierarchy .hierarchy-item.unit:hover, .rentfetch-hierarchy .hierarchy-item.unit.highlighted {
+  background-color: var(--wp-admin-theme-color, #2271b1);
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.35);
+}
+.rentfetch-hierarchy .hierarchy-item.unit.faded {
+  opacity: 0.5;
+}
+.rentfetch-hierarchy .unit-title {
+  color: var(--wp-admin-theme-color, #2271b1);
+  font-size: 12px;
+  font-weight: 700;
+}
+.rentfetch-hierarchy .unit-id,
+.rentfetch-hierarchy .unit-availability {
+  margin-left: 4px;
+  color: #646970;
+  font-size: 11px;
+  font-weight: 400;
+}
+.rentfetch-hierarchy .units-show-more {
+  position: relative;
+  z-index: 3;
+  margin-top: 8px;
+  text-align: center;
+}
+.rentfetch-hierarchy .sync-green {
+  background-color: #eff6f1 !important;
+}
+.rentfetch-hierarchy .sync-yellow {
+  background-color: rgba(255, 193, 7, 0.08) !important;
+}
+.rentfetch-hierarchy .sync-orange {
+  background-color: rgba(255, 140, 0, 0.1) !important;
+}
+.rentfetch-hierarchy .sync-red {
+  background-color: #fff0f1 !important;
+}
+.rentfetch-hierarchy .sync-gray {
+  background-color: rgba(108, 117, 125, 0.05) !important;
+}
+.rentfetch-hierarchy .hierarchy-item.unit.sync-green {
+  border-color: #c3e6cb !important;
+  background-color: #d4edda !important;
+}
+.rentfetch-hierarchy .hierarchy-item.unit.sync-yellow,
+.rentfetch-hierarchy .hierarchy-item.unit.sync-orange {
+  border-color: rgba(255, 193, 7, 0.3) !important;
+  background-color: rgba(255, 193, 7, 0.2) !important;
+}
+.rentfetch-hierarchy .hierarchy-item.unit.sync-red {
+  border-color: #f5c6cb !important;
+  background-color: #f8d7da !important;
+}
+.rentfetch-hierarchy .hierarchy-item.unit.sync-gray {
+  border-color: rgba(108, 117, 125, 0.3) !important;
+  background-color: rgba(108, 117, 125, 0.2) !important;
+}
+.rentfetch-hierarchy a.sync-green,
+.rentfetch-hierarchy .sync-green .unit-title {
+  color: #1d7f2f !important;
+}
+.rentfetch-hierarchy a.sync-yellow,
+.rentfetch-hierarchy .sync-yellow .unit-title {
+  color: #856404 !important;
+}
+.rentfetch-hierarchy a.sync-orange,
+.rentfetch-hierarchy .sync-orange .unit-title {
+  color: #9a6700 !important;
+}
+.rentfetch-hierarchy a.sync-red,
+.rentfetch-hierarchy .sync-red .unit-title {
+  color: #b32d2e !important;
+}
+.rentfetch-hierarchy a.sync-gray,
+.rentfetch-hierarchy .sync-gray .unit-title {
+  color: #646970 !important;
+}
+.rentfetch-hierarchy [data-tooltip] {
+  cursor: pointer;
+}
+
+.rentfetch-hierarchy-tooltip {
+  position: fixed;
+  z-index: 9999;
+  max-width: 280px;
+  padding: 4px 7px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+/* Property fees. */
+#rf-property-editor-panel-fees .field {
+  grid-template-columns: 250px minmax(0, 1fr);
+}
+#rf-property-editor-panel-fees .csv-input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+#rf-property-editor-panel-fees .csv-input-group .button {
+  margin: 0;
+  border-radius: 3px 0 0 3px;
+}
+#rf-property-editor-panel-fees .csv-input-group input {
+  flex: 1;
+  border-left: 0;
+  border-radius: 0 3px 3px 0;
+}
+#rf-property-editor-panel-fees #csv-url-validation-status {
+  margin-bottom: 10px;
+}
+#rf-property-editor-panel-fees #property_monthly_required_total_fees {
+  width: 100%;
+  max-width: 240px;
+}
+#rf-property-editor-panel-fees #monthly-required-fees-refresh-status {
+  min-height: 18px;
+  margin-top: 2px;
+}
+#rf-property-editor-panel-fees #property_fees_embed {
+  width: 100%;
+}
+
+.rentfetch-admin-monthly-fees-table {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 6px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.rentfetch-admin-monthly-fees-table th,
+.rentfetch-admin-monthly-fees-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid #f0f0f1;
+  text-align: left;
+}
+.rentfetch-admin-monthly-fees-table th {
+  border-bottom-color: #dcdcde;
+}
+.rentfetch-admin-monthly-fees-table th:last-child,
+.rentfetch-admin-monthly-fees-table td:last-child {
+  text-align: right;
+}
+
+.rentfetch-admin-fees-preview-field {
+  align-items: start;
+}
+
+.rentfetch-admin-fees-preview-content {
+  padding-top: 5px;
+}
+
+.rentfetch-admin-effective-pricing-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-left: 4px solid var(--wp-admin-theme-color, #2271b1);
+  background: #f0f6fc;
+  font-size: 13px;
+}
+.rentfetch-admin-effective-pricing-total span {
+  font-weight: 600;
+}
+.rentfetch-admin-effective-pricing-total strong {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.rentfetch-admin-fees-source-label {
+  margin: 0 0 4px;
+  padding: 0;
+  font-size: 14px;
+}
+
+.rentfetch-admin-fees-disabled-notice {
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border: 1px solid #dba617;
+  border-left-width: 4px;
+  background: #fcf9e8;
+  box-shadow: none;
+}
+.rentfetch-admin-fees-disabled-notice p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.rentfetch-admin-effective-fees-preview {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #dcdcde;
+  background: #fff;
+}
+.rentfetch-admin-effective-fees-preview .property-fees-description {
+  max-width: 68ch;
+  margin: 0 0 1rem;
+}
+.rentfetch-admin-effective-fees-preview h3 {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.rentfetch-admin-effective-fees-preview h3:first-of-type {
+  margin-top: 0;
+}
+.rentfetch-admin-effective-fees-preview .property-fees-table {
+  width: 100%;
+  margin: 0 0 1.5rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.rentfetch-admin-effective-fees-preview .property-fees-table td {
+  padding: 4px 8px;
+  border: 0;
+  border-bottom: 1px solid #f0f0f1;
+  vertical-align: top;
+  word-break: break-word;
+}
+.rentfetch-admin-effective-fees-preview .property-fees-table td:first-child {
+  padding-left: 0;
+  font-weight: 500;
+}
+.rentfetch-admin-effective-fees-preview .property-fees-table td:nth-child(2) {
+  white-space: nowrap;
+}
+.rentfetch-admin-effective-fees-preview .property-fees-table td:nth-child(3) {
+  padding-right: 0;
+  color: #50575e;
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .rf-property-identity {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .rf-property-identity-item.rf-property-identity-source,
+  .rf-property-identity-item.rf-property-identity-id {
+    min-width: 0;
+  }
+  .rf-confirmation-dialog-header {
+    padding: 18px 18px 14px;
+  }
+  .rf-confirmation-dialog-body {
+    padding: 0 18px 18px;
+  }
+  .rf-confirmation-dialog-actions {
+    padding: 12px 18px;
+  }
+  .rf-property-editor-tab {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+  .rf-property-editor-tab[data-rf-property-tab=diagnostics] {
+    margin-left: 0;
+  }
+  .rf-property-editor-panel {
+    padding: 18px 14px;
+  }
+}
 .rf-specials-flatpickr-calendar {
   font-size: 14px;
 }
@@ -975,7 +1675,6 @@ body.toplevel_page_rentfetch-options #wpcontent {
   grid-template-columns: 1fr;
   gap: 0;
   border: none;
-  border-radius: 8px;
 }
 .office-hours-grid .office-hours-field .time-inputs {
   display: flex;

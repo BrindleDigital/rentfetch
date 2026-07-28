@@ -1,13 +1,20 @@
 (function (window, document, $) {
 	'use strict';
 
-	function initRentfetchApiResponseEditors() {
+	function initRentfetchApiResponseEditors(context) {
 		if (typeof wp === 'undefined' || !wp.codeEditor) {
 			return;
 		}
 
-		jQuery('.rentfetch-api-response-json').each(function () {
+		jQuery(context || document)
+			.find('.rentfetch-api-response-json')
+			.each(function () {
 			var $textarea = jQuery(this);
+
+			if ($textarea.data('rentfetchCodeEditorInitialized')) {
+				return;
+			}
+			$textarea.data('rentfetchCodeEditorInitialized', true);
 
 			var settings = {};
 
@@ -28,14 +35,26 @@
 				settings.codemirror.gutters || []
 			).concat(['CodeMirror-foldgutter']);
 
-			wp.codeEditor.initialize($textarea[0], settings);
-		});
+				wp.codeEditor.initialize($textarea[0], settings);
+			});
 	}
 
-	// Initialize on document ready and when new metaboxes are added (AJAX)
-	jQuery(document).ready(initRentfetchApiResponseEditors);
+	// Initialize only editors already visible on load, then lazy diagnostics.
+	jQuery(document).ready(function () {
+		initRentfetchApiResponseEditors(document);
+	});
 	jQuery(document).on(
 		'postbox-added postbox-removed',
-		initRentfetchApiResponseEditors
+		function () {
+			initRentfetchApiResponseEditors(document);
+		}
+	);
+	document.addEventListener(
+		'rentfetch:property-tab-content-loaded',
+		function (event) {
+			if (event.detail && event.detail.panel) {
+				initRentfetchApiResponseEditors(event.detail.panel);
+			}
+		}
 	);
 })(window, document, jQuery);

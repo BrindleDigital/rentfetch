@@ -2,16 +2,25 @@
  * CSV URL Validation for Property Fees
  * Validates the CSV URL on page load and when the URL changes
  */
-jQuery(document).ready(function ($) {
-	var $urlInput = $('#property_fees_csv_url');
-	var $statusDiv = $('#csv-url-validation-status');
+(function (document, $) {
+	'use strict';
+
+	function initFeesCsvValidation(panel) {
+	var $panel = $(panel);
+	var $urlInput = $panel.find('#property_fees_csv_url');
+	var $statusDiv = $panel.find('#csv-url-validation-status');
 	var validationTimeout = null;
 	var lastValidatedUrl = '';
 
 	// Don't run if elements don't exist
-	if (!$urlInput.length || !$statusDiv.length) {
+	if (
+		!$urlInput.length ||
+		!$statusDiv.length ||
+		$urlInput.data('rfCsvValidationInitialized')
+	) {
 		return;
 	}
+	$urlInput.data('rfCsvValidationInitialized', true);
 
 	/**
 	 * Show validation status with appropriate styling
@@ -331,4 +340,23 @@ jQuery(document).ready(function ($) {
 	$(document).on('rentfetch_csv_uploaded', function () {
 		validateCsvUrl(true);
 	});
-});
+	}
+
+	document.addEventListener(
+		'rentfetch:property-tab-activated',
+		function (event) {
+			if (event.detail && 'fees' === event.detail.tabId) {
+				initFeesCsvValidation(event.detail.panel);
+			}
+		}
+	);
+
+	$(function () {
+		var activeFeesPanel = document.querySelector(
+			'[data-rf-property-panel="fees"].is-active'
+		);
+		if (activeFeesPanel) {
+			initFeesCsvValidation(activeFeesPanel);
+		}
+	});
+})(document, jQuery);
