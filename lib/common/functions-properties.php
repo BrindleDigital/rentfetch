@@ -2023,10 +2023,11 @@ function rentfetch_get_effective_monthly_required_total_fees_for_property( $prop
 /**
  * Get the effective monthly-fees preview context used for frontend pricing.
  *
- * @param int|null $property_post_id The property post ID.
+ * @param int|null $property_post_id          The property post ID.
+ * @param bool     $respect_frontend_visibility Whether to return an empty context when fees are globally hidden.
  * @return array
  */
-function rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $property_post_id = null ) {
+function rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $property_post_id = null, $respect_frontend_visibility = true ) {
 	$property_post_id = (int) $property_post_id;
 	$empty_context    = array(
 		'source_key'    => 'none',
@@ -2038,7 +2039,7 @@ function rentfetch_get_effective_monthly_required_fees_preview_context_for_prope
 		'description'   => 'No synced API fees, property-level monthly fees, or global monthly fees are currently affecting frontend pricing.',
 	);
 
-	if ( ! rentfetch_should_show_property_fees() ) {
+	if ( $respect_frontend_visibility && ! rentfetch_should_show_property_fees() ) {
 		$empty_context['description'] = 'Property fees are globally disabled, so no fee totals are currently affecting frontend pricing.';
 		return $empty_context;
 	}
@@ -2804,10 +2805,11 @@ function rentfetch_property_fees_embed( $property_id_or_post_id = null ) {
  *
  * Mirrors the same precedence used by the frontend fees embed renderer.
  *
- * @param string|int|null $property_id_or_post_id Property ID meta value or Post ID.
+ * @param string|int|null $property_id_or_post_id     Property ID meta value or Post ID.
+ * @param bool            $respect_frontend_visibility Whether to honor the global frontend visibility setting.
  * @return array
  */
-function rentfetch_get_property_fees_display_source_context( $property_id_or_post_id = null ) {
+function rentfetch_get_property_fees_display_source_context( $property_id_or_post_id = null, $respect_frontend_visibility = true ) {
 	$post_id = null;
 
 	if ( $property_id_or_post_id ) {
@@ -2825,7 +2827,7 @@ function rentfetch_get_property_fees_display_source_context( $property_id_or_pos
 		'source_label' => 'No active fees source',
 	);
 
-	if ( ! rentfetch_should_show_property_fees() ) {
+	if ( $respect_frontend_visibility && ! rentfetch_should_show_property_fees() ) {
 		return $context;
 	}
 
@@ -2908,11 +2910,12 @@ function rentfetch_get_property_fees_display_source_context( $property_id_or_pos
 /**
  * Gets the property fees embed code.
  *
- * @param string|int|null $property_id_or_post_id Property ID meta value or Post ID.
+ * @param string|int|null $property_id_or_post_id     Property ID meta value or Post ID.
+ * @param bool            $respect_frontend_visibility Whether to honor the global frontend visibility setting.
  * @return string The property fees embed code.
  */
-function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
-	if ( ! rentfetch_should_show_property_fees() ) {
+function rentfetch_get_property_fees_embed( $property_id_or_post_id = null, $respect_frontend_visibility = true ) {
+	if ( $respect_frontend_visibility && ! rentfetch_should_show_property_fees() ) {
 		return '';
 	}
 	
@@ -2945,7 +2948,7 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 			$api_fees_are_authoritative = true;
 			if ( ! empty( $api_fees_data ) ) {
 				$property_fees_json   = wp_json_encode( $api_fees_data );
-				$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
+				$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json, $respect_frontend_visibility );
 			}
 		}
 
@@ -2956,7 +2959,7 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
 				if ( ! empty( $fees_data ) ) {
 					$property_fees_json   = wp_json_encode( $fees_data );
-					$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
+					$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json, $respect_frontend_visibility );
 				}
 			}
 		}
@@ -2965,7 +2968,7 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 		// This is also a fallback if the CSV URL exists but fails to fetch/parse.
 		if ( ! $api_fees_are_authoritative && empty( $property_fees_markup ) && ! empty( $property_fees_data ) && is_array( $property_fees_data ) ) {
 			$property_fees_json   = wp_json_encode( $property_fees_data );
-			$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json );
+			$property_fees_markup = rentfetch_get_property_fees_markup( $property_fees_json, $respect_frontend_visibility );
 		}
 
 		// Priority 3: Fallback to property_fees_embed.
@@ -2991,7 +2994,7 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 				$fees_data = rentfetch_process_csv_content_to_fees_array( $csv_content );
 				if ( ! empty( $fees_data ) ) {
 					$global_fees_json     = wp_json_encode( $fees_data );
-					$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json );
+					$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json, $respect_frontend_visibility );
 				}
 			}
 		}
@@ -3000,7 +3003,7 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 		// This is also a fallback if the CSV URL exists but fails to fetch/parse.
 		if ( empty( $property_fees_markup ) && ! empty( $global_fees_data ) && is_array( $global_fees_data ) ) {
 			$global_fees_json     = wp_json_encode( $global_fees_data );
-			$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json );
+			$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json, $respect_frontend_visibility );
 		}
 
 		// Priority 3: Fallback to global_fees_embed
@@ -3261,8 +3264,15 @@ function rentfetch_get_property_fee_tooltip_html( $fee ) {
 	return $longnotes_html;
 }
 
-function rentfetch_get_property_fees_markup( $property_fees_json ) {
-	if ( ! rentfetch_should_show_property_fees() ) {
+/**
+ * Convert normalized property-fee JSON into grouped table markup.
+ *
+ * @param string $property_fees_json         Normalized property-fee JSON.
+ * @param bool   $respect_frontend_visibility Whether to honor the global frontend visibility setting.
+ * @return string
+ */
+function rentfetch_get_property_fees_markup( $property_fees_json, $respect_frontend_visibility = true ) {
+	if ( $respect_frontend_visibility && ! rentfetch_should_show_property_fees() ) {
 		return '';
 	}
 	

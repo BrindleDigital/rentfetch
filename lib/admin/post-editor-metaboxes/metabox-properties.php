@@ -1238,7 +1238,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 		.property-info-content { position: relative; z-index: 2; pointer-events: none; }
 		.property-info-content a { pointer-events: auto; } /* Allow frontend links to be clickable */
 		.hierarchy-property-info { margin: 0; padding: 0; background: transparent; border-radius: 0; text-decoration: none; display: block; position: absolute; inset: 0; z-index: 1; transition: all 0.2s ease; }
-		.hierarchy-property-info:hover, .hierarchy-property-info.highlighted { background-color: #007cba; color: white; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4); }
+		.hierarchy-property-info:hover, .hierarchy-property-info.highlighted { box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #2271b1); }
 		.floorplans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 10px; }
 		.floorplan-container { border: 1px solid #e1e1e1; border-radius: 6px; background: #fafafa; padding: 10px; position: relative; }
 		.floorplan-header { position: relative; z-index: 10; margin-bottom: 10px; pointer-events: none;}
@@ -1447,7 +1447,15 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		$property_fees_data = array();
 	}
 
-	$api_fees_payload = function_exists( 'rentfetch_get_yardi_synced_property_lease_fees_payload' )
+	$property_fees_are_enabled  = ! function_exists( 'rentfetch_should_show_property_fees' ) || rentfetch_should_show_property_fees();
+	$property_fees_settings_url = admin_url( 'admin.php?page=rentfetch-options&tab=properties&section=global-property-fees' );
+	$effective_monthly_fees_context = function_exists( 'rentfetch_get_effective_monthly_required_fees_preview_context_for_property' )
+		? rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $post->ID, false )
+		: array();
+	$effective_monthly_fees_total = isset( $effective_monthly_fees_context['total'] )
+		? (float) $effective_monthly_fees_context['total']
+		: 0.0;
+	$api_fees_payload            = function_exists( 'rentfetch_get_yardi_synced_property_lease_fees_payload' )
 		? rentfetch_get_yardi_synced_property_lease_fees_payload( $post->ID )
 		: null;
 
@@ -1458,18 +1466,31 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 
 		$api_fees_preview_markup = '';
 		if ( ! empty( $api_fees_data ) && function_exists( 'rentfetch_get_property_fees_markup' ) ) {
-			$api_fees_preview_markup = rentfetch_get_property_fees_markup( wp_json_encode( $api_fees_data ) );
+			$api_fees_preview_markup = rentfetch_get_property_fees_markup( wp_json_encode( $api_fees_data ), false );
 		}
 		?>
 		<div class="rf-metabox rf-metabox-properties">
-			<div class="field">
-				<div class="column">
-					<label>Synced API Fees Preview</label>
-					<p class="description">Fees for this property are coming from the synced lease-fees API. Property-level CSV, manual fee totals, manual entries, and embed-code settings are hidden while API fees are available.</p>
+			<div class="field rentfetch-admin-fees-preview-field">
+				<div class="column rentfetch-admin-fees-preview-meta">
+					<?php if ( ! $property_fees_are_enabled ) : ?>
+						<div class="notice notice-warning inline rentfetch-admin-fees-disabled-notice">
+							<p><strong>Property fees are turned off globally.</strong></p>
+							<p>
+								These fees will not render on the frontend.
+								<a href="<?php echo esc_url( $property_fees_settings_url ); ?>">Adjust the Property Fees settings</a>.
+							</p>
+						</div>
+					<?php endif; ?>
+					<label class="rentfetch-admin-fees-source-label">Fee source: Synced lease fees (Yardi / RentCafe)</label>
+					<p class="description rentfetch-admin-fees-source-note">Property-level CSV, manual fee totals, manual entries, and embed-code settings are hidden while API fees are available.</p>
 				</div>
-				<div class="column">
+				<div class="column rentfetch-admin-fees-preview-content">
+					<div class="rentfetch-admin-effective-pricing-total">
+						<span>Effective total added to pricing</span>
+						<strong><?php echo esc_html( '$' . number_format( $effective_monthly_fees_total, 2 ) . '/mo' ); ?></strong>
+					</div>
 					<?php if ( ! empty( trim( (string) $api_fees_preview_markup ) ) ) : ?>
-						<div class="rentfetch-admin-effective-fees-preview" style="border: 1px solid #dcdcde; background: #fff; padding: 12px; max-width: 760px;">
+						<div class="rentfetch-admin-effective-fees-preview">
 							<?php echo $api_fees_preview_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</div>
 					<?php else : ?>
@@ -1479,6 +1500,74 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 			</div>
 
 			<style>
+				.rentfetch-admin-fees-preview-field {
+					grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+					align-items: start;
+				}
+
+				.rentfetch-admin-fees-preview-content {
+					padding-top: 5px;
+				}
+
+				.rentfetch-admin-effective-pricing-total {
+					display: flex;
+					align-items: baseline;
+					justify-content: space-between;
+					gap: 12px;
+					margin: 0 0 10px;
+					padding: 10px 12px;
+					border-left: 4px solid #2271b1;
+					background: #f0f6fc;
+					font-size: 13px;
+				}
+
+				.rentfetch-admin-effective-pricing-total strong {
+					font-size: 14px;
+					white-space: nowrap;
+				}
+
+				.rentfetch-admin-effective-pricing-total span {
+					font-weight: 600;
+				}
+
+				.rentfetch-admin-fees-source-label {
+					margin: 0 0 4px;
+					padding: 0;
+					font-size: 14px;
+				}
+
+				.rentfetch-admin-fees-source-note {
+					font-style: italic;
+				}
+
+				.rentfetch-admin-fees-disabled-notice {
+					margin: 0 0 18px;
+					padding: 10px 14px;
+					border: 1px solid #dba617;
+					border-left-width: 4px;
+					background: #fcf9e8;
+					box-shadow: none;
+				}
+
+				.rentfetch-admin-fees-disabled-notice p {
+					margin: 4px 0;
+					font-size: 13px;
+				}
+
+				.rentfetch-admin-fees-disabled-notice p:first-child {
+					font-size: 14px;
+				}
+
+				.rentfetch-admin-effective-fees-preview {
+					box-sizing: border-box;
+					width: 100%;
+					max-width: none;
+					margin-top: 0;
+					padding: 16px;
+					border: 1px solid #dcdcde;
+					background: #fff;
+				}
+
 				.rentfetch-admin-effective-fees-preview h3 {
 					margin: 1.5rem 0 0.75rem;
 					font-size: 13px;
@@ -1491,7 +1580,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 
 				.rentfetch-admin-effective-fees-preview .property-fees-table {
 					width: 100%;
-					max-width: 760px;
+					max-width: none;
 					border-collapse: collapse;
 					table-layout: fixed;
 					margin: 0 0 1.5rem;
@@ -1573,24 +1662,15 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		$monthly_fees_last_checked   = (int) get_post_meta( $post->ID, 'property_monthly_required_total_fees_last_checked', true );
 		$monthly_fee_rows            = get_post_meta( $post->ID, 'property_monthly_required_total_fees_rows', true );
 		$monthly_fees_refresh_nonce  = wp_create_nonce( 'rentfetch_refresh_monthly_required_fees_now' );
-		$effective_monthly_fees_context = function_exists( 'rentfetch_get_effective_monthly_required_fees_preview_context_for_property' )
-			? rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $post->ID )
-			: array();
 		$effective_fees_display_source_context = function_exists( 'rentfetch_get_property_fees_display_source_context' )
-			? rentfetch_get_property_fees_display_source_context( $post->ID )
+			? rentfetch_get_property_fees_display_source_context( $post->ID, false )
 			: array();
 		$effective_fees_preview_markup = function_exists( 'rentfetch_get_property_fees_embed' )
-			? rentfetch_get_property_fees_embed( $post->ID )
+			? rentfetch_get_property_fees_embed( $post->ID, false )
 			: '';
 		if ( ! is_array( $monthly_fee_rows ) ) {
 			$monthly_fee_rows = array();
 		}
-		if ( ! is_array( $effective_monthly_fees_context ) ) {
-			$effective_monthly_fees_context = array();
-		}
-		$effective_monthly_fee_rows = isset( $effective_monthly_fees_context['contributors'] ) && is_array( $effective_monthly_fees_context['contributors'] )
-			? $effective_monthly_fees_context['contributors']
-			: array();
 		?>
 		<div class="field">
 			<div class="column">
@@ -1825,74 +1905,30 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 			</div>
 		</div>
 
-		<div class="field">
-			<div class="column">
-				<label>Effective Frontend Pricing Fees</label>
-				<p class="description">This section explains which fees are currently changing frontend pricing for this property and why.</p>
-			</div>
-			<div class="column">
-				<div style="border: 1px solid #dcdcde; background: #f6f7f7; padding: 12px; max-width: 760px; margin-bottom: 18px;">
-					<p class="description" style="margin-top: 0;">
-						<strong>Effective frontend source:</strong>
-						<?php echo esc_html( (string) ( $effective_monthly_fees_context['source_label'] ?? 'No active fees source' ) ); ?>
-					</p>
-					<p class="description">
-						<strong>Effective total added to pricing:</strong>
-						<?php
-						$effective_total = isset( $effective_monthly_fees_context['total'] ) ? (float) $effective_monthly_fees_context['total'] : 0;
-						echo esc_html( '$' . number_format( $effective_total, 2 ) . '/mo' );
-						?>
-					</p>
-					<?php if ( ! empty( $effective_monthly_fees_context['description'] ) ) : ?>
-						<p class="description"><?php echo esc_html( (string) $effective_monthly_fees_context['description'] ); ?></p>
-					<?php endif; ?>
-					<?php if ( ! empty( $effective_monthly_fees_context['detail_label'] ) && ! empty( $effective_monthly_fees_context['detail_value'] ) ) : ?>
-						<p class="description">
-							<strong><?php echo esc_html( (string) $effective_monthly_fees_context['detail_label'] ); ?>:</strong>
-							<?php echo esc_html( (string) $effective_monthly_fees_context['detail_value'] ); ?>
+		<div class="field rentfetch-admin-fees-preview-field">
+			<div class="column rentfetch-admin-fees-preview-meta">
+				<?php if ( ! $property_fees_are_enabled ) : ?>
+					<div class="notice notice-warning inline rentfetch-admin-fees-disabled-notice">
+						<p><strong>Property fees are turned off globally.</strong></p>
+						<p>
+							These fees will not render on the frontend.
+							<a href="<?php echo esc_url( $property_fees_settings_url ); ?>">Adjust the Property Fees settings</a>.
 						</p>
-					<?php endif; ?>
-
-					<?php if ( ! empty( $effective_monthly_fee_rows ) ) : ?>
-						<table style="margin-top: 8px; border-collapse: collapse; font-size: 12px; width: 100%; max-width: 520px;">
-							<thead>
-								<tr>
-									<th style="text-align: left; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Reason Applied to Frontend Pricing</th>
-									<th style="text-align: right; border-bottom: 1px solid #dcdcde; padding: 4px 6px;">Applied Price</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php foreach ( $effective_monthly_fee_rows as $row ) : ?>
-									<?php
-									$row_description = sanitize_text_field( (string) ( $row['description'] ?? '' ) );
-									$row_price       = isset( $row['applied_price'] ) ? (float) $row['applied_price'] : 0;
-									?>
-									<tr>
-										<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1;"><?php echo esc_html( $row_description ); ?></td>
-										<td style="padding: 4px 6px; border-bottom: 1px solid #f0f0f1; text-align: right;"><?php echo esc_html( '$' . number_format( $row_price, 2 ) ); ?></td>
-									</tr>
-								<?php endforeach; ?>
-							</tbody>
-						</table>
-					<?php elseif ( 'none' !== (string) ( $effective_monthly_fees_context['source_key'] ?? 'none' ) ) : ?>
-						<p class="description" style="margin-bottom: 0;">No line-item contributor rows are available for the active source.</p>
-					<?php endif; ?>
-				</div>
-			</div>
-		</div>
-
-		<div class="field">
-			<div class="column">
-				<label>Effective Fees Preview</label>
+					</div>
+				<?php endif; ?>
+				<label class="rentfetch-admin-fees-source-label">
+					Fee source:
+					<?php echo esc_html( (string) ( $effective_fees_display_source_context['source_label'] ?? 'No active fees source' ) ); ?>
+				</label>
 				<p class="description">This preview shows the fees content currently resolved for this property after source precedence is applied.</p>
 			</div>
-			<div class="column">
-				<p class="description">
-					<strong>Preview source:</strong>
-					<?php echo esc_html( (string) ( $effective_fees_display_source_context['source_label'] ?? 'No active fees source' ) ); ?>
-				</p>
+			<div class="column rentfetch-admin-fees-preview-content">
+				<div class="rentfetch-admin-effective-pricing-total">
+					<span>Effective total added to pricing</span>
+					<strong><?php echo esc_html( '$' . number_format( $effective_monthly_fees_total, 2 ) . '/mo' ); ?></strong>
+				</div>
 				<?php if ( ! empty( trim( (string) $effective_fees_preview_markup ) ) ) : ?>
-					<div class="rentfetch-admin-effective-fees-preview" style="border: 1px solid #dcdcde; background: #fff; padding: 12px; max-width: 760px;">
+					<div class="rentfetch-admin-effective-fees-preview">
 						<?php echo $effective_fees_preview_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 				<?php else : ?>
@@ -1902,6 +1938,70 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		</div>
 
 		<style>
+			.rentfetch-admin-fees-preview-field {
+				grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+				align-items: start;
+			}
+
+			.rentfetch-admin-fees-preview-content {
+				padding-top: 5px;
+			}
+
+			.rentfetch-admin-effective-pricing-total {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 12px;
+				margin: 0 0 10px;
+				padding: 10px 12px;
+				border-left: 4px solid #2271b1;
+				background: #f0f6fc;
+				font-size: 13px;
+			}
+
+			.rentfetch-admin-effective-pricing-total strong {
+				font-size: 14px;
+				white-space: nowrap;
+			}
+
+			.rentfetch-admin-effective-pricing-total span {
+				font-weight: 600;
+			}
+
+			.rentfetch-admin-fees-source-label {
+				margin: 0 0 4px;
+				padding: 0;
+				font-size: 14px;
+			}
+
+			.rentfetch-admin-fees-disabled-notice {
+				margin: 0 0 18px;
+				padding: 10px 14px;
+				border: 1px solid #dba617;
+				border-left-width: 4px;
+				background: #fcf9e8;
+				box-shadow: none;
+			}
+
+			.rentfetch-admin-fees-disabled-notice p {
+				margin: 4px 0;
+				font-size: 13px;
+			}
+
+			.rentfetch-admin-fees-disabled-notice p:first-child {
+				font-size: 14px;
+			}
+
+			.rentfetch-admin-effective-fees-preview {
+				box-sizing: border-box;
+				width: 100%;
+				max-width: none;
+				margin-top: 0;
+				padding: 16px;
+				border: 1px solid #dcdcde;
+				background: #fff;
+			}
+
 			.rentfetch-admin-effective-fees-preview .property-fees-description {
 				margin: 0 0 1rem;
 				max-width: 68ch;
@@ -1919,7 +2019,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 
 			.rentfetch-admin-effective-fees-preview .property-fees-table {
 				width: 100%;
-				max-width: 760px;
+				max-width: none;
 				border-collapse: collapse;
 				table-layout: fixed;
 				margin: 0 0 1.5rem;
