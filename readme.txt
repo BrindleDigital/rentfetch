@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 7.3
-Stable tag: 0.37.1
+Stable tag: 0.37.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,15 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.37.2 =
+
+* Added core compatibility for Engrain-backed partial sync data across properties, floor plans, and units, including source-aware field controls, sync endpoint labels, integration settings handling, and orphan-cleanup scheduling.
+* Added support for Engrain property galleries and floor plan images throughout frontend and administrator displays.
+* Added provider-neutral synced fee handling and total monthly pricing support so Engrain pricing and expense data can power fee-inclusive property, floor plan, and unit displays while retaining existing Yardi compatibility.
+* Rebuilt the property editor as a responsive, accessible tabbed interface for contact details, content, specials, images, office hours, fees, and diagnostics.
+* Improved property editor performance by loading diagnostics and synced previews only when needed, while remembering each administrator's active tab.
+* Refactored property editor assets, rendering, and save handling into focused components for easier maintenance and integration compatibility.
 
 = 0.37.1 =
 
