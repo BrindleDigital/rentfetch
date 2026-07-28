@@ -147,6 +147,17 @@ function rentfetch_get_sync_endpoint_label( $endpoint ) {
 		'units_api'                       => __( 'Units', 'rentfetch' ),
 		'getMitsPropertyUnits'            => __( 'Property units', 'rentfetch' ),
 		'getUnitsAvailabilityAndPricing'  => __( 'Availability', 'rentfetch' ),
+		'engrain_asset_api'               => __( 'Engrain property', 'rentfetch' ),
+		'engrain_inventory_api'           => __( 'Engrain inventory', 'rentfetch' ),
+		'engrain_pricing_api'             => __( 'Engrain pricing & availability', 'rentfetch' ),
+		'engrain_all_in_pricing_api'      => __( 'Engrain all-in pricing', 'rentfetch' ),
+		'engrain_galleries_api'           => __( 'Engrain galleries', 'rentfetch' ),
+		'engrain_unit_descriptions_api'   => __( 'Engrain unit amenities', 'rentfetch' ),
+		'engrain_marker_descriptions_api' => __( 'Engrain property amenities', 'rentfetch' ),
+		'engrain_expenses_api'            => __( 'Engrain fees', 'rentfetch' ),
+		'engrain_pricing_disclaimers_api' => __( 'Engrain disclaimers', 'rentfetch' ),
+		'engrain_floorplans_api'          => __( 'Engrain floor plans', 'rentfetch' ),
+		'engrain_units_api'               => __( 'Engrain units', 'rentfetch' ),
 	);
 
 	return isset( $labels[ $endpoint ] ) ? $labels[ $endpoint ] : ucwords( str_replace( '_', ' ', (string) $endpoint ) );
@@ -606,6 +617,8 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 			$synced_images = rentfetch_get_property_images_rentmanager( null );
 		} elseif ( 'entrata' === $property_source ) {
 			$synced_images = rentfetch_get_property_images_entrata( null );
+		} elseif ( 'engrain' === $property_source && function_exists( 'rentfetch_get_property_images_engrain' ) ) {
+			$synced_images = rentfetch_get_property_images_engrain( null );
 		}
 
 		if ( is_array( $synced_images ) ) {

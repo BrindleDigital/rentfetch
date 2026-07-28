@@ -21,6 +21,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	$floorplans = array();
 	$meta_keys = array(
 		'property_id', 'beds', 'baths', 'minimum_rent', 'maximum_rent',
+		'minimum_total_monthly_price', 'maximum_total_monthly_price',
 		'minimum_sqft', 'maximum_sqft', 'available_units', 'availability_date', 'has_specials'
 	);
 	$meta_keys_sql = implode("','", $meta_keys);
@@ -141,6 +142,8 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 		$baths = isset($meta['baths']) ? $meta['baths'] : '';
 		$minimum_rent = isset($meta['minimum_rent']) ? $meta['minimum_rent'] : '';
 		$maximum_rent = isset($meta['maximum_rent']) ? $meta['maximum_rent'] : '';
+		$minimum_total_monthly_price = isset($meta['minimum_total_monthly_price']) ? $meta['minimum_total_monthly_price'] : '';
+		$maximum_total_monthly_price = isset($meta['maximum_total_monthly_price']) ? $meta['maximum_total_monthly_price'] : '';
 		$minimum_sqft = isset($meta['minimum_sqft']) ? $meta['minimum_sqft'] : '';
 		$maximum_sqft = isset($meta['maximum_sqft']) ? $meta['maximum_sqft'] : '';
 		$available_units = isset($meta['available_units']) ? $meta['available_units'] : '';
@@ -155,6 +158,8 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 				'baths'             => array($baths),
 				'minimum_rent'      => array($minimum_rent),
 				'maximum_rent'      => array($maximum_rent),
+				'minimum_total_monthly_price' => array($minimum_total_monthly_price),
+				'maximum_total_monthly_price' => array($maximum_total_monthly_price),
 				'minimum_sqft'      => array($minimum_sqft),
 				'maximum_sqft'      => array($maximum_sqft),
 				'available_units'   => array($available_units),
@@ -167,6 +172,8 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 			$floorplans[$property_id]['baths'][]             = $baths;
 			$floorplans[$property_id]['minimum_rent'][]      = $minimum_rent;
 			$floorplans[$property_id]['maximum_rent'][]      = $maximum_rent;
+			$floorplans[$property_id]['minimum_total_monthly_price'][] = $minimum_total_monthly_price;
+			$floorplans[$property_id]['maximum_total_monthly_price'][] = $maximum_total_monthly_price;
 			$floorplans[$property_id]['minimum_sqft'][]      = $minimum_sqft;
 			$floorplans[$property_id]['maximum_sqft'][]      = $maximum_sqft;
 			$floorplans[$property_id]['available_units'][]   = $available_units;

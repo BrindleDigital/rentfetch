@@ -28,6 +28,7 @@ function rentfetch_get_property_images( $args = null ) {
 	$yardi_images       = rentfetch_get_property_images_yardi( $args );
 	$rentmanager_images = rentfetch_get_property_images_rentmanager( $args );
 	$entrata_images     = rentfetch_get_property_images_entrata( $args );
+	$engrain_images     = rentfetch_get_property_images_engrain( $args );
 	$fallback_images    = rentfetch_get_property_images_fallback( $args );
 
 	if ( $manual_images ) {
@@ -38,6 +39,8 @@ function rentfetch_get_property_images( $args = null ) {
 		return apply_filters( 'rentfetch_filter_property_images', $rentmanager_images );
 	} elseif ( $entrata_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $entrata_images );
+	} elseif ( $engrain_images ) {
+		return apply_filters( 'rentfetch_filter_property_images', $engrain_images );
 	} elseif ( $fallback_images ) {
 		return apply_filters( 'rentfetch_filter_property_images', $fallback_images );
 	} else {
@@ -246,6 +249,40 @@ function rentfetch_get_property_images_entrata( $args ) {
 
 	return $return_images;
 } 
+
+/**
+ * Get normalized Engrain property gallery images.
+ *
+ * @param array|null $args Optional image arguments, unused for remote images.
+ * @return array|null
+ */
+function rentfetch_get_property_images_engrain( $args = null ) {
+	$args; // phpcs:ignore
+
+	if ( 'engrain' !== get_post_meta( get_the_ID(), 'property_source', true ) ) {
+		return;
+	}
+
+	$source_images = get_post_meta( get_the_ID(), 'synced_property_images', true );
+	if ( ! is_array( $source_images ) || empty( $source_images ) ) {
+		return;
+	}
+
+	$images = array();
+	foreach ( $source_images as $source_image ) {
+		if ( ! is_array( $source_image ) || empty( $source_image['url'] ) ) {
+			continue;
+		}
+		$images[] = array(
+			'url'     => esc_url( $source_image['url'] ),
+			'title'   => sanitize_text_field( (string) ( $source_image['title'] ?? '' ) ),
+			'alt'     => sanitize_text_field( (string) ( $source_image['alt'] ?? '' ) ),
+			'caption' => sanitize_text_field( (string) ( $source_image['caption'] ?? '' ) ),
+		);
+	}
+
+	return empty( $images ) ? null : $images;
+}
 
 /**
  * Get the fallback property images

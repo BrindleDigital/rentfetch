@@ -1984,6 +1984,94 @@ function rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $pr
 }
 
 /**
+ * Get authoritative provider-neutral synced fee data for a property.
+ *
+ * New integrations can write the normalized meta contract while the existing
+ * Yardi adapter remains supported without changing its raw payload shape.
+ *
+ * @param int|null $property_post_id Property post ID.
+ * @return array|null
+ */
+function rentfetch_get_synced_property_fee_context( $property_post_id = null ) {
+	$property_post_id = (int) $property_post_id;
+	if ( $property_post_id <= 0 ) {
+		return null;
+	}
+
+	$source  = sanitize_key( (string) get_post_meta( $property_post_id, 'synced_property_fee_source', true ) );
+	$rows    = get_post_meta( $property_post_id, 'synced_property_fee_rows', true );
+	$summary = get_post_meta( $property_post_id, 'synced_property_fee_monthly_summary', true );
+	$current_property_source = sanitize_key( (string) get_post_meta( $property_post_id, 'property_source', true ) );
+
+	if ( '' !== $source && $source === $current_property_source && is_array( $rows ) && ! empty( $rows ) ) {
+		if ( ! is_array( $summary ) ) {
+			$summary = array(
+				'total'        => 0.0,
+				'contributors' => array(),
+			);
+		}
+
+		$labels = array(
+			'engrain' => 'Synced Engrain expenses API',
+		);
+
+		return array(
+			'source'       => $source,
+			'source_key'   => $source . '_api',
+			'source_label' => $labels[ $source ] ?? sprintf( 'Synced %s fees API', ucfirst( $source ) ),
+			'rows'         => $rows,
+			'summary'      => $summary,
+		);
+	}
+
+	$yardi_payload = rentfetch_get_yardi_synced_property_lease_fees_payload( $property_post_id );
+	if ( ! is_array( $yardi_payload ) ) {
+		return null;
+	}
+
+	return array(
+		'source'       => 'yardi',
+		'source_key'   => 'yardi_api',
+		'source_label' => 'Synced Yardi lease fees API',
+		'rows'         => rentfetch_get_yardi_api_property_fees_data( $property_post_id ),
+		'summary'      => rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $property_post_id ),
+	);
+}
+
+/**
+ * Get fixed mandatory monthly fees scoped to a synced floorplan or unit.
+ *
+ * @param int|null $post_id Floorplan or unit post ID.
+ * @return float
+ */
+function rentfetch_get_synced_scoped_monthly_required_fee_total( $post_id = null ) {
+	$post_id = (int) $post_id;
+	if ( $post_id <= 0 ) {
+		return 0.0;
+	}
+
+	$source  = sanitize_key( (string) get_post_meta( $post_id, 'synced_scoped_fee_source', true ) );
+	$summary = get_post_meta( $post_id, 'synced_scoped_fee_monthly_summary', true );
+	if ( '' === $source || ! is_array( $summary ) || ! isset( $summary['total'] ) || ! is_numeric( $summary['total'] ) ) {
+		return 0.0;
+	}
+
+	$source_meta_keys = array(
+		'floorplans' => 'floorplan_source',
+		'units'      => 'unit_source',
+	);
+	$post_type        = get_post_type( $post_id );
+	if ( isset( $source_meta_keys[ $post_type ] ) ) {
+		$current_source = sanitize_key( (string) get_post_meta( $post_id, $source_meta_keys[ $post_type ], true ) );
+		if ( $current_source !== $source ) {
+			return 0.0;
+		}
+	}
+
+	return max( 0.0, (float) $summary['total'] );
+}
+
+/**
  * Get monthly required total fees for a property, with global fallback.
  *
  * @param int|null $property_post_id The property post ID.
@@ -1997,9 +2085,10 @@ function rentfetch_get_effective_monthly_required_total_fees_for_property( $prop
 	$property_total = null;
 
 	if ( $property_post_id ) {
-		$yardi_api_summary = rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $property_post_id );
-		if ( is_array( $yardi_api_summary ) && isset( $yardi_api_summary['total'] ) ) {
-			return (float) $yardi_api_summary['total'];
+		$synced_fee_context = rentfetch_get_synced_property_fee_context( $property_post_id );
+		$synced_summary     = is_array( $synced_fee_context ) ? ( $synced_fee_context['summary'] ?? null ) : null;
+		if ( is_array( $synced_summary ) && isset( $synced_summary['total'] ) ) {
+			return (float) $synced_summary['total'];
 		}
 
 		$property_raw = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
@@ -2047,26 +2136,26 @@ function rentfetch_get_effective_monthly_required_fees_preview_context_for_prope
 		return $empty_context;
 	}
 
-	$yardi_api_payload = rentfetch_get_yardi_synced_property_lease_fees_payload( $property_post_id );
-	if ( is_array( $yardi_api_payload ) ) {
-		$yardi_summary = rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $property_post_id );
-		$contributors  = is_array( $yardi_summary ) && isset( $yardi_summary['contributors'] ) && is_array( $yardi_summary['contributors'] )
-			? $yardi_summary['contributors']
+	$synced_fee_context = rentfetch_get_synced_property_fee_context( $property_post_id );
+	if ( is_array( $synced_fee_context ) ) {
+		$synced_summary = $synced_fee_context['summary'] ?? array();
+		$contributors   = is_array( $synced_summary ) && isset( $synced_summary['contributors'] ) && is_array( $synced_summary['contributors'] )
+			? $synced_summary['contributors']
 			: array();
-		$total         = is_array( $yardi_summary ) && isset( $yardi_summary['total'] )
-			? (float) $yardi_summary['total']
+		$total          = is_array( $synced_summary ) && isset( $synced_summary['total'] )
+			? (float) $synced_summary['total']
 			: 0.0;
 
 		return array(
-			'source_key'   => 'yardi_api',
-			'source_label' => 'Synced Yardi lease fees API',
+			'source_key'   => $synced_fee_context['source_key'],
+			'source_label' => $synced_fee_context['source_label'],
 			'total'        => $total,
 			'contributors' => $contributors,
 			'detail_label' => '',
 			'detail_value' => '',
 			'description'  => $total > 0
-				? 'Frontend pricing is currently using synced Yardi monthly required fees. These take precedence over property-level and global manual fee totals.'
-				: 'A synced Yardi lease-fee payload is active for this property, but it does not currently contribute any required monthly fees to frontend pricing.',
+				? sprintf( 'Frontend pricing is currently using monthly required fees from %s. These take precedence over property-level and global manual fee totals.', $synced_fee_context['source_label'] )
+				: sprintf( '%s is active for this property, but it does not currently contribute any required monthly fees to frontend pricing.', $synced_fee_context['source_label'] ),
 		);
 	}
 
@@ -2181,6 +2270,8 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 
 	$min_rent_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_rent'] ?? array() );
 	$max_rent_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_rent'] ?? array() );
+	$min_total_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_total_monthly_price'] ?? array() );
+	$max_total_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_total_monthly_price'] ?? array() );
 
 	$min_rent = ! empty( $min_rent_values ) ? min( $min_rent_values ) : null;
 	$max_rent = ! empty( $max_rent_values ) ? max( $max_rent_values ) : null;
@@ -2225,6 +2316,27 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 	$monthly_required_fees = rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id );
 
 	$base_rent_display = rentfetch_format_property_rent_display( $min_rent, $max_rent, $pricing_display );
+	$minimum_total_monthly_price = ! empty( $min_total_values ) ? min( $min_total_values ) : null;
+	$maximum_total_monthly_price = ! empty( $max_total_values ) ? max( $max_total_values ) : null;
+	if ( null === $minimum_total_monthly_price ) {
+		$minimum_total_monthly_price = $maximum_total_monthly_price;
+	}
+	if ( null === $maximum_total_monthly_price ) {
+		$maximum_total_monthly_price = $minimum_total_monthly_price;
+	}
+
+	if ( null !== $minimum_total_monthly_price ) {
+		$including_fees_rent_display = rentfetch_format_property_rent_display( $minimum_total_monthly_price, $maximum_total_monthly_price, $pricing_display );
+		$tooltip_markup              = rentfetch_get_total_monthly_leasing_pricing_tooltip_markup();
+		$rent = sprintf(
+			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees"><span class="rentfetch-pricing-with-tooltip">%1$s/mo%3$s</span></span><span class="rentfetch-property-base-rent">%2$s base rent</span></span>',
+			esc_html( $including_fees_rent_display ),
+			esc_html( $base_rent_display ),
+			$tooltip_markup
+		);
+
+		return apply_filters( 'rentfetch_filter_property_pricing', $rent, $floorplan_data['rentrange'] ?? null, $floorplan_data['minimum_rent'] ?? null, $floorplan_data['maximum_rent'] ?? null );
+	}
 
 	if ( $monthly_required_fees > 0 ) {
 		$including_fees_min_rent     = $min_rent + $monthly_required_fees;
@@ -2830,16 +2942,15 @@ function rentfetch_get_property_fees_display_source_context( $property_id_or_pos
 	}
 
 	if ( $post_id ) {
-		$api_fees_payload    = rentfetch_get_yardi_synced_property_lease_fees_payload( $post_id );
-		$api_fees_data       = rentfetch_get_yardi_api_property_fees_data( $post_id );
+		$synced_fee_context  = rentfetch_get_synced_property_fee_context( $post_id );
 		$property_fees_data    = get_post_meta( $post_id, 'property_fees_data', true );
 		$property_fees_csv_url = get_post_meta( $post_id, 'property_fees_csv_url', true );
 		$property_fees_embed   = get_post_meta( $post_id, 'property_fees_embed', true );
 
-		if ( is_array( $api_fees_payload ) ) {
+		if ( is_array( $synced_fee_context ) ) {
 			return array(
-				'source_key'   => 'yardi_api',
-				'source_label' => 'Synced Yardi lease fees API',
+				'source_key'   => $synced_fee_context['source_key'],
+				'source_label' => $synced_fee_context['source_label'],
 			);
 		}
 
@@ -2934,14 +3045,16 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null ) {
 
 	// If we have a valid post_id, try property-specific fees first
 	if ( $post_id ) {
-		$api_fees_payload    = rentfetch_get_yardi_synced_property_lease_fees_payload( $post_id );
-		$api_fees_data       = rentfetch_get_yardi_api_property_fees_data( $post_id );
+		$synced_fee_context  = rentfetch_get_synced_property_fee_context( $post_id );
+		$api_fees_data       = is_array( $synced_fee_context ) && isset( $synced_fee_context['rows'] ) && is_array( $synced_fee_context['rows'] )
+			? $synced_fee_context['rows']
+			: array();
 		$property_fees_data    = get_post_meta( $post_id, 'property_fees_data', true );
 		$property_fees_csv_url = get_post_meta( $post_id, 'property_fees_csv_url', true );
 		$property_fees_embed   = get_post_meta( $post_id, 'property_fees_embed', true );
 
 		// Priority 0: synced lease-fee API data is authoritative when present.
-		if ( is_array( $api_fees_payload ) ) {
+		if ( is_array( $synced_fee_context ) ) {
 			$api_fees_are_authoritative = true;
 			if ( ! empty( $api_fees_data ) ) {
 				$property_fees_json   = wp_json_encode( $api_fees_data );

@@ -23,6 +23,8 @@ function rentfetch_property_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_rentmanager', $array_fields, $post_id );
 	} elseif ( 'entrata' === $property_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_entrata', $array_fields, $post_id );
+	} elseif ( 'engrain' === $property_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_engrain', $array_fields, $post_id );
 	}
 
 	if ( !empty( $property_source ) ) {
@@ -89,6 +91,31 @@ function rentfetch_property_syncing_fields_entrata( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_property_syncing_fields_entrata', 'rentfetch_property_syncing_fields_entrata', 10, 2 );
+
+/**
+ * Get shared property fields synchronized by Engrain.
+ *
+ * @param array $array_fields Existing fields.
+ * @param int   $post_id Property post ID.
+ * @return array
+ */
+function rentfetch_property_syncing_fields_engrain( $array_fields, $post_id ) {
+	return array(
+		'title',
+		'property_id',
+		'address',
+		'address_2',
+		'city',
+		'state',
+		'country',
+		'zipcode',
+		'description',
+		'latitude',
+		'longitude',
+		'synced_property_images',
+	);
+}
+add_filter( 'rentfetch_filter_property_syncing_fields_engrain', 'rentfetch_property_syncing_fields_engrain', 10, 2 );
 
 /**
  * Filter the syncing fields for the propertys for the RentManager API

@@ -1447,14 +1447,17 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		$property_fees_data = array();
 	}
 
-	$api_fees_payload = function_exists( 'rentfetch_get_yardi_synced_property_lease_fees_payload' )
-		? rentfetch_get_yardi_synced_property_lease_fees_payload( $post->ID )
+	$synced_fee_context = function_exists( 'rentfetch_get_synced_property_fee_context' )
+		? rentfetch_get_synced_property_fee_context( $post->ID )
 		: null;
 
-	if ( is_array( $api_fees_payload ) ) {
-		$api_fees_data = function_exists( 'rentfetch_get_yardi_api_property_fees_data' )
-			? rentfetch_get_yardi_api_property_fees_data( $post->ID )
+	if ( is_array( $synced_fee_context ) ) {
+		$api_fees_data = isset( $synced_fee_context['rows'] ) && is_array( $synced_fee_context['rows'] )
+			? $synced_fee_context['rows']
 			: array();
+		$api_source_label = isset( $synced_fee_context['source_label'] )
+			? sanitize_text_field( $synced_fee_context['source_label'] )
+			: 'Synced fees API';
 
 		$api_fees_preview_markup = '';
 		if ( ! empty( $api_fees_data ) && function_exists( 'rentfetch_get_property_fees_markup' ) ) {
@@ -1465,7 +1468,7 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 			<div class="field">
 				<div class="column">
 					<label>Synced API Fees Preview</label>
-					<p class="description">Fees for this property are coming from the synced lease-fees API. Property-level CSV, manual fee totals, manual entries, and embed-code settings are hidden while API fees are available.</p>
+					<p class="description">Fee source: <?php echo esc_html( $api_source_label ); ?>. Property-level CSV, manual fee totals, manual entries, and embed-code settings are hidden while API fees are available.</p>
 				</div>
 				<div class="column">
 					<?php if ( ! empty( trim( (string) $api_fees_preview_markup ) ) ) : ?>

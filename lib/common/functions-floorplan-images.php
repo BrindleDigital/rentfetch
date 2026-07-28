@@ -26,6 +26,7 @@ function rentfetch_get_floorplan_images() {
 	$yardi_images    = rentfetch_get_floorplan_images_yardi();
 	$entrata_images    = rentfetch_get_floorplan_images_entrata();
 	$rentmanager_images    = rentfetch_get_floorplan_images_rentmanager();
+	$engrain_images  = rentfetch_get_floorplan_images_engrain();
 	$fallback_images = rentfetch_get_floorplan_images_fallback();
 
 	if ( $manual_images ) {
@@ -36,6 +37,8 @@ function rentfetch_get_floorplan_images() {
 		return $entrata_images;
 	} elseif( $rentmanager_images) {
 		return $rentmanager_images;
+	} elseif ( $engrain_images ) {
+		return $engrain_images;
 	} elseif ( $fallback_images ) {
 		return $fallback_images;
 	} else {
@@ -176,6 +179,34 @@ function rentfetch_get_floorplan_images_rentmanager() {
 	}
 
 	return $images_return;
+}
+
+/**
+ * Get primary and secondary floorplan images from Engrain.
+ *
+ * @return array|null Normalized images.
+ */
+function rentfetch_get_floorplan_images_engrain() {
+	$floorplan_source = get_post_meta( get_the_ID(), 'floorplan_source', true );
+	if ( 'engrain' !== $floorplan_source ) {
+		return;
+	}
+
+	$image_urls = array(
+		get_post_meta( get_the_ID(), 'floorplan_image_url', true ),
+		get_post_meta( get_the_ID(), 'floorplan_secondary_image_url', true ),
+	);
+	$image_urls = array_values( array_unique( array_filter( array_map( 'trim', $image_urls ) ) ) );
+	if ( empty( $image_urls ) ) {
+		return;
+	}
+
+	$images = array();
+	foreach ( $image_urls as $image_url ) {
+		$images[] = array( 'url' => esc_url( $image_url ) );
+	}
+
+	return $images;
 }
 
 /**

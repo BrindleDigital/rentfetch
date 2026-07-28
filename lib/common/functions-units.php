@@ -65,28 +65,93 @@ function rentfetch_get_connected_property_post_id_for_unit( $unit_post_id = null
 }
 
 /**
- * Get property-level monthly required total fees for a unit.
+ * Resolve a unit post to its related floorplan post.
+ *
+ * @param int|null $unit_post_id Optional unit post ID.
+ * @return int|null
+ */
+function rentfetch_get_connected_floorplan_post_id_for_unit( $unit_post_id = null ) {
+	if ( ! $unit_post_id ) {
+		$unit_post_id = get_the_ID();
+	}
+
+	$unit_post_id = (int) $unit_post_id;
+	$floorplan_id = trim( (string) get_post_meta( $unit_post_id, 'floorplan_id', true ) );
+	$property_id  = trim( (string) get_post_meta( $unit_post_id, 'property_id', true ) );
+	$unit_source  = trim( (string) get_post_meta( $unit_post_id, 'unit_source', true ) );
+	if ( $unit_post_id <= 0 || '' === $floorplan_id || '' === $property_id ) {
+		return null;
+	}
+
+	$meta_query = array(
+		'relation' => 'AND',
+		array(
+			'key'     => 'floorplan_id',
+			'value'   => $floorplan_id,
+			'compare' => '=',
+		),
+		array(
+			'key'     => 'property_id',
+			'value'   => $property_id,
+			'compare' => '=',
+		),
+	);
+	if ( '' !== $unit_source ) {
+		$meta_query[] = array(
+			'key'     => 'floorplan_source',
+			'value'   => $unit_source,
+			'compare' => '=',
+		);
+	}
+
+	$floorplan_ids = get_posts(
+		array(
+			'post_type'      => 'floorplans',
+			'post_status'    => 'any',
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'meta_query'     => $meta_query,
+		)
+	);
+
+	return empty( $floorplan_ids ) ? null : (int) $floorplan_ids[0];
+}
+
+/**
+ * Get all fixed monthly required fees applicable to a unit.
+ *
+ * Includes related property, floorplan, and unit-scoped fees.
  *
  * @param int|null $unit_post_id Optional unit post ID.
  * @return float
  */
 function rentfetch_get_unit_property_monthly_required_fees_total( $unit_post_id = null ) {
+	if ( ! $unit_post_id ) {
+		$unit_post_id = get_the_ID();
+	}
+	$scoped_total = function_exists( 'rentfetch_get_synced_scoped_monthly_required_fee_total' )
+		? rentfetch_get_synced_scoped_monthly_required_fee_total( $unit_post_id )
+		: 0.0;
+	$floorplan_post_id = rentfetch_get_connected_floorplan_post_id_for_unit( $unit_post_id );
+	if ( $floorplan_post_id && function_exists( 'rentfetch_get_synced_scoped_monthly_required_fee_total' ) ) {
+		$scoped_total += rentfetch_get_synced_scoped_monthly_required_fee_total( $floorplan_post_id );
+	}
 	$property_post_id = rentfetch_get_connected_property_post_id_for_unit( $unit_post_id );
 	if ( ! $property_post_id ) {
-		return 0.0;
+		return $scoped_total;
 	}
 
 	if ( function_exists( 'rentfetch_get_effective_monthly_required_total_fees_for_property' ) ) {
 		$effective_total = rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id );
 		if ( is_numeric( $effective_total ) && (float) $effective_total > 0 ) {
-			return (float) $effective_total;
+			return (float) $effective_total + $scoped_total;
 		}
-		return 0.0;
+		return $scoped_total;
 	}
 
 	$property_raw = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
 	if ( '' === (string) $property_raw ) {
-		return 0.0;
+		return $scoped_total;
 	}
 
 	$property_total = null;
@@ -97,10 +162,10 @@ function rentfetch_get_unit_property_monthly_required_fees_total( $unit_post_id 
 	}
 
 	if ( null === $property_total || $property_total <= 0 ) {
-		return 0.0;
+		return $scoped_total;
 	}
 
-	return (float) $property_total;
+	return (float) $property_total + $scoped_total;
 }
 
 /**
@@ -144,6 +209,37 @@ function rentfetch_format_unit_rent_value( $value ) {
 }
 
 /**
+ * Format a unit total-monthly-price range.
+ *
+ * @param mixed $minimum Minimum total monthly price.
+ * @param mixed $maximum Maximum total monthly price.
+ * @return string
+ */
+function rentfetch_format_unit_total_monthly_price( $minimum, $maximum ) {
+	$minimum = is_numeric( $minimum ) && (float) $minimum > 0 ? (float) $minimum : null;
+	$maximum = is_numeric( $maximum ) && (float) $maximum > 0 ? (float) $maximum : null;
+
+	if ( null === $minimum ) {
+		$minimum = $maximum;
+	}
+	if ( null === $maximum ) {
+		$maximum = $minimum;
+	}
+	if ( null === $minimum || null === $maximum ) {
+		return '';
+	}
+	if ( $maximum < $minimum ) {
+		$temp    = $minimum;
+		$minimum = $maximum;
+		$maximum = $temp;
+	}
+
+	return $minimum === $maximum
+		? rentfetch_format_unit_rent_value( $minimum )
+		: sprintf( '$%s-$%s', number_format( $minimum ), number_format( $maximum ) );
+}
+
+/**
  * Get the unit pricing.
  *
  * @return string the unit pricing.
@@ -163,9 +259,23 @@ function rentfetch_get_unit_pricing() {
 	}
 
 	$base_rent_display = rentfetch_format_unit_rent_value( $base_rent_value );
+	$total_monthly_price = rentfetch_format_unit_total_monthly_price(
+		get_post_meta( get_the_ID(), 'minimum_total_monthly_price', true ),
+		get_post_meta( get_the_ID(), 'maximum_total_monthly_price', true )
+	);
 
-	$monthly_required_fees = rentfetch_get_unit_property_monthly_required_fees_total( get_the_ID() );
-	if ( $monthly_required_fees > 0 ) {
+	if ( '' !== $total_monthly_price ) {
+		$tooltip_markup = function_exists( 'rentfetch_get_total_monthly_leasing_pricing_tooltip_markup' ) ? rentfetch_get_total_monthly_leasing_pricing_tooltip_markup() : '';
+		$rent_range     = sprintf(
+			'<span class="rentfetch-unit-rent-lines"><span class="rentfetch-unit-rent-with-fees rentfetch-unit-rent-with-fees--inclusive"><span class="rentfetch-pricing-with-tooltip">%1$s/mo%3$s</span></span><span class="rentfetch-unit-base-rent">%2$s base rent</span></span>',
+			esc_html( $total_monthly_price ),
+			esc_html( $base_rent_display ),
+			$tooltip_markup
+		);
+	} else {
+		$monthly_required_fees = rentfetch_get_unit_property_monthly_required_fees_total( get_the_ID() );
+	}
+	if ( '' === $total_monthly_price && $monthly_required_fees > 0 ) {
 		$rent_with_fees_display = rentfetch_format_unit_rent_value( $base_rent_value + $monthly_required_fees );
 		$tooltip_markup         = function_exists( 'rentfetch_get_total_monthly_leasing_pricing_tooltip_markup' ) ? rentfetch_get_total_monthly_leasing_pricing_tooltip_markup() : '';
 		$rent_range             = sprintf(
@@ -174,7 +284,7 @@ function rentfetch_get_unit_pricing() {
 			esc_html( $base_rent_display ),
 			$tooltip_markup
 		);
-	} else {
+	} elseif ( '' === $total_monthly_price ) {
 		$rent_range = sprintf(
 			'<span class="rentfetch-unit-rent-lines"><span class="rentfetch-unit-rent-with-fees">%s/mo</span></span>',
 			esc_html( $base_rent_display )
