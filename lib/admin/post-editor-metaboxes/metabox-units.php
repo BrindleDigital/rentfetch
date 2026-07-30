@@ -10,80 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Register the metabox
- *
- * @return void
- */
-function rentfetch_register_units_details_metabox() {
-	
-	// bail if we're not on the 'units' post type.
-	if ( 'units' !== get_current_screen()->post_type ) {
-		return;
-	}
-
-	add_meta_box(
-		'rentfetch_units_hierarchy', // ID of the metabox.
-		'Property Hierarchy', // Title of the metabox.
-		'rentfetch_units_hierarchy_metabox_callback', // Callback function to render the metabox.
-		'units', // Post type to add the metabox to.
-		'normal', // Priority of the metabox.
-		'default' // Context of the metabox.
-	);
-
-	add_meta_box(
-		'rentfetch_units_identifiers', // ID of the metabox.
-		'Unit Identifiers', // Title of the metabox.
-		'rentfetch_units_identifiers_metabox_callback', // Callback function to render the metabox.
-		'units', // Post type to add the metabox to.
-		'normal', // Priority of the metabox.
-		'default' // Context of the metabox.
-	);
-
-	add_meta_box(
-		'rentfetch_unit_info', // ID of the metabox.
-		'Unit Information', // Title of the metabox.
-		'rentfetch_units_info_metabox_callback', // Callback function to render the metabox.
-		'units', // Post type to add the metabox to.
-		'normal', // Priority of the metabox.
-		'default' // Context of the metabox.
-	);
-
-	add_meta_box(
-		'rentfetch_units_availability', // ID of the metabox.
-		'Unit Availability', // Title of the metabox.
-		'rentfetch_units_availability_metabox_callback', // Callback function to render the metabox.
-		'units', // Post type to add the metabox to.
-		'normal', // Priority of the metabox.
-		'default' // Context of the metabox.
-	);
-
-	// Conditionally add an API Response metabox when this post has an `api_response` meta value.
-	global $post;
-	$post_id = 0;
-	if ( isset( $_GET['post'] ) ) {
-		$post_id = (int) $_GET['post'];
-	} elseif ( isset( $_GET['post_ID'] ) ) {
-		$post_id = (int) $_GET['post_ID'];
-	} elseif ( is_object( $post ) && isset( $post->ID ) ) {
-		$post_id = (int) $post->ID;
-	}
-
-	if ( $post_id ) {
-		$api_response = get_post_meta( $post_id, 'api_response', true );
-		if ( ! empty( $api_response ) ) {
-			add_meta_box(
-				'rentfetch_units_api_response', // ID
-				'API Response', // Title
-				'rentfetch_units_api_response_metabox_callback', // Callback
-				'units', // screen
-				'normal', // context
-				'default' // priority
-			);
-		}
-	}
-}
-
-/**
  * Units identifiers callback
  *
  * @param object $post The post object.
@@ -152,7 +78,7 @@ function rentfetch_units_identifiers_metabox_callback( $post ) {
 							$property_title = get_the_title();
 							$property_link  = get_the_permalink();
 							$property_id    = get_post_meta( get_the_ID(), 'property_id', true );
-							printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', esc_url( $property_link ), esc_attr( $property_title ), (int) get_the_ID() );
+							printf( '<p class="description"><a target="_blank" href="%1$s">%2$s</a> (<a target="_blank" href="%3$s" data-rf-debug-navigation>edit</a>)</p>', esc_url( $property_link ), esc_html( $property_title ), esc_url( get_edit_post_link( get_the_ID() ) ) );
 						}
 					} else {
 						echo '<p class="description">When this is filled out, just save and refresh the page to see a link to the associated property.</p>';
@@ -196,7 +122,7 @@ function rentfetch_units_identifiers_metabox_callback( $post ) {
 							$floorplan_title = get_the_title();
 							$floorplan_link  = get_the_permalink();
 							$floorplan_id    = get_post_meta( get_the_ID(), 'floorplan_id', true );
-							printf( '<p class="description"><a target="_blank" href="%s">%s</a> (<a target="_blank" href="/wp-admin/post.php?post=%s&action=edit">edit</a>)</p>', esc_url( $floorplan_link ), esc_attr( $floorplan_title ), (int) get_the_ID() );
+							printf( '<p class="description"><a target="_blank" href="%1$s">%2$s</a> (<a target="_blank" href="%3$s" data-rf-debug-navigation>edit</a>)</p>', esc_url( $floorplan_link ), esc_html( $floorplan_title ), esc_url( get_edit_post_link( get_the_ID() ) ) );
 						}
 					} else {
 						echo '<p class="description">When this is filled out, just save and refresh the page to see a link to the associated floorplan.</p>';
@@ -468,16 +394,96 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 		return;
 	}
 
-	if ( isset( $_POST['property_id'] ) ) {
-		update_post_meta( $post_id, 'property_id', sanitize_text_field( wp_unslash( $_POST['property_id'] ) ) );
+	if (
+		! rentfetch_validate_manual_record_identifiers(
+			$post_id,
+			'unit_source',
+			array(
+				'property_id'  => 'Property ID',
+				'floorplan_id' => 'Floor Plan ID',
+				'unit_id'      => 'Unit ID',
+			)
+		)
+	) {
+		return;
 	}
 
-	if ( isset( $_POST['floorplan_id'] ) ) {
-		update_post_meta( $post_id, 'floorplan_id', sanitize_text_field( wp_unslash( $_POST['floorplan_id'] ) ) );
+	$relationship_override_confirmed = isset( $_POST['rentfetch_unit_relationship_override_confirmed'] )
+		&& '1' === sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_relationship_override_confirmed'] ) );
+	$current_property_id             = (string) get_post_meta( $post_id, 'property_id', true );
+	$current_floorplan_id            = (string) get_post_meta( $post_id, 'floorplan_id', true );
+	$original_property_id            = isset( $_POST['rentfetch_unit_property_id_original'] )
+		? sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_property_id_original'] ) )
+		: $current_property_id;
+	$original_floorplan_id           = isset( $_POST['rentfetch_unit_floorplan_id_original'] )
+		? sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_floorplan_id_original'] ) )
+		: $current_floorplan_id;
+
+	if (
+		$original_property_id === $current_property_id
+		&& $original_floorplan_id === $current_floorplan_id
+	) {
+		if ( isset( $_POST['property_id'] ) ) {
+			$submitted_property_id = sanitize_text_field( wp_unslash( $_POST['property_id'] ) );
+			if (
+				$submitted_property_id === $current_property_id
+				|| $relationship_override_confirmed
+				|| '' === trim( $current_property_id )
+			) {
+				update_post_meta( $post_id, 'property_id', $submitted_property_id );
+			}
+		}
+
+		if ( isset( $_POST['floorplan_id'] ) ) {
+			$submitted_floorplan_id = sanitize_text_field( wp_unslash( $_POST['floorplan_id'] ) );
+			if (
+				$submitted_floorplan_id === $current_floorplan_id
+				|| $relationship_override_confirmed
+				|| '' === trim( $current_floorplan_id )
+			) {
+				update_post_meta( $post_id, 'floorplan_id', $submitted_floorplan_id );
+			}
+		}
 	}
 
 	if ( isset( $_POST['unit_id'] ) ) {
-		update_post_meta( $post_id, 'unit_id', sanitize_text_field( wp_unslash( $_POST['unit_id'] ) ) );
+		$submitted_unit_id = sanitize_text_field( wp_unslash( $_POST['unit_id'] ) );
+		$current_unit_id   = (string) get_post_meta( $post_id, 'unit_id', true );
+		$original_unit_id  = isset( $_POST['rentfetch_unit_id_original'] )
+			? sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_id_original'] ) )
+			: $current_unit_id;
+		$override_confirmed = isset( $_POST['rentfetch_unit_id_override_confirmed'] )
+			&& '1' === sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_id_override_confirmed'] ) );
+
+		if (
+			$submitted_unit_id !== $current_unit_id
+			&& ( $override_confirmed || '' === trim( $current_unit_id ) )
+			&& $original_unit_id === $current_unit_id
+		) {
+			update_post_meta( $post_id, 'unit_id', $submitted_unit_id );
+		}
+	}
+
+	if ( isset( $_POST['unit_source'] ) ) {
+		$submitted_unit_source = sanitize_key( wp_unslash( $_POST['unit_source'] ) );
+		$current_unit_source   = (string) get_post_meta( $post_id, 'unit_source', true );
+		$original_unit_source  = isset( $_POST['rentfetch_unit_source_original'] )
+			? sanitize_key( wp_unslash( $_POST['rentfetch_unit_source_original'] ) )
+			: $current_unit_source;
+		$source_confirmed      = isset( $_POST['rentfetch_unit_source_override_confirmed'] )
+			&& '1' === sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_source_override_confirmed'] ) );
+
+		if (
+			$submitted_unit_source !== $current_unit_source
+			&& $source_confirmed
+			&& $original_unit_source === $current_unit_source
+		) {
+			if ( '' === $submitted_unit_source ) {
+				delete_post_meta( $post_id, 'unit_source' );
+			} else {
+				update_post_meta( $post_id, 'unit_source', $submitted_unit_source );
+			}
+		}
 	}
 
 	if ( isset( $_POST['beds'] ) ) {

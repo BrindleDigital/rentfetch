@@ -20,6 +20,18 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		return;
 	}
 
+	if (
+		! rentfetch_validate_manual_record_identifiers(
+			$post_id,
+			'property_source',
+			array(
+				'property_id' => 'Property ID',
+			)
+		)
+	) {
+		return;
+	}
+
 	if ( isset( $_POST['property_id'] ) ) {
 		$submitted_property_id = sanitize_text_field( wp_unslash( $_POST['property_id'] ) );
 		$current_property_id   = (string) get_post_meta( $post_id, 'property_id', true );

@@ -97,6 +97,7 @@ function rentfetch_enqueue_property_editor_assets( $hook ) {
 		'rentfetchPropertyEditor',
 		array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'action'  => 'rentfetch_get_property_editor_fragment',
 			'nonce'   => wp_create_nonce( 'rentfetch_property_editor_lazy' ),
 		)
 	);

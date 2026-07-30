@@ -10,6 +10,44 @@
 		currentTooltip = null;
 	}
 
+	function diagnosticsAreActive() {
+		var activeDiagnosticsTab = document.querySelector(
+			'[data-rf-property-tab="diagnostics"][aria-selected="true"]'
+		);
+
+		return (
+			'#diagnostics' === window.location.hash ||
+			Boolean(activeDiagnosticsTab)
+		);
+	}
+
+	function preserveDiagnostics(link) {
+		var url;
+
+		if (!link || !diagnosticsAreActive()) {
+			return;
+		}
+
+		try {
+			url = new URL(link.href, window.location.href);
+		} catch (error) {
+			return;
+		}
+
+		url.hash = 'diagnostics';
+		link.href = url.toString();
+	}
+
+	// Keep relationship navigation in diagnostics, including a trip through the
+	// current unit editor before that editor has tabs of its own.
+	document.addEventListener('click', function (event) {
+		var link = event.target.closest('[data-rf-debug-navigation]');
+
+		if (link) {
+			preserveDiagnostics(link);
+		}
+	});
+
 	document.addEventListener('click', function (event) {
 		var toggle = event.target.closest('.rentfetch-hierarchy .show-more-link');
 		if (!toggle) {

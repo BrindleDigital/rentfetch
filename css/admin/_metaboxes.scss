@@ -393,6 +393,158 @@
 	}
 }
 
+.rf-floorplan-identity,
+.rf-unit-identity {
+	display: grid;
+	gap: 24px;
+	align-items: start;
+
+	.rf-property-identity-item.rf-property-identity-source,
+	.rf-property-identity-item.rf-property-identity-id {
+		min-width: 0;
+	}
+
+	.rf-property-identity-control input,
+	.rf-property-identity-control select {
+		width: 100%;
+		min-width: 0;
+		max-width: none;
+	}
+}
+
+.rf-floorplan-identity {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rf-unit-identity {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rf-property-relationship-combobox {
+	position: relative;
+	width: 100%;
+
+	select {
+		width: 100%;
+	}
+
+	&.is-enhanced {
+		select {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			border: 0;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+
+		.rf-property-relationship-search {
+			padding-right: 40px;
+		}
+	}
+}
+
+.rf-property-relationship-toggle {
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 38px;
+	padding: 0;
+	border: 0;
+	border-left: 1px solid #8c8f94;
+	border-radius: 0 3px 3px 0;
+	background: #f6f7f7;
+	color: #50575e;
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		background: #fff;
+		color: var(--wp-admin-theme-color, #2271b1);
+	}
+
+	.dashicons {
+		width: 18px;
+		height: 18px;
+		font-size: 18px;
+		line-height: 18px;
+	}
+}
+
+.rf-property-relationship-menu {
+	z-index: 100100 !important;
+	max-height: 320px;
+	padding: 4px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	.ui-menu-item-wrapper {
+		padding: 8px 10px;
+		border: 0;
+		font-size: 13px;
+		line-height: 1.4;
+	}
+
+	.ui-state-active {
+		margin: 0;
+		background: var(--wp-admin-theme-color, #2271b1);
+		color: #fff;
+	}
+}
+
+.rf-floorplan-information {
+	.rf-floorplan-information-row {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 16px;
+		align-items: start;
+
+		& + .rf-floorplan-information-row {
+			margin-top: 20px;
+		}
+	}
+
+	.rf-floorplan-number-field {
+		min-width: 0;
+	}
+
+	.rf-floorplan-number-label-row {
+		display: flex;
+		gap: 3px;
+		align-items: center;
+		min-height: 18px;
+		margin-bottom: 6px;
+
+		label {
+			padding: 0;
+			color: #1d2327;
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 18px;
+		}
+	}
+
+	input[type='number'] {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: none;
+		min-height: 36px;
+		margin: 0;
+	}
+}
+
 .rf-property-identity-label {
 	display: block;
 	margin: 0;
@@ -669,6 +821,29 @@
 	line-height: 1.4;
 }
 
+.rf-property-editor-section-header {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 0 18px;
+
+	.rf-property-editor-section-title {
+		margin: 0;
+	}
+}
+
+.rf-property-editor-section-actions {
+	margin-left: auto;
+
+	.rf-related-record-links {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		justify-content: flex-end;
+	}
+}
+
 .rf-property-editor-lazy {
 	min-height: 44px;
 }
@@ -702,7 +877,9 @@
 	width: 100%;
 }
 
-#rf-property-editor-panel-diagnostics {
+#rf-property-editor-panel-diagnostics,
+#rf-floorplan-editor-panel-diagnostics,
+#rf-unit-editor-panel-diagnostics {
 	.rf-property-editor-section + .rf-property-editor-section {
 		padding-top: 30px;
 		margin-top: 30px;
@@ -1180,6 +1357,26 @@
 
 	.rf-property-editor-panel {
 		padding: 18px 14px;
+	}
+
+	.rf-property-editor-section-header {
+		flex-wrap: wrap;
+		align-items: flex-start;
+	}
+
+	.rf-property-editor-section-actions {
+		width: 100%;
+		margin-left: 0;
+
+		.rf-related-record-links {
+			justify-content: flex-start;
+		}
+	}
+
+	.rf-floorplan-information {
+		.rf-floorplan-information-row {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
 	}
 }
 

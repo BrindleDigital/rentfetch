@@ -1,62 +1,46 @@
 <?php
 /**
- * Render the tabbed property editor.
+ * Render the tabbed floor plan editor.
  *
  * @package rentfetch
  */
 
 /**
- * Get the property editor tab definitions.
+ * Get the floor plan editor tab definitions.
  *
  * @return array<string, array<string, mixed>>
  */
-function rentfetch_get_property_editor_tabs() {
+function rentfetch_get_floorplan_editor_tabs() {
 	return array(
 		'overview'     => array(
-			'label'    => 'Contact Information',
+			'label'    => 'Floor Plan Information',
 			'sections' => array(
-				array(
-					'label'    => 'Contact Information',
-					'callback' => 'rentfetch_properties_contact_metabox_callback',
-				),
-				array(
-					'label'    => 'Virtual Tour',
-					'callback' => 'rentfetch_properties_tour_callback',
-				),
-				array(
-					'label'    => 'Location',
-					'callback' => 'rentfetch_properties_location_metabox_callback',
-				),
+				array( 'callback' => 'rentfetch_floorplans_info_metabox_callback' ),
 			),
 		),
 		'content'      => array(
 			'label'    => 'Content',
 			'sections' => array(
-				array( 'callback' => 'rentfetch_properties_display_information_metabox_callback' ),
+				array(
+					'label'    => 'Description',
+					'callback' => 'rentfetch_floorplans_description_callback',
+				),
+				array(
+					'label'    => 'Virtual Tour',
+					'callback' => 'rentfetch_floorplans_tour_callback',
+				),
 			),
 		),
-		'specials'     => array(
-			'label'    => 'Specials',
+		'availability' => array(
+			'label'    => 'Availability',
 			'sections' => array(
-				array( 'callback' => 'rentfetch_properties_specials_metabox_callback' ),
+				array( 'callback' => 'rentfetch_floorplans_availability_metabox_callback' ),
 			),
 		),
 		'images'       => array(
 			'label'    => 'Images',
 			'sections' => array(
-				array( 'callback' => 'rentfetch_properties_images_metabox_callback' ),
-			),
-		),
-		'office-hours' => array(
-			'label'    => 'Office Hours',
-			'sections' => array(
-				array( 'callback' => 'rentfetch_properties_office_hours_metabox_callback' ),
-			),
-		),
-		'fees'         => array(
-			'label'    => 'Fees',
-			'sections' => array(
-				array( 'callback' => 'rentfetch_properties_fees_metabox_callback' ),
+				array( 'callback' => 'rentfetch_floorplans_images_metabox_callback' ),
 			),
 		),
 		'diagnostics'  => array(
@@ -64,13 +48,12 @@ function rentfetch_get_property_editor_tabs() {
 			'lazy'     => 'diagnostics',
 			'sections' => array(
 				array(
-					'label'            => 'Property Hierarchy',
-					'callback'         => 'rentfetch_properties_hierarchy_metabox_callback',
-					'actions_callback' => 'rentfetch_properties_related_records_callback',
+					'label'    => 'Property Hierarchy',
+					'callback' => 'rentfetch_floorplans_hierarchy_metabox_callback',
 				),
 				array(
 					'label'    => 'API Responses',
-					'callback' => 'rentfetch_properties_api_response_metabox_callback',
+					'callback' => 'rentfetch_floorplans_api_response_metabox_callback',
 				),
 			),
 		),
@@ -78,13 +61,13 @@ function rentfetch_get_property_editor_tabs() {
 }
 
 /**
- * Render one area inside a property editor tab.
+ * Render one area inside a floor plan editor tab.
  *
- * @param array<string, mixed> $section Section definition.
- * @param WP_Post             $post    Current property.
+ * @param array<string, string> $section Section definition.
+ * @param WP_Post               $post    Current floor plan.
  * @return void
  */
-function rentfetch_render_property_editor_section( $section, $post ) {
+function rentfetch_render_floorplan_editor_section( $section, $post ) {
 	$callback = $section['callback'] ?? '';
 
 	if ( ! is_callable( $callback ) ) {
@@ -93,14 +76,7 @@ function rentfetch_render_property_editor_section( $section, $post ) {
 	?>
 	<section class="rf-property-editor-section">
 		<?php if ( ! empty( $section['label'] ) ) : ?>
-			<div class="rf-property-editor-section-header">
-				<h3 class="rf-property-editor-section-title"><?php echo esc_html( $section['label'] ); ?></h3>
-				<?php if ( ! empty( $section['actions_callback'] ) && is_callable( $section['actions_callback'] ) ) : ?>
-					<div class="rf-property-editor-section-actions">
-						<?php call_user_func( $section['actions_callback'], $post ); ?>
-					</div>
-				<?php endif; ?>
-			</div>
+			<h3 class="rf-property-editor-section-title"><?php echo esc_html( $section['label'] ); ?></h3>
 		<?php endif; ?>
 		<?php call_user_func( $callback, $post ); ?>
 	</section>
@@ -111,10 +87,10 @@ function rentfetch_render_property_editor_section( $section, $post ) {
  * Render a placeholder whose contents are fetched the first time its tab opens.
  *
  * @param string $fragment Fragment identifier.
- * @param int    $post_id  Current property post ID.
+ * @param int    $post_id  Current floor plan post ID.
  * @return void
  */
-function rentfetch_render_property_editor_lazy_fragment( $fragment, $post_id ) {
+function rentfetch_render_floorplan_editor_lazy_fragment( $fragment, $post_id ) {
 	?>
 	<div
 		class="rf-property-editor-lazy"
@@ -127,31 +103,31 @@ function rentfetch_render_property_editor_lazy_fragment( $fragment, $post_id ) {
 }
 
 /**
- * Render the standalone Property Details editor.
+ * Render the standalone Floor Plan Details editor.
  *
- * @param WP_Post $post Current property.
+ * @param WP_Post $post Current floor plan.
  * @return void
  */
-function rentfetch_properties_editor_callback( $post ) {
-	$tabs = rentfetch_get_property_editor_tabs();
+function rentfetch_floorplans_editor_callback( $post ) {
+	$tabs = rentfetch_get_floorplan_editor_tabs();
 
-	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
-	rentfetch_render_property_identity_bar( $post );
+	wp_nonce_field( 'rentfetch_floorplans_metabox_nonce', 'rentfetch_floorplans_metabox_nonce' );
+	rentfetch_render_floorplan_identity_bar( $post );
 	?>
 	<div
-		class="rf-property-editor"
+		class="rf-property-editor rf-floorplan-editor"
 		data-rf-property-editor
 		data-user-id="<?php echo esc_attr( get_current_user_id() ); ?>"
 	>
 		<div class="rf-property-editor-tabs-wrap">
-			<div class="rf-property-editor-tabs" role="tablist" aria-label="Property details">
+			<div class="rf-property-editor-tabs" role="tablist" aria-label="Floor plan details">
 				<?php foreach ( $tabs as $tab_id => $tab ) : ?>
 					<button
 						type="button"
 						class="rf-property-editor-tab"
-						id="rf-property-editor-tab-<?php echo esc_attr( $tab_id ); ?>"
+						id="rf-floorplan-editor-tab-<?php echo esc_attr( $tab_id ); ?>"
 						role="tab"
-						aria-controls="rf-property-editor-panel-<?php echo esc_attr( $tab_id ); ?>"
+						aria-controls="rf-floorplan-editor-panel-<?php echo esc_attr( $tab_id ); ?>"
 						aria-selected="<?php echo 'overview' === $tab_id ? 'true' : 'false'; ?>"
 						tabindex="<?php echo 'overview' === $tab_id ? '0' : '-1'; ?>"
 						data-rf-property-tab="<?php echo esc_attr( $tab_id ); ?>"
@@ -166,17 +142,17 @@ function rentfetch_properties_editor_callback( $post ) {
 			<?php foreach ( $tabs as $tab_id => $tab ) : ?>
 				<div
 					class="rf-property-editor-panel<?php echo 'overview' === $tab_id ? ' is-active' : ''; ?>"
-					id="rf-property-editor-panel-<?php echo esc_attr( $tab_id ); ?>"
+					id="rf-floorplan-editor-panel-<?php echo esc_attr( $tab_id ); ?>"
 					role="tabpanel"
-					aria-labelledby="rf-property-editor-tab-<?php echo esc_attr( $tab_id ); ?>"
+					aria-labelledby="rf-floorplan-editor-tab-<?php echo esc_attr( $tab_id ); ?>"
 					data-rf-property-panel="<?php echo esc_attr( $tab_id ); ?>"
 				>
 					<?php
 					if ( ! empty( $tab['lazy'] ) ) {
-						rentfetch_render_property_editor_lazy_fragment( $tab['lazy'], $post->ID );
+						rentfetch_render_floorplan_editor_lazy_fragment( $tab['lazy'], $post->ID );
 					} else {
 						foreach ( $tab['sections'] as $section ) {
-							rentfetch_render_property_editor_section( $section, $post );
+							rentfetch_render_floorplan_editor_section( $section, $post );
 						}
 					}
 					?>

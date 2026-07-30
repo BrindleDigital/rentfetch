@@ -88,6 +88,7 @@ function rentfetch_render_property_identity_bar( $post ) {
 					name="property_id"
 					value="<?php echo esc_attr( $property_id ); ?>"
 					placeholder="Not set"
+					required
 					<?php echo $property_id ? 'readonly' : ''; ?>
 					<?php echo $property_id ? 'aria-readonly="true" aria-haspopup="dialog"' : ''; ?>
 					data-rf-protected-field="id"

@@ -54,7 +54,7 @@ function rentfetch_render_hierarchy_unit( $unit, $unit_data, $current_type, $cur
 	$tooltip      = rentfetch_get_sync_tooltip( $unit->ID );
 	$formatted    = rentfetch_format_hierarchy_availability_date( $availability );
 
-	echo '<a href="' . esc_url( get_edit_post_link( $unit->ID ) ) . '" class="hierarchy-item unit' . esc_attr( $highlight . $faded . ' ' . $sync_class ) . '" data-tooltip="' . esc_attr( $tooltip ) . '">';
+	echo '<a href="' . esc_url( get_edit_post_link( $unit->ID ) ) . '" class="hierarchy-item unit' . esc_attr( $highlight . $faded . ' ' . $sync_class ) . '" data-tooltip="' . esc_attr( $tooltip ) . '" data-rf-debug-navigation>';
 	echo '<div class="unit-title">' . esc_html( $unit->post_title );
 	if ( '' !== (string) $unit_id ) {
 		echo '<span class="unit-id">' . esc_html( $unit_id ) . '</span>';
@@ -179,7 +179,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 	echo '<a href="' . esc_url( $property_url ) . '" class="' . esc_attr( $property_sync ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $property_post->post_title ) . '</a> · ';
 	echo 'Property ID: ' . esc_html( get_post_meta( $property_post->ID, 'property_id', true ) );
 	echo '</div>';
-	echo '<a href="' . esc_url( get_edit_post_link( $property_post->ID ) ) . '" class="hierarchy-property-info' . esc_attr( $property_highlight . ' ' . $property_sync ) . '" data-tooltip="' . esc_attr( $property_tooltip ) . '"></a>';
+	echo '<a href="' . esc_url( get_edit_post_link( $property_post->ID ) ) . '" class="hierarchy-property-info' . esc_attr( $property_highlight . ' ' . $property_sync ) . '" data-tooltip="' . esc_attr( $property_tooltip ) . '" data-rf-debug-navigation></a>';
 	echo '</div>';
 
 	if ( ! empty( $floorplans ) ) {
@@ -235,7 +235,7 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 				echo '<div class="floorplan-units-count">' . intval( $available_count ) . ' available</div>';
 			}
 			echo '</div>';
-			echo '<a href="' . esc_url( get_edit_post_link( $floorplan->ID ) ) . '" class="hierarchy-item floorplan' . esc_attr( $highlight . ' ' . $sync_class ) . '" data-tooltip="' . esc_attr( $tooltip ) . '"></a>';
+			echo '<a href="' . esc_url( get_edit_post_link( $floorplan->ID ) ) . '" class="hierarchy-item floorplan' . esc_attr( $highlight . ' ' . $sync_class ) . '" data-tooltip="' . esc_attr( $tooltip ) . '" data-rf-debug-navigation></a>';
 
 			if ( ! empty( $available_units ) ) {
 				$visible_units = array_slice( $available_units, 0, 3 );

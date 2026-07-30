@@ -135,7 +135,11 @@
 			fragment.setAttribute('data-rf-lazy-state', 'loading');
 
 			var body = new window.URLSearchParams();
-			body.set('action', 'rentfetch_get_property_editor_fragment');
+			body.set(
+				'action',
+				rentfetchPropertyEditor.action ||
+					'rentfetch_get_property_editor_fragment'
+			);
 			body.set('nonce', rentfetchPropertyEditor.nonce);
 			body.set(
 				'fragment',
