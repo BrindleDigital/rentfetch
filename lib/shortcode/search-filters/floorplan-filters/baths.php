@@ -31,7 +31,7 @@ function rentfetch_search_filters_baths() {
 	$baths = array_values(
 		array_filter(
 			$baths,
-			function( $bath ) {
+			function ( $bath ) {
 				return null !== $bath && 0 !== $bath && '0' !== $bath;
 			}
 		)
@@ -40,7 +40,7 @@ function rentfetch_search_filters_baths() {
 	if ( count( $baths ) < 2 ) {
 		return;
 	}
-	
+
 	$label = apply_filters( 'rentfetch_search_filters_baths_label', 'Baths' );
 
 	// build the baths search.

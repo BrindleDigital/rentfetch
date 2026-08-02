@@ -68,13 +68,13 @@ function rentfetch_settings_general() {
 		echo '</div>';
 
 		echo '<div class="container">';
-			if ( 'performance' === $section ) {
-				do_action( 'rentfetch_do_settings_general_performance' );
-			} elseif ( 'analytics' === $section ) {
-				do_action( 'rentfetch_do_settings_general_analytics' );
-			} else {
-				do_action( 'rentfetch_do_settings_general_data_sync' );
-			}
+	if ( 'performance' === $section ) {
+		do_action( 'rentfetch_do_settings_general_performance' );
+	} elseif ( 'analytics' === $section ) {
+		do_action( 'rentfetch_do_settings_general_analytics' );
+	} else {
+		do_action( 'rentfetch_do_settings_general_data_sync' );
+	}
 		echo '</div><!-- .container -->';
 	echo '</section><!-- #rent-fetch-general-page -->';
 }
@@ -589,6 +589,8 @@ function rentfetch_settings_general_analytics() {
 }
 add_action( 'rentfetch_do_settings_general_analytics', 'rentfetch_settings_general_analytics' );
 
+// The public save hook verifies the settings nonce before any helper below is called.
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- Request verification is centralized in rentfetch_process_form_data() and repeated in rentfetch_save_settings_general().
 /**
  * Save general data sync settings.
  *
@@ -701,7 +703,7 @@ function rentfetch_save_settings_general_data_sync() {
 		$input_value = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_entrata_integration_creds_entrata_subdomain'] ) );
 
 		// Extract the subdomain if a full URL is provided.
-		$parsed_url = parse_url( $input_value );
+		$parsed_url = wp_parse_url( $input_value );
 		if ( isset( $parsed_url['host'] ) ) {
 			$host_parts = explode( '.', $parsed_url['host'] );
 			$options_entrata_integration_creds_entrata_subdomain = $host_parts[0];
@@ -813,6 +815,7 @@ function rentfetch_save_settings_general_performance() {
 	// If caching is disabled (value is '1'), clear existing transients.
 	if ( '1' === $disable_query_caching ) {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- This administrator-triggered lookup deletes the matching plugin transients immediately below.
 		$transients = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_rentfetch_%'" );
 		foreach ( $transients as $transient ) {
 			$key = str_replace( '_transient_', '', $transient );
@@ -852,6 +855,8 @@ function rentfetch_save_settings_general_analytics() {
 	update_option( 'rentfetch_options_enable_analytics_debug', $enable_analytics_debug );
 }
 
+// phpcs:enable WordPress.Security.NonceVerification.Missing
+
 /**
  * Save the general settings.
  *
@@ -873,12 +878,15 @@ function rentfetch_save_settings_general() {
 		return;
 	}
 
-	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
-
-	// * Verify the nonce.
-	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
-		die( 'Security check failed' );
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die(
+			esc_html__( 'You are not allowed to manage Rent Fetch settings.', 'rentfetch' ),
+			'',
+			array( 'response' => 403 )
+		);
 	}
+
+	check_admin_referer( 'rentfetch_main_options_nonce_action', 'rentfetch_main_options_nonce_field' );
 
 	if ( 'performance' === $section ) {
 		rentfetch_save_settings_general_performance();

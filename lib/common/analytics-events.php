@@ -118,8 +118,8 @@ function rentfetch_get_property_tracking_context( $property_id = null, $post_id 
 		return array();
 	}
 
-	$property_name = get_the_title( $post_id );
-	$property_city = get_post_meta( $post_id, 'city', true );
+	$property_name    = get_the_title( $post_id );
+	$property_city    = get_post_meta( $post_id, 'city', true );
 	$property_id_meta = get_post_meta( $post_id, 'property_id', true );
 
 	return array(
@@ -148,19 +148,19 @@ function rentfetch_get_floorplan_tracking_context( $floorplan_id = null ) {
 		return array();
 	}
 
-	$floorplan_name   = get_the_title( $floorplan_id );
+	$floorplan_name    = get_the_title( $floorplan_id );
 	$floorplan_id_meta = get_post_meta( $floorplan_id, 'floorplan_id', true );
-	$property_id      = get_post_meta( $floorplan_id, 'property_id', true );
-	$property_post    = $property_id ? rentfetch_get_post_id_from_property_id( $property_id ) : null;
+	$property_id       = get_post_meta( $floorplan_id, 'property_id', true );
+	$property_post     = $property_id ? rentfetch_get_post_id_from_property_id( $property_id ) : null;
 
 	$property_name = $property_post ? get_the_title( $property_post ) : null;
 	$property_city = $property_post ? get_post_meta( $property_post, 'city', true ) : null;
 
 	return array(
-		'property_id'   => $property_id ? sanitize_text_field( $property_id ) : null,
-		'property_name' => $property_name ? sanitize_text_field( $property_name ) : null,
-		'property_city' => $property_city ? sanitize_text_field( $property_city ) : null,
-		'floorplan_id'  => $floorplan_id_meta ? sanitize_text_field( $floorplan_id_meta ) : null,
+		'property_id'    => $property_id ? sanitize_text_field( $property_id ) : null,
+		'property_name'  => $property_name ? sanitize_text_field( $property_name ) : null,
+		'property_city'  => $property_city ? sanitize_text_field( $property_city ) : null,
+		'floorplan_id'   => $floorplan_id_meta ? sanitize_text_field( $floorplan_id_meta ) : null,
 		'floorplan_name' => $floorplan_name ? sanitize_text_field( $floorplan_name ) : null,
 	);
 }
@@ -178,11 +178,11 @@ function rentfetch_enqueue_analytics_events_script() {
 	}
 
 	if ( is_singular( array( 'properties', 'floorplans' ) ) ) {
-		$debug_option = get_option( 'rentfetch_options_enable_analytics_debug', '0' );
-		$debug_enabled = in_array( $debug_option, array( '1', 1, true, 'true', 'yes' ), true );
+		$debug_option   = get_option( 'rentfetch_options_enable_analytics_debug', '0' );
+		$debug_enabled  = in_array( $debug_option, array( '1', 1, true, 'true', 'yes' ), true );
 		$debug_override = isset( $_GET['rentfetch_debug'] ) ? sanitize_text_field( wp_unslash( $_GET['rentfetch_debug'] ) ) : '';
 
-		if ( $debug_override !== '' ) {
+		if ( '' !== $debug_override ) {
 			$debug_enabled = in_array( $debug_override, array( '1', 'true', 'yes', 'on' ), true );
 		}
 
@@ -193,8 +193,8 @@ function rentfetch_enqueue_analytics_events_script() {
 			'rentfetch-analytics-events',
 			'rentfetchAnalyticsSettings',
 			array(
-				'enabled' => ( '1' === $enabled ),
-				'debug'   => $debug_enabled,
+				'enabled'      => ( '1' === $enabled ),
+				'debug'        => $debug_enabled,
 				'debugAllowed' => $debug_allowed,
 			)
 		);

@@ -1,16 +1,27 @@
 <?php
+/**
+ * Unit synchronization field definitions.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
- * Filter the syncing fields for the units
+ * Filter the syncing fields for units.
  *
- * @return  array  an array of the fields that sync with the API
+ * @param array $array_fields Existing synchronized fields.
+ * @param int   $post_id      Unit post ID.
+ * @return array Fields that sync with the API.
  */
 function rentfetch_unit_syncing_fields( $array_fields, $post_id ) {
 
 	$unit_source = get_post_meta( $post_id, 'unit_source', true );
 
 	// Set a blank array, just in case the source is not set.
-	if ( !is_array( $array_fields ) ) {
+	if ( ! is_array( $array_fields ) ) {
 		$array_fields = array();
 	}
 
@@ -27,15 +38,15 @@ function rentfetch_unit_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_engrain', $array_fields, $post_id );
 	}
 
-	if ( !empty( $unit_source ) ) {
+	if ( ! empty( $unit_source ) ) {
 
-		// Add the default fields to the array that would never be editable
+		// Add the default fields to the array that would never be editable.
 		$never_editable_fields = array(
 			'unit_source',
 			'property_name', // property name is never editable because it's determined, it's not entered. Property, not floorplan.
 			'api_response',
 		);
-		
+
 		$array_fields = array_merge( $array_fields, $never_editable_fields );
 	}
 
@@ -44,11 +55,14 @@ function rentfetch_unit_syncing_fields( $array_fields, $post_id ) {
 add_filter( 'rentfetch_filter_unit_syncing_fields', 'rentfetch_unit_syncing_fields', 10, 2 );
 
 /**
- * Filter the syncing fields for the floorplans for the Yardi API
+ * Filter the syncing fields for units using the Yardi API.
  *
- * @return  array  an array of the fields that sync with the API
+ * @param array $array_fields Existing synchronized fields.
+ * @param int   $post_id      Unit post ID.
+ * @return array Fields that sync with the API.
  */
 function rentfetch_unit_syncing_fields_yardi( $array_fields, $post_id ) {
+	unset( $array_fields, $post_id );
 	return array(
 		'title',
 		'property_id',
@@ -63,17 +77,20 @@ function rentfetch_unit_syncing_fields_yardi( $array_fields, $post_id ) {
 		'deposit',
 		'minimum_rent',
 		'maximum_rent',
-		'sqrft'
+		'sqrft',
 	);
 }
 add_filter( 'rentfetch_filter_unit_syncing_fields_yardi', 'rentfetch_unit_syncing_fields_yardi', 10, 2 );
 
 /**
- * Filter the syncing fields for the floorplans for the Yardi API
+ * Filter the syncing fields for units using the Entrata API.
  *
- * @return  array  an array of the fields that sync with the API
+ * @param array $array_fields Existing synchronized fields.
+ * @param int   $post_id      Unit post ID.
+ * @return array Fields that sync with the API.
  */
 function rentfetch_unit_syncing_fields_entrata( $array_fields, $post_id ) {
+	unset( $array_fields, $post_id );
 	return array(
 		'title',
 		'property_id',
@@ -87,7 +104,7 @@ function rentfetch_unit_syncing_fields_entrata( $array_fields, $post_id ) {
 		'deposit',
 		'minimum_rent',
 		'maximum_rent',
-		'sqrft'
+		'sqrft',
 	);
 }
 add_filter( 'rentfetch_filter_unit_syncing_fields_entrata', 'rentfetch_unit_syncing_fields_entrata', 10, 2 );
@@ -100,6 +117,7 @@ add_filter( 'rentfetch_filter_unit_syncing_fields_entrata', 'rentfetch_unit_sync
  * @return array
  */
 function rentfetch_unit_syncing_fields_engrain( $array_fields, $post_id ) {
+	unset( $array_fields, $post_id );
 	return array(
 		'title',
 		'property_id',
@@ -123,11 +141,14 @@ function rentfetch_unit_syncing_fields_engrain( $array_fields, $post_id ) {
 add_filter( 'rentfetch_filter_unit_syncing_fields_engrain', 'rentfetch_unit_syncing_fields_engrain', 10, 2 );
 
 /**
- * Filter the syncing fields for the floorplans for the Yardi API
+ * Filter the syncing fields for units using the Rent Manager API.
  *
- * @return  array  an array of the fields that sync with the API
+ * @param array $array_fields Existing synchronized fields.
+ * @param int   $post_id      Unit post ID.
+ * @return array Fields that sync with the API.
  */
 function rentfetch_unit_syncing_fields_rentmanager( $array_fields, $post_id ) {
+	unset( $array_fields, $post_id );
 	return array(
 		'title',
 		'property_id',
@@ -142,11 +163,14 @@ function rentfetch_unit_syncing_fields_rentmanager( $array_fields, $post_id ) {
 add_filter( 'rentfetch_filter_unit_syncing_fields_rentmanager', 'rentfetch_unit_syncing_fields_rentmanager', 10, 2 );
 
 /**
- * Filter the syncing fields for the floorplans for the RealPage API
+ * Filter the syncing fields for units using the RealPage API.
  *
- * @return  array  an array of the fields that sync with the API
+ * @param array $array_fields Existing synchronized fields.
+ * @param int   $post_id      Unit post ID.
+ * @return array Fields that sync with the API.
  */
 function rentfetch_unit_syncing_fields_realpage( $array_fields, $post_id ) {
+	unset( $array_fields, $post_id );
 	return array(
 		'title',
 		'property_id',

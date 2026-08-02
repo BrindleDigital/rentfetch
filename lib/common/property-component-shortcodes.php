@@ -34,15 +34,15 @@ function rentfetch_property_shortcode( $atts ) {
 	$after       = $atts['after'];
 	$class       = $atts['class'];
 
-	// If no property_id is passed, try to get it from context
+	// If no property_id is passed, try to get it from context.
 	if ( ! $property_id ) {
-		// First, check if we're on a single property page (get_the_ID() should work)
+		// First, check if we're on a single property page (get_the_ID() should work).
 		$current_post_id = get_the_ID();
 		if ( $current_post_id && get_post_type( $current_post_id ) === 'properties' ) {
 			$property_id = get_post_meta( $current_post_id, 'property_id', true );
 		}
-		
-		// If that didn't work, check if this is a single-property website
+
+		// If that didn't work, check if this is a single-property website.
 		if ( ! $property_id ) {
 			$single_property_id = rentfetch_website_single_property_site_get_property_id();
 			if ( $single_property_id ) {
@@ -178,7 +178,7 @@ function rentfetch_property_shortcode( $atts ) {
 			return '<!-- Unknown output type: ' . esc_html( $info ) . ' -->';
 	}
 
-	// Only output before/after if we have content
+	// Only output before/after if we have content.
 	if ( ! empty( $content ) ) {
 		return $before . $content . $after;
 	}

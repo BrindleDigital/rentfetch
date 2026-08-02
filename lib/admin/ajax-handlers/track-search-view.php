@@ -17,8 +17,10 @@ function rentfetch_ajax_track_search_view() {
 	check_ajax_referer( 'rentfetch_track_view', 'nonce' );
 
 	// Get search parameters.
-	$search_type = isset( $_POST['search_type'] ) ? sanitize_text_field( $_POST['search_type'] ) : '';
-	$params      = isset( $_POST['params'] ) && is_array( $_POST['params'] ) ? $_POST['params'] : array();
+	$search_type = isset( $_POST['search_type'] ) ? sanitize_key( wp_unslash( $_POST['search_type'] ) ) : '';
+	$params      = isset( $_POST['params'] ) && is_array( $_POST['params'] )
+		? map_deep( wp_unslash( $_POST['params'] ), 'sanitize_text_field' )
+		: array();
 
 	// Validate search type.
 	if ( ! in_array( $search_type, array( 'properties', 'floorplans' ), true ) ) {

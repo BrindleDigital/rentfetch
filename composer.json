@@ -1,0 +1,19 @@
+{
+	"name": "brindle-digital/rentfetch",
+	"description": "Development tools for the Rent Fetch WordPress plugin.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require-dev": {
+		"wp-coding-standards/wpcs": "^3.0"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"sort-packages": true
+	},
+	"scripts": {
+		"phpcbf": "phpcbf --standard=phpcs-ruleset.xml",
+		"phpcs": "phpcs --standard=phpcs-ruleset.xml"
+	}
+}

@@ -23,8 +23,6 @@ function rentfetch_single_properties_parts_more_properties() {
 
 	global $post;
 
-	
-
 	$city = get_post_meta( get_the_ID(), 'city', true );
 
 	$args = array(
@@ -47,7 +45,7 @@ function rentfetch_single_properties_parts_more_properties() {
 
 	// The Loop.
 	if ( $custom_query->found_posts >= 2 ) {
-		
+
 		echo '<div id="moreproperties" class="single-properties-section">';
 			echo '<div class="wrap">';
 
@@ -62,19 +60,19 @@ function rentfetch_single_properties_parts_more_properties() {
 						echo '<div class="blaze-track-container">';
 							echo '<div class="blaze-track">';
 
-								while ( $custom_query->have_posts() ) {
+		while ( $custom_query->have_posts() ) {
 
-									$custom_query->the_post();
-									
-									$classes_array = get_post_class();
-									$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
-									$class = implode( ' ', $classes_array );
+			$custom_query->the_post();
 
-									printf( '<div class="%s">', esc_attr( $class ) );
-										do_action( 'rentfetch_do_each_property_in_archive' );
-									echo '</div>';
+			$classes_array = get_post_class();
+			$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
+			$class         = implode( ' ', $classes_array );
 
-								}
+			printf( '<div class="%s">', esc_attr( $class ) );
+				do_action( 'rentfetch_do_each_property_in_archive' );
+			echo '</div>';
+
+		}
 
 							echo '</div>'; // .blaze-track.
 						echo '</div>'; // .blaze-track-container.
@@ -92,11 +90,7 @@ function rentfetch_single_properties_parts_more_properties() {
 		// Restore postdata.
 		wp_reset_postdata();
 
-	} else {
-		// silence is golden.
 	}
-
-	
 }
 
 /**

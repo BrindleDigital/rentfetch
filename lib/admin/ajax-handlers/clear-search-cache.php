@@ -61,7 +61,7 @@ function rentfetch_clear_search_cache_transients() {
 				OR option_name LIKE '_transient_timeout_rentfetch_fees_csv_%'
 				OR option_name LIKE '_transient_rentfetch_fees_csv_calc_%'
 				OR option_name LIKE '_transient_timeout_rentfetch_fees_csv_calc_%'"
-			);
+		);
 
 		delete_option( 'rentfetch_search_query_cache_registry' );
 		delete_option( 'rentfetch_search_query_cache_stats' );

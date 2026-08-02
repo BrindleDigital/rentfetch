@@ -41,7 +41,7 @@ function rentfetch_search_filters_beds() {
 	$beds = array_values(
 		array_filter(
 			$beds,
-			function( $bed ) {
+			function ( $bed ) {
 				return null !== $bed;
 			}
 		)

@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Enqueue unit editor controls.
  *

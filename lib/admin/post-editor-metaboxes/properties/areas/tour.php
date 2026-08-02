@@ -1,5 +1,15 @@
 <?php
 /**
+ * Property editor virtual tour fields.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Render the property virtual tour field.
  *
  * @param WP_Post $post Current property.

@@ -19,7 +19,7 @@ function rentfetch_register_amenities_taxonomy() {
 		'amenities',
 		'properties',
 		array(
-			'label'        => __( 'Amenities' ),
+			'label'        => __( 'Amenities', 'rentfetch' ),
 			'rewrite'      => array( 'slug' => 'amenities' ),
 			'hierarchical' => true,
 			'show_in_rest' => true,
@@ -31,24 +31,25 @@ add_action( 'init', 'rentfetch_register_amenities_taxonomy', 20 );
 /**
  * Remove the amentities from the post_class, as they are not generally useful and they triple the markup size.
  *
- * @param   array $classes  the default classes.
- * @param   array $class    the classes to add.
- * @param   string $post_id  the post id.
+ * @param array  $classes       The default classes.
+ * @param array  $added_classes Additional post classes supplied by WordPress.
+ * @param string $post_id       The post ID.
  *
  * @return  array the filtered classes.
  */
-function rentfetch_remove_taxonomy_from_post_class($classes, $class, $post_id) {	
-	return array_filter( $classes, 'rentfetch_filter_taxonomy_classes_remove_amenities');
+function rentfetch_remove_taxonomy_from_post_class( $classes, $added_classes, $post_id ) {
+	unset( $added_classes, $post_id );
+	return array_filter( $classes, 'rentfetch_filter_taxonomy_classes_remove_amenities' );
 }
 add_filter( 'post_class', 'rentfetch_remove_taxonomy_from_post_class', 10, 3 );
 
 /**
  * Filter the classes to remove the amenities
  *
- * @param   string  $class  each class.
+ * @param string $css_class Each class.
  *
  * @return  string  the filtered class.
  */
-function rentfetch_filter_taxonomy_classes_remove_amenities($class) {
-	return !str_starts_with( $class, 'amenities-' );
+function rentfetch_filter_taxonomy_classes_remove_amenities( $css_class ) {
+	return 0 !== strpos( $css_class, 'amenities-' );
 }

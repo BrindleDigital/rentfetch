@@ -10,6 +10,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Get the HTML allowed in administrator-managed embed fields.
+ *
+ * @return array<string,array<string,bool>> Allowed HTML tags and attributes.
+ */
+function rentfetch_get_allowed_embed_html() {
+	$allowed_tags           = wp_kses_allowed_html( 'post' );
+	$allowed_tags['iframe'] = array(
+		'allow'           => true,
+		'allowfullscreen' => true,
+		'frameborder'     => true,
+		'height'          => true,
+		'loading'         => true,
+		'name'            => true,
+		'referrerpolicy'  => true,
+		'sandbox'         => true,
+		'src'             => true,
+		'style'           => true,
+		'title'           => true,
+		'width'           => true,
+	);
+	$allowed_tags['script'] = array(
+		'async' => true,
+		'defer' => true,
+		'src'   => true,
+		'type'  => true,
+	);
+
+	return apply_filters( 'rentfetch_allowed_embed_html', $allowed_tags );
+}
+
+/**
  * Bedroom labels
  *
  * @param float $beds The number of bedrooms.

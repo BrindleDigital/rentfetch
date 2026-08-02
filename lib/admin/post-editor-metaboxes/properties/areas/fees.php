@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Render the editable property fees shell.
  *
@@ -26,8 +30,8 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
 		<?php endif; ?>
 
 		<?php
-		$csv_url                    = get_post_meta( $post->ID, 'property_fees_csv_url', true );
-		$monthly_required_total     = get_post_meta( $post->ID, 'property_monthly_required_total_fees', true );
+		$csv_url                   = get_post_meta( $post->ID, 'property_fees_csv_url', true );
+		$monthly_required_total    = get_post_meta( $post->ID, 'property_monthly_required_total_fees', true );
 		$monthly_fees_last_checked = (int) get_post_meta( $post->ID, 'property_monthly_required_total_fees_last_checked', true );
 		$monthly_fee_rows          = get_post_meta( $post->ID, 'property_monthly_required_total_fees_rows', true );
 		$monthly_refresh_nonce     = wp_create_nonce( 'rentfetch_refresh_monthly_required_fees_now' );
@@ -133,16 +137,16 @@ function rentfetch_properties_fees_metabox_callback( $post ) {
  * @return void
  */
 function rentfetch_render_property_fees_preview( $post ) {
-	$fees_enabled = ! function_exists( 'rentfetch_should_show_property_fees' ) || rentfetch_should_show_property_fees();
-	$settings_url = admin_url( 'admin.php?page=rentfetch-options&tab=properties&section=global-property-fees' );
+	$fees_enabled    = ! function_exists( 'rentfetch_should_show_property_fees' ) || rentfetch_should_show_property_fees();
+	$settings_url    = admin_url( 'admin.php?page=rentfetch-options&tab=properties&section=global-property-fees' );
 	$monthly_context = function_exists( 'rentfetch_get_effective_monthly_required_fees_preview_context_for_property' )
 		? rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $post->ID, false )
 		: array();
-	$monthly_total = isset( $monthly_context['total'] ) ? (float) $monthly_context['total'] : 0.0;
-	$source_context = function_exists( 'rentfetch_get_property_fees_display_source_context' )
+	$monthly_total   = isset( $monthly_context['total'] ) ? (float) $monthly_context['total'] : 0.0;
+	$source_context  = function_exists( 'rentfetch_get_property_fees_display_source_context' )
 		? rentfetch_get_property_fees_display_source_context( $post->ID, false )
 		: array();
-	$preview_markup = function_exists( 'rentfetch_get_property_fees_embed' )
+	$preview_markup  = function_exists( 'rentfetch_get_property_fees_embed' )
 		? rentfetch_get_property_fees_embed( $post->ID, false )
 		: '';
 	?>

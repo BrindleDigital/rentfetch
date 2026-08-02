@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Render the property, floor plan, and unit hierarchy for a floor plan.
  *

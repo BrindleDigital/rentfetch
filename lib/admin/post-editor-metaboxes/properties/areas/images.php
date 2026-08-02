@@ -1,5 +1,15 @@
 <?php
 /**
+ * Property editor image fields.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Markup for the properties images metabox
  *
  * @param object $post The post object.

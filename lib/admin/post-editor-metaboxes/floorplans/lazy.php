@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Render a requested floor plan editor fragment.
  *

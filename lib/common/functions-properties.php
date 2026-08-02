@@ -54,13 +54,13 @@ function rentfetch_get_post_id_from_property_id( $property_id ) {
 /**
  * Add a filter to the properties post classes.
  *
- * @param   array   $classes    The current classes array.
- * @param   string  $property_id Optional property_id meta value.
+ * @param array  $classes     The current classes array.
+ * @param string $property_id Optional property_id meta value.
  *
  * @return  array               The modified classes array.
  */
 function rentfetch_properties_post_classes( $classes, $property_id = null ) {
-	
+
 	if ( $property_id ) {
 		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
 		if ( ! $post_id ) {
@@ -69,29 +69,28 @@ function rentfetch_properties_post_classes( $classes, $property_id = null ) {
 	} else {
 		$post_id = get_the_ID();
 	}
-	
+
 	$property_id_meta = esc_html( get_post_meta( $post_id, 'property_id', true ) );
-	$floorplan_data = rentfetch_get_floorplans( $property_id_meta );
-	
+	$floorplan_data   = rentfetch_get_floorplans( $property_id_meta );
+
 	if ( isset( $floorplan_data['availability'] ) ) {
 		$units_count = $floorplan_data['availability'];
 	} else {
 		$units_count = 0;
 	}
-	
+
 	if ( $units_count > 0 ) {
 		$classes[] = 'has-units-available';
 	} else {
 		$classes[] = 'no-units-available';
-		
+
 		$fade_out_unavailable = get_option( 'rentfetch_options_property_apply_styles_no_floorplans' );
-		if ( $fade_out_unavailable === '1' ) {
+		if ( '1' === $fade_out_unavailable ) {
 			$classes[] = 'no-units-available-faded';
 		}
 	}
 
 	return $classes;
-
 }
 add_filter( 'rentfetch_filter_properties_post_classes', 'rentfetch_properties_post_classes', 10, 2 );
 
@@ -361,19 +360,19 @@ function rentfetch_get_property_location_link( $property_id = null ) {
  * Get the property location button
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property location button.
  */
-function rentfetch_get_property_location_button( $property_id = null, $class = '' ) {
-	$location_link   = rentfetch_get_property_location_link( $property_id );
-	$classes         = 'location-link property-link';
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+function rentfetch_get_property_location_button( $property_id = null, $css_class = '' ) {
+	$location_link = rentfetch_get_property_location_link( $property_id );
+	$classes       = 'location-link property-link';
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
-	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_directions_click', rentfetch_get_property_tracking_context( $property_id ) );
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 location-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>';
+	$tracking_attrs  = rentfetch_get_tracking_data_attributes( 'rentfetch_directions_click', rentfetch_get_property_tracking_context( $property_id ) );
+	$svg             = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 location-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>';
 	$location_button = sprintf( '<a class="%s" href="%s" target="_blank"%s>%sGet Directions</a>', $classes, esc_url( $location_link ), $tracking_attrs, $svg );
-	return apply_filters( 'rentfetch_filter_property_location_button', $location_button, $property_id, $class );
+	return apply_filters( 'rentfetch_filter_property_location_button', $location_button, $property_id, $css_class );
 }
 
 /**
@@ -383,21 +382,24 @@ function rentfetch_get_property_location_button( $property_id = null, $class = '
  * @return void.
  */
 function rentfetch_property_location_button( $property_id = null ) {
-	$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
-		'svg' => array(
-			'xmlns' => true,
-			'fill' => true,
-			'viewbox' => true,
-			'stroke-width' => true,
-			'stroke' => true,
-			'class' => true,
-		),
-		'path' => array(
-			'stroke-linecap' => true,
-			'stroke-linejoin' => true,
-			'd' => true,
-		),
-	) );
+	$allowed_html = array_merge(
+		wp_kses_allowed_html( 'post' ),
+		array(
+			'svg'  => array(
+				'xmlns'        => true,
+				'fill'         => true,
+				'viewbox'      => true,
+				'stroke-width' => true,
+				'stroke'       => true,
+				'class'        => true,
+			),
+			'path' => array(
+				'stroke-linecap'  => true,
+				'stroke-linejoin' => true,
+				'd'               => true,
+			),
+		)
+	);
 	echo wp_kses( rentfetch_get_property_location_button( $property_id ), $allowed_html );
 }
 
@@ -461,27 +463,22 @@ function rentfetch_format_phone_number( $phone ) {
 	$cleaned = preg_replace( '/[^\d+]/', '', $phone );
 
 	// If the number is exactly 10 digits, format it as a US number without the country code.
-	if ( strlen($cleaned) === 10 ) {
-		return '(' . substr($cleaned, 0, 3) . ') ' . substr($cleaned, 3, 3) . '-' . substr($cleaned, 6);
-	} 
-	// Handle cases with a leading + and exactly 10 digits after the +.
-	elseif ( preg_match( '/^\+(\d{10})$/', $cleaned, $matches ) ) {
-		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
-	}
-	// Handle cases with a leading +1 followed by 10 digits.
-	elseif ( preg_match( '/^\+1(\d{10})$/', $cleaned, $matches ) ) {
-		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
-	}
-	// Handle cases with a leading 1 followed by 10 digits (without the +).
-	elseif ( preg_match( '/^1(\d{10})$/', $cleaned, $matches ) ) {
-		return '+1 (' . substr($matches[1], 0, 3) . ') ' . substr($matches[1], 3, 3) . '-' . substr($matches[1], 6);
-	}
-	// Handle cases with a leading + and more than 10 digits (international numbers).
-	elseif ( preg_match( '/^\+(\d{1,3})(\d{3})(\d{4})$/', $cleaned, $matches ) ) {
+	if ( strlen( $cleaned ) === 10 ) {
+		return '(' . substr( $cleaned, 0, 3 ) . ') ' . substr( $cleaned, 3, 3 ) . '-' . substr( $cleaned, 6 );
+	} elseif ( preg_match( '/^\+(\d{10})$/', $cleaned, $matches ) ) {
+		// Handle cases with a leading + and exactly 10 digits after the +.
+		return '+1 (' . substr( $matches[1], 0, 3 ) . ') ' . substr( $matches[1], 3, 3 ) . '-' . substr( $matches[1], 6 );
+	} elseif ( preg_match( '/^\+1(\d{10})$/', $cleaned, $matches ) ) {
+		// Handle cases with a leading +1 followed by 10 digits.
+		return '+1 (' . substr( $matches[1], 0, 3 ) . ') ' . substr( $matches[1], 3, 3 ) . '-' . substr( $matches[1], 6 );
+	} elseif ( preg_match( '/^1(\d{10})$/', $cleaned, $matches ) ) {
+		// Handle cases with a leading 1 followed by 10 digits (without the +).
+		return '+1 (' . substr( $matches[1], 0, 3 ) . ') ' . substr( $matches[1], 3, 3 ) . '-' . substr( $matches[1], 6 );
+	} elseif ( preg_match( '/^\+(\d{1,3})(\d{3})(\d{4})$/', $cleaned, $matches ) ) {
+		// Handle cases with a leading + and more than 10 digits (international numbers).
 		return '+' . $matches[1] . ' ' . $matches[2] . ' ' . $matches[3];
-	}
-	// Return the cleaned number as it is if it doesn't match known formats.
-	else {
+	} else {
+		// Return the cleaned number as it is if it doesn't match known formats.
 		return $cleaned;
 	}
 }
@@ -553,22 +550,22 @@ function rentfetch_property_phone( $property_id = null ) {
  * Get the property phone number
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property phone number.
  */
-function rentfetch_get_property_phone_button( $property_id = null, $class = '' ) {
-	$phone        = rentfetch_get_property_phone( $property_id );
-	$phone_link   = rentfetch_format_phone_number_link( $phone );
-	$classes      = 'phone-link property-link';
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+function rentfetch_get_property_phone_button( $property_id = null, $css_class = '' ) {
+	$phone      = rentfetch_get_property_phone( $property_id );
+	$phone_link = rentfetch_format_phone_number_link( $phone );
+	$classes    = 'phone-link property-link';
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_phonecall_click', rentfetch_get_property_tracking_context( $property_id ) );
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 phone-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>';
-	$phone_button = sprintf( '<a class="%s" href="tel:%s"%s>%s%s</a>', $classes, esc_html( $phone_link ), $tracking_attrs, $svg, esc_html( $phone ) );
+	$svg            = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 phone-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>';
+	$phone_button   = sprintf( '<a class="%s" href="tel:%s"%s>%s%s</a>', $classes, esc_html( $phone_link ), $tracking_attrs, $svg, esc_html( $phone ) );
 
 	if ( $phone ) {
-		return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button, $property_id, $class );
+		return apply_filters( 'rentfetch_filter_property_phone_button', $phone_button, $property_id, $css_class );
 	} else {
 		return;
 	}
@@ -582,23 +579,26 @@ function rentfetch_get_property_phone_button( $property_id = null, $class = '' )
  */
 function rentfetch_property_phone_button( $property_id = null ) {
 	$button = rentfetch_get_property_phone_button( $property_id );
-	
+
 	if ( $button ) {
-		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
-			'svg' => array(
-				'xmlns' => true,
-				'fill' => true,
-				'viewbox' => true,
-				'stroke-width' => true,
-				'stroke' => true,
-				'class' => true,
-			),
-			'path' => array(
-				'stroke-linecap' => true,
-				'stroke-linejoin' => true,
-				'd' => true,
-			),
-		) );
+		$allowed_html = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'  => array(
+					'xmlns'        => true,
+					'fill'         => true,
+					'viewbox'      => true,
+					'stroke-width' => true,
+					'stroke'       => true,
+					'class'        => true,
+				),
+				'path' => array(
+					'stroke-linecap'  => true,
+					'stroke-linejoin' => true,
+					'd'               => true,
+				),
+			)
+		);
 		echo wp_kses( $button, $allowed_html );
 	}
 }
@@ -621,13 +621,13 @@ function rentfetch_get_property_url( $property_id = null ) {
 		$post_id = get_the_ID();
 	}
 
-	$url = get_post_meta( $post_id, 'url', true );
+	$url          = get_post_meta( $post_id, 'url', true );
 	$url_override = get_post_meta( $post_id, 'url_override', true );
-	
+
 	if ( $url_override ) {
 		$url = $url_override;
 	}
-	
+
 	return esc_url( apply_filters( 'rentfetch_filter_property_url', $url ) );
 }
 
@@ -646,20 +646,18 @@ function rentfetch_get_property_permalink( $property_id = null ) {
 	} else {
 		$post_id = get_the_ID();
 	}
-	
+
 	$permalink_behavior = get_option( 'rentfetch_options_property_external_linking_behavior', 'internal' );
-	$url = rentfetch_get_property_url( $property_id );
-	
-	if ( !$url ) {
-		$url = get_the_permalink( $post_id );		
-	} else {
-		if ( 'external' !== $permalink_behavior ) {
+	$url                = rentfetch_get_property_url( $property_id );
+
+	if ( ! $url ) {
+		$url = get_the_permalink( $post_id );
+	} elseif ( 'external' !== $permalink_behavior ) {
 			$url = get_the_permalink( $post_id );
-		} else {
-			$url = rentfetch_get_property_url( $property_id );
-		}
+	} else {
+		$url = rentfetch_get_property_url( $property_id );
 	}
-	
+
 	return esc_url( $url );
 }
 
@@ -712,22 +710,22 @@ function rentfetch_property_resident_portal_url( $property_id = null ) {
  * Get the property website.
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property website.
  */
-function rentfetch_get_property_website_button( $property_id = null, $class = '' ) {
-	$url            = rentfetch_get_property_url( $property_id );
-	$target         = rentfetch_get_link_target( $url );
-	$classes        = 'url-link property-link';
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+function rentfetch_get_property_website_button( $property_id = null, $css_class = '' ) {
+	$url     = rentfetch_get_property_url( $property_id );
+	$target  = rentfetch_get_link_target( $url );
+	$classes = 'url-link property-link';
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_visitpropertywebsite_click', rentfetch_get_property_tracking_context( $property_id ) );
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 website-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>';
+	$svg            = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 website-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>';
 	$website_button = sprintf( '<a class="%s" href="%s" target="%s"%s>%sVisit Website</a>', $classes, esc_html( $url ), esc_attr( $target ), $tracking_attrs, $svg );
 
 	if ( $url ) {
-		return apply_filters( 'rentfetch_filter_property_website', $website_button, $property_id, $class );
+		return apply_filters( 'rentfetch_filter_property_website', $website_button, $property_id, $css_class );
 	} else {
 		return;
 	}
@@ -741,21 +739,24 @@ function rentfetch_get_property_website_button( $property_id = null, $class = ''
  */
 function rentfetch_property_website_button( $property_id = null ) {
 	if ( rentfetch_get_property_url( $property_id ) ) {
-		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
-			'svg' => array(
-				'xmlns' => true,
-				'fill' => true,
-				'viewbox' => true,
-				'stroke-width' => true,
-				'stroke' => true,
-				'class' => true,
-			),
-			'path' => array(
-				'stroke-linecap' => true,
-				'stroke-linejoin' => true,
-				'd' => true,
-			),
-		) );
+		$allowed_html = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'  => array(
+					'xmlns'        => true,
+					'fill'         => true,
+					'viewbox'      => true,
+					'stroke-width' => true,
+					'stroke'       => true,
+					'class'        => true,
+				),
+				'path' => array(
+					'stroke-linecap'  => true,
+					'stroke-linejoin' => true,
+					'd'               => true,
+				),
+			)
+		);
 		echo wp_kses( rentfetch_get_property_website_button( $property_id ), $allowed_html );
 	}
 }
@@ -766,10 +767,10 @@ function rentfetch_property_website_button( $property_id = null ) {
  * Get the property email.
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property email.
  */
-function rentfetch_get_property_contact_button( $property_id = null, $class = '' ) {
+function rentfetch_get_property_contact_button( $property_id = null, $css_class = '' ) {
 	if ( $property_id ) {
 		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
 		if ( ! $post_id ) {
@@ -778,16 +779,16 @@ function rentfetch_get_property_contact_button( $property_id = null, $class = ''
 	} else {
 		$post_id = get_the_ID();
 	}
-	$email          = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( $post_id, 'email', true ) ) );
-	$email_link     = 'mailto:' . $email;
-	$classes        = 'email-link property-link';
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+	$email      = sanitize_email( apply_filters( 'rentfetch_filter_property_email_address', get_post_meta( $post_id, 'email', true ) ) );
+	$email_link = 'mailto:' . $email;
+	$classes    = 'email-link property-link';
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_emailus_click', rentfetch_get_property_tracking_context( $property_id ) );
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 email-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>';
+	$svg            = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 email-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>';
 	$contact_button = sprintf( '<a class="%s" href="%s"%s>%sEmail Us</a>', $classes, esc_html( $email_link ), $tracking_attrs, $svg );
-	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button, $property_id, $class );
+	$email_button   = apply_filters( 'rentfetch_filter_property_contact_button', $contact_button, $property_id, $css_class );
 
 	if ( $email ) {
 		return $email_button;
@@ -804,21 +805,24 @@ function rentfetch_get_property_contact_button( $property_id = null, $class = ''
  */
 function rentfetch_property_contact_button( $property_id = null ) {
 	if ( rentfetch_get_property_contact_button( $property_id ) ) {
-		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
-			'svg' => array(
-				'xmlns' => true,
-				'fill' => true,
-				'viewbox' => true,
-				'stroke-width' => true,
-				'stroke' => true,
-				'class' => true,
-			),
-			'path' => array(
-				'stroke-linecap' => true,
-				'stroke-linejoin' => true,
-				'd' => true,
-			),
-		) );
+		$allowed_html = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'  => array(
+					'xmlns'        => true,
+					'fill'         => true,
+					'viewbox'      => true,
+					'stroke-width' => true,
+					'stroke'       => true,
+					'class'        => true,
+				),
+				'path' => array(
+					'stroke-linecap'  => true,
+					'stroke-linejoin' => true,
+					'd'               => true,
+				),
+			)
+		);
 		echo wp_kses( rentfetch_get_property_contact_button( $property_id ), $allowed_html );
 	}
 }
@@ -859,20 +863,20 @@ function rentfetch_property_email( $property_id = null ) {
  * Get the property email link.
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property email link.
  */
-function rentfetch_get_property_email_link( $property_id = null, $class = '' ) {
-	$email = rentfetch_get_property_email( $property_id );
+function rentfetch_get_property_email_link( $property_id = null, $css_class = '' ) {
+	$email      = rentfetch_get_property_email( $property_id );
 	$email_link = 'mailto:' . $email;
-	$classes = 'email-link';
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+	$classes    = 'email-link';
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
 	$email_button = sprintf( '<a class="%s" href="%s">%s</a>', $classes, esc_html( $email_link ), esc_html( $email ) );
 
 	if ( $email ) {
-		return apply_filters( 'rentfetch_filter_property_email_link', $email_button, $property_id, $class );
+		return apply_filters( 'rentfetch_filter_property_email_link', $email_button, $property_id, $css_class );
 	} else {
 		return;
 	}
@@ -897,10 +901,10 @@ function rentfetch_property_email_link( $property_id = null ) {
  * Get the property email.
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property email.
  */
-function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) {
+function rentfetch_get_property_tour_button( $property_id = null, $css_class = '' ) {
 	if ( $property_id ) {
 		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
 		if ( ! $post_id ) {
@@ -909,29 +913,29 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
 	} else {
 		$post_id = get_the_ID();
 	}
-		
-	$iframe    = get_post_meta( $post_id, 'tour', true );
-	$embedlink = null;
+
+	$iframe         = get_post_meta( $post_id, 'tour', true );
+	$embedlink      = null;
 	$tour_link_text = 'Video Tour';
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 tour-icon">
+	$svg            = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 tour-icon">
   <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
   <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
 </svg>';
-	
+
 	// bail if we don't have anything to show.
 	if ( ! $iframe ) {
 		return;
 	}
-	
+
 	wp_enqueue_style( 'rentfetch-glightbox-style' );
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
 	wp_enqueue_script( 'rentfetch-glightbox-init' );
 
-	// check against youtube - handle both iframe HTML and direct URLs
+	// check against youtube - handle both iframe HTML and direct URLs.
 	$youtube_pattern = '/src="https:\/\/www\.youtube\.com\/embed\/([^?"]+)\?/';
 	preg_match( $youtube_pattern, $iframe, $youtube_matches );
-	
-	// Also check for direct YouTube URLs
+
+	// Also check for direct YouTube URLs.
 	if ( ! isset( $youtube_matches[1] ) ) {
 		preg_match( '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $iframe, $youtube_matches );
 	}
@@ -941,17 +945,17 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
 		$video_id   = $youtube_matches[1];
 		$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
 		$classes    = 'tour-link property-link tour-link-youtube';
-		if ( ! empty( $class ) ) {
-			$classes .= ' ' . esc_attr( $class );
+		if ( ! empty( $css_class ) ) {
+			$classes .= ' ' . esc_attr( $css_class );
 		}
 		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_tour_click', rentfetch_get_property_tracking_context( $property_id, $post_id ) );
-		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" data-glightbox="type: video;" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
+		$embedlink      = sprintf( '<a class="%s" data-gallery="post-%s" data-glightbox="type: video;" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
 	}
 
 	$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
 	preg_match( $matterport_pattern, $iframe, $matterport_matches );
-	
-	// Also check for direct Matterport URLs
+
+	// Also check for direct Matterport URLs.
 	if ( ! isset( $matterport_matches[1] ) && strpos( $iframe, 'matterport.com' ) !== false ) {
 		$matterport_matches[1] = $iframe;
 	}
@@ -960,25 +964,25 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
 	if ( isset( $matterport_matches[1] ) ) {
 		$oembedlink = $matterport_matches[1];
 		$classes    = 'tour-link property-link tour-link-matterport';
-		if ( ! empty( $class ) ) {
-			$classes .= ' ' . esc_attr( $class );
+		if ( ! empty( $css_class ) ) {
+			$classes .= ' ' . esc_attr( $css_class );
 		}
 		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_tour_click', rentfetch_get_property_tracking_context( $property_id, $post_id ) );
-		$embedlink  = sprintf( '<a class="%s" data-gallery="post-%s" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
+		$embedlink      = sprintf( '<a class="%s" data-gallery="post-%s" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
 	}
 
 	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
 	if ( ! $embedlink ) {
 		$oembedlink = $iframe;
 		$classes    = 'tour-link property-link';
-		if ( ! empty( $class ) ) {
-			$classes .= ' ' . esc_attr( $class );
+		if ( ! empty( $css_class ) ) {
+			$classes .= ' ' . esc_attr( $css_class );
 		}
 		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_tour_click', rentfetch_get_property_tracking_context( $property_id, $post_id ) );
-		$embedlink  = sprintf( '<a class="%s" target="_blank" data-gallery="post-%s" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
+		$embedlink      = sprintf( '<a class="%s" target="_blank" data-gallery="post-%s" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
 	}
-	
-	return apply_filters( 'rentfetch_filter_property_tour_button', $embedlink, $property_id, $class );
+
+	return apply_filters( 'rentfetch_filter_property_tour_button', $embedlink, $property_id, $css_class );
 }
 
 /**
@@ -989,21 +993,24 @@ function rentfetch_get_property_tour_button( $property_id = null, $class = '' ) 
  */
 function rentfetch_property_tour_button( $property_id = null ) {
 	if ( rentfetch_get_property_tour_button( $property_id ) ) {
-		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
-			'svg' => array(
-				'xmlns' => true,
-				'fill' => true,
-				'viewbox' => true,
-				'stroke-width' => true,
-				'stroke' => true,
-				'class' => true,
-			),
-			'path' => array(
-				'stroke-linecap' => true,
-				'stroke-linejoin' => true,
-				'd' => true,
-			),
-		) );
+		$allowed_html = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'  => array(
+					'xmlns'        => true,
+					'fill'         => true,
+					'viewbox'      => true,
+					'stroke-width' => true,
+					'stroke'       => true,
+					'class'        => true,
+				),
+				'path' => array(
+					'stroke-linecap'  => true,
+					'stroke-linejoin' => true,
+					'd'               => true,
+				),
+			)
+		);
 		echo wp_kses( rentfetch_get_property_tour_button( $property_id ), $allowed_html );
 	}
 }
@@ -1025,7 +1032,7 @@ function rentfetch_get_property_tour_booking_url( $property_id = null ) {
 	}
 
 	$url = get_post_meta( $post_id, 'tour_booking_link', true );
-	
+
 	return esc_url( apply_filters( 'rentfetch_filter_property_tour_booking_url', $url ) );
 }
 
@@ -1033,22 +1040,22 @@ function rentfetch_get_property_tour_booking_url( $property_id = null ) {
  * Get the property tour booking button.
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property tour booking button.
  */
-function rentfetch_get_property_tour_booking_button( $property_id = null, $class = '' ) {
-	$url = rentfetch_get_property_tour_booking_url( $property_id );
-	$target = rentfetch_get_link_target( $url );
+function rentfetch_get_property_tour_booking_button( $property_id = null, $css_class = '' ) {
+	$url     = rentfetch_get_property_tour_booking_url( $property_id );
+	$target  = rentfetch_get_link_target( $url );
 	$classes = 'tour-booking-link property-link';
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
-	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_scheduletour_click', rentfetch_get_property_tracking_context( $property_id ) );
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 tour-booking-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>';
+	$tracking_attrs      = rentfetch_get_tracking_data_attributes( 'rentfetch_scheduletour_click', rentfetch_get_property_tracking_context( $property_id ) );
+	$svg                 = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 tour-booking-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" /></svg>';
 	$tour_booking_button = sprintf( '<a class="%s" href="%s" target="%s"%s>%sBook Tour</a>', $classes, esc_html( $url ), esc_attr( $target ), $tracking_attrs, $svg );
 
 	if ( $url ) {
-		return apply_filters( 'rentfetch_filter_property_tour_booking', $tour_booking_button, $property_id, $class );
+		return apply_filters( 'rentfetch_filter_property_tour_booking', $tour_booking_button, $property_id, $css_class );
 	} else {
 		return;
 	}
@@ -1062,21 +1069,24 @@ function rentfetch_get_property_tour_booking_button( $property_id = null, $class
  */
 function rentfetch_property_tour_booking_button( $property_id = null ) {
 	if ( rentfetch_get_property_tour_booking_url( $property_id ) ) {
-		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
-			'svg' => array(
-				'xmlns' => true,
-				'fill' => true,
-				'viewbox' => true,
-				'stroke-width' => true,
-				'stroke' => true,
-				'class' => true,
-			),
-			'path' => array(
-				'stroke-linecap' => true,
-				'stroke-linejoin' => true,
-				'd' => true,
-			),
-		) );
+		$allowed_html = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'  => array(
+					'xmlns'        => true,
+					'fill'         => true,
+					'viewbox'      => true,
+					'stroke-width' => true,
+					'stroke'       => true,
+					'class'        => true,
+				),
+				'path' => array(
+					'stroke-linecap'  => true,
+					'stroke-linejoin' => true,
+					'd'               => true,
+				),
+			)
+		);
 		echo wp_kses( rentfetch_get_property_tour_booking_button( $property_id ), $allowed_html );
 	}
 }
@@ -1108,23 +1118,23 @@ function rentfetch_get_property_apply_online_url( $property_id = null ) {
  * Get the property apply online button.
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string|null The property apply online button.
  */
-function rentfetch_get_property_apply_online_button( $property_id = null, $class = '' ) {
+function rentfetch_get_property_apply_online_button( $property_id = null, $css_class = '' ) {
 	$url     = rentfetch_get_property_apply_online_url( $property_id );
 	$target  = rentfetch_get_link_target( $url );
 	$classes = 'apply-online-link property-link property-link-highlight';
 
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
 
-	$tracking_attrs       = rentfetch_get_tracking_data_attributes( 'rentfetch_applyonline_click', rentfetch_get_property_tracking_context( $property_id ) );
+	$tracking_attrs      = rentfetch_get_tracking_data_attributes( 'rentfetch_applyonline_click', rentfetch_get_property_tracking_context( $property_id ) );
 	$apply_online_button = sprintf( '<a class="%s" href="%s" target="%s"%s>Apply Online</a>', esc_attr( $classes ), esc_url( $url ), esc_attr( $target ), $tracking_attrs );
 
 	if ( $url ) {
-		return apply_filters( 'rentfetch_filter_property_apply_online_button', $apply_online_button, $property_id, $class );
+		return apply_filters( 'rentfetch_filter_property_apply_online_button', $apply_online_button, $property_id, $css_class );
 	}
 
 	return null;
@@ -1150,10 +1160,10 @@ function rentfetch_property_apply_online_button( $property_id = null ) {
  * Get the property office hours button.
  *
  * @param string $property_id Optional property_id meta value.
- * @param string $class Optional additional CSS class.
+ * @param string $css_class Optional additional CSS class.
  * @return string The property office hours button.
  */
-function rentfetch_get_property_office_hours_button( $property_id = null, $class = '' ) {
+function rentfetch_get_property_office_hours_button( $property_id = null, $css_class = '' ) {
 	$office_hours = rentfetch_get_property_office_hours_array( $property_id );
 
 	if ( empty( $office_hours ) ) {
@@ -1161,25 +1171,25 @@ function rentfetch_get_property_office_hours_button( $property_id = null, $class
 	}
 
 	$classes = 'office-hours-link property-link';
-	if ( ! empty( $class ) ) {
-		$classes .= ' ' . esc_attr( $class );
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 office-hours-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>';
+	$svg            = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 office-hours-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>';
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_officehours_click', rentfetch_get_property_tracking_context( $property_id ) );
 
-	// Get office hours markup without heading and wrapper
-	$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+	// Get office hours markup without heading and wrapper.
+	$days                 = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
 	$office_hours_content = '';
 	foreach ( $days as $day ) {
-		$office_hours_content .= '<div class="office-hours-day">';
+		$office_hours_content     .= '<div class="office-hours-day">';
 			$office_hours_content .= '<span class="day-name">' . esc_html( ucfirst( $day ) . ':' ) . '</span> ';
-			if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
-				$start_time = date( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
-				$end_time = date( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
-				$office_hours_content .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
-			} else {
-				$office_hours_content .= '<span class="day-hours">Closed</span>';
-			}
+		if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
+			$start_time            = gmdate( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
+			$end_time              = gmdate( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
+			$office_hours_content .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
+		} else {
+			$office_hours_content .= '<span class="day-hours">Closed</span>';
+		}
 		$office_hours_content .= '</div>';
 	}
 
@@ -1194,8 +1204,10 @@ function rentfetch_get_property_office_hours_button( $property_id = null, $class
 		$office_hours_content
 	);
 
-	return apply_filters( 'rentfetch_filter_property_office_hours_button', $office_hours_button, $property_id, $class );
-}/**
+	return apply_filters( 'rentfetch_filter_property_office_hours_button', $office_hours_button, $property_id, $css_class );
+}
+
+/**
  * Echo the property office hours button.
  *
  * @param string $property_id Optional property_id meta value.
@@ -1203,41 +1215,44 @@ function rentfetch_get_property_office_hours_button( $property_id = null, $class
  */
 function rentfetch_property_office_hours_button( $property_id = null ) {
 	$button = rentfetch_get_property_office_hours_button( $property_id );
-	
+
 	if ( $button ) {
-		$allowed_html = array_merge( wp_kses_allowed_html( 'post' ), array(
-			'svg' => array(
-				'xmlns' => true,
-				'fill' => true,
-				'viewbox' => true,
-				'stroke-width' => true,
-				'stroke' => true,
-				'class' => true,
-			),
-			'path' => array(
-				'stroke-linecap' => true,
-				'stroke-linejoin' => true,
-				'd' => true,
-			),
-			'details' => array(
-				'class' => true,
-				'open' => true,
-			),
-			'summary' => array(
-				'class' => true,
-				'data-rentfetch-event' => true,
-				'data-rentfetch-property-id' => true,
-				'data-rentfetch-property-name' => true,
-				'data-rentfetch-property-city' => true,
-			),
-			'div' => array(
-				'class' => true,
-				'style' => true,
-			),
-			'span' => array(
-				'class' => true,
-			),
-		) );
+		$allowed_html = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'     => array(
+					'xmlns'        => true,
+					'fill'         => true,
+					'viewbox'      => true,
+					'stroke-width' => true,
+					'stroke'       => true,
+					'class'        => true,
+				),
+				'path'    => array(
+					'stroke-linecap'  => true,
+					'stroke-linejoin' => true,
+					'd'               => true,
+				),
+				'details' => array(
+					'class' => true,
+					'open'  => true,
+				),
+				'summary' => array(
+					'class'                        => true,
+					'data-rentfetch-event'         => true,
+					'data-rentfetch-property-id'   => true,
+					'data-rentfetch-property-name' => true,
+					'data-rentfetch-property-city' => true,
+				),
+				'div'     => array(
+					'class' => true,
+					'style' => true,
+				),
+				'span'    => array(
+					'class' => true,
+				),
+			)
+		);
 		echo wp_kses( $button, $allowed_html );
 	}
 }
@@ -1740,15 +1755,15 @@ function rentfetch_get_yardi_api_fee_longnotes( $fee, $applies_to = array(), $al
  */
 function rentfetch_get_yardi_api_fee_signature( $fee ) {
 	$signature_payload = array(
-		'feeName'             => (string) ( $fee['feeName'] ?? '' ),
-		'feeCost'             => isset( $fee['feeCost'] ) ? (float) $fee['feeCost'] : null,
-		'feeCostMax'          => isset( $fee['feeCostMax'] ) ? (float) $fee['feeCostMax'] : null,
-		'feeCostText'         => (string) ( $fee['feeCostText'] ?? '' ),
-		'isRequired'          => ! empty( $fee['isRequired'] ),
-		'feeChargeCodeId'     => isset( $fee['feeChargeCode']['id'] ) ? (int) $fee['feeChargeCode']['id'] : 0,
-		'feeChargeCodeCode'   => (string) ( $fee['feeChargeCode']['code'] ?? '' ),
-		'feeChargeCodeDesc'   => (string) ( $fee['feeChargeCode']['description'] ?? '' ),
-		'frequency'           => rentfetch_get_yardi_api_fee_frequency_label( $fee ),
+		'feeName'           => (string) ( $fee['feeName'] ?? '' ),
+		'feeCost'           => isset( $fee['feeCost'] ) ? (float) $fee['feeCost'] : null,
+		'feeCostMax'        => isset( $fee['feeCostMax'] ) ? (float) $fee['feeCostMax'] : null,
+		'feeCostText'       => (string) ( $fee['feeCostText'] ?? '' ),
+		'isRequired'        => ! empty( $fee['isRequired'] ),
+		'feeChargeCodeId'   => isset( $fee['feeChargeCode']['id'] ) ? (int) $fee['feeChargeCode']['id'] : 0,
+		'feeChargeCodeCode' => (string) ( $fee['feeChargeCode']['code'] ?? '' ),
+		'feeChargeCodeDesc' => (string) ( $fee['feeChargeCode']['description'] ?? '' ),
+		'frequency'         => rentfetch_get_yardi_api_fee_frequency_label( $fee ),
 	);
 
 	return md5( wp_json_encode( $signature_payload ) );
@@ -1766,10 +1781,10 @@ function rentfetch_get_yardi_api_property_fees_data( $property_post_id = null ) 
 		return array();
 	}
 
-	$aggregated         = array();
+	$aggregated          = array();
 	$all_floorplan_names = array();
 
-	$add_fee = static function( $fee, $applies_to = array() ) use ( &$aggregated ) {
+	$add_fee = static function ( $fee, $applies_to = array() ) use ( &$aggregated ) {
 		if ( ! is_array( $fee ) ) {
 			return;
 		}
@@ -1856,15 +1871,15 @@ function rentfetch_get_yardi_api_property_fees_data( $property_post_id = null ) 
 	}
 
 	$category_order = array(
-		'Required Monthly Fees' => 0,
+		'Required Monthly Fees'  => 0,
 		'Required One-Time Fees' => 1,
-		'Optional Monthly Fees' => 2,
+		'Optional Monthly Fees'  => 2,
 		'Optional One-Time Fees' => 3,
 	);
 
 	usort(
 		$rows,
-		static function( $left, $right ) use ( $category_order ) {
+		static function ( $left, $right ) use ( $category_order ) {
 			$left_category_order  = $category_order[ $left['category'] ?? '' ] ?? 999;
 			$right_category_order = $category_order[ $right['category'] ?? '' ] ?? 999;
 
@@ -1906,7 +1921,7 @@ function rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $pr
 
 			$numeric_price = rentfetch_get_yardi_api_fee_numeric_price( $fee );
 			if ( null !== $numeric_price && $numeric_price > 0 ) {
-				$total += (float) $numeric_price;
+				$total         += (float) $numeric_price;
 				$contributors[] = array(
 					'description'   => sanitize_text_field( (string) ( $fee['feeName'] ?? 'Fee' ) ),
 					'applied_price' => (float) $numeric_price,
@@ -1915,7 +1930,7 @@ function rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $pr
 		}
 	}
 
-	$unit_types = isset( $payload['unitTypes'] ) && is_array( $payload['unitTypes'] ) ? $payload['unitTypes'] : array();
+	$unit_types      = isset( $payload['unitTypes'] ) && is_array( $payload['unitTypes'] ) ? $payload['unitTypes'] : array();
 	$unit_type_count = count( $unit_types );
 
 	if ( $unit_type_count > 0 ) {
@@ -1954,14 +1969,14 @@ function rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $pr
 						);
 					}
 
-					$shared_monthly_required_fees[ $signature ]['count']++;
+					++$shared_monthly_required_fees[ $signature ]['count'];
 				}
 			}
 		}
 
 		foreach ( $shared_monthly_required_fees as $shared_fee ) {
 			if ( (int) $shared_fee['count'] === $unit_type_count ) {
-				$total += (float) $shared_fee['price'];
+				$total         += (float) $shared_fee['price'];
 				$contributors[] = array(
 					'description'   => sanitize_text_field( (string) $shared_fee['description'] ) . ' (all floorplans)',
 					'applied_price' => (float) $shared_fee['price'],
@@ -1972,7 +1987,7 @@ function rentfetch_get_yardi_api_monthly_required_fees_summary_for_property( $pr
 
 	usort(
 		$contributors,
-		static function( $left, $right ) {
+		static function ( $left, $right ) {
 			return strcasecmp( (string) ( $left['description'] ?? '' ), (string) ( $right['description'] ?? '' ) );
 		}
 	);
@@ -1998,9 +2013,9 @@ function rentfetch_get_synced_property_fee_context( $property_post_id = null ) {
 		return null;
 	}
 
-	$source  = sanitize_key( (string) get_post_meta( $property_post_id, 'synced_property_fee_source', true ) );
-	$rows    = get_post_meta( $property_post_id, 'synced_property_fee_rows', true );
-	$summary = get_post_meta( $property_post_id, 'synced_property_fee_monthly_summary', true );
+	$source                  = sanitize_key( (string) get_post_meta( $property_post_id, 'synced_property_fee_source', true ) );
+	$rows                    = get_post_meta( $property_post_id, 'synced_property_fee_rows', true );
+	$summary                 = get_post_meta( $property_post_id, 'synced_property_fee_monthly_summary', true );
 	$current_property_source = sanitize_key( (string) get_post_meta( $property_post_id, 'property_source', true ) );
 
 	if ( '' !== $source && $source === $current_property_source && is_array( $rows ) && ! empty( $rows ) ) {
@@ -2091,7 +2106,7 @@ function rentfetch_get_effective_monthly_required_total_fees_for_property( $prop
 			return (float) $synced_summary['total'];
 		}
 
-		$property_raw = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
+		$property_raw   = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
 		$property_total = rentfetch_extract_first_numeric_fee_value( $property_raw );
 	}
 
@@ -2119,13 +2134,13 @@ function rentfetch_get_effective_monthly_required_total_fees_for_property( $prop
 function rentfetch_get_effective_monthly_required_fees_preview_context_for_property( $property_post_id = null, $respect_frontend_visibility = true ) {
 	$property_post_id = (int) $property_post_id;
 	$empty_context    = array(
-		'source_key'    => 'none',
-		'source_label'  => 'No active fees source',
-		'total'         => 0.0,
-		'contributors'  => array(),
-		'detail_label'  => '',
-		'detail_value'  => '',
-		'description'   => 'No synced API fees, property-level monthly fees, or global monthly fees are currently affecting frontend pricing.',
+		'source_key'   => 'none',
+		'source_label' => 'No active fees source',
+		'total'        => 0.0,
+		'contributors' => array(),
+		'detail_label' => '',
+		'detail_value' => '',
+		'description'  => 'No synced API fees, property-level monthly fees, or global monthly fees are currently affecting frontend pricing.',
 	);
 
 	if ( $respect_frontend_visibility && ! rentfetch_should_show_property_fees() ) {
@@ -2160,10 +2175,10 @@ function rentfetch_get_effective_monthly_required_fees_preview_context_for_prope
 		);
 	}
 
-	$property_raw         = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
-	$property_total       = rentfetch_extract_first_numeric_fee_value( $property_raw );
-	$property_rows        = get_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows', true );
-	$property_csv_url     = trim( (string) get_post_meta( $property_post_id, 'property_fees_csv_url', true ) );
+	$property_raw          = get_post_meta( $property_post_id, 'property_monthly_required_total_fees', true );
+	$property_total        = rentfetch_extract_first_numeric_fee_value( $property_raw );
+	$property_rows         = get_post_meta( $property_post_id, 'property_monthly_required_total_fees_rows', true );
+	$property_csv_url      = trim( (string) get_post_meta( $property_post_id, 'property_fees_csv_url', true ) );
 	$property_last_checked = (int) get_post_meta( $property_post_id, 'property_monthly_required_total_fees_last_checked', true );
 
 	if ( ! is_array( $property_rows ) ) {
@@ -2269,8 +2284,8 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
 	$rent_range      = $floorplan_data['rentrange'] ?? null;
 
-	$min_rent_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_rent'] ?? array() );
-	$max_rent_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_rent'] ?? array() );
+	$min_rent_values  = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_rent'] ?? array() );
+	$max_rent_values  = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_rent'] ?? array() );
 	$min_total_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_total_monthly_price'] ?? array() );
 	$max_total_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_total_monthly_price'] ?? array() );
 
@@ -2281,7 +2296,7 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 	if ( null === $min_rent && ! empty( $rent_range ) ) {
 		preg_match_all( '/\d[\d,]*(?:\.\d+)?/', (string) $rent_range, $matches );
 		$range_numbers = array_map(
-			function( $number ) {
+			function ( $number ) {
 				return (float) str_replace( ',', '', $number );
 			},
 			$matches[0] ?? array()
@@ -2300,7 +2315,7 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 		$max_rent = $min_rent;
 	}
 	if ( null !== $min_rent && null !== $max_rent && $max_rent < $min_rent ) {
-		$temp = $min_rent;
+		$temp     = $min_rent;
 		$min_rent = $max_rent;
 		$max_rent = $temp;
 	}
@@ -2316,7 +2331,7 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 	}
 	$monthly_required_fees = rentfetch_get_effective_monthly_required_total_fees_for_property( $property_post_id );
 
-	$base_rent_display = rentfetch_format_property_rent_display( $min_rent, $max_rent, $pricing_display );
+	$base_rent_display           = rentfetch_format_property_rent_display( $min_rent, $max_rent, $pricing_display );
 	$minimum_total_monthly_price = ! empty( $min_total_values ) ? min( $min_total_values ) : null;
 	$maximum_total_monthly_price = ! empty( $max_total_values ) ? max( $max_total_values ) : null;
 	if ( null === $minimum_total_monthly_price ) {
@@ -2329,7 +2344,7 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 	if ( null !== $minimum_total_monthly_price ) {
 		$including_fees_rent_display = rentfetch_format_property_rent_display( $minimum_total_monthly_price, $maximum_total_monthly_price, $pricing_display );
 		$tooltip_markup              = rentfetch_get_total_monthly_leasing_pricing_tooltip_markup();
-		$rent = sprintf(
+		$rent                        = sprintf(
 			'<span class="rentfetch-property-rent-lines"><span class="rentfetch-property-rent-with-fees"><span class="rentfetch-pricing-with-tooltip">%1$s/mo%3$s</span></span><span class="rentfetch-property-base-rent">%2$s base rent</span></span>',
 			esc_html( $including_fees_rent_display ),
 			esc_html( $base_rent_display ),
@@ -2559,10 +2574,10 @@ function rentfetch_get_property_specials_from_meta( $property_id = null ) {
 		$post_id = get_the_ID();
 	}
 
-	$has_specials = get_post_meta( $post_id, 'has_specials', true );
+	$has_specials           = get_post_meta( $post_id, 'has_specials', true );
 	$specials_override_text = get_post_meta( $post_id, 'specials_override_text', true );
-	
-	// Sanitize the override text to plain text to prevent HTML from being output
+
+	// Sanitize the override text to plain text to prevent HTML from being output.
 	$specials_override_text = sanitize_text_field( $specials_override_text );
 	$specials_override_text = function_exists( 'mb_substr' ) ? mb_substr( $specials_override_text, 0, 25 ) : substr( $specials_override_text, 0, 25 );
 
@@ -2573,8 +2588,8 @@ function rentfetch_get_property_specials_from_meta( $property_id = null ) {
 	if ( ! rentfetch_property_specials_are_active_by_date( $post_id ) ) {
 		return apply_filters( 'rentfetch_filter_property_specials_from_meta', null );
 	}
-	
-	if ( $has_specials && !$specials_override_text ) {
+
+	if ( $has_specials && ! $specials_override_text ) {
 		$specials_text = 'Specials available';
 	} elseif ( $specials_override_text ) {
 		$specials_text = $specials_override_text;
@@ -2593,7 +2608,7 @@ function rentfetch_get_property_specials_from_meta( $property_id = null ) {
  */
 function rentfetch_property_specials_from_meta( $property_id = null ) {
 	$specials = rentfetch_get_property_specials_from_meta( $property_id );
-	
+
 	if ( $specials ) {
 		echo wp_kses_post( $specials );
 	}
@@ -2723,7 +2738,7 @@ function rentfetch_property_specials_callout_from_meta( $property_id = null ) {
 		$allowed_html = array_merge(
 			wp_kses_allowed_html( 'post' ),
 			array(
-				'svg'  => array(
+				'svg'    => array(
 					'xmlns'        => true,
 					'fill'         => true,
 					'viewbox'      => true,
@@ -2732,7 +2747,7 @@ function rentfetch_property_specials_callout_from_meta( $property_id = null ) {
 					'aria-hidden'  => true,
 					'focusable'    => true,
 				),
-				'path' => array(
+				'path'   => array(
 					'stroke-linecap'  => true,
 					'stroke-linejoin' => true,
 					'd'               => true,
@@ -2815,7 +2830,7 @@ function rentfetch_property_description( $property_id = null ) {
 	}
 }
 
-//* PROPERTY TOUR
+// * PROPERTY TOUR.
 
 /**
  * Get the property tour embed or link.
@@ -2840,32 +2855,32 @@ function rentfetch_get_property_tour( $property_id = null, $embed_direct = false
 	if ( $iframe ) {
 
 		if ( $embed_direct ) {
-			// Return the iframe directly - convert URLs to iframe HTML if needed
+			// Return the iframe directly - convert URLs to iframe HTML if needed.
 			if ( strpos( $iframe, '<iframe' ) === 0 ) {
-				// Already iframe HTML, use as-is
+				// Already iframe HTML, use as-is.
 				$embedlink = $iframe;
 			} elseif ( preg_match( '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $iframe, $youtube_matches ) ) {
-				// YouTube URL, convert to embed iframe
-				$video_id = $youtube_matches[1];
+				// YouTube URL, convert to embed iframe.
+				$video_id  = $youtube_matches[1];
 				$embedlink = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' . $video_id . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
 			} elseif ( strpos( $iframe, 'matterport.com' ) !== false ) {
-				// Matterport URL, convert to embed iframe
+				// Matterport URL, convert to embed iframe.
 				$embedlink = '<iframe width="853" height="480" src="' . esc_url( $iframe ) . '" frameborder="0" allowfullscreen allow="xr-spatial-tracking"></iframe>';
 			} else {
-				// Fallback: assume it's already iframe HTML or wrap as iframe
+				// Fallback: assume it's already iframe HTML or wrap as iframe.
 				$embedlink = $iframe;
 			}
 		} else {
-			// Return links for lightbox/modal (existing behavior)
+			// Return links for lightbox/modal (existing behavior).
 			wp_enqueue_style( 'rentfetch-glightbox-style' );
 			wp_enqueue_script( 'rentfetch-glightbox-script' );
 			wp_enqueue_script( 'rentfetch-glightbox-init' );
 
-			// check against youtube - handle both iframe HTML and direct URLs
+			// check against youtube - handle both iframe HTML and direct URLs.
 			$youtube_pattern = '/src="https:\/\/www\.youtube\.com\/embed\/([^?"]+)\?/';
 			preg_match( $youtube_pattern, $iframe, $youtube_matches );
-			
-			// Also check for direct YouTube URLs
+
+			// Also check for direct YouTube URLs.
 			if ( ! isset( $youtube_matches[1] ) ) {
 				preg_match( '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $iframe, $youtube_matches );
 			}
@@ -2879,8 +2894,8 @@ function rentfetch_get_property_tour( $property_id = null, $embed_direct = false
 
 			$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
 			preg_match( $matterport_pattern, $iframe, $matterport_matches );
-			
-			// Also check for direct Matterport URLs
+
+			// Also check for direct Matterport URLs.
 			if ( ! isset( $matterport_matches[1] ) && strpos( $iframe, 'matterport.com' ) !== false ) {
 				$matterport_matches[1] = $iframe;
 			}
@@ -2944,7 +2959,7 @@ function rentfetch_get_property_fees_display_source_context( $property_id_or_pos
 	}
 
 	if ( $post_id ) {
-		$synced_fee_context  = rentfetch_get_synced_property_fee_context( $post_id );
+		$synced_fee_context    = rentfetch_get_synced_property_fee_context( $post_id );
 		$property_fees_data    = get_post_meta( $post_id, 'property_fees_data', true );
 		$property_fees_csv_url = get_post_meta( $post_id, 'property_fees_csv_url', true );
 		$property_fees_embed   = get_post_meta( $post_id, 'property_fees_embed', true );
@@ -3029,10 +3044,10 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null, $res
 	if ( $respect_frontend_visibility && ! rentfetch_should_show_property_fees() ) {
 		return '';
 	}
-	
+
 	// Figure out the post ID to use for getting the fees.
 	$post_id = null;
-	
+
 	if ( $property_id_or_post_id ) {
 		if ( is_numeric( $property_id_or_post_id ) ) {
 			$post_id = $property_id_or_post_id;
@@ -3043,13 +3058,13 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null, $res
 		$post_id = get_the_ID();
 	}
 
-	$property_fees_markup = '';
+	$property_fees_markup       = '';
 	$api_fees_are_authoritative = false;
 
-	// If we have a valid post_id, try property-specific fees first
+	// If we have a valid post_id, try property-specific fees first.
 	if ( $post_id ) {
-		$synced_fee_context  = rentfetch_get_synced_property_fee_context( $post_id );
-		$api_fees_data       = is_array( $synced_fee_context ) && isset( $synced_fee_context['rows'] ) && is_array( $synced_fee_context['rows'] )
+		$synced_fee_context    = rentfetch_get_synced_property_fee_context( $post_id );
+		$api_fees_data         = is_array( $synced_fee_context ) && isset( $synced_fee_context['rows'] ) && is_array( $synced_fee_context['rows'] )
 			? $synced_fee_context['rows']
 			: array();
 		$property_fees_data    = get_post_meta( $post_id, 'property_fees_data', true );
@@ -3065,7 +3080,7 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null, $res
 			}
 		}
 
-		// Priority 1: Use property_fees_csv_url if available
+		// Priority 1: Use property_fees_csv_url if available.
 		if ( ! $api_fees_are_authoritative && ! empty( $property_fees_csv_url ) ) {
 			$csv_content = rentfetch_get_cached_fees_csv_content( $property_fees_csv_url );
 			if ( false !== $csv_content ) {
@@ -3094,13 +3109,13 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null, $res
 		return '';
 	}
 
-	// If no property-specific fees or no post_id, try global fallbacks
+	// If no property-specific fees or no post_id, try global fallbacks.
 	if ( empty( $property_fees_markup ) ) {
-		$global_fees_csv_url  = get_option( 'rentfetch_options_global_property_fees_csv_url' );
-		$global_fees_data     = get_option( 'rentfetch_options_global_property_fees_data' );
-		$global_fees_embed    = get_option( 'rentfetch_options_global_property_fees_embed' );
+		$global_fees_csv_url = get_option( 'rentfetch_options_global_property_fees_csv_url' );
+		$global_fees_data    = get_option( 'rentfetch_options_global_property_fees_data' );
+		$global_fees_embed   = get_option( 'rentfetch_options_global_property_fees_embed' );
 
-		// Priority 1: Use global_fees_csv_url if available
+		// Priority 1: Use global_fees_csv_url if available.
 		if ( ! empty( $global_fees_csv_url ) ) {
 			$csv_content = rentfetch_get_cached_fees_csv_content( $global_fees_csv_url );
 			if ( false !== $csv_content ) {
@@ -3119,25 +3134,25 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null, $res
 			$property_fees_markup = rentfetch_get_property_fees_markup( $global_fees_json, $respect_frontend_visibility );
 		}
 
-		// Priority 3: Fallback to global_fees_embed
+		// Priority 3: Fallback to global_fees_embed.
 		if ( empty( $property_fees_markup ) && ! empty( $global_fees_embed ) ) {
 			$property_fees_markup = $global_fees_embed;
 		}
-		// If none, return empty
+		// Return an empty string when none of the fee sources has content.
 		if ( empty( $property_fees_markup ) ) {
 			return '';
 		}
 	}
 
 	// Add description text before the fees markup (filterable, accepts HTML)
-	// The filtered text is run through the_content to auto-add paragraphs
+	// The filtered text is run through the_content to auto-add paragraphs.
 	$fees_description = apply_filters(
 		'rentfetch_property_fees_description',
 		'Please note that prices shown are base rent. To help budget your monthly costs and make it easy to understand what your rent includes and what may be additional, we\'ve included the list of potential fees below.',
 		$post_id
 	);
 
-	// Prepend description to markup if not empty, wrapped in a styled container
+	// Prepend description to markup if not empty, wrapped in a styled container.
 	if ( ! empty( $fees_description ) ) {
 		$fees_description_html = apply_filters( 'the_content', $fees_description );
 		$property_fees_markup  = '<div class="property-fees-description">' . $fees_description_html . '</div>' . $property_fees_markup;
@@ -3388,19 +3403,19 @@ function rentfetch_get_property_fees_markup( $property_fees_json, $respect_front
 	if ( $respect_frontend_visibility && ! rentfetch_should_show_property_fees() ) {
 		return '';
 	}
-	
-	// Start output buffering
+
+	// Start output buffering.
 	ob_start();
-	
-	// Decode the JSON
+
+	// Decode the JSON.
 	$fees_data = json_decode( $property_fees_json, true );
-	
-	// If JSON is invalid or empty, return empty string
+
+	// If JSON is invalid or empty, return empty string.
 	if ( ! is_array( $fees_data ) || empty( $fees_data ) ) {
 		return '';
 	}
 
-	// Check if any fee has longnotes (for tooltip functionality)
+	// Check if any fee has longnotes (for tooltip functionality).
 	$has_tooltip_content = false;
 	foreach ( $fees_data as $fee ) {
 		if ( '' !== rentfetch_get_property_fee_tooltip_html( $fee ) ) {
@@ -3408,12 +3423,12 @@ function rentfetch_get_property_fees_markup( $property_fees_json, $respect_front
 			break;
 		}
 	}
-	
-	// Enqueue tooltip script if we have content to display
+
+	// Enqueue tooltip script if we have content to display.
 	if ( $has_tooltip_content ) {
 		wp_enqueue_script( 'rentfetch-tooltip' );
 	}
-	// Extract unique categories
+	// Extract unique categories.
 	$categories = array();
 	foreach ( $fees_data as $fee ) {
 		if ( ! empty( $fee['category'] ) ) {
@@ -3421,19 +3436,22 @@ function rentfetch_get_property_fees_markup( $property_fees_json, $respect_front
 		}
 	}
 	$categories = array_unique( $categories );
-	
-	// If we have categories, group by category
+
+	// If we have categories, group by category.
 	if ( ! empty( $categories ) ) {
 		foreach ( $categories as $category ) {
-			// Get fees for this category
-			$category_fees = array_filter( $fees_data, function( $fee ) use ( $category ) {
-				return isset( $fee['category'] ) && $fee['category'] === $category;
-			} );
+			// Get fees for this category.
+			$category_fees = array_filter(
+				$fees_data,
+				function ( $fee ) use ( $category ) {
+					return isset( $fee['category'] ) && $fee['category'] === $category;
+				}
+			);
 
-			// Output category header
+			// Output category header.
 			echo '<h3>' . esc_html( $category ) . '</h3>';
 
-			// Start table
+			// Start table.
 			echo '<table class="property-fees-table" style="width:100%; table-layout:fixed;">';
 			echo '<colgroup>';
 			echo '<col style="width:42%;">';
@@ -3441,8 +3459,8 @@ function rentfetch_get_property_fees_markup( $property_fees_json, $respect_front
 			echo '<col style="width:25%;">';
 			echo '</colgroup>';
 			echo '<tbody>';
-			
-			// Output table rows
+
+			// Output table rows.
 			foreach ( $category_fees as $fee ) {
 				$longnotes_html = rentfetch_get_property_fee_tooltip_html( $fee );
 				$has_longnotes  = '' !== $longnotes_html;
@@ -3464,13 +3482,13 @@ function rentfetch_get_property_fees_markup( $property_fees_json, $respect_front
 				echo '<td class="fee-notes">' . esc_html( $fee['notes'] ?? '' ) . '</td>';
 				echo '</tr>';
 			}
-			
-			// End table
+
+			// End table.
 			echo '</tbody>';
 			echo '</table>';
 		}
 	} else {
-		// No categories, output single table
+		// No categories, output single table.
 		echo '<table class="property-fees-table" style="width:100%; table-layout:fixed;">';
 		echo '<colgroup>';
 		echo '<col style="width:42%;">';
@@ -3478,7 +3496,7 @@ function rentfetch_get_property_fees_markup( $property_fees_json, $respect_front
 		echo '<col style="width:25%;">';
 		echo '</colgroup>';
 		echo '<tbody>';
-		
+
 		foreach ( $fees_data as $fee ) {
 			$longnotes_html = rentfetch_get_property_fee_tooltip_html( $fee );
 			$has_longnotes  = '' !== $longnotes_html;
@@ -3500,58 +3518,65 @@ function rentfetch_get_property_fees_markup( $property_fees_json, $respect_front
 			echo '<td class="fee-notes">' . esc_html( $fee['notes'] ?? '' ) . '</td>';
 			echo '</tr>';
 		}
-		
+
 		echo '</tbody>';
 		echo '</table>';
 	}
-	
-	// Return the buffered output
+
+	// Return the buffered output.
 	return ob_get_clean();
 }
 
+/**
+ * Get the property post ID when the site contains exactly one property.
+ *
+ * @return int|null The property post ID, or null when this is not a single-property site.
+ */
 function rentfetch_website_single_property_site_get_property_id() {
-	// check if this is a single-property website by querying the 'properties' post type and checking the CPT to see if we have a single post or more than one (or zero).
-	$property_query = new WP_Query( array(
-		'post_type'      => 'properties',
-		'posts_per_page' => 2,
-		'post_status'    => 'publish',
-	) );
-	
-	// if there's exactly one property, get the value of the property_id meta field.
-	if ( $property_query->have_posts() && $property_query->found_posts === 1 ) {
+	// Query at most two properties; a single result identifies a single-property site.
+	$property_query = new WP_Query(
+		array(
+			'post_type'      => 'properties',
+			'posts_per_page' => 2,
+			'post_status'    => 'publish',
+		)
+	);
+
+	// If there's exactly one property, get its post ID.
+	if ( $property_query->have_posts() && 1 === $property_query->found_posts ) {
 		$property_query->the_post();
-		$post_id = $property_query->posts[0]->ID;	
+		$post_id = $property_query->posts[0]->ID;
 	} else {
 		return;
 	}
-	
-	// need to reset the query so that we don't mess up the main query.
+
+	// Reset the query so that we don't affect the main query.
 	wp_reset_postdata();
-	
+
 	return $post_id;
 }
 
+/**
+ * Output the property fees embed for a single-property site.
+ *
+ * @return void.
+ */
 function rentfetch_property_fees_embed_and_wrap() {
-	
-	// check to see if this is a single-property website. If it is, the property post_id will be returned.
+	// A single-property site provides the property post ID.
 	$post_id = rentfetch_website_single_property_site_get_property_id();
-	
+
 	if ( ! $post_id ) {
-		return; // if we don't have a post ID, we can't output the fees embed.
-	}
-	
-	$embed = rentfetch_get_property_fees_embed( $post_id );
-	if ( ! $embed ) {
-		return; // if we don't have an embed, we can't output the fees embed.
+		return;
 	}
 
-	// output the property fees embed code.
-	// Note: This function is used in both the simple grid and search results, so we need to pass the post ID.
-	// rentfetch_property_fees_embed( $post_id );
+	$embed = rentfetch_get_property_fees_embed( $post_id );
+	if ( ! $embed ) {
+		return;
+	}
+
 	echo '<div class="rentfetch-after-floorplans-grid-search-property-fees-embed-wrapper">';
-		echo $embed;
+	echo wp_kses( $embed, rentfetch_get_allowed_embed_html() );
 	echo '</div>';
-	
 }
 add_action( 'rentfetch_after_floorplans_simple_grid', 'rentfetch_property_fees_embed_and_wrap' );
 add_action( 'rentfetch_after_floorplans_search', 'rentfetch_property_fees_embed_and_wrap' );
@@ -3631,7 +3656,7 @@ function rentfetch_get_monthly_required_fee_contributors( $fees_data ) {
 		}
 
 		$contributors[] = array(
-			'description'  => sanitize_text_field( (string) ( $fee['description'] ?? '' ) ),
+			'description'   => sanitize_text_field( (string) ( $fee['description'] ?? '' ) ),
 			'applied_price' => (float) $numeric_price,
 		);
 	}
@@ -3653,7 +3678,7 @@ function rentfetch_get_monthly_required_fee_contributors( $fees_data ) {
  */
 function rentfetch_calculate_monthly_required_total_fees( $fees_data ) {
 	$contributors = rentfetch_get_monthly_required_fee_contributors( $fees_data );
-	$total = 0.0;
+	$total        = 0.0;
 
 	foreach ( $contributors as $contributor ) {
 		$total += (float) ( $contributor['applied_price'] ?? 0 );
@@ -3665,7 +3690,8 @@ function rentfetch_calculate_monthly_required_total_fees( $fees_data ) {
 /**
  * Update stored monthly required total fees for a property from its fees CSV URL.
  *
- * @param int $property_post_id The property post ID.
+ * @param int  $property_post_id The property post ID.
+ * @param bool $force_recompute  Whether to bypass the cached calculation.
  * @return bool True when a positive total is saved, false otherwise.
  */
 function rentfetch_update_property_monthly_required_total_fees_from_csv( $property_post_id, $force_recompute = false ) {
@@ -3705,6 +3731,7 @@ function rentfetch_update_property_monthly_required_total_fees_from_csv( $proper
 /**
  * Update stored monthly required total fees from the global fees CSV URL.
  *
+ * @param bool $force_recompute Whether to bypass the cached calculation.
  * @return bool True when a positive total is saved, false otherwise.
  */
 function rentfetch_update_global_monthly_required_total_fees_from_csv( $force_recompute = false ) {
@@ -3840,11 +3867,11 @@ function rentfetch_get_property_office_hours_array( $property_id = null ) {
 	} else {
 		$office_hours = get_post_meta( get_the_ID(), 'office_hours', true );
 	}
-	
+
 	if ( ! is_array( $office_hours ) ) {
 		$office_hours = array();
 	}
-	
+
 	$office_hours = apply_filters( 'rentfetch_filter_property_office_hours_array', $office_hours, $property_id );
 	return $office_hours;
 }
@@ -3858,103 +3885,107 @@ function rentfetch_get_property_office_hours_array( $property_id = null ) {
  */
 function rentfetch_get_property_office_hours( $property_id = null, $include_heading = true ) {
 	$office_hours = rentfetch_get_property_office_hours_array( $property_id );
-	
+
 	if ( empty( $office_hours ) ) {
 		return '';
 	}
-	
+
 	$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
-	
+
 	$output = '';
 	if ( $include_heading ) {
 		$output .= '<h3>Office Hours</h3>';
 	}
 	$output .= '<div class="rentfetch-property-office-hours">';
 	foreach ( $days as $day ) {
-		$output .= '<div class="office-hours-day">';
+		$output     .= '<div class="office-hours-day">';
 			$output .= '<span class="day-name">' . esc_html( ucfirst( $day ) . ':' ) . '</span> ';
-			if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
-				$start_time = date( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
-				$end_time = date( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
-				$output .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
-			} else {
-				$output .= '<span class="day-hours">Closed</span>';
-			}
+		if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
+			$start_time = gmdate( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
+			$end_time   = gmdate( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
+			$output    .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
+		} else {
+			$output .= '<span class="day-hours">Closed</span>';
+		}
 		$output .= '</div>';
 	}
 	$output .= '</div>';
-	
+
 	return apply_filters( 'rentfetch_filter_property_office_hours', $output, $property_id );
 }
 
+/**
+ * Parse property fees CSV content into normalized fee rows.
+ *
+ * @param string $csv_content Raw CSV content.
+ * @return array Parsed fee rows.
+ */
 function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 	$fees_data = array();
 	if ( ! is_string( $csv_content ) || '' === trim( $csv_content ) ) {
 		return $fees_data;
 	}
 
-	$handle = fopen( 'php://temp', 'r+' );
-	if ( false === $handle ) {
-		return $fees_data;
-	}
+	$csv_file = new SplTempFileObject();
+	$csv_file->fwrite( $csv_content );
+	$csv_file->rewind();
 
-	fwrite( $handle, $csv_content );
-	rewind( $handle );
-
-	$header = fgetcsv( $handle, 100000, ',', '"', '\\' );
+	$header = $csv_file->fgetcsv( ',', '"', '\\' );
 	if ( false === $header || ! is_array( $header ) ) {
-		fclose( $handle );
 		return $fees_data;
 	}
 
-	// Normalize header: trim and lowercase
-	$header = array_map( function( $col ) {
-		$clean_col = str_replace( "\xEF\xBB\xBF", '', (string) $col ); // Strip UTF-8 BOM if present.
-		return strtolower( trim( $clean_col ) );
-	}, $header );
-	
+	// Normalize header: trim and lowercase.
+	$header = array_map(
+		function ( $col ) {
+			$clean_col = str_replace( "\xEF\xBB\xBF", '', (string) $col ); // Strip UTF-8 BOM if present.
+			return strtolower( trim( $clean_col ) );
+		},
+		$header
+	);
+
 	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
-	
-	// Find column indices - only require 'description' to be present
+
+	// Find column indices - only require 'description' to be present.
 	$column_indices = array();
 	foreach ( $expected_columns as $col ) {
-		$index = array_search( $col, $header, true );
-		$column_indices[ $col ] = ( $index !== false ) ? $index : -1;
+		$index                  = array_search( $col, $header, true );
+		$column_indices[ $col ] = ( false !== $index ) ? $index : -1;
 	}
-	
-	// Must have at least 'description' column
-	if ( $column_indices['description'] === -1 ) {
-		fclose( $handle );
+
+	// Must have at least 'description' column.
+	if ( -1 === $column_indices['description'] ) {
 		return $fees_data;
 	}
-	
-	while ( ( $data = fgetcsv( $handle, 100000, ',', '"', '\\' ) ) !== false ) {
+
+	while ( ! $csv_file->eof() ) {
+		$data = $csv_file->fgetcsv( ',', '"', '\\' );
 		if ( ! is_array( $data ) ) {
 			continue;
 		}
-		
-		// Get value from column index, or empty string if column doesn't exist
-		$get_value = function( $col ) use ( $column_indices, $data ) {
+
+		// Get value from column index, or empty string if column doesn't exist.
+		$get_value = function ( $col ) use ( $column_indices, $data ) {
 			$index = $column_indices[ $col ];
-			if ( $index === -1 || ! isset( $data[ $index ] ) ) {
+			if ( -1 === $index || ! isset( $data[ $index ] ) ) {
 				return '';
 			}
 			return sanitize_text_field( $data[ $index ] );
 		};
-		
-		// Skip rows where description is empty
+
+		// Skip rows where description is empty.
 		$description = $get_value( 'description' );
 		if ( empty( $description ) ) {
 			continue;
 		}
-		
-		// Get longnotes value - allow HTML so use wp_kses_post instead of sanitize_text_field
+
+		// Get longnotes value - allow HTML so use wp_kses_post instead of sanitize_text_field.
 		$longnotes_index = $column_indices['longnotes'];
 		$longnotes_value = '';
-		if ( $longnotes_index !== -1 && isset( $data[ $longnotes_index ] ) ) {
+		if ( -1 !== $longnotes_index && isset( $data[ $longnotes_index ] ) ) {
 			$longnotes_value = wp_kses_post( $data[ $longnotes_index ] );
 		}
-		
+
 		$fees_data[] = array(
 			'description' => $description,
 			'price'       => $get_value( 'price' ),
@@ -3965,7 +3996,6 @@ function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
 		);
 	}
 
-	fclose( $handle );
 	return $fees_data;
 }
 
@@ -3977,7 +4007,7 @@ function rentfetch_process_csv_content_to_fees_array( $csv_content ) {
  */
 function rentfetch_property_office_hours( $property_id = null ) {
 	$office_hours = rentfetch_get_property_office_hours( $property_id );
-	
+
 	if ( $office_hours ) {
 		echo wp_kses_post( $office_hours );
 	}

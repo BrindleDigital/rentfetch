@@ -50,14 +50,14 @@ function rentfetch_ajax_warm_cache() {
 		}
 
 		$data = array(
-			'message'    => $message,
-			'warmed'     => $result['warmed'],
-			'failed'     => $result['failed'],
-			'total'      => $result['total'],
-			'batch_size' => isset( $result['batch_size'] ) ? (int) $result['batch_size'] : 0,
-			'cursor'     => isset( $result['cursor'] ) ? (int) $result['cursor'] : 0,
+			'message'     => $message,
+			'warmed'      => $result['warmed'],
+			'failed'      => $result['failed'],
+			'total'       => $result['total'],
+			'batch_size'  => isset( $result['batch_size'] ) ? (int) $result['batch_size'] : 0,
+			'cursor'      => isset( $result['cursor'] ) ? (int) $result['cursor'] : 0,
 			'next_cursor' => isset( $result['next_cursor'] ) ? (int) $result['next_cursor'] : 0,
-			'errors'     => isset( $result['errors'] ) && is_array( $result['errors'] ) ? $result['errors'] : array(),
+			'errors'      => isset( $result['errors'] ) && is_array( $result['errors'] ) ? $result['errors'] : array(),
 		);
 
 		if ( function_exists( 'rentfetch_get_admin_bar_cache_states' ) ) {
@@ -125,14 +125,14 @@ function rentfetch_ajax_get_popular_searches() {
 			}
 		}
 
-		$percentage   = $total_searches > 0 ? round( ( $search_data['count'] / $total_searches ) * 100, 1 ) : 0;
-		$formatted[]  = array(
-			'type'       => esc_html( sanitize_text_field( $search_data['type'] ) ),
-			'query'      => esc_html( $query_string ),
+		$percentage  = $total_searches > 0 ? round( ( $search_data['count'] / $total_searches ) * 100, 1 ) : 0;
+		$formatted[] = array(
+			'type'          => esc_html( sanitize_text_field( $search_data['type'] ) ),
+			'query'         => esc_html( $query_string ),
 			'display_query' => esc_html( $display_query ),
-			'count'      => esc_html( (string) absint( $search_data['count'] ) ),
-			'percentage' => esc_html( (string) $percentage ),
-			'last_used'  => esc_html( human_time_diff( absint( $search_data['last_used'] ) ) . ' ago' ),
+			'count'         => esc_html( (string) absint( $search_data['count'] ) ),
+			'percentage'    => esc_html( (string) $percentage ),
+			'last_used'     => esc_html( human_time_diff( absint( $search_data['last_used'] ) ) . ' ago' ),
 		);
 	}
 

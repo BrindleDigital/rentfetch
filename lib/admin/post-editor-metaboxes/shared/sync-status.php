@@ -1,8 +1,18 @@
 <?php
 /**
- * Get sync status color class based on API response timestamps
+ * Shared sync-status helpers.
  *
- * @param int $post_id The post ID to check
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Get sync status color class based on API response timestamps.
+ *
+ * @param int $post_id The post ID to check.
  * @return string Color class (green/yellow/red/gray)
  */
 function rentfetch_get_sync_status_class( $post_id ) {
@@ -20,15 +30,15 @@ function rentfetch_get_sync_status_class( $post_id ) {
 		return 'sync-gray'; // No valid timestamps.
 	}
 
-	$current_time = current_time( 'timestamp' );
-	$hours_diff = ( $current_time - $sync_state['timestamp'] ) / 3600;
-	
+	$current_time = time();
+	$hours_diff   = ( $current_time - $sync_state['timestamp'] ) / 3600;
+
 	if ( $hours_diff <= 24 ) {
-		return 'sync-green'; // Within 24 hours
-	} elseif ( $hours_diff <= 72 ) { // 3 days
-		return 'sync-yellow'; // Within 3 days
+		return 'sync-green'; // Within 24 hours.
+	} elseif ( $hours_diff <= 72 ) { // 3 days.
+		return 'sync-yellow'; // Within 3 days.
 	} else {
-		return 'sync-red'; // Older than 3 days
+		return 'sync-red'; // Older than 3 days.
 	}
 }
 
@@ -162,52 +172,52 @@ function rentfetch_get_last_synced_state( $post_id ) {
 }
 
 /**
- * Get relative time string (e.g., "Today", "1 day ago", "2 weeks ago")
+ * Get relative time string (e.g., "Today", "1 day ago", "2 weeks ago").
  *
- * @param string $timestamp The timestamp to convert
+ * @param string $timestamp The timestamp to convert.
  * @return string The relative time string
  */
 function rentfetch_get_relative_time( $timestamp ) {
-	$timestamp = strtotime( $timestamp );
-	$current_time = current_time( 'timestamp' );
+	$timestamp    = strtotime( $timestamp );
+	$current_time = time();
 	$diff_seconds = $current_time - $timestamp;
-	
+
 	if ( $diff_seconds < 0 ) {
 		return 'In the future';
 	}
-	
+
 	$diff_minutes = floor( $diff_seconds / 60 );
-	$diff_hours = floor( $diff_seconds / 3600 );
-	$diff_days = floor( $diff_seconds / 86400 );
-	$diff_weeks = floor( $diff_seconds / 604800 );
-	$diff_months = floor( $diff_seconds / 2592000 );
-	$diff_years = floor( $diff_seconds / 31536000 );
-	
+	$diff_hours   = floor( $diff_seconds / 3600 );
+	$diff_days    = floor( $diff_seconds / 86400 );
+	$diff_weeks   = floor( $diff_seconds / 604800 );
+	$diff_months  = floor( $diff_seconds / 2592000 );
+	$diff_years   = floor( $diff_seconds / 31536000 );
+
 	if ( $diff_seconds < 60 ) {
 		return 'Just now';
 	} elseif ( $diff_minutes < 60 ) {
-		return $diff_minutes . ' minute' . ( $diff_minutes != 1 ? 's' : '' ) . ' ago';
+		return $diff_minutes . ' minute' . ( 1 !== $diff_minutes ? 's' : '' ) . ' ago';
 	} elseif ( $diff_hours < 24 ) {
-		return $diff_hours . ' hour' . ( $diff_hours != 1 ? 's' : '' ) . ' ago';
+		return $diff_hours . ' hour' . ( 1 !== $diff_hours ? 's' : '' ) . ' ago';
 	} elseif ( $diff_days < 7 ) {
-		if ( $diff_days == 0 ) {
+		if ( 0 === $diff_days ) {
 			return 'Today';
-		} elseif ( $diff_days == 1 ) {
+		} elseif ( 1 === $diff_days ) {
 			return 'Yesterday';
 		} else {
 			return $diff_days . ' days ago';
 		}
 	} elseif ( $diff_weeks < 4 ) {
-		return $diff_weeks . ' week' . ( $diff_weeks != 1 ? 's' : '' ) . ' ago';
+		return $diff_weeks . ' week' . ( 1 !== $diff_weeks ? 's' : '' ) . ' ago';
 	} elseif ( $diff_months < 12 ) {
-		return $diff_months . ' month' . ( $diff_months != 1 ? 's' : '' ) . ' ago';
+		return $diff_months . ' month' . ( 1 !== $diff_months ? 's' : '' ) . ' ago';
 	} else {
-		return $diff_years . ' year' . ( $diff_years != 1 ? 's' : '' ) . ' ago';
+		return $diff_years . ' year' . ( 1 !== $diff_years ? 's' : '' ) . ' ago';
 	}
 }
 
 /**
- * Get tooltip content showing API names and dates
+ * Get tooltip content showing API names and dates.
  *
  * @param int $post_id The post ID.
  * @return string The tooltip HTML content.
@@ -223,8 +233,8 @@ function rentfetch_get_sync_tooltip( $post_id ) {
 
 	foreach ( $api_response as $api_name => $response_data ) {
 		if ( is_array( $response_data ) ) {
-			// Look for timestamp fields in various possible formats
-			$timestamp = null;
+			// Look for timestamp fields in various possible formats.
+			$timestamp       = null;
 			$possible_fields = array( 'updated', 'timestamp', 'last_sync', 'sync_date', 'date' );
 
 			foreach ( $possible_fields as $field ) {
@@ -235,14 +245,14 @@ function rentfetch_get_sync_tooltip( $post_id ) {
 			}
 
 			if ( $timestamp ) {
-				$relative_time = rentfetch_get_relative_time( $timestamp );
+				$relative_time   = rentfetch_get_relative_time( $timestamp );
 				$tooltip_lines[] = esc_html( $api_name ) . ': ' . $relative_time;
 			} else {
-				// If no timestamp found, just show the API name
+				// If no timestamp found, just show the API name.
 				$tooltip_lines[] = esc_html( $api_name ) . ': No timestamp';
 			}
 		} else {
-			// If response_data is not an array, just show the API name
+			// If response_data is not an array, just show the API name.
 			$tooltip_lines[] = esc_html( $api_name ) . ': ' . esc_html( $response_data );
 		}
 	}
@@ -251,7 +261,6 @@ function rentfetch_get_sync_tooltip( $post_id ) {
 		return 'No API data found';
 	}
 
-	$result = implode( "<br>", $tooltip_lines );
-	// error_log('Tooltip result for post ' . $post_id . ': ' . $result);
+	$result = implode( '<br>', $tooltip_lines );
 	return $result;
 }

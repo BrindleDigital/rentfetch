@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return void.
  */
 function rentfetch_floorplan_images() {
-	
+
 	// read the flag for whether we should use a slider.
 	global $floorplan_images_use_slider;
-	
+
 	if ( false === $floorplan_images_use_slider ) {
 		rentfetch_floorplan_single_image();
 	} elseif ( is_singular( 'floorplans' ) ) {
@@ -43,7 +43,6 @@ function rentfetch_floorplan_single_image() {
 	echo '<div class="floorplan-single-image-wrap">';
 		printf( '<img class="floorplan-single-image" src="%s" loading="lazy">', esc_url( $images[0]['url'] ) );
 	echo '</div>';
-
 }
 
 /**
@@ -71,29 +70,29 @@ function rentfetch_floorplan_image_slider() {
 			echo '<div class="blaze-track-container">';
 				echo '<div class="blaze-track">';
 
-					foreach ( $images as $image ) {
+	foreach ( $images as $image ) {
 
-						// check if the image url includes "fallback".
-						if ( strpos( $image['url'], 'fallback' ) !== false ) {
-							echo '<div class="floorplan-image-slide">';
-								printf( '<img class="floorplan-image" src="%s" loading="lazy">', esc_url( $image['url'] ) );
-							echo '</div>';
-						} else {
-							echo '<div class="floorplan-image-slide">';
-								printf( '<img class="floorplan-image floorplan-image-gallery" data-dallery="gallery-%s" src="%s" loading="lazy">', (int) $rand, esc_url( $image['url'] ) );
-							echo '</div>';
-						}
-					}
+		// check if the image url includes "fallback".
+		if ( strpos( $image['url'], 'fallback' ) !== false ) {
+			echo '<div class="floorplan-image-slide">';
+				printf( '<img class="floorplan-image" src="%s" loading="lazy">', esc_url( $image['url'] ) );
+			echo '</div>';
+		} else {
+			echo '<div class="floorplan-image-slide">';
+				printf( '<img class="floorplan-image floorplan-image-gallery" data-dallery="gallery-%s" src="%s" loading="lazy">', (int) $rand, esc_url( $image['url'] ) );
+			echo '</div>';
+		}
+	}
 
 				echo '</div>'; // .blaze-track.
 			echo '</div>'; // .blaze-track-container.
 
-			if ( count( $images ) > 1 ) {
-				echo '<div class="blaze-buttons">';
-					echo '<button class="blaze-prev"></button>';
-					echo '<button class="blaze-next"></button>';
-				echo '</div>'; // .blaze-buttons.
-			}
+	if ( count( $images ) > 1 ) {
+		echo '<div class="blaze-buttons">';
+			echo '<button class="blaze-prev"></button>';
+			echo '<button class="blaze-next"></button>';
+		echo '</div>'; // .blaze-buttons.
+	}
 
 		echo '</div>'; // .blaze-container.
 	echo '</div>'; // .blaze-slider.

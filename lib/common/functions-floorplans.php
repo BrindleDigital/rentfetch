@@ -9,8 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-//* Post classes (in all archive contexts)
-
+/**
+ * Add availability classes to floor plan posts in archive contexts.
+ *
+ * @param array $classes Existing post classes.
+ * @return array Modified post classes.
+ */
 function rentfetch_floorplans_post_classes( $classes ) {
 
 	$units_count = rentfetch_get_floorplan_units_count_from_meta();
@@ -18,15 +22,14 @@ function rentfetch_floorplans_post_classes( $classes ) {
 		$classes[] = 'has-units-available';
 	} else {
 		$classes[] = 'no-units-available';
-		
+
 		$fade_out_unavailable = get_option( 'rentfetch_options_floorplan_apply_styles_no_floorplans' );
-		if ( $fade_out_unavailable === '1' ) {
+		if ( '1' === $fade_out_unavailable ) {
 			$classes[] = 'no-units-available-faded';
 		}
 	}
 
 	return $classes;
-
 }
 add_filter( 'rentfetch_filter_floorplans_post_classes', 'rentfetch_floorplans_post_classes', 10, 1 );
 
@@ -255,7 +258,7 @@ function rentfetch_get_floorplan_property_monthly_required_fees_total( $floorpla
 	if ( ! $floorplan_post_id ) {
 		$floorplan_post_id = get_the_ID();
 	}
-	$scoped_total = function_exists( 'rentfetch_get_synced_scoped_monthly_required_fee_total' )
+	$scoped_total     = function_exists( 'rentfetch_get_synced_scoped_monthly_required_fee_total' )
 		? rentfetch_get_synced_scoped_monthly_required_fee_total( $floorplan_post_id )
 		: 0.0;
 	$property_post_id = rentfetch_get_connected_property_post_id_for_floorplan( $floorplan_post_id );
@@ -381,13 +384,13 @@ function rentfetch_floorplan_pricing() {
  */
 function rentfetch_get_floorplan_specials() {
 
-	$specials = get_post_meta( get_the_ID(), 'has_specials', true );
+	$specials               = get_post_meta( get_the_ID(), 'has_specials', true );
 	$specials_override_text = get_post_meta( get_the_ID(), 'specials_override_text', true );
-	
-	// Sanitize the override text to plain text to prevent HTML from being output
+
+	// Sanitize the override text to plain text to prevent HTML from being output.
 	$specials_override_text = sanitize_text_field( $specials_override_text );
-	
-	if ( $specials && !$specials_override_text ) {
+
+	if ( $specials && ! $specials_override_text ) {
 		$specials_text = 'Specials available';
 	} elseif ( $specials_override_text ) {
 		$specials_text = $specials_override_text;
@@ -401,7 +404,7 @@ function rentfetch_get_floorplan_specials() {
 /**
  * Echo the move-in special markup.
  *
- * @param string $specials The move-in special value (yes or no).
+ * @param string $specials_text The move-in special text.
  *
  * @return string|null.
  */
@@ -537,7 +540,7 @@ function rentfetch_floorplan_tour_embed() {
  */
 function rentfetch_get_floorplan_links() {
 
-	$units_count = rentfetch_get_floorplan_units_count_from_cpt();
+	$units_count            = rentfetch_get_floorplan_units_count_from_cpt();
 	$force_enable_fb_single = get_option( 'rentfetch_options_floorplan_force_single_template_link', 'disabled' );
 
 	ob_start();
@@ -597,7 +600,7 @@ function rentfetch_floorplan_buttons() {
  */
 function rentfetch_floorplan_default_availability_button() {
 
-	$button_enabled = (int) get_option( 'rentfetch_options_availability_button_enabled', false );
+	$button_enabled        = (int) get_option( 'rentfetch_options_availability_button_enabled', false );
 	$hide_if_no_availabily = (int) get_option( 'rentfetch_options_availability_button_enabled_hide_when_unavailable', false );
 
 	// bail if the button is not enabled.
@@ -607,9 +610,9 @@ function rentfetch_floorplan_default_availability_button() {
 
 	// if the button is set to hide when there's not availability, let's check for availability and do the needful.
 	if ( $hide_if_no_availabily ) {
-		$available_units = get_post_meta( get_the_ID(), 'available_units', true );
+		$available_units   = get_post_meta( get_the_ID(), 'available_units', true );
 		$availability_date = get_post_meta( get_the_ID(), 'availability_date', true );
-		
+
 		if ( $available_units < 1 && empty( $availability_date ) ) {
 			return false;
 		}
@@ -628,8 +631,8 @@ function rentfetch_floorplan_default_availability_button_markup() {
 
 	$button_label = get_option( 'rentfetch_options_availability_button_button_label', 'availability' );
 
-	$link   = get_post_meta( get_the_ID(), 'availability_url', true );
-	$target = rentfetch_get_link_target( $link );
+	$link           = get_post_meta( get_the_ID(), 'availability_url', true );
+	$target         = rentfetch_get_link_target( $link );
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_applynow_click', rentfetch_get_floorplan_tracking_context() );
 
 	// bail if no link is set.
@@ -668,7 +671,7 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_unava
  * @return string the availability button markup.
  */
 function rentfetch_floorplan_default_unavailability_button_markup() {
-	
+
 	$units_count = rentfetch_get_floorplan_units_count_from_meta();
 	if ( $units_count > 0 ) {
 		return false;
@@ -676,8 +679,8 @@ function rentfetch_floorplan_default_unavailability_button_markup() {
 
 	$button_label = get_option( 'rentfetch_options_unavailability_button_button_label', 'availability' );
 
-	$link   = get_option( 'rentfetch_options_unavailability_button_link' );
-	$target = rentfetch_get_link_target( $link );
+	$link           = get_option( 'rentfetch_options_unavailability_button_link' );
+	$target         = rentfetch_get_link_target( $link );
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_unavailability_click', rentfetch_get_floorplan_tracking_context() );
 
 	// bail if no link is set.
@@ -714,9 +717,9 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_conta
  */
 function rentfetch_floorplan_default_contact_button_markup() {
 
-	$button_label = get_option( 'rentfetch_options_contact_button_button_label', 'Contact' );
-	$link         = get_option( 'rentfetch_options_contact_button_link', false );
-	$target       = rentfetch_get_link_target( $link );
+	$button_label   = get_option( 'rentfetch_options_contact_button_button_label', 'Contact' );
+	$link           = get_option( 'rentfetch_options_contact_button_link', false );
+	$target         = rentfetch_get_link_target( $link );
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_contact_click', rentfetch_get_floorplan_tracking_context() );
 
 	return sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-contact-button"%s>%s</a>', $link, $target, $tracking_attrs, $button_label );
@@ -741,7 +744,7 @@ function rentfetch_floorplan_default_tour_button() {
 	}
 
 	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_scheduletour_click', rentfetch_get_floorplan_tracking_context() );
-	$button = sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-tour-button"%s>%s</a>', $fallback_link, $target, $tracking_attrs, $label );
+	$button         = sprintf( '<a href="%s" target="%s" class="rentfetch-button rentfetch-floorplan-tour-button"%s>%s</a>', $fallback_link, $target, $tracking_attrs, $label );
 
 	echo wp_kses_post( apply_filters( 'rentfetch_floorplan_default_tour_button', $button ) );
 }
@@ -782,32 +785,31 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 
 	// * Pricing.
 	// We need to get the 'minimum_rent' and 'maximum_rent' meta values and make sure they're not empty. If there are any values, then we add the pricing column.
-	$args_pricing      = $args;
-	$args_pricing_meta = array(
+	$args_pricing                 = $args;
+	$args_pricing_meta            = array(
 		'key'     => 'minimum_rent',
 		'value'   => 0,
 		'compare' => '>',
 	);
 	$args_pricing['meta_query'][] = $args_pricing_meta;
-	
-	
+
 	// We need to get the 'maximum_rent' meta values and make sure they're not empty. If there are any values, then we add the pricing column.
-	$args_pricing_max      = $args;
-	$args_pricing_max_meta = array(
+	$args_pricing_max                 = $args;
+	$args_pricing_max_meta            = array(
 		'key'     => 'maximum_rent',
 		'value'   => 0,
 		'compare' => '>',
 	);
 	$args_pricing_max['meta_query'][] = $args_pricing_max_meta;
-	
-	$posts_pricing = get_posts( $args_pricing );
+
+	$posts_pricing     = get_posts( $args_pricing );
 	$posts_pricing_max = get_posts( $args_pricing_max );
-	
+
 	// If either $posts_pricing or $posts_pricing_max is an array with at least one item, then we'll add the pricing column.
 	if ( ( is_array( $posts_pricing ) && count( $posts_pricing ) > 0 ) || ( is_array( $posts_pricing_max ) && count( $posts_pricing_max ) > 0 ) ) {
 		$columns[] = 'pricing';
 	}
-	
+
 	// * Deposit.
 	// We need to add an array to args that looks for 'deposit' in the meta key and makes sure the value is non-zero and not empty/null.
 	$args_deposit      = $args;
@@ -918,8 +920,8 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 	if ( is_array( $posts_specials ) && count( $posts_specials ) > 0 ) {
 		$columns[] = 'specials';
 	}
-	
-	//* Building name.
+
+	// * Building name.
 	// We need to add an array to args that looks for 'building_name' in the meta key and makes sure the value is non-empty.
 	$args_building_name      = $args;
 	$args_building_name_meta = array(
@@ -927,26 +929,26 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 		'value'   => '',
 		'compare' => '!=',
 	);
-	
+
 	$args_building_name['meta_query'][] = $args_building_name_meta;
-	$posts_building_name = get_posts( $args_building_name );
-	
+	$posts_building_name                = get_posts( $args_building_name );
+
 	// if $posts_building_name is an array with at least one item, then we'll add the building name column.
 	if ( is_array( $posts_building_name ) && count( $posts_building_name ) > 0 ) {
 		$columns[] = 'building_name';
 	}
-	
-	//* Floor number.
+
+	// * Floor number.
 	// We need to add an array to args that looks for 'floor_number' in the meta key and makes sure the value is non-empty.
-	$args_floor_number      = $args;
-	$args_floor_number_meta = array(
+	$args_floor_number                 = $args;
+	$args_floor_number_meta            = array(
 		'key'     => 'floor_number',
 		'value'   => '',
 		'compare' => '!=',
 	);
 	$args_floor_number['meta_query'][] = $args_floor_number_meta;
-	$posts_floor_number = get_posts( $args_floor_number );
-	
+	$posts_floor_number                = get_posts( $args_floor_number );
+
 	// if $posts_floor_number is an array with at least one item, then we'll add the floor number column.
 	if ( is_array( $posts_floor_number ) && count( $posts_floor_number ) > 0 ) {
 		$columns[] = 'floor_number';
@@ -986,7 +988,7 @@ function rentfetch_floorplan_unit_table() {
 		),
 	);
 
-	$args    = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
 
@@ -999,104 +1001,104 @@ function rentfetch_floorplan_unit_table() {
 		echo '<table class="unit-details-table">';
 			echo '<tr>';
 
-				if ( in_array( 'building_name', $columns, true ) ) {
-					echo '<th class="unit-buliding-name">Building</th>';
-				}
-				
-				if ( in_array( 'title', $columns, true ) ) {
-					echo '<th class="unit-title">Apt #</th>';
-				}
+		if ( in_array( 'building_name', $columns, true ) ) {
+			echo '<th class="unit-buliding-name">Building</th>';
+		}
 
-				if ( in_array( 'floor_number', $columns, true ) ) {
-					echo '<th class="building-floor-number">Floor</th>';
-				}
+		if ( in_array( 'title', $columns, true ) ) {
+			echo '<th class="unit-title">Apt #</th>';
+		}
 
-				if ( in_array( 'sqrft', $columns, true ) ) {
-					printf( '<th class="unit-sqrft">%s</th>', esc_html( $square_feet_label ) );
-				}
+		if ( in_array( 'floor_number', $columns, true ) ) {
+			echo '<th class="building-floor-number">Floor</th>';
+		}
 
-				if ( in_array( 'pricing', $columns, true ) ) {
-					echo '<th class="unit-starting-at">Starting At</th>';
-				}
+		if ( in_array( 'sqrft', $columns, true ) ) {
+			printf( '<th class="unit-sqrft">%s</th>', esc_html( $square_feet_label ) );
+		}
 
-				if ( in_array( 'deposit', $columns, true ) ) {
-					echo '<th class="unit-deposit">Deposit</th>';
-				}
+		if ( in_array( 'pricing', $columns, true ) ) {
+			echo '<th class="unit-starting-at">Starting At</th>';
+		}
 
-				if ( in_array( 'availability_date', $columns, true ) ) {
-					echo '<th class="unit-availability">Date Available</th>';
-				}
+		if ( in_array( 'deposit', $columns, true ) ) {
+			echo '<th class="unit-deposit">Deposit</th>';
+		}
 
-				if ( in_array( 'amenities', $columns, true ) ) {
-					echo '<th class="unit-amenities">Amenities</th>';
-				}
+		if ( in_array( 'availability_date', $columns, true ) ) {
+			echo '<th class="unit-availability">Date Available</th>';
+		}
 
-				if ( in_array( 'specials', $columns, true ) ) {
-					echo '<th class="unit-specials">Specials</th>';
-				}
+		if ( in_array( 'amenities', $columns, true ) ) {
+			echo '<th class="unit-amenities">Amenities</th>';
+		}
+
+		if ( in_array( 'specials', $columns, true ) ) {
+			echo '<th class="unit-specials">Specials</th>';
+		}
 
 				echo '<th class="unit-buttons"></th>';
 			echo '</tr>';
 
-			while ( $units_table_query->have_posts() ) {
+		while ( $units_table_query->have_posts() ) {
 
-				$units_table_query->the_post();
+			$units_table_query->the_post();
 
-				$title             = rentfetch_get_unit_title();
-				$building_name     = rentfetch_get_unit_building_name();
-				$floor_number      = rentfetch_get_unit_floor_number();
-				$square_feet       = rentfetch_get_unit_square_feet();
-				$pricing           = rentfetch_get_unit_pricing();
-				$deposit           = rentfetch_get_unit_deposit();
-				$availability_date = rentfetch_get_unit_availability_date();
-				$amenities         = rentfetch_get_unit_amenities();
-				$specials          = rentfetch_get_unit_specials();
+			$title             = rentfetch_get_unit_title();
+			$building_name     = rentfetch_get_unit_building_name();
+			$floor_number      = rentfetch_get_unit_floor_number();
+			$square_feet       = rentfetch_get_unit_square_feet();
+			$pricing           = rentfetch_get_unit_pricing();
+			$deposit           = rentfetch_get_unit_deposit();
+			$availability_date = rentfetch_get_unit_availability_date();
+			$amenities         = rentfetch_get_unit_amenities();
+			$specials          = rentfetch_get_unit_specials();
 
-				echo '<tr>';
-				
-					if ( in_array( 'building_name', $columns, true ) ) {
-						printf( '<td class="unit-building-name">%s</td>', esc_html( $building_name ) );
-					}
+			echo '<tr>';
 
-					if ( in_array( 'title', $columns, true ) ) {
-						printf( '<td class="unit-title">%s</td>', esc_html( $title ) );
-					}
-					
-					if ( in_array( 'floor_number', $columns, true ) ) {
-						printf( '<td class="unit-floor-number">%s</td>', esc_html( $floor_number ) );
-					}
+			if ( in_array( 'building_name', $columns, true ) ) {
+				printf( '<td class="unit-building-name">%s</td>', esc_html( $building_name ) );
+			}
 
-					if ( in_array( 'sqrft', $columns, true ) ) {
-						printf( '<td class="unit-sqrft">%s</td>', $square_feet ? esc_html( $square_feet ) : '' );
-					}
+			if ( in_array( 'title', $columns, true ) ) {
+				printf( '<td class="unit-title">%s</td>', esc_html( $title ) );
+			}
 
-					if ( in_array( 'pricing', $columns, true ) ) {
-						printf( '<td class="unit-starting-at">%s</td>', $pricing ? wp_kses_post( $pricing ) : '' );
-					}
+			if ( in_array( 'floor_number', $columns, true ) ) {
+				printf( '<td class="unit-floor-number">%s</td>', esc_html( $floor_number ) );
+			}
 
-					if ( in_array( 'deposit', $columns, true ) ) {
-						printf( '<td class="unit-deposit">%s</td>', esc_html( $deposit ) );
-					}
+			if ( in_array( 'sqrft', $columns, true ) ) {
+				printf( '<td class="unit-sqrft">%s</td>', $square_feet ? esc_html( $square_feet ) : '' );
+			}
 
-					if ( in_array( 'availability_date', $columns, true ) ) {
-						printf( '<td class="unit-availability">%s</td>', esc_html( $availability_date ) );
-					}
+			if ( in_array( 'pricing', $columns, true ) ) {
+				printf( '<td class="unit-starting-at">%s</td>', $pricing ? wp_kses_post( $pricing ) : '' );
+			}
 
-					if ( in_array( 'amenities', $columns, true ) ) {
-						printf( '<td class="unit-amenities">%s</td>', esc_html( $amenities ) );
-					}
+			if ( in_array( 'deposit', $columns, true ) ) {
+				printf( '<td class="unit-deposit">%s</td>', esc_html( $deposit ) );
+			}
 
-					if ( in_array( 'specials', $columns, true ) ) {
-						printf( '<td class="unit-specials">%s</td>', wp_kses_post( $specials ) );
-					}
+			if ( in_array( 'availability_date', $columns, true ) ) {
+				printf( '<td class="unit-availability">%s</td>', esc_html( $availability_date ) );
+			}
 
-					echo '<td class="unit-buttons">';
-						do_action( 'rentfetch_do_unit_button' );
-					echo '</td>';
+			if ( in_array( 'amenities', $columns, true ) ) {
+				printf( '<td class="unit-amenities">%s</td>', esc_html( $amenities ) );
+			}
+
+			if ( in_array( 'specials', $columns, true ) ) {
+				printf( '<td class="unit-specials">%s</td>', wp_kses_post( $specials ) );
+			}
+
+				echo '<td class="unit-buttons">';
+					do_action( 'rentfetch_do_unit_button' );
+				echo '</td>';
 
 				echo '</tr>';
 
-			}
+		}
 
 		echo '</table>';
 
@@ -1132,7 +1134,7 @@ function rentfetch_floorplan_unit_list() {
 		),
 	);
 
-	$args    = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
+	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
 
@@ -1160,41 +1162,41 @@ function rentfetch_floorplan_unit_list() {
 
 			echo '<details class="unit-details">';
 				echo '<summary class="unit-summary">';
-					if ( $pricing ) {
-						printf( '<p class="unit-title">%s, <span class="label">starting at</span> %s<span class="dropdown"></span></p>', esc_html( $title ), wp_kses_post( $pricing ) );
-					} else {
-						printf( '<p class="unit-title">%s<span class="dropdown"></span></p>', esc_html( $title ) );
-					}
+			if ( $pricing ) {
+				printf( '<p class="unit-title">%s, <span class="label">starting at</span> %s<span class="dropdown"></span></p>', esc_html( $title ), wp_kses_post( $pricing ) );
+			} else {
+				printf( '<p class="unit-title">%s<span class="dropdown"></span></p>', esc_html( $title ) );
+			}
 				echo '</summary>';
 				echo '<ul class="unit-details-list-wrap">';
 
-					if ( $building_name ) {
-						printf( '<li class="unit-building-name"><span class="label">Building:</span> %s</li>', esc_html( $building_name ) );
-					}
-					
-					if ( $floor_number ) {
-						printf( '<li class="unit-floor-number"><span class="label">Floor number:</span> %s</li>', esc_html( $floor_number ) );
-					}
+			if ( $building_name ) {
+				printf( '<li class="unit-building-name"><span class="label">Building:</span> %s</li>', esc_html( $building_name ) );
+			}
 
-					if ( in_array( 'sqrft', $columns, true ) && $square_feet ) {
-						printf( '<li class="unit-sqrft"><span class="label">%s:</span> %s</li>', esc_html( $square_feet_label ), esc_html( $square_feet ) );
-					}
-					
-					if ( $deposit && 'Please inquire' !== $deposit ) {
-						printf( '<li class="unit-deposit"><span class="label">Deposit:</span> %s</li>', esc_html( $deposit ) );
-					}
+			if ( $floor_number ) {
+				printf( '<li class="unit-floor-number"><span class="label">Floor number:</span> %s</li>', esc_html( $floor_number ) );
+			}
 
-					if ( $availability_date ) {
-						printf( '<li class="unit-availability"><span class="label">Date Available:</span> %s</li>', esc_html( $availability_date ) );
-					}
+			if ( in_array( 'sqrft', $columns, true ) && $square_feet ) {
+				printf( '<li class="unit-sqrft"><span class="label">%s:</span> %s</li>', esc_html( $square_feet_label ), esc_html( $square_feet ) );
+			}
 
-					if ( $amenities ) {
-						printf( '<li class="unit-amenities"><span class="label">Amenities:</span> %s</li>', esc_html( $amenities ) );
-					}
+			if ( $deposit && 'Please inquire' !== $deposit ) {
+				printf( '<li class="unit-deposit"><span class="label">Deposit:</span> %s</li>', esc_html( $deposit ) );
+			}
 
-					if ( $specials ) {
-						printf( '<li class="unit-specials">Specials: %s</li>', esc_html( $specials ) );
-					}
+			if ( $availability_date ) {
+				printf( '<li class="unit-availability"><span class="label">Date Available:</span> %s</li>', esc_html( $availability_date ) );
+			}
+
+			if ( $amenities ) {
+				printf( '<li class="unit-amenities"><span class="label">Amenities:</span> %s</li>', esc_html( $amenities ) );
+			}
+
+			if ( $specials ) {
+				printf( '<li class="unit-specials">Specials: %s</li>', esc_html( $specials ) );
+			}
 
 					echo '<li class="unit-buttons">';
 						do_action( 'rentfetch_do_unit_button' );
@@ -1321,6 +1323,12 @@ function rentfetch_floorplan_description() {
 	echo wp_kses_post( $description );
 }
 
+/**
+ * Get the connected property's fees embed for a floor plan.
+ *
+ * @param int|null $post_id Floor plan post ID.
+ * @return string|null Fees embed markup, or null when unavailable.
+ */
 function rentfetch_get_property_fee_embed_from_floorplan_id( $post_id = null ) {
 
 	// the post_id is the *floorplan* post ID, not the property post ID.
@@ -1329,19 +1337,19 @@ function rentfetch_get_property_fee_embed_from_floorplan_id( $post_id = null ) {
 	}
 
 	$property_post_id = rentfetch_get_connected_property_post_id_for_floorplan( $post_id );
-	
+
 	// bail if we can't find the id.
 	if ( ! $property_post_id ) {
 		return;
 	}
-	
+
 	$embed = rentfetch_get_property_fees_embed( $property_post_id );
-	
+
 	// if the embed is empty, return null.
 	if ( ! $embed ) {
 		return null;
 	}
-	
+
 	// if the embed is not empty, return the embed.
 	return $embed;
 }

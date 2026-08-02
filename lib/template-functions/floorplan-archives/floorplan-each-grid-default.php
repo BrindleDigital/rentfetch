@@ -40,49 +40,49 @@ function rentfetch_floorplans_each_grid_default() {
 	echo '<div class="floorplan-details">';
 		echo '<div class="floorplan-content">';
 
-			if ( $title ) {
-				printf( '<h3>%s</h3>', esc_html( $title ) );
-			}
+	if ( $title ) {
+		printf( '<h3>%s</h3>', esc_html( $title ) );
+	}
 
 			echo '<div class="floorplan-attributes">';
 
-				if ( $beds ) {
-					printf( '<p class="beds">%s</p>', wp_kses_post( $beds ) );
-				}
+	if ( $beds ) {
+		printf( '<p class="beds">%s</p>', wp_kses_post( $beds ) );
+	}
 
-				if ( $baths ) {
-					printf( '<p class="baths">%s</p>', wp_kses_post( $baths ) );
-				}
+	if ( $baths ) {
+		printf( '<p class="baths">%s</p>', wp_kses_post( $baths ) );
+	}
 
-				if ( $square_feet ) {
-					printf( '<p class="square-feet">%s</p>', wp_kses_post( $square_feet ) );
-				}
+	if ( $square_feet ) {
+		printf( '<p class="square-feet">%s</p>', wp_kses_post( $square_feet ) );
+	}
 
 			echo '</div>'; // .floorplan-attributes.
 
 		echo '</div>'; // .floorplan-content.
 
 		// show this if there are units or pricing (if there's nothing at all to say, don't show this section).
-		if ( $units_count > 0 || $pricing ) {
+	if ( $units_count > 0 || $pricing ) {
 
-			echo '<div class="floorplan-availability">';
+		echo '<div class="floorplan-availability">';
 
-				if ( $pricing ) {
-					printf( '<p class="pricing">%s</p>', wp_kses_post( $pricing ) );
-				}
-				
-				$rentfetch_options_floorplan_hide_number_of_units = get_option( 'rentfetch_options_floorplan_hide_number_of_units' );
-				if ( '1' !== $rentfetch_options_floorplan_hide_number_of_units ) {
-					printf( '<p class="availability">%s</p>', esc_html( $available_units ) );
-				}
+		if ( $pricing ) {
+			printf( '<p class="pricing">%s</p>', wp_kses_post( $pricing ) );
+		}
+
+			$rentfetch_options_floorplan_hide_number_of_units = get_option( 'rentfetch_options_floorplan_hide_number_of_units' );
+		if ( '1' !== $rentfetch_options_floorplan_hide_number_of_units ) {
+			printf( '<p class="availability">%s</p>', esc_html( $available_units ) );
+		}
 
 			echo '</div>'; // .floorplan-availability
 
-		}
-		
-		if ( $links ) {
-			echo wp_kses_post( $links );
-		}
+	}
+
+	if ( $links ) {
+		echo wp_kses_post( $links );
+	}
 
 		edit_post_link( 'Edit floorplan', '', '', get_the_ID() );
 

@@ -35,7 +35,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 			$string_atts .= sprintf( ' %s="%s"', $key, esc_attr( $value ) );
 		}
 	}
-	
+
 	do_action( 'rentfetch_before_floorplans_search' );
 
 	// * Our container markup for the results
@@ -57,7 +57,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 		echo '</form>';
 
 	echo '</div>';
-	
+
 	do_action( 'rentfetch_after_floorplans_search' );
 
 	return ob_get_clean();
@@ -74,11 +74,11 @@ function rentfetch_floorplansearchfilters( $atts ) {
 
 	ob_start();
 
-	rentfetch_set_floorplan_filter_shortcode_atts( $atts ?: array() );
+	rentfetch_set_floorplan_filter_shortcode_atts( $atts ? $atts : array() );
 
 	// enqueue the search floorplans ajax script.
 	wp_enqueue_script( 'rentfetch-search-floorplans-ajax' );
-	
+
 	// remove the taxonomy filter if there's a shortcode attribute for it (which hard-sets it and should disable selection).
 	if ( isset( $atts['taxonomy'] ) ) {
 		if ( 'floorplancategory' === $atts['taxonomy'] ) {
@@ -92,13 +92,13 @@ function rentfetch_floorplansearchfilters( $atts ) {
 	// needed for toggling the featured filters on and off.
 	wp_enqueue_script( 'rentfetch-floorplan-search-featured-filters-toggle' );
 
-	$shortcode_attributes_json = esc_attr( wp_json_encode( $atts ?: array() ) );
-	$rest_url                 = esc_url( rest_url( 'rentfetch/v1/search/floorplans' ) );
+	$shortcode_attributes_json = wp_json_encode( $atts ? $atts : array() );
+	$rest_url                  = rest_url( 'rentfetch/v1/search/floorplans' );
 
 	printf(
 		'<div class="filters-wrap" data-floorplan-search-rest-url="%s" data-floorplan-search-shortcode-attributes="%s">',
-		$rest_url,
-		$shortcode_attributes_json
+		esc_url( $rest_url ),
+		esc_attr( $shortcode_attributes_json )
 	);
 		echo '<div id="featured-filters">';
 			do_action( 'rentfetch_do_search_floorplans_filters' );
@@ -146,10 +146,10 @@ function rentfetch_render_floorplan_query_results( $floorplan_args ) {
 		while ( $floorplanquery->have_posts() ) {
 
 			$floorplanquery->the_post();
-			
+
 			$classes_array = get_post_class();
 			$classes_array = apply_filters( 'rentfetch_filter_floorplans_post_classes', $classes_array );
-			$classes = implode( ' ', $classes_array );
+			$classes       = implode( ' ', $classes_array );
 
 			printf( '<div class="%s">', esc_attr( $classes ) );
 

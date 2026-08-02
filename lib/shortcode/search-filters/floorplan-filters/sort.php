@@ -30,11 +30,11 @@ function rentfetch_search_filters_sort_floorplans() {
 		printf( '<legend>%s</legend>', esc_html( $label ) );
 		printf( '<button type="button" class="toggle">%s</button>', esc_html( $label ) );
 		echo '<div class="input-wrap radio checkboxes inactive">';
-			if ( 'availability' === $sort ) {
-				$checked = 'checked';
-			} else {
-				$checked = null;
-			}
+	if ( 'availability' === $sort ) {
+		$checked = 'checked';
+	} else {
+		$checked = null;
+	}
 
 			printf(
 				'<label>
@@ -49,11 +49,11 @@ function rentfetch_search_filters_sort_floorplans() {
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
 
-			if ( 'beds' === $sort ) {
-				$checked = 'checked';
-			} else {
-				$checked = null;
-			}
+	if ( 'beds' === $sort ) {
+		$checked = 'checked';
+	} else {
+		$checked = null;
+	}
 
 			printf(
 				'<label>
@@ -68,11 +68,11 @@ function rentfetch_search_filters_sort_floorplans() {
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
 
-			if ( 'baths' === $sort ) {
-				$checked = 'checked';
-			} else {
-				$checked = null;
-			}
+	if ( 'baths' === $sort ) {
+		$checked = 'checked';
+	} else {
+		$checked = null;
+	}
 
 			printf(
 				'<label>
@@ -87,11 +87,11 @@ function rentfetch_search_filters_sort_floorplans() {
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
 
-			if ( 'pricelow' === $sort ) {
-				$checked = 'checked';
-			} else {
-				$checked = null;
-			}
+	if ( 'pricelow' === $sort ) {
+		$checked = 'checked';
+	} else {
+		$checked = null;
+	}
 
 			printf(
 				'<label>
@@ -106,11 +106,11 @@ function rentfetch_search_filters_sort_floorplans() {
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
 
-			if ( 'pricehigh' === $sort ) {
-				$checked = 'checked';
-			} else {
-				$checked = null;
-			}
+	if ( 'pricehigh' === $sort ) {
+		$checked = 'checked';
+	} else {
+		$checked = null;
+	}
 
 			printf(
 				'<label>
@@ -124,12 +124,12 @@ function rentfetch_search_filters_sort_floorplans() {
 				</label>',
 				$checked ? 'checked' : '', // Apply checked attribute.
 			);
-			
-			if ( 'alphabetical' === $sort ) {
-				$checked = 'checked';
-			} else {
-				$checked = null;
-			}
+
+	if ( 'alphabetical' === $sort ) {
+		$checked = 'checked';
+	} else {
+		$checked = null;
+	}
 
 			printf(
 				'<label>
@@ -200,9 +200,9 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 
 	// if it's price low to high.
 	if ( 'pricelow' === $sort ) {
-		$floorplans_args['orderby']    = 'meta_value_num';
+		$floorplans_args['orderby']      = 'meta_value_num';
 		$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
-		$floorplans_args['order']      = 'ASC';
+		$floorplans_args['order']        = 'ASC';
 		$floorplans_args['meta_query'][] = array( // phpcs:ignore
 			'key'     => 'minimum_rent',
 			'value'   => 100,
@@ -213,9 +213,9 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 
 	// if it's price high to low.
 	if ( 'pricehigh' === $sort ) {
-		$floorplans_args['orderby']    = 'meta_value_num';
+		$floorplans_args['orderby']      = 'meta_value_num';
 		$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
-		$floorplans_args['order']      = 'DESC';
+		$floorplans_args['order']        = 'DESC';
 		$floorplans_args['meta_query'][] = array( // phpcs:ignore
 			'key'     => 'minimum_rent',
 			'value'   => 100,
@@ -223,17 +223,17 @@ function rentfetch_search_floorplans_args_sort_floorplans( $floorplans_args ) {
 			'compare' => '>',
 		);
 	}
-	
+
 	// if it's alphabetical...
 	if ( 'alphabetical' === $sort ) {
-		$floorplans_args['orderby']  = 'title';
-		$floorplans_args['order']    = 'ASC';
+		$floorplans_args['orderby'] = 'title';
+		$floorplans_args['order']   = 'ASC';
 	}
-	
+
 	// if it's menu_order...
 	if ( 'menu_order' === $sort ) {
-		$floorplans_args['orderby']  = 'menu_order';
-		$floorplans_args['order']    = 'ASC';
+		$floorplans_args['orderby'] = 'menu_order';
+		$floorplans_args['order']   = 'ASC';
 	}
 
 	// return the args.

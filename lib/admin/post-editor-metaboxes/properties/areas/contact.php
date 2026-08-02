@@ -1,5 +1,15 @@
 <?php
 /**
+ * Property editor contact fields.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Properties contact metabox callback
  *
  * @param object $post The post object.

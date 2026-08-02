@@ -27,7 +27,15 @@ function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publis
 	}
 
 	// Pseudocache: transient keyed by key/type/status to avoid repeated DB queries.
-	$cache_key = 'rentfetch_meta_values_' . md5( wp_json_encode( array( 'key' => $key, 'type' => $type, 'status' => $status ) ) );
+	$cache_key = 'rentfetch_meta_values_' . md5(
+		wp_json_encode(
+			array(
+				'key'    => $key,
+				'type'   => $type,
+				'status' => $status,
+			)
+		)
+	);
 	if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 		$cached = rentfetch_get_cache_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) ) {
@@ -35,6 +43,7 @@ function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publis
 		}
 	}
 
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Results are stored in the plugin's query transient immediately below.
 	$r = $wpdb->get_col(
 		$wpdb->prepare(
 			"
@@ -52,7 +61,7 @@ function rentfetch_get_meta_values( $key = '', $type = 'post', $status = 'publis
 
 	// Sanitize meta values before caching.
 	$r = array_map(
-		function( $value ) {
+		function ( $value ) {
 			return sanitize_text_field( wp_unslash( $value ) );
 		},
 		(array) $r
@@ -101,7 +110,7 @@ function rentfetch_normalize_floorplan_filter_property_ids( $property_ids ) {
 	}
 
 	$values = array_map(
-		function( $value ) {
+		function ( $value ) {
 			return sanitize_text_field( trim( wp_unslash( (string) $value ) ) );
 		},
 		$values
@@ -126,11 +135,15 @@ function rentfetch_get_floorplan_filter_property_ids() {
 
 	foreach ( array( 'property_id', 'propertyids', 'property' ) as $key ) {
 		if ( ! empty( $_POST[ $key ] ) ) {
-			return rentfetch_normalize_floorplan_filter_property_ids( wp_unslash( $_POST[ $key ] ) );
+			$submitted_value = map_deep( wp_unslash( $_POST[ $key ] ), 'sanitize_text_field' );
+
+			return rentfetch_normalize_floorplan_filter_property_ids( $submitted_value );
 		}
 
 		if ( ! empty( $_GET[ $key ] ) ) {
-			return rentfetch_normalize_floorplan_filter_property_ids( wp_unslash( $_GET[ $key ] ) );
+			$query_value = map_deep( wp_unslash( $_GET[ $key ] ), 'sanitize_text_field' );
+
+			return rentfetch_normalize_floorplan_filter_property_ids( $query_value );
 		}
 	}
 
@@ -167,7 +180,7 @@ function rentfetch_get_floorplan_meta_values_for_property_ids( $key, $property_i
 	}
 
 	static $request_cache = array();
-	$cache_key = md5( wp_json_encode( array( $key, $property_ids, $status ) ) );
+	$cache_key            = md5( wp_json_encode( array( $key, $property_ids, $status ) ) );
 
 	if ( isset( $request_cache[ $cache_key ] ) ) {
 		return $request_cache[ $cache_key ];
@@ -176,6 +189,8 @@ function rentfetch_get_floorplan_meta_values_for_property_ids( $key, $property_i
 	$property_placeholders = implode( ',', array_fill( 0, count( $property_ids ), '%s' ) );
 	$query_args            = array_merge( array( $key, $status ), $property_ids );
 
+	// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholder count matches the normalized property-ID array.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Results are cached for the duration of the request.
 	$values = $wpdb->get_col(
 		$wpdb->prepare(
 			"
@@ -189,12 +204,13 @@ function rentfetch_get_floorplan_meta_values_for_property_ids( $key, $property_i
 			AND property_meta.meta_key = 'property_id'
 			AND property_meta.meta_value IN ($property_placeholders)
 			",
-			$query_args
+			...$query_args
 		)
 	);
+	// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
 	$values = array_map(
-		function( $value ) {
+		function ( $value ) {
 			return sanitize_text_field( wp_unslash( $value ) );
 		},
 		(array) $values
@@ -223,7 +239,7 @@ function rentfetch_get_floorplan_terms_for_property_ids( $taxonomy, $property_id
 	}
 
 	static $request_cache = array();
-	$cache_key = md5( wp_json_encode( array( $taxonomy, $property_ids, $status ) ) );
+	$cache_key            = md5( wp_json_encode( array( $taxonomy, $property_ids, $status ) ) );
 
 	if ( isset( $request_cache[ $cache_key ] ) ) {
 		return $request_cache[ $cache_key ];

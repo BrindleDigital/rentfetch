@@ -15,17 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return void.
  */
 function rentfetch_single_properties_parts_more_information() {
-	
+
 	$content_area = get_post_meta( get_the_ID(), 'content_area', true );
 
 	// bail if there is no content.
-	if ( !$content_area ) {
+	if ( ! $content_area ) {
 		return;
 	}
 
 	echo '<div id="more-information" class="single-properties-section">';
 		echo '<div class="wrap">';
-			echo apply_filters( 'the_content', $content_area );
+			echo wp_kses_post( apply_filters( 'the_content', $content_area ) );
 		echo '</div>'; // .wrap.
 	echo '</div>'; // #more-information.
 }
@@ -36,7 +36,7 @@ function rentfetch_single_properties_parts_more_information() {
  * @return void.
  */
 function rentfetch_single_properties_parts_subnav_more_information() {
-	
+
 	$content_area = get_post_meta( get_the_ID(), 'content_area', true );
 
 	if ( $content_area ) {

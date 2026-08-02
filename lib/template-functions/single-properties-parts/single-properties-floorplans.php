@@ -37,60 +37,60 @@ function rentfetch_single_properties_parts_floorplans() {
 			asort( $beds );
 
 			// loop through each of the possible values, so that we can do markup around that.
-			foreach ( $beds as $bed ) {
+	foreach ( $beds as $bed ) {
 
-				$args = array(
-					'post_type'      => 'floorplans',
-					'posts_per_page' => -1,
-					'orderby'        => 'meta_value_num',
-					'meta_key'       => 'beds',
-					'order'          => 'ASC',
-					'meta_query'     => array(
-						array(
-							'key'   => 'property_id',
-							'value' => $property_id,
-						),
-						array(
-							'key'   => 'beds',
-							'value' => $bed,
-						),
-					),
-				);
+		$args = array(
+			'post_type'      => 'floorplans',
+			'posts_per_page' => -1,
+			'orderby'        => 'meta_value_num',
+			'meta_key'       => 'beds',
+			'order'          => 'ASC',
+			'meta_query'     => array(
+				array(
+					'key'   => 'property_id',
+					'value' => $property_id,
+				),
+				array(
+					'key'   => 'beds',
+					'value' => $bed,
+				),
+			),
+		);
 
-				$floorplans_query = new WP_Query( $args );
+		$floorplans_query = new WP_Query( $args );
 
-				if ( $floorplans_query->have_posts() ) {
+		if ( $floorplans_query->have_posts() ) {
 
-					echo '<div class="floorplan-group">';
+			echo '<div class="floorplan-group">';
 
-						echo '<h3>';
-							echo wp_kses_post( apply_filters( 'rentfetch_get_bedroom_number_label', $bed ) );
-						echo '</h3>';
-						echo '<div class="floorplans-in-archive">';
+				echo '<h3>';
+					echo wp_kses_post( apply_filters( 'rentfetch_get_bedroom_number_label', $bed ) );
+				echo '</h3>';
+				echo '<div class="floorplans-in-archive">';
 
-							while ( $floorplans_query->have_posts() ) {
+			while ( $floorplans_query->have_posts() ) {
 
-								$floorplans_query->the_post();
+				$floorplans_query->the_post();
 
-								$classes_array = get_post_class();
-								$classes_array = apply_filters( 'rentfetch_filter_floorplans_post_classes', $classes_array );
-								$classes = implode( ' ', $classes_array );
+				$classes_array = get_post_class();
+				$classes_array = apply_filters( 'rentfetch_filter_floorplans_post_classes', $classes_array );
+				$classes       = implode( ' ', $classes_array );
 
-								printf( '<div class="%s">', esc_attr( $classes ) );
+				printf( '<div class="%s">', esc_attr( $classes ) );
 
-									do_action( 'rentfetch_single_properties_do_floorplans_each' );
+					do_action( 'rentfetch_single_properties_do_floorplans_each' );
 
-								echo '</div>'; // post_class.
+				echo '</div>'; // post_class.
 
-							}
+			}
 
-						echo '</div>'; // .floorplans-in-archive.
+				echo '</div>'; // .floorplans-in-archive.
 
 					echo '</div>'; // .floorplan-group.
 
 					wp_reset_postdata();
-				}
-			}
+		}
+	}
 
 		echo '</div>'; // .wrap.
 	echo '</div>'; // #floorplans.
@@ -136,7 +136,7 @@ function rentfetch_maybe_property_part_floorplans() {
 add_filter( 'rentfetch_maybe_do_property_part_floorplans', 'rentfetch_maybe_property_part_floorplans' );
 
 /**
- * Output the floorplans section in the subnav if it should be displayed 
+ * Output the floorplans section in the subnav if it should be displayed
  *
  * @return void.
  */

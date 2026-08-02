@@ -32,7 +32,7 @@ function rentfetch_each_property_in_archive_simple() {
 	if ( $specials ) {
 		printf( '<p class="specials">%s</p>', esc_html( $specials ) );
 	}
-	
+
 	edit_post_link( null, '', '', get_the_ID() );
 
 	echo '<div class="property-content">';

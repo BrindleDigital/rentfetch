@@ -509,7 +509,7 @@ function rentfetch_save_settings_property_search() {
 	// Checkbox field - Enable the availability button.
 	$hide_number_of_units = isset( $_POST['rentfetch_options_properties_hide_number_of_units'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_properties_hide_number_of_units', $hide_number_of_units );
-	
+
 	// Checkbox field - Fade properties without availability.
 	$hide_number_of_units = isset( $_POST['rentfetch_options_property_apply_styles_no_floorplans'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_property_apply_styles_no_floorplans', $hide_number_of_units );
@@ -940,10 +940,10 @@ function rentfetch_save_settings_global_property_fees() {
 	$show_property_fees = isset( $_POST['rentfetch_options_show_property_fees'] ) ? '1' : '0';
 	update_option( 'rentfetch_options_show_property_fees', $show_property_fees );
 
-	// JSON data
+	// JSON data.
 	if ( isset( $_POST['rentfetch_options_global_property_fees_data'] ) ) {
 		$json_data = sanitize_textarea_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_data'] ) );
-		$decoded = json_decode( $json_data, true );
+		$decoded   = json_decode( $json_data, true );
 		if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
 			update_option( 'rentfetch_options_global_property_fees_data', $decoded );
 		} else {
@@ -951,7 +951,7 @@ function rentfetch_save_settings_global_property_fees() {
 		}
 	}
 
-	// CSV URL
+	// CSV URL.
 	$previous_global_csv_url = trim( (string) get_option( 'rentfetch_options_global_property_fees_csv_url', '' ) );
 	$global_csv_url          = $previous_global_csv_url;
 	if ( isset( $_POST['rentfetch_options_global_property_fees_csv_url'] ) ) {
@@ -980,15 +980,10 @@ function rentfetch_save_settings_global_property_fees() {
 
 	// Global monthly required total fees (editable override).
 	if ( isset( $_POST['rentfetch_options_global_monthly_required_total_fees'] ) ) {
-		$raw_total = trim( (string) wp_unslash( $_POST['rentfetch_options_global_monthly_required_total_fees'] ) );
+		$raw_total = trim( sanitize_text_field( wp_unslash( $_POST['rentfetch_options_global_monthly_required_total_fees'] ) ) );
 
-		if ( $global_csv_was_removed ) {
-			delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
-			delete_option( 'rentfetch_options_global_monthly_required_total_fees_last_checked' );
-			delete_option( 'rentfetch_options_global_monthly_required_total_fees_rows' );
-		} elseif ( '' === $raw_total || $global_csv_url_changed ) {
-			// Keep current parsed value (or cleared state from parser) when blank or when CSV changed.
-		} else {
+		// Preserve the parsed value when blank or changed; explicit removal was handled above.
+		if ( ! $global_csv_was_removed && '' !== $raw_total && ! $global_csv_url_changed ) {
 			$numeric_total = rentfetch_extract_first_numeric_fee_value( $raw_total );
 			if ( null === $numeric_total || $numeric_total <= 0 ) {
 				delete_option( 'rentfetch_options_global_monthly_required_total_fees' );
@@ -998,7 +993,7 @@ function rentfetch_save_settings_global_property_fees() {
 		}
 	}
 
-	// Embed code
+	// Embed code.
 	if ( isset( $_POST['rentfetch_options_global_property_fees_embed'] ) ) {
 		$embed = sanitize_textarea_field( wp_unslash( $_POST['rentfetch_options_global_property_fees_embed'] ) );
 		update_option( 'rentfetch_options_global_property_fees_embed', $embed );
@@ -1016,20 +1011,23 @@ function rentfetch_save_settings_global_property_fees() {
 add_action( 'rentfetch_save_settings', 'rentfetch_save_settings_global_property_fees' );
 
 /**
- * Enqueue scripts for global property fees options page
+ * Enqueue scripts for the global property fees options page.
+ *
+ * @param string $hook Current admin page hook.
+ * @return void.
  */
 function rentfetch_enqueue_global_property_fees_scripts( $hook ) {
-	// Only load on admin.php page
+	// Only load on admin.php page.
 	if ( 'toplevel_page_rentfetch-options' !== $hook ) {
 		return;
 	}
 
-	// Check if we're on the properties tab and global-property-fees section
+	// Check if we're on the properties tab and global-property-fees section.
 	$route = rentfetch_settings_get_current_route();
 	if ( 'properties' === $route['tab'] && 'global-property-fees' === $route['section'] ) {
-		// Enqueue WordPress Media Library
+		// Enqueue WordPress Media Library.
 		wp_enqueue_media();
-		
+
 		// Ensure wp.codeEditor is available and get settings so WP can enqueue required addons.
 		$settings = wp_enqueue_code_editor( array( 'type' => 'application/json' ) );
 
@@ -1047,19 +1045,23 @@ function rentfetch_enqueue_global_property_fees_scripts( $hook ) {
 
 		// Make the settings available to our script so it uses the same assets/addons WP enqueued.
 		wp_localize_script( 'rentfetch-api-response-editor', 'rentfetchCodeEditorSettings', $settings );
-		
-		// Enqueue JSON handling script
-		wp_enqueue_script( 'rentfetch-properties-fees-json-handling', plugins_url( 'js/rentfetch-properties-fees-json-handling.js', dirname( __FILE__, 3 ) ), array( 'rentfetch-api-response-editor' ), '1.0.0', true );
-		
-		// Localize settings for the JSON handling script as well
+
+		// Enqueue JSON handling script.
+		wp_enqueue_script( 'rentfetch-properties-fees-json-handling', plugins_url( 'js/rentfetch-properties-fees-json-handling.js', dirname( __DIR__, 2 ) ), array( 'rentfetch-api-response-editor' ), '1.0.0', true );
+
+		// Localize settings for the JSON handling script as well.
 		wp_localize_script( 'rentfetch-properties-fees-json-handling', 'rentfetchCodeEditorSettings', $settings );
-		
+
 		// Enqueue CSV URL validation script for global property fees.
-		wp_enqueue_script( 'rentfetch-global-fees-csv-url-validation', plugins_url( 'js/rentfetch-global-fees-csv-url-validation.js', dirname( __FILE__, 3 ) ), array( 'jquery' ), '1.0.0', true );
-		wp_localize_script( 'rentfetch-global-fees-csv-url-validation', 'rentfetchGlobalCsvValidation', array(
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'rentfetch_validate_csv_url' ),
-		) );
+		wp_enqueue_script( 'rentfetch-global-fees-csv-url-validation', plugins_url( 'js/rentfetch-global-fees-csv-url-validation.js', dirname( __DIR__, 2 ) ), array( 'jquery' ), '1.0.0', true );
+		wp_localize_script(
+			'rentfetch-global-fees-csv-url-validation',
+			'rentfetchGlobalCsvValidation',
+			array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'rentfetch_validate_csv_url' ),
+			)
+		);
 	}
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_global_property_fees_scripts' );

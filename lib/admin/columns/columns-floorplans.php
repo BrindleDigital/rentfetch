@@ -58,7 +58,7 @@ add_filter( 'manage_floorplans_posts_columns', 'rentfetch_default_floorplans_adm
  */
 function rentfetch_floorplans_sortable_columns( $columns ) {
 	$columns['availability_date'] = 'availability_date';
-	$columns['available_units'] = 'available_units';
+	$columns['available_units']   = 'available_units';
 	return $columns;
 }
 add_filter( 'manage_edit-floorplans_sortable_columns', 'rentfetch_floorplans_sortable_columns' );
@@ -76,7 +76,7 @@ function rentfetch_floorplans_orderby( $query ) {
 	if ( 'availability_date' === $query->get( 'orderby' ) ) {
 		$query->set( 'meta_key', 'availability_date' );
 		$query->set( 'orderby', 'meta_value' );
-		// For floorplans, availability_date is stored as Ymd, so string sorting works
+		// For floorplans, availability_date is stored as Ymd, so string sorting works.
 	}
 
 	if ( 'available_units' === $query->get( 'orderby' ) ) {
@@ -97,7 +97,10 @@ function rentfetch_floorplans_filter_by_floorplan_source( $post_type ) {
 	}
 
 	global $wpdb;
-	$floorplan_sources = $wpdb->get_col( $wpdb->prepare( "
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- This is a bounded administrator-only lookup used to build the current list-table filter.
+	$floorplan_sources = $wpdb->get_col(
+		$wpdb->prepare(
+			"
 		SELECT DISTINCT pm.meta_value
 		FROM {$wpdb->postmeta} pm
 		INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
@@ -105,15 +108,25 @@ function rentfetch_floorplans_filter_by_floorplan_source( $post_type ) {
 		AND pm.meta_value != ''
 		AND p.post_type = %s
 		ORDER BY pm.meta_value ASC
-	", 'floorplan_source', 'floorplans' ) );
+	",
+			'floorplan_source',
+			'floorplans'
+		)
+	);
 
-	$current = isset( $_GET['floorplan_source_filter'] ) ? $_GET['floorplan_source_filter'] : '';
+	$current = isset( $_GET['floorplan_source_filter'] )
+		? sanitize_key( wp_unslash( $_GET['floorplan_source_filter'] ) )
+		: '';
 
 	echo '<select name="floorplan_source_filter">';
-	echo '<option value="">' . __( 'All Integrations', 'rentfetch' ) . '</option>';
+	echo '<option value="">' . esc_html__( 'All Integrations', 'rentfetch' ) . '</option>';
 	foreach ( $floorplan_sources as $source ) {
-		$selected = ( $source === $current ) ? ' selected="selected"' : '';
-		echo '<option value="' . esc_attr( $source ) . '"' . $selected . '>' . esc_html( $source ) . '</option>';
+		printf(
+			'<option value="%1$s"%2$s>%3$s</option>',
+			esc_attr( $source ),
+			selected( $source, $current, false ),
+			esc_html( $source )
+		);
 	}
 	echo '</select>';
 }
@@ -145,13 +158,16 @@ function rentfetch_floorplans_filter_query( $query ) {
 	}
 
 	if ( isset( $_GET['floorplan_source_filter'] ) && ! empty( $_GET['floorplan_source_filter'] ) ) {
-		$query->set( 'meta_query', array(
+		$query->set(
+			'meta_query',
 			array(
-				'key'     => 'floorplan_source',
-				'value'   => sanitize_text_field( $_GET['floorplan_source_filter'] ),
-				'compare' => '=',
-			),
-		) );
+				array(
+					'key'     => 'floorplan_source',
+					'value'   => sanitize_key( wp_unslash( $_GET['floorplan_source_filter'] ) ),
+					'compare' => '=',
+				),
+			)
+		);
 	}
 }
 add_action( 'pre_get_posts', 'rentfetch_floorplans_filter_query' );
@@ -165,7 +181,7 @@ add_action( 'pre_get_posts', 'rentfetch_floorplans_filter_query' );
  * @return void
  */
 function rentfetch_floorplans_default_column_content( $column, $post_id ) {
-	
+
 	if ( 'title' === $column ) {
 		echo esc_attr( get_the_title( $post_id ) );
 	}
@@ -181,7 +197,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 			'sync-red'    => '#dc3545',
 			'sync-gray'   => '#6c757d',
 		);
-		$tooltip = function_exists( 'rentfetch_get_column_sync_tooltip' )
+		$tooltip     = function_exists( 'rentfetch_get_column_sync_tooltip' )
 			? rentfetch_get_column_sync_tooltip( __( 'Floor plans APIs', 'rentfetch' ), array( $post_id ) )
 			: __( 'No sync status available.', 'rentfetch' );
 
@@ -190,15 +206,15 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 
 	if ( 'floorplan_source' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floorplan_source', true ) );
-		
+
 		// let's also run the script for this post here, showing disabled fields.
 		$array_disabled_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields', array(), $post_id );
-		
-		// Output the inline script to add 'disabled' class
+
+		// Output the inline script to add 'disabled' class.
 		echo '<script>
 			document.addEventListener("DOMContentLoaded", function() {
-				var disabledFields = ' . json_encode( $array_disabled_fields ) . ';
-				var postId = ' . json_encode( $post_id ) . ';
+				var disabledFields = ' . wp_json_encode( $array_disabled_fields ) . ';
+				var postId = ' . wp_json_encode( $post_id ) . ';
 				
 				disabledFields.forEach(function(field) {
 					document.querySelectorAll("tr#post-" + postId + " td." + field).forEach(function(td) {
@@ -207,7 +223,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 				});
 			});
 		</script>';
-		
+
 	}
 
 	if ( 'property_id' === $column ) {
@@ -265,7 +281,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 
 			$count = count( $images );
 
-			// limit the array to 3 images
+			// limit the array to 3 images.
 			if ( $count > 3 ) {
 				$images           = array_slice( $images, 0, 3 );
 				$remaining_images = $count - 3;
@@ -283,13 +299,12 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'floorplan_images' === $column ) {
-		
+
 		$floorplan_source = get_post_meta( $post_id, 'floorplan_source', true );
 		$floorplan_images = null;
-		
-				
+
 		if ( 'yardi' === $floorplan_source ) {
-			$floorplan_images = rentfetch_get_floorplan_images_yardi();	
+			$floorplan_images = rentfetch_get_floorplan_images_yardi();
 		} elseif ( 'rentmanager' === $floorplan_source ) {
 			$floorplan_images = rentfetch_get_floorplan_images_rentmanager();
 		} elseif ( 'entrata' === $floorplan_source ) {
@@ -307,13 +322,11 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 				$remaining_images = $count - 3;
 			}
 
-			foreach ( $floorplan_images as $image ) {				
+			foreach ( $floorplan_images as $image ) {
 				if ( isset( $image['url'] ) ) {
 					$url = esc_url( $image['url'] );
 					echo '<img src="' . esc_url( $url ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
 				}
-				
-
 			}
 
 			if ( ! empty( $remaining_images ) && 1 < $remaining_images ) {
@@ -328,7 +341,6 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 				echo esc_attr( get_post_meta( $post_id, 'floorplan_description', true ) );
 			echo '</span>';
 		}
-		
 	}
 
 	if ( 'floorplan_video_or_tour' === $column ) {
@@ -380,7 +392,7 @@ function rentfetch_floorplans_default_column_content( $column, $post_id ) {
 			echo 'No';
 		}
 	}
-	
+
 	if ( 'specials_override_text' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'specials_override_text', true ) );
 	}

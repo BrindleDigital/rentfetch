@@ -16,15 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return array Validation result array with 'success', 'data' or 'error' keys.
  */
 function rentfetch_validate_fees_csv_url_internal( $url ) {
-	// Expected columns for property fees CSV
+	// Expected columns for property fees CSV.
 	$expected_columns = array( 'description', 'price', 'frequency', 'notes', 'category', 'longnotes' );
-	$required_columns = array( 'description' ); // Only description is truly required
+	$required_columns = array( 'description' ); // Only description is truly required.
 
-	// Fetch the CSV file
-	$response = wp_remote_get( $url, array(
-		'timeout'   => 15,
-		'sslverify' => false, // Allow self-signed certs for local development
-	) );
+	// Fetch the CSV file.
+	$response = wp_remote_get(
+		$url,
+		array(
+			'timeout'   => 15,
+			'sslverify' => false, // Allow self-signed certs for local development.
+		)
+	);
 
 	if ( is_wp_error( $response ) ) {
 		return array(
@@ -37,7 +40,7 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 	}
 
 	$response_code = wp_remote_retrieve_response_code( $response );
-	if ( $response_code !== 200 ) {
+	if ( 200 !== $response_code ) {
 		return array(
 			'success' => false,
 			'error'   => array(
@@ -59,24 +62,13 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 		);
 	}
 
-	$handle = fopen( 'php://temp', 'r+' );
-	if ( false === $handle ) {
-		return array(
-			'success' => false,
-			'error'   => array(
-				'message' => 'Could not read CSV content',
-				'type'    => 'parse_error',
-			),
-		);
-	}
-
-	fwrite( $handle, $body );
-	rewind( $handle );
+	$csv_file = new SplTempFileObject();
+	$csv_file->fwrite( $body );
+	$csv_file->rewind();
 
 	// Parse the header row.
-	$header_row = fgetcsv( $handle, 100000, ',', '"', '\\' );
+	$header_row = $csv_file->fgetcsv( ',', '"', '\\' );
 	if ( false === $header_row || ! is_array( $header_row ) ) {
-		fclose( $handle );
 		return array(
 			'success' => false,
 			'error'   => array(
@@ -88,53 +80,52 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 
 	$header_row       = array_map( 'trim', $header_row );
 	$header_row_lower = array_map(
-		function( $col ) {
+		function ( $col ) {
 			$clean_col = str_replace( "\xEF\xBB\xBF", '', (string) $col ); // Strip UTF-8 BOM if present.
 			return strtolower( trim( $clean_col ) );
 		},
 		$header_row
 	);
 
-	// Count empty columns
+	// Count empty columns.
 	$empty_column_count = 0;
 	$non_empty_columns  = array();
 	foreach ( $header_row_lower as $col ) {
-		if ( $col === '' ) {
-			$empty_column_count++;
+		if ( '' === $col ) {
+			++$empty_column_count;
 		} else {
 			$non_empty_columns[] = $col;
 		}
 	}
 
-	// Find missing required columns (check against non-empty columns only)
+	// Find missing required columns (check against non-empty columns only).
 	$missing_required = array_diff( $required_columns, $non_empty_columns );
 
-	// Find missing optional columns
+	// Find missing optional columns.
 	$missing_optional = array_diff( $expected_columns, $non_empty_columns );
-	$missing_optional = array_diff( $missing_optional, $required_columns ); // Remove required from optional
+	$missing_optional = array_diff( $missing_optional, $required_columns ); // Remove required from optional.
 
-	// Find extra columns (not in expected list, and not empty)
+	// Find extra columns (not in expected list, and not empty).
 	$extra_columns = array_diff( $non_empty_columns, $expected_columns );
 
 	// Count data rows (excluding header), supporting multiline quoted cells.
 	$data_row_count = 0;
-	while ( ( $row = fgetcsv( $handle, 100000, ',', '"', '\\' ) ) !== false ) {
+	while ( ! $csv_file->eof() ) {
+		$row = $csv_file->fgetcsv( ',', '"', '\\' );
 		if ( ! is_array( $row ) ) {
 			continue;
 		}
 		$non_empty_cells = array_filter(
 			$row,
-			function( $cell ) {
+			function ( $cell ) {
 				return '' !== trim( (string) $cell );
 			}
 		);
 		if ( ! empty( $non_empty_cells ) ) {
-			$data_row_count++;
+			++$data_row_count;
 		}
 	}
-	fclose( $handle );
-
-	// Build validation result
+	// Build validation result.
 	$validation_result = array(
 		'valid'              => empty( $missing_required ),
 		'found_columns'      => $non_empty_columns,
@@ -146,7 +137,7 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 		'row_count'          => $data_row_count,
 	);
 
-	// Generate human-readable messages
+	// Generate human-readable messages.
 	$messages = array();
 	$warnings = array();
 
@@ -162,8 +153,8 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
 		$warnings[] = 'Extra column(s) found: ' . implode( ', ', $extra_columns ) . ' (these will be ignored)';
 	}
 
-	if ( $data_row_count === 0 ) {
-		$messages[]                   = 'CSV file contains no data rows';
+	if ( 0 === $data_row_count ) {
+		$messages[]                 = 'CSV file contains no data rows';
 		$validation_result['valid'] = false;
 	}
 
@@ -188,12 +179,12 @@ function rentfetch_validate_fees_csv_url_internal( $url ) {
  * AJAX handler to validate a CSV URL for property fees
  */
 function rentfetch_validate_fees_csv_url() {
-	// Verify nonce for security
+	// Verify nonce for security.
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_validate_csv_url' ) ) {
 		wp_send_json_error( array( 'message' => 'Security check failed' ) );
 	}
 
-	// Get the URL
+	// Get the URL.
 	$url = isset( $_POST['url'] ) ? esc_url_raw( wp_unslash( $_POST['url'] ) ) : '';
 
 	if ( empty( $url ) ) {
@@ -214,11 +205,11 @@ add_action( 'wp_ajax_rentfetch_validate_fees_csv_url', 'rentfetch_validate_fees_
  * AJAX handler to download sample fees CSV
  */
 function rentfetch_download_fees_csv_sample() {
-	// Set headers for CSV download
+	// Set headers for CSV download.
 	header( 'Content-Type: text/csv; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename=property_fees_sample.csv' );
 
-	// Create sample CSV content
+	// Create sample CSV content.
 	$csv_content  = "description,price,frequency,notes,category,longnotes\n";
 	$csv_content .= "Application Fee,\$100,,Required,Move-In Basics,\"<h4>Application Fee Details</h4><p>A non-refundable fee required for each applicant over the age of 18. This fee covers the cost of background checks and credit verification.</p><h5>What's Included</h5><ul><li>Criminal background check</li><li>Credit history review</li><li>Employment verification</li><li>Rental history verification</li></ul><p>Please allow 2-3 business days for processing.</p>\"\n";
 	$csv_content .= "Administration Fee,\$300,,Required,Move-In Basics,\n";
@@ -229,7 +220,7 @@ function rentfetch_download_fees_csv_sample() {
 	$csv_content .= "Internet Access,\$85,,Required,Essentials,\"<h4>High-Speed Internet Package</h4><p>Our community offers premium fiber internet service included in your monthly fees.</p><h5>Service Details</h5><ul><li>Speeds up to 1 Gbps download</li><li>Speeds up to 500 Mbps upload</li><li>No data caps</li><li>Professional installation included</li></ul><p>Service is provided by our partner ISP and is available within 48 hours of move-in.</p>\"\n";
 	$csv_content .= "Pest Control,\$5,,Required,Essentials,\n";
 
-	echo $csv_content;
+	echo wp_kses_post( $csv_content );
 	exit;
 }
 add_action( 'wp_ajax_rentfetch_download_fees_csv_sample', 'rentfetch_download_fees_csv_sample' );
@@ -246,19 +237,19 @@ add_action( 'wp_ajax_rentfetch_download_global_fees_csv_sample', 'rentfetch_down
  * AJAX handler to download current fees data as CSV (property-specific)
  */
 function rentfetch_download_current_fees_csv() {
-	// Verify nonce for security
+	// Verify nonce for security.
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_properties_metabox_nonce' ) ) {
 		wp_die( 'Security check failed' );
 	}
 
-	// Get the post ID
+	// Get the post ID.
 	$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
 
 	if ( ! $post_id ) {
 		wp_die( 'Invalid post ID' );
 	}
 
-	// Get current fees data
+	// Get current fees data.
 	$fees_data = get_post_meta( $post_id, 'property_fees_data', true );
 	if ( ! is_array( $fees_data ) ) {
 		$fees_data = array();
@@ -272,12 +263,12 @@ add_action( 'wp_ajax_rentfetch_download_current_fees_csv', 'rentfetch_download_c
  * AJAX handler to download current global fees data as CSV
  */
 function rentfetch_download_current_global_fees_csv() {
-	// Verify nonce for security
+	// Verify nonce for security.
 	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'rentfetch_main_options_nonce_action' ) ) {
 		wp_die( 'Security check failed' );
 	}
 
-	// Get current global fees data
+	// Get current global fees data.
 	$fees_data = get_option( 'rentfetch_options_global_property_fees_data' );
 	if ( ! is_array( $fees_data ) ) {
 		$fees_data = array();
@@ -294,11 +285,11 @@ add_action( 'wp_ajax_rentfetch_download_current_global_fees_csv', 'rentfetch_dow
  * @param string $filename  The filename for the download.
  */
 function rentfetch_output_fees_csv( $fees_data, $filename ) {
-	// Set headers for CSV download
+	// Set headers for CSV download.
 	header( 'Content-Type: text/csv; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 
-	// Create CSV content
+	// Create CSV content.
 	$csv_content = "description,price,frequency,notes,category,longnotes\n";
 
 	foreach ( $fees_data as $fee ) {
@@ -313,7 +304,7 @@ function rentfetch_output_fees_csv( $fees_data, $filename ) {
 		);
 	}
 
-	echo $csv_content;
+	echo wp_kses_post( $csv_content );
 	exit;
 }
 

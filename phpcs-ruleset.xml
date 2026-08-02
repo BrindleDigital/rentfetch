@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<ruleset name="Rent Fetch">
+	<description>WordPress coding standards for the Rent Fetch plugin.</description>
+
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg value="sp"/>
+
+	<file>rentfetch.php</file>
+	<file>lib</file>
+	<file>template</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+
+	<config name="minimum_supported_wp_version" value="6.4"/>
+
+	<rule ref="WordPress"/>
+
+	<!-- Public search filters accept sanitized, read-only GET/REST input and cannot require a nonce. -->
+	<rule ref="WordPress.Security.NonceVerification">
+		<exclude-pattern>*/lib/shortcode/search-filters/*</exclude-pattern>
+		<exclude-pattern>*/lib/admin/admin-notices/options-save-success.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/columns/columns-floorplans.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/columns/columns-properties.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/columns/columns-units.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/options-pages-setup/get-request-details-for-saving.php</exclude-pattern>
+		<!-- These save callbacks run only after rentfetch_process_form_data() verifies the settings nonce. -->
+		<exclude-pattern>*/lib/admin/options-sections/options-general-section.php</exclude-pattern>
+		<!-- These files bridge already-validated AJAX/REST data or inspect non-mutating request state. -->
+		<exclude-pattern>*/lib/admin/search-analytics.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/analytics-events.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/get-meta-values.php</exclude-pattern>
+		<exclude-pattern>*/lib/initialization/rest-api.php</exclude-pattern>
+	</rule>
+
+	<!-- These direct reads are cached by plugin transients/request caches or are bounded admin lookups. -->
+	<rule ref="WordPress.DB.DirectDatabaseQuery.DirectQuery">
+		<exclude-pattern>*/lib/admin/columns/columns-floorplans.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/columns/columns-units.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/options-sections/options-general-section.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/functions-floorplans-array.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/get-meta-values.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/search-filters/floorplan-filters/date-based.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.DirectDatabaseQuery.NoCaching">
+		<exclude-pattern>*/lib/admin/columns/columns-floorplans.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/columns/columns-units.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/options-sections/options-general-section.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/functions-floorplans-array.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/get-meta-values.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/search-filters/floorplan-filters/date-based.php</exclude-pattern>
+	</rule>
+
+	<!-- Index creation/removal is the explicit purpose of this administrator-controlled module. -->
+	<rule ref="WordPress.DB.DirectDatabaseQuery.SchemaChange">
+		<exclude-pattern>*/lib/admin/database-indexes.php</exclude-pattern>
+	</rule>
+
+	<!-- Dynamic IN lists use generated placeholders and values passed through wpdb::prepare(). -->
+	<rule ref="WordPress.DB.PreparedSQL.InterpolatedNotPrepared">
+		<exclude-pattern>*/lib/admin/admin-bar-cache-controls.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/get-meta-values.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/search-filters/floorplan-filters/date-based.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/search-filters/property-filters/text-based-search.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQL.NotPrepared">
+		<!-- These variables contain SQL assembled exclusively from whitelisted/cast fragments. -->
+		<exclude-pattern>*/lib/common/functions-floorplans-array.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/search-filters/floorplan-filters/date-based.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare">
+		<exclude-pattern>*/lib/admin/admin-bar-cache-controls.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/search-filters/floorplan-filters/date-based.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber">
+		<!-- PHPCS cannot count the generated property-ID placeholder array. -->
+		<exclude-pattern>*/lib/common/get-meta-values.php</exclude-pattern>
+	</rule>
+
+	<!-- These are intentional WordPress meta/taxonomy queries with no equivalent non-query API. -->
+	<rule ref="WordPress.DB.SlowDBQuery">
+		<exclude-pattern>*/lib/admin/columns/columns-floorplans.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/columns/columns-properties.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/columns/columns-units.php</exclude-pattern>
+		<exclude-pattern>*/lib/admin/post-editor-metaboxes/shared/hierarchy.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/functions-properties.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/functions-units.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/get-meta-values.php</exclude-pattern>
+		<exclude-pattern>*/lib/initialization/rest-api.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/properties-grid.php</exclude-pattern>
+		<exclude-pattern>*/lib/shortcode/search-filters/property-filters/cities.php</exclude-pattern>
+		<exclude-pattern>*/lib/template-functions/single-properties-parts/single-properties-floorplans.php</exclude-pattern>
+		<exclude-pattern>*/lib/template-functions/single-properties-parts/single-properties-more-properties.php</exclude-pattern>
+	</rule>
+
+	<!-- Logging is conditional diagnostics, not unconditional production debug output. -->
+	<rule ref="WordPress.PHP.DevelopmentFunctions.error_log_error_log">
+		<exclude-pattern>*/lib/admin/search-analytics.php</exclude-pattern>
+		<exclude-pattern>*/lib/common/cache-helpers.php</exclude-pattern>
+		<exclude-pattern>*/lib/initialization/rest-api.php</exclude-pattern>
+	</rule>
+
+	<!-- The editor temporarily swaps and then restores the global post for legacy template helpers. -->
+	<rule ref="WordPress.WP.GlobalVariablesOverride.Prohibited">
+		<exclude-pattern>*/lib/admin/post-editor-metaboxes/properties/lazy.php</exclude-pattern>
+	</rule>
+
+	<!-- Benign encoding: an SVG data URI and strict decoding of a signed monitoring request. -->
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode">
+		<exclude-pattern>*/lib/admin/options-pages-setup/admin-menu-setup.php</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode">
+		<exclude-pattern>*/lib/initialization/monitoring-status.php</exclude-pattern>
+	</rule>
+
+	<!-- Reads a fixed, packaged SVG path; no URL or user-controlled path is involved. -->
+	<rule ref="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents">
+		<exclude-pattern>*/lib/admin/options-pages-setup/admin-menu-setup.php</exclude-pattern>
+	</rule>
+</ruleset>

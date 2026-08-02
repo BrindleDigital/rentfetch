@@ -402,7 +402,7 @@ function rentfetch_prune_search_query_cache_registry( $registry = null ) {
 
 	uasort(
 		$registry,
-		function( $a, $b ) {
+		function ( $a, $b ) {
 			$a_last_set = (int) ( $a['last_set_at'] ?? 0 );
 			$b_last_set = (int) ( $b['last_set_at'] ?? 0 );
 
@@ -515,22 +515,22 @@ function rentfetch_get_search_query_cache_dashboard_stats() {
 	$now   = time();
 	$stats = array(
 		'html'  => array(
-			'label'       => 'HTML',
-			'count'       => 0,
-			'fresh'       => 0,
-			'stale'       => 0,
-			'oldest_age'  => null,
-			'newest_age'  => null,
-			'priority'    => 0,
+			'label'      => 'HTML',
+			'count'      => 0,
+			'fresh'      => 0,
+			'stale'      => 0,
+			'oldest_age' => null,
+			'newest_age' => null,
+			'priority'   => 0,
 		),
 		'query' => array(
-			'label'       => 'Query Results',
-			'count'       => 0,
-			'fresh'       => 0,
-			'stale'       => 0,
-			'oldest_age'  => null,
-			'newest_age'  => null,
-			'priority'    => 0,
+			'label'      => 'Query Results',
+			'count'      => 0,
+			'fresh'      => 0,
+			'stale'      => 0,
+			'oldest_age' => null,
+			'newest_age' => null,
+			'priority'   => 0,
 		),
 	);
 
@@ -579,8 +579,8 @@ function rentfetch_get_search_query_cache_dashboard_stats() {
 	$history = array_slice( $history, -14, null, true );
 
 	return array(
-		'limit'      => (int) apply_filters( 'rentfetch_search_query_cache_limit', RENTFETCH_SEARCH_QUERY_CACHE_LIMIT ),
-		'families'   => $stats,
+		'limit'       => (int) apply_filters( 'rentfetch_search_query_cache_limit', RENTFETCH_SEARCH_QUERY_CACHE_LIMIT ),
+		'families'    => $stats,
 		'hit_history' => $history,
 	);
 }
@@ -835,8 +835,8 @@ function rentfetch_set_cache_transient( $key, $value ) {
 
 	$payload = array(
 		'rentfetch_cache_version' => 1,
-		'generated_at'           => time(),
-		'value'                  => $value,
+		'generated_at'            => time(),
+		'value'                   => $value,
 	);
 
 	$stored = set_transient( $key, $payload, RENTFETCH_CACHE_TTL );
@@ -869,7 +869,7 @@ function rentfetch_get_cache_transient( $key, &$is_stale = false ) {
 		return false;
 	}
 
-	$cached   = get_transient( $key );
+	$cached = get_transient( $key );
 
 	if ( false === $cached ) {
 		rentfetch_record_search_query_cache_event( $key, false );
@@ -907,7 +907,7 @@ function rentfetch_get_cache_transient( $key, &$is_stale = false ) {
  * @return void
  */
 function rentfetch_refresh_cache_after_response( $key, $callback ) {
-	static $callbacks = array();
+	static $callbacks  = array();
 	static $registered = false;
 
 	if ( isset( $callbacks[ $key ] ) || ! is_callable( $callback ) ) {
@@ -923,7 +923,7 @@ function rentfetch_refresh_cache_after_response( $key, $callback ) {
 	$registered = true;
 	add_action(
 		'shutdown',
-		function() use ( &$callbacks ) {
+		function () use ( &$callbacks ) {
 			if ( function_exists( 'fastcgi_finish_request' ) ) {
 				fastcgi_finish_request();
 			}

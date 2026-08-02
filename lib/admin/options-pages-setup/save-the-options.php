@@ -13,13 +13,24 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Save the form data for ALL tabs on the Rent Fetch settings page
  */
 function rentfetch_process_form_data() {
-
-	$nonce = isset( $_POST['rentfetch_main_options_nonce_field'] ) ? sanitize_text_field( wp_unslash( $_POST['rentfetch_main_options_nonce_field'] ) ) : '';
-
-	// * Verify the nonce
-	if ( ! wp_verify_nonce( wp_unslash( $nonce ), 'rentfetch_main_options_nonce_action' ) ) {
-		die( 'Security check failed' );
+	$request_method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : '';
+	if ( 'POST' !== strtoupper( $request_method ) ) {
+		wp_die(
+			esc_html__( 'Rent Fetch settings must be submitted with a POST request.', 'rentfetch' ),
+			'',
+			array( 'response' => 405 )
+		);
 	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die(
+			esc_html__( 'You are not allowed to manage Rent Fetch settings.', 'rentfetch' ),
+			'',
+			array( 'response' => 403 )
+		);
+	}
+
+	check_admin_referer( 'rentfetch_main_options_nonce_action', 'rentfetch_main_options_nonce_field' );
 
 	// * Save the settings
 	do_action( 'rentfetch_save_settings' );

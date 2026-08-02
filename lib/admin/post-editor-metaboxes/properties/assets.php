@@ -1,5 +1,15 @@
 <?php
 /**
+ * Property editor assets.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Enqueue admin scripts/styles for API response code editor.
  *
  * @param string $hook The current admin page hook.
@@ -34,11 +44,11 @@ function rentfetch_enqueue_api_response_editor_assets( $hook ) {
 
 	// Make the settings available to our script so it uses the same assets/addons WP enqueued.
 	wp_localize_script( 'rentfetch-api-response-editor', 'rentfetchCodeEditorSettings', $settings );
-	
-	// Enqueue JSON handling script
+
+	// Enqueue JSON handling script.
 	wp_enqueue_script( 'rentfetch-properties-fees-json-handling', RENTFETCH_PATH . 'js/rentfetch-properties-fees-json-handling.js', array( 'rentfetch-api-response-editor' ), RENTFETCH_VERSION, true );
-	
-	// Localize settings for the JSON handling script as well
+
+	// Localize settings for the JSON handling script as well.
 	wp_localize_script( 'rentfetch-properties-fees-json-handling', 'rentfetchCodeEditorSettings', $settings );
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_api_response_editor_assets' );
@@ -61,10 +71,14 @@ function rentfetch_enqueue_csv_upload_script( $hook ) {
 	}
 
 	wp_enqueue_script( 'rentfetch-properties-fees-csv-url-validation', RENTFETCH_PATH . 'js/rentfetch-properties-fees-csv-url-validation.js', array( 'jquery' ), RENTFETCH_VERSION, true );
-	wp_localize_script( 'rentfetch-properties-fees-csv-url-validation', 'rentfetchCsvValidation', array(
-		'ajaxurl' => admin_url( 'admin-ajax.php' ),
-		'nonce'   => wp_create_nonce( 'rentfetch_validate_csv_url' ),
-	) );
+	wp_localize_script(
+		'rentfetch-properties-fees-csv-url-validation',
+		'rentfetchCsvValidation',
+		array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'rentfetch_validate_csv_url' ),
+		)
+	);
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_csv_upload_script' );
 

@@ -223,9 +223,10 @@ function rentfetch_get_admin_bar_content_summary() {
 	);
 
 	if ( isset( $wpdb ) && (int) array_sum( $counts ) > 0 ) {
-		$post_types = array( 'properties', 'floorplans', 'units' );
+		$post_types   = array( 'properties', 'floorplans', 'units' );
 		$placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholder count comes from the fixed post-type list.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -251,8 +252,9 @@ function rentfetch_get_admin_bar_content_summary() {
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
-		$now = current_time( 'timestamp' );
+		$now = time();
 
 		foreach ( (array) $rows as $row ) {
 			$post_type = isset( $row['post_type'] ) ? (string) $row['post_type'] : '';
@@ -332,9 +334,9 @@ function rentfetch_get_admin_bar_content_summary() {
 	}
 
 	$summary = array(
-		'counts'        => $counts,
-		'content_rows'  => array_values( $content_rows ),
-		'sync_by_type'  => $sync_by_type,
+		'counts'       => $counts,
+		'content_rows' => array_values( $content_rows ),
+		'sync_by_type' => $sync_by_type,
 	);
 
 	set_transient( 'rentfetch_admin_bar_content_summary_v6', $summary, MINUTE_IN_SECONDS );
@@ -349,7 +351,7 @@ function rentfetch_get_admin_bar_content_summary() {
  * @return string
  */
 function rentfetch_get_admin_bar_sync_summary_label( $sync ) {
-	$parts = array();
+	$parts  = array();
 	$labels = array(
 		'failed'  => 'failed',
 		'partial' => 'partial',
@@ -390,13 +392,13 @@ function rentfetch_get_admin_bar_cache_counts() {
 	}
 
 	$counts = array(
-		'total'          => 0,
-		'html'           => 0,
-		'query'          => 0,
-		'preload'        => 0,
-		'limit'          => (int) apply_filters( 'rentfetch_search_query_cache_limit', RENTFETCH_SEARCH_QUERY_CACHE_LIMIT ),
-		'summary_label'  => '',
-		'details_label'  => '',
+		'total'         => 0,
+		'html'          => 0,
+		'query'         => 0,
+		'preload'       => 0,
+		'limit'         => (int) apply_filters( 'rentfetch_search_query_cache_limit', RENTFETCH_SEARCH_QUERY_CACHE_LIMIT ),
+		'summary_label' => '',
+		'details_label' => '',
 	);
 	$now    = time();
 	$ttl    = defined( 'RENTFETCH_CACHE_TTL' ) ? (int) RENTFETCH_CACHE_TTL : DAY_IN_SECONDS;
@@ -497,15 +499,15 @@ function rentfetch_get_admin_bar_section_title( $label, $dot_status = '', $dot_l
  * @return string
  */
 function rentfetch_get_admin_bar_content_row_title( $row ) {
-	$post_type = isset( $row['post_type'] ) ? sanitize_key( $row['post_type'] ) : '';
-	$sync = isset( $row['sync'] ) && is_array( $row['sync'] ) ? $row['sync'] : array(
+	$post_type       = isset( $row['post_type'] ) ? sanitize_key( $row['post_type'] ) : '';
+	$sync            = isset( $row['sync'] ) && is_array( $row['sync'] ) ? $row['sync'] : array(
 		'status' => 'gray',
 		'label'  => 'No sync data',
 	);
-	$sync_label = (string) ( $sync['label'] ?? 'No sync data' );
-	$sync_status = (string) ( $sync['status'] ?? 'gray' );
-	$count       = (int) ( $row['count'] ?? 0 );
-	$label       = (string) ( $row['label'] ?? '' );
+	$sync_label      = (string) ( $sync['label'] ?? 'No sync data' );
+	$sync_status     = (string) ( $sync['status'] ?? 'gray' );
+	$count           = (int) ( $row['count'] ?? 0 );
+	$label           = (string) ( $row['label'] ?? '' );
 	$singular_labels = array(
 		'properties'  => 'property',
 		'floor plans' => 'floor plan',
@@ -603,7 +605,7 @@ function rentfetch_get_admin_bar_title() {
  * @return string
  */
 function rentfetch_get_admin_bar_panel_markup( $content, $states, $show_performance ) {
-	$settings_url = admin_url( 'admin.php?page=rentfetch-options&tab=general&section=performance' );
+	$settings_url             = admin_url( 'admin.php?page=rentfetch-options&tab=general&section=performance' );
 	$sync_panel_is_registered = has_action( 'rentfetch_admin_bar_panel_after_content', 'rfs_render_accelerated_sync_admin_bar_panel' );
 
 	ob_start();
@@ -1175,11 +1177,11 @@ function rentfetch_admin_bar_cache_controls_script() {
 		return;
 	}
 
-	$config = array(
+	$config           = array(
 		'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 		'nonces'  => array(
-			'rentfetch_clear_search_cache' => wp_create_nonce( 'rentfetch_clear_cache' ),
-			'rentfetch_warm_cache'         => wp_create_nonce( 'rentfetch_warm_cache' ),
+			'rentfetch_clear_search_cache'  => wp_create_nonce( 'rentfetch_clear_cache' ),
+			'rentfetch_warm_cache'          => wp_create_nonce( 'rentfetch_warm_cache' ),
 			'rentfetch_toggle_cache_option' => wp_create_nonce( 'rentfetch_admin_bar_cache' ),
 		),
 	);

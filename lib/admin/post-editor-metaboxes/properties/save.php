@@ -1,6 +1,16 @@
 <?php
 /**
- * Rentfetch save properties metaboxes
+ * Property editor save handling.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Save property editor fields.
  *
  * @param int $post_id The post ID.
  *
@@ -26,6 +36,14 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 			'property_source',
 			array(
 				'property_id' => 'Property ID',
+			),
+			array(
+				'property_source' => isset( $_POST['property_source'] )
+					? sanitize_key( wp_unslash( $_POST['property_source'] ) )
+					: null,
+				'property_id'     => isset( $_POST['property_id'] )
+					? sanitize_text_field( wp_unslash( $_POST['property_id'] ) )
+					: null,
 			)
 		)
 	) {
@@ -41,9 +59,11 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		$override_confirmed    = isset( $_POST['rentfetch_property_id_override_confirmed'] )
 			&& '1' === sanitize_text_field( wp_unslash( $_POST['rentfetch_property_id_override_confirmed'] ) );
 
-		if ( $submitted_property_id === $current_property_id ) {
-			// The locked field was submitted unchanged.
-		} elseif ( ( $override_confirmed || '' === trim( $current_property_id ) ) && $original_property_id === $current_property_id ) {
+		if (
+			$submitted_property_id !== $current_property_id
+			&& ( $override_confirmed || '' === trim( $current_property_id ) )
+			&& $original_property_id === $current_property_id
+		) {
 			update_post_meta( $post_id, 'property_id', $submitted_property_id );
 		}
 	}
@@ -57,9 +77,11 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		$source_override_confirmed = isset( $_POST['rentfetch_property_source_override_confirmed'] )
 			&& '1' === sanitize_text_field( wp_unslash( $_POST['rentfetch_property_source_override_confirmed'] ) );
 
-		if ( $submitted_property_source === $current_property_source ) {
-			// The source was enabled but left unchanged.
-		} elseif ( $source_override_confirmed && $original_property_source === $current_property_source ) {
+		if (
+			$submitted_property_source !== $current_property_source
+			&& $source_override_confirmed
+			&& $original_property_source === $current_property_source
+		) {
 			if ( '' === $submitted_property_source ) {
 				delete_post_meta( $post_id, 'property_source' );
 			} else {
@@ -107,7 +129,7 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 	if ( isset( $_POST['url'] ) ) {
 		update_post_meta( $post_id, 'url', sanitize_text_field( wp_unslash( $_POST['url'] ) ) );
 	}
-	
+
 	if ( isset( $_POST['url_override'] ) ) {
 		update_post_meta( $post_id, 'url_override', esc_url_raw( wp_unslash( $_POST['url_override'] ) ) );
 	}
@@ -126,26 +148,26 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 	if ( isset( $_POST['office_hours'] ) && is_array( $_POST['office_hours'] ) ) {
 		$office_hours = array();
-		$days = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
-		
+		$days         = array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' );
+
 		foreach ( $days as $day ) {
 			if ( isset( $_POST['office_hours'][ $day ] ) && is_array( $_POST['office_hours'][ $day ] ) ) {
 				$start = sanitize_text_field( wp_unslash( $_POST['office_hours'][ $day ]['start'] ?? '' ) );
-				$end = sanitize_text_field( wp_unslash( $_POST['office_hours'][ $day ]['end'] ?? '' ) );
-				
-				// Normalize time format
+				$end   = sanitize_text_field( wp_unslash( $_POST['office_hours'][ $day ]['end'] ?? '' ) );
+
+				// Normalize time format.
 				$start = rentfetch_normalize_time_input( $start );
-				$end = rentfetch_normalize_time_input( $end );
-				
+				$end   = rentfetch_normalize_time_input( $end );
+
 				if ( ! empty( $start ) || ! empty( $end ) ) {
 					$office_hours[ $day ] = array(
 						'start' => $start,
-						'end' => $end,
+						'end'   => $end,
 					);
 				}
 			}
 		}
-		
+
 		if ( ! empty( $office_hours ) ) {
 			update_post_meta( $post_id, 'office_hours', $office_hours );
 		} else {
@@ -158,7 +180,7 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		$property_images = trim( $property_images, ',' );
 		$property_images = explode( ',', $property_images );
 		$property_images = array_unique( $property_images );
-		
+
 		// remove any empty values.
 		$property_images = array_filter(
 			$property_images,
@@ -192,50 +214,49 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 	}
 
 	if ( isset( $_POST['property_fees_embed'] ) ) {
-		update_post_meta( $post_id, 'property_fees_embed', wp_unslash( $_POST['property_fees_embed'] ) );
+		$property_fees_embed = wp_kses( wp_unslash( $_POST['property_fees_embed'] ), rentfetch_get_allowed_embed_html() );
+		update_post_meta( $post_id, 'property_fees_embed', $property_fees_embed );
 	}
 
 	if ( isset( $_POST['property_fees_json'] ) ) {
-		$json_data = wp_unslash( $_POST['property_fees_json'] );
-		$json_data = trim( $json_data ); // Trim whitespace
-		
-		// If CSV URL is set, clear the JSON data
+		$json_data = sanitize_textarea_field( wp_unslash( $_POST['property_fees_json'] ) );
+		$json_data = trim( $json_data ); // Trim whitespace.
+
+		// If CSV URL is set, clear the JSON data.
 		if ( isset( $_POST['property_fees_csv_url'] ) && ! empty( $_POST['property_fees_csv_url'] ) ) {
 			delete_post_meta( $post_id, 'property_fees_data' );
+		} elseif ( empty( $json_data ) ) {
+			// If JSON field is empty, save an empty array.
+			update_post_meta( $post_id, 'property_fees_data', array() );
 		} else {
-			// If JSON field is empty, save empty array
-			if ( empty( $json_data ) ) {
-				update_post_meta( $post_id, 'property_fees_data', array() );
-			} else {
-				$fees_data = json_decode( $json_data, true );
-				if ( json_last_error() === JSON_ERROR_NONE && is_array( $fees_data ) ) {
-					// Sanitize each fee item
-					$sanitized_fees = array();
-					foreach ( $fees_data as $fee ) {
-						if ( is_array( $fee ) ) {
-							$sanitized_fees[] = array(
-								'description' => sanitize_text_field( $fee['description'] ?? '' ),
-								'price'       => sanitize_text_field( $fee['price'] ?? '' ),
-								'frequency'   => sanitize_text_field( $fee['frequency'] ?? '' ),
-								'notes'       => sanitize_text_field( $fee['notes'] ?? '' ),
-								'category'    => sanitize_text_field( $fee['category'] ?? '' ),
-							);
-						}
+			$fees_data = json_decode( $json_data, true );
+			if ( JSON_ERROR_NONE === json_last_error() && is_array( $fees_data ) ) {
+				// Sanitize each fee item.
+				$sanitized_fees = array();
+				foreach ( $fees_data as $fee ) {
+					if ( is_array( $fee ) ) {
+						$sanitized_fees[] = array(
+							'description' => sanitize_text_field( $fee['description'] ?? '' ),
+							'price'       => sanitize_text_field( $fee['price'] ?? '' ),
+							'frequency'   => sanitize_text_field( $fee['frequency'] ?? '' ),
+							'notes'       => sanitize_text_field( $fee['notes'] ?? '' ),
+							'category'    => sanitize_text_field( $fee['category'] ?? '' ),
+						);
 					}
-					update_post_meta( $post_id, 'property_fees_data', $sanitized_fees );
 				}
+				update_post_meta( $post_id, 'property_fees_data', $sanitized_fees );
 			}
 		}
 	}
 
 	$previous_property_fees_csv_url = trim( (string) get_post_meta( $post_id, 'property_fees_csv_url', true ) );
 
-	// Handle CSV upload or URL for property fees
+	// Handle CSV upload or URL for property fees.
 	if ( isset( $_POST['property_fees_csv_url'] ) ) {
-		$url = esc_url_raw( $_POST['property_fees_csv_url'] );
+		$url = esc_url_raw( wp_unslash( $_POST['property_fees_csv_url'] ) );
 		update_post_meta( $post_id, 'property_fees_csv_url', $url );
 		if ( ! empty( $url ) ) {
-			// Clear the JSON data when CSV URL is set
+			// Clear the JSON data when CSV URL is set.
 			delete_post_meta( $post_id, 'property_fees_data' );
 		}
 	}
@@ -264,7 +285,7 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 
 	// Manual override field. If CSV URL changed in this save, keep the freshly parsed value.
 	if ( isset( $_POST['property_monthly_required_total_fees'] ) ) {
-		$raw_total = trim( (string) wp_unslash( $_POST['property_monthly_required_total_fees'] ) );
+		$raw_total = trim( sanitize_text_field( wp_unslash( $_POST['property_monthly_required_total_fees'] ) ) );
 
 		// If CSV was explicitly removed in this save, keep the cleared state.
 		// Also allow manual clearing when no CSV is configured and the field is blank.
@@ -272,9 +293,7 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 			delete_post_meta( $post_id, 'property_monthly_required_total_fees' );
 			delete_post_meta( $post_id, 'property_monthly_required_total_fees_last_checked' );
 			delete_post_meta( $post_id, 'property_monthly_required_total_fees_rows' );
-		} elseif ( '' === $raw_total || $csv_url_changed ) {
-			// Keep current parsed value (or cleared state from parser) when blank or when CSV changed.
-		} else {
+		} elseif ( '' !== $raw_total && ! $csv_url_changed ) {
 			$numeric_total = rentfetch_extract_first_numeric_fee_value( $raw_total );
 			if ( null === $numeric_total || $numeric_total <= 0 ) {
 				delete_post_meta( $post_id, 'property_monthly_required_total_fees' );

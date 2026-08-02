@@ -55,7 +55,7 @@ function rentfetch_search_properties_args_text( $property_args ) {
 	}
 
 	if ( null !== $search ) {
-		$property_args['s'] = $search;
+		$property_args['s']                              = $search;
 		$property_args['rentfetch_property_text_search'] = true;
 	}
 
@@ -126,7 +126,7 @@ function rentfetch_property_text_search_clause( $search, $query ) {
 
 	$search_parts = array();
 	foreach ( $terms as $term ) {
-		$like = '%' . $wpdb->esc_like( $term ) . '%';
+		$like       = '%' . $wpdb->esc_like( $term ) . '%';
 		$term_parts = array(
 			$wpdb->prepare( "({$wpdb->posts}.post_title LIKE %s)", $like ),
 			$wpdb->prepare( "({$wpdb->posts}.post_excerpt LIKE %s)", $like ),
@@ -135,6 +135,7 @@ function rentfetch_property_text_search_clause( $search, $query ) {
 
 		if ( ! empty( $meta_keys ) ) {
 			$meta_key_placeholders = implode( ', ', array_fill( 0, count( $meta_keys ), '%s' ) );
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholder count comes from the sanitized internal meta-key list.
 			$term_parts[] = $wpdb->prepare(
 				"EXISTS (
 					SELECT 1
@@ -145,6 +146,7 @@ function rentfetch_property_text_search_clause( $search, $query ) {
 				)",
 				array_merge( $meta_keys, array( $like ) )
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		}
 
 		$search_parts[] = '(' . implode( ' OR ', $term_parts ) . ')';

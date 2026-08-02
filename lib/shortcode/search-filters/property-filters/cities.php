@@ -35,7 +35,12 @@ function rentfetch_search_filters_cities() {
 
 	// Normalize, remove empties and duplicates, then sort case-insensitively.
 	$cities = array_map( 'trim', $all_cities );
-	$cities = array_filter( $cities, function( $v ) { return '' !== $v; } );
+	$cities = array_filter(
+		$cities,
+		function ( $v ) {
+			return '' !== $v;
+		}
+	);
 	$cities = array_unique( $cities );
 	if ( empty( $cities ) ) {
 		return;

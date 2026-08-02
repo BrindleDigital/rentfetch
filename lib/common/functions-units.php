@@ -129,7 +129,7 @@ function rentfetch_get_unit_property_monthly_required_fees_total( $unit_post_id 
 	if ( ! $unit_post_id ) {
 		$unit_post_id = get_the_ID();
 	}
-	$scoped_total = function_exists( 'rentfetch_get_synced_scoped_monthly_required_fee_total' )
+	$scoped_total      = function_exists( 'rentfetch_get_synced_scoped_monthly_required_fee_total' )
 		? rentfetch_get_synced_scoped_monthly_required_fee_total( $unit_post_id )
 		: 0.0;
 	$floorplan_post_id = rentfetch_get_connected_floorplan_post_id_for_unit( $unit_post_id );
@@ -258,7 +258,7 @@ function rentfetch_get_unit_pricing() {
 		return apply_filters( 'rentfetch_filter_unit_pricing', null, $minimum_rent, $maximum_rent );
 	}
 
-	$base_rent_display = rentfetch_format_unit_rent_value( $base_rent_value );
+	$base_rent_display   = rentfetch_format_unit_rent_value( $base_rent_value );
 	$total_monthly_price = rentfetch_format_unit_total_monthly_price(
 		get_post_meta( get_the_ID(), 'minimum_total_monthly_price', true ),
 		get_post_meta( get_the_ID(), 'maximum_total_monthly_price', true )
@@ -410,7 +410,7 @@ function rentfetch_get_unit_availability_date() {
 /**
  * Output the unit amenities
  *
- * @return void
+ * @return string Unit amenities.
  */
 function rentfetch_get_unit_amenities() {
 	$amenities = esc_html( get_post_meta( get_the_ID(), 'amenities', true ) );
@@ -477,7 +477,7 @@ function rentfetch_get_floorplan_units_count_from_cpt() {
 	if ( ! $floorplan_id ) {
 		return null;
 	}
-	
+
 	// set up the args for the query. We need units that match both the property and floorplan.
 	$args = array(
 		'post_type'      => 'units',
@@ -498,7 +498,7 @@ function rentfetch_get_floorplan_units_count_from_cpt() {
 			),
 		),
 	);
-	
+
 	$posts = get_posts( $args );
 
 	$count = count( $posts );
@@ -518,7 +518,7 @@ function rentfetch_unit_button() {
 
 	if ( $apply_online_url ) {
 		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_applyonline_click', rentfetch_get_floorplan_tracking_context() );
-		$markup = sprintf( '<a href="%s" class="rentfetch-button rentfetch-button-small" target="_blank"%s>Apply Online</a>', $apply_online_url, $tracking_attrs );
+		$markup         = sprintf( '<a href="%s" class="rentfetch-button rentfetch-button-small" target="_blank"%s>Apply Online</a>', $apply_online_url, $tracking_attrs );
 		echo wp_kses_post( apply_filters( 'rentfetch_filter_unit_apply_button_markup', $markup ) );
 	} else {
 		rentfetch_unit_default_contact_button();

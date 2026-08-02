@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Get the property editor tab definitions.
  *
@@ -81,7 +85,7 @@ function rentfetch_get_property_editor_tabs() {
  * Render one area inside a property editor tab.
  *
  * @param array<string, mixed> $section Section definition.
- * @param WP_Post             $post    Current property.
+ * @param WP_Post              $post    Current property.
  * @return void
  */
 function rentfetch_render_property_editor_section( $section, $post ) {

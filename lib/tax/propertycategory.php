@@ -19,7 +19,7 @@ function rentfetch_register_propertycategory_taxonomy() {
 		'propertycategories',
 		'properties',
 		array(
-			'label'        => __( 'Property categories' ),
+			'label'        => __( 'Property categories', 'rentfetch' ),
 			'rewrite'      => array( 'slug' => 'propertycategories' ),
 			'hierarchical' => true,
 			'show_in_rest' => true,

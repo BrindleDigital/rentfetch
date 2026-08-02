@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return string       the markup for the property search.
  */
 function rentfetch_propertysearch_default_layout( $atts ) {
-	
+
 	ob_start();
 
 	$a = shortcode_atts(
@@ -39,7 +39,7 @@ function rentfetch_propertysearch_default_layout( $atts ) {
 
 	// this script is for scrolling specifically in the context of a full-height map.
 	wp_enqueue_script( 'rentfetch-property-search-scroll-to-active-property' );
-	
+
 	// because these are loaded over ajax, we need to enqueue the lightbox scripts here (they're enqueue automatically when loaded normally).
 	wp_enqueue_style( 'rentfetch-glightbox-style' );
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
@@ -47,7 +47,7 @@ function rentfetch_propertysearch_default_layout( $atts ) {
 
 	// Ensure tooltip behavior is available for pricing/fees in AJAX-loaded results.
 	wp_enqueue_script( 'rentfetch-tooltip' );
-	
+
 	// * Our container markup for the results
 	echo '<div class="rent-fetch-property-search-default-layout">';
 		echo '<div class="filters-and-properties-container">';
@@ -73,9 +73,9 @@ function rentfetch_propertysearchfilters( $atts ) {
 
 	ob_start();
 
-	rentfetch_set_floorplan_filter_shortcode_atts( $atts ?: array() );
+	rentfetch_set_floorplan_filter_shortcode_atts( $atts ? $atts : array() );
 
-	// enqueue the search properties ajax script
+	// enqueue the search properties ajax script.
 	wp_enqueue_script( 'rentfetch-search-properties-ajax' );
 
 	// needed for toggling the featured filters on and off.
@@ -87,13 +87,13 @@ function rentfetch_propertysearchfilters( $atts ) {
 	// we need to do output the dialog when we're outputting this, but we don't want to do that inside this container.
 	add_action( 'wp_footer', 'rentfetch_propertysearch_filters_dialog' );
 
-	$shortcode_attributes_json = esc_attr( wp_json_encode( $atts ?: array() ) );
-	$rest_url                 = esc_url( rest_url( 'rentfetch/v1/search/properties' ) );
+	$shortcode_attributes_json = wp_json_encode( $atts ? $atts : array() );
+	$rest_url                  = rest_url( 'rentfetch/v1/search/properties' );
 
 	printf(
 		'<div class="filters-wrap" data-property-search-rest-url="%s" data-property-search-shortcode-attributes="%s">',
-		$rest_url,
-		$shortcode_attributes_json
+		esc_url( $rest_url ),
+		esc_attr( $shortcode_attributes_json )
 	);
 		echo '<div id="featured-filters">';
 			do_action( 'rentfetch_do_search_properties_featured_filters' );
@@ -237,7 +237,7 @@ function rentfetch_render_property_query_results_data( $property_args ) {
 
 			$classes_array = get_post_class();
 			$classes_array = apply_filters( 'rentfetch_filter_properties_post_classes', $classes_array );
-			$class = implode( ' ', $classes_array );
+			$class         = implode( ' ', $classes_array );
 
 			printf(
 				'<div class="%s" data-latitude="%s" data-longitude="%s" data-id="%s" data-marker-id="%s">',

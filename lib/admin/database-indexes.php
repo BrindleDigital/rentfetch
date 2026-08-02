@@ -83,7 +83,7 @@ function rentfetch_create_indexes() {
 		}
 	} else {
 		$results['indexes']['idx_meta_key_value'] = array(
-			'created'       => false,
+			'created'        => false,
 			'already_exists' => true,
 		);
 	}
@@ -108,7 +108,7 @@ function rentfetch_create_indexes() {
 		}
 	} else {
 		$results['indexes']['idx_post_meta_key'] = array(
-			'created'       => false,
+			'created'        => false,
 			'already_exists' => true,
 		);
 	}
@@ -182,8 +182,8 @@ function rentfetch_remove_indexes() {
 		}
 	} else {
 		$results['indexes']['idx_meta_key_value'] = array(
-			'removed'      => false,
-			'not_found'    => true,
+			'removed'   => false,
+			'not_found' => true,
 		);
 	}
 
@@ -213,9 +213,9 @@ function rentfetch_remove_indexes() {
 	}
 
 	// Build message.
-	$removed_count = 0;
+	$removed_count   = 0;
 	$not_found_count = 0;
-	$error_count   = 0;
+	$error_count     = 0;
 
 	foreach ( $results['indexes'] as $index_name => $index_result ) {
 		if ( ! empty( $index_result['removed'] ) ) {
@@ -252,9 +252,9 @@ function rentfetch_remove_indexes() {
 function rentfetch_get_index_status() {
 	$existing = rentfetch_check_indexes_exist();
 
-	$total_indexes   = count( $existing );
-	$active_indexes  = array_filter( $existing );
-	$active_count    = count( $active_indexes );
+	$total_indexes  = count( $existing );
+	$active_indexes = array_filter( $existing );
+	$active_count   = count( $active_indexes );
 
 	if ( $active_count === $total_indexes ) {
 		return sprintf(

@@ -19,29 +19,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_default_properties_admin_columns( $columns ) {
 
 	$columns = array(
-		'cb'                    => '<input type="checkbox" />',
-		'title'                 => __( 'Title', 'rentfetch' ),
-		'sync_status'           => __( 'Syncing', 'rentfetch' ),
-		'property_source'       => __( 'Property Source', 'rentfetch' ),
-		'property_id'           => __( 'Property ID', 'rentfetch' ),
-		'address'               => __( 'Address', 'rentfetch' ),
-		'city'                  => __( 'City', 'rentfetch' ),
-		'state'                 => __( 'State', 'rentfetch' ),
-		'zipcode'               => __( 'Zipcode', 'rentfetch' ),
-		'latitude'              => __( 'Latitude', 'rentfetch' ),
-		'longitude'             => __( 'Longitude', 'rentfetch' ),
-		'email'                 => __( 'Email', 'rentfetch' ),
-		'phone'                 => __( 'Phone', 'rentfetch' ),
-		'url'                   => __( 'URL', 'rentfetch' ),
-		'url_override'          => __( 'URL override', 'rentfetch' ),
-		'tour_booking_link'     => __( 'Tour Booking Link', 'rentfetch' ),
-		'images'                => __( 'Manual Images', 'rentfetch' ),
+		'cb'                     => '<input type="checkbox" />',
+		'title'                  => __( 'Title', 'rentfetch' ),
+		'sync_status'            => __( 'Syncing', 'rentfetch' ),
+		'property_source'        => __( 'Property Source', 'rentfetch' ),
+		'property_id'            => __( 'Property ID', 'rentfetch' ),
+		'address'                => __( 'Address', 'rentfetch' ),
+		'city'                   => __( 'City', 'rentfetch' ),
+		'state'                  => __( 'State', 'rentfetch' ),
+		'zipcode'                => __( 'Zipcode', 'rentfetch' ),
+		'latitude'               => __( 'Latitude', 'rentfetch' ),
+		'longitude'              => __( 'Longitude', 'rentfetch' ),
+		'email'                  => __( 'Email', 'rentfetch' ),
+		'phone'                  => __( 'Phone', 'rentfetch' ),
+		'url'                    => __( 'URL', 'rentfetch' ),
+		'url_override'           => __( 'URL override', 'rentfetch' ),
+		'tour_booking_link'      => __( 'Tour Booking Link', 'rentfetch' ),
+		'images'                 => __( 'Manual Images', 'rentfetch' ),
 		'synced_property_images' => __( 'Synced Images', 'rentfetch' ),
-		'description'           => __( 'Description', 'rentfetch' ),
-		'tour'                  => __( 'Tour', 'rentfetch' ),
-		// 'pets'                  => __( 'Pets', 'rentfetch' ),
-		'content_area'          => __( 'Content Area', 'rentfetch' ),
-		'api_response'          => __( 'API response', 'rentfetch' ),
+		'description'            => __( 'Description', 'rentfetch' ),
+		'tour'                   => __( 'Tour', 'rentfetch' ),
+		'content_area'           => __( 'Content Area', 'rentfetch' ),
+		'api_response'           => __( 'API response', 'rentfetch' ),
 	);
 
 	return $columns;
@@ -272,9 +271,12 @@ function rentfetch_get_column_sync_tooltip( $heading, $posts ) {
 	}
 
 	if ( $no_status_count > 0 ) {
-		$lines[] = 1 === $no_status_count
-			? __( 'No API status', 'rentfetch' )
-			: sprintf( __( '%s records with no API status', 'rentfetch' ), number_format_i18n( $no_status_count ) );
+		if ( 1 === $no_status_count ) {
+			$lines[] = __( 'No API status', 'rentfetch' );
+		} else {
+			/* translators: %s: Number of records with no API status. */
+			$lines[] = sprintf( __( '%s records with no API status', 'rentfetch' ), number_format_i18n( $no_status_count ) );
+		}
 	}
 
 	return implode( "\n", $lines );
@@ -410,32 +412,34 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	if ( 'title' === $column ) {
 		echo esc_attr( get_the_title( $post_id ) );
 	}
-	
+
 	if ( 'sync_status' === $column ) {
-		
+
 		$property_sync = rentfetch_get_sync_status_class( $post_id );
-		$property_id = get_post_meta( $post_id, 'property_id', true );
-		
-		// Floorplans
-		$floorplans = get_posts( array(
-			'post_type' => 'floorplans',
-			'meta_query' => array(
-				array(
-					'key' => 'property_id',
-					'value' => $property_id,
-					'compare' => '=',
+		$property_id   = get_post_meta( $post_id, 'property_id', true );
+
+		// Floorplans.
+		$floorplans = get_posts(
+			array(
+				'post_type'      => 'floorplans',
+				'meta_query'     => array(
+					array(
+						'key'     => 'property_id',
+						'value'   => $property_id,
+						'compare' => '=',
+					),
 				),
-			),
-			'posts_per_page' => -1,
-		) );
-		
+				'posts_per_page' => -1,
+			)
+		);
+
 		$floorplan_statuses = array();
 		foreach ( $floorplans as $floorplan ) {
 			$floorplan_statuses[] = rentfetch_get_sync_status_class( $floorplan->ID );
 		}
 		$floorplan_sync = rentfetch_get_overall_sync_status( $floorplan_statuses );
-		
-		// Units
+
+		// Units.
 		$floorplan_ids = array();
 		foreach ( $floorplans as $floorplan ) {
 			$id = get_post_meta( $floorplan->ID, 'floorplan_id', true );
@@ -443,29 +447,31 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 				$floorplan_ids[] = $id;
 			}
 		}
-		
+
 		$units = array();
 		if ( ! empty( $floorplan_ids ) ) {
-			$units = get_posts( array(
-				'post_type' => 'units',
-				'meta_query' => array(
-					array(
-						'key' => 'floorplan_id',
-						'value' => $floorplan_ids,
-						'compare' => 'IN',
+			$units = get_posts(
+				array(
+					'post_type'      => 'units',
+					'meta_query'     => array(
+						array(
+							'key'     => 'floorplan_id',
+							'value'   => $floorplan_ids,
+							'compare' => 'IN',
+						),
 					),
-				),
-				'posts_per_page' => -1,
-			) );
+					'posts_per_page' => -1,
+				)
+			);
 		}
-		
+
 		$unit_statuses = array();
 		foreach ( $units as $unit ) {
 			$unit_statuses[] = rentfetch_get_sync_status_class( $unit->ID );
 		}
 		$unit_sync = rentfetch_get_overall_sync_status( $unit_statuses );
-		
-		// Colors
+
+		// Colors.
 		$sync_colors = array(
 			'sync-green'  => '#28a745',
 			'sync-yellow' => '#dba617',
@@ -477,12 +483,12 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 		$property_tooltip  = rentfetch_get_column_sync_tooltip( __( 'Properties APIs', 'rentfetch' ), array( $post_id ) );
 		$floorplan_tooltip = rentfetch_get_column_sync_tooltip( __( 'Floor plans APIs', 'rentfetch' ), $floorplans );
 		$unit_tooltip      = rentfetch_get_column_sync_tooltip( __( 'Units APIs', 'rentfetch' ), $units );
-		
-		// Output
+
+		// Output.
 		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $property_tooltip ) . '" aria-label="' . esc_attr( $property_tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $property_sync ] ?? '#6c757d' ) . ';">●</span> ';
 		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $floorplan_tooltip ) . '" aria-label="' . esc_attr( $floorplan_tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $floorplan_sync ] ?? '#6c757d' ) . ';">●</span> ';
 		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $unit_tooltip ) . '" aria-label="' . esc_attr( $unit_tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $unit_sync ] ?? '#6c757d' ) . ';">●</span>';
-		
+
 	}
 
 	if ( 'property_id' === $column ) {
@@ -528,11 +534,11 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	if ( 'url' === $column ) {
 		printf( '<a target="_blank" href="%s">%s</a>', esc_url( get_post_meta( $post_id, 'url', true ) ), esc_attr( get_post_meta( $post_id, 'url', true ) ) );
 	}
-	
+
 	if ( 'url_override' === $column ) {
 		printf( '<a target="_blank" href="%s">%s</a>', esc_url( get_post_meta( $post_id, 'url_override', true ) ), esc_attr( get_post_meta( $post_id, 'url_override', true ) ) );
 	}
-	
+
 	if ( 'tour_booking_link' === $column ) {
 		$tour_booking_link = get_post_meta( $post_id, 'tour_booking_link', true );
 		if ( $tour_booking_link ) {
@@ -543,14 +549,14 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'images' === $column ) {
-		$images = get_post_meta( $post_id, 'images', true );
+		$images           = get_post_meta( $post_id, 'images', true );
 		$remaining_images = 0;
 
 		if ( is_array( $images ) && array( '' ) !== $images ) {
 
 			$count = count( $images );
 
-			// limit the array to 3 images
+			// limit the array to 3 images.
 			if ( $count > 3 ) {
 				$images           = array_slice( $images, 0, 3 );
 				$remaining_images = $count - 3;
@@ -569,15 +575,15 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 
 	if ( 'property_source' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'property_source', true ) );
-		
+
 		// let's also run the script for this post here, showing disabled fields.
 		$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post_id );
-		
-		// Output the inline script to add 'disabled' class
+
+		// Output the inline script to add 'disabled' class.
 		echo '<script>
 			document.addEventListener("DOMContentLoaded", function() {
-				var disabledFields = ' . json_encode( $array_disabled_fields ) . ';
-				var postId = ' . json_encode( $post_id ) . ';
+				var disabledFields = ' . wp_json_encode( $array_disabled_fields ) . ';
+				var postId = ' . wp_json_encode( $post_id ) . ';
 				
 				disabledFields.forEach(function(field) {
 					document.querySelectorAll("tr#post-" + postId + " td." + field).forEach(function(td) {
@@ -607,10 +613,10 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'synced_property_images' === $column ) {
-		
+
 		$property_source = get_post_meta( $post_id, 'property_source', true );
-		$synced_images = null;
-		
+		$synced_images   = null;
+
 		if ( 'yardi' === $property_source ) {
 			$synced_images = rentfetch_get_property_images_yardi( null );
 		} elseif ( 'rentmanager' === $property_source ) {
@@ -624,14 +630,13 @@ function rentfetch_properties_default_column_content( $column, $post_id ) {
 		if ( is_array( $synced_images ) ) {
 			$count = count( $synced_images );
 
-			// limit the array to 3 images
+			// limit the array to 3 images.
 			if ( $count > 3 ) {
-				$synced_images     = array_slice( $synced_images, 0, 3 );
+				$synced_images    = array_slice( $synced_images, 0, 3 );
 				$remaining_images = $count - 3;
 			}
 
 			foreach ( $synced_images as $image ) {
-				// var_dump( $image['url'] );
 				echo '<img src="' . esc_url( $image['url'] ) . '" style="width: 40px; height: 40px; margin-right: 2px;" />';
 
 			}

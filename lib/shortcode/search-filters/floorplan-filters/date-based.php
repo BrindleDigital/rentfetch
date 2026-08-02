@@ -12,19 +12,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Check if a date range has any availability
  *
- * @param string $start Start date in Ymd format
- * @param string $end End date in Ymd format
+ * @param string $start Start date in Ymd format.
+ * @param string $end   End date in Ymd format.
  * @return bool True if availability exists
  */
 function rentfetch_date_option_has_availability( $start, $end ) {
 	static $cache = array();
-	$cache_key = md5( $start . '_' . $end );
-	
+	$cache_key    = md5( $start . '_' . $end );
+
 	if ( isset( $cache[ $cache_key ] ) ) {
 		return $cache[ $cache_key ];
 	}
 
-	$transient_key = 'rentfetch_date_availability_' . $cache_key;
+	$transient_key    = 'rentfetch_date_availability_' . $cache_key;
 	$has_availability = rentfetch_get_cache_transient( $transient_key );
 	if ( false !== $has_availability ) {
 		$cache[ $cache_key ] = (bool) $has_availability;
@@ -32,28 +32,34 @@ function rentfetch_date_option_has_availability( $start, $end ) {
 	}
 
 	global $wpdb;
-	$start_date = date( 'Y-m-d', strtotime( $start ) );
-	$end_date = date( 'Y-m-d', strtotime( $end ) );
+	$start_date = gmdate( 'Y-m-d', strtotime( $start ) );
+	$end_date   = gmdate( 'Y-m-d', strtotime( $end ) );
 
-	// Check floorplans
-	$floorplan_count = $wpdb->get_var( $wpdb->prepare(
-		"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'floorplans' AND ID IN (
+	// Check floorplans.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The bounded availability check is cached in memory and in a plugin transient.
+	$floorplan_count = $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'floorplans' AND ID IN (
 			SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'availability_date' AND CAST(meta_value AS UNSIGNED) BETWEEN %d AND %d
 		)",
-		$start,
-		$end
-	) );
+			$start,
+			$end
+		)
+	);
 
-	// Check units
-	$unit_count = $wpdb->get_var( $wpdb->prepare(
-		"SELECT COUNT(*) FROM {$wpdb->postmeta} pm1 
-		JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id 
+	// Check units.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The bounded availability check is cached in memory and in a plugin transient.
+	$unit_count = $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT COUNT(*) FROM {$wpdb->postmeta} pm1
+		JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id
 		JOIN {$wpdb->posts} p ON pm1.post_id = p.ID
-		WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%%m/%%d/%%Y')) BETWEEN DATE(%s) AND DATE(%s) 
+		WHERE pm1.meta_key = 'availability_date' AND DATE(STR_TO_DATE(pm1.meta_value, '%%m/%%d/%%Y')) BETWEEN DATE(%s) AND DATE(%s)
 		AND pm2.meta_key = 'floorplan_id' AND p.post_type = 'units'",
-		$start_date,
-		$end_date
-	) );
+			$start_date,
+			$end_date
+		)
+	);
 
 	$has_availability = ( $floorplan_count > 0 || $unit_count > 0 );
 
@@ -77,12 +83,12 @@ function rentfetch_search_filters_date() {
 		$active_parameters = array();
 	}
 
-	$current_year = date( 'Y' );
-	$fall_start = $current_year . '-06-30';
-	$fall_end = $current_year . '-10-01';
+	$current_year = current_time( 'Y' );
+	$fall_start   = $current_year . '-06-30';
+	$fall_end     = $current_year . '-10-01';
 	$spring_start = $current_year . '-03-01';
-	$spring_end = $current_year . '-05-31';
-	$today = date( 'Y-m-d' );
+	$spring_end   = $current_year . '-05-31';
+	$today        = current_time( 'Y-m-d' );
 
 	if ( $today >= $fall_start && $today <= $fall_end ) {
 		$fall_year = $current_year;
@@ -99,23 +105,23 @@ function rentfetch_search_filters_date() {
 	$all_options = array(
 		'now-30' => array(
 			'label' => 'Next 30 days',
-			'start' => date( 'Ymd', strtotime( '-1 year' ) ),
-			'end'   => date( 'Ymd', strtotime( '+30 days' ) ),
+			'start' => gmdate( 'Ymd', strtotime( '-1 year' ) ),
+			'end'   => gmdate( 'Ymd', strtotime( '+30 days' ) ),
 		),
 		'30-60'  => array(
 			'label' => '30-60 days',
-			'start' => date( 'Ymd', strtotime( '+30 days' ) ),
-			'end'   => date( 'Ymd', strtotime( '+60 days' ) ),
+			'start' => gmdate( 'Ymd', strtotime( '+30 days' ) ),
+			'end'   => gmdate( 'Ymd', strtotime( '+60 days' ) ),
 		),
 		'60-90'  => array(
 			'label' => '60-90 days',
-			'start' => date( 'Ymd', strtotime( '+60 days' ) ),
-			'end'   => date( 'Ymd', strtotime( '+90 days' ) ),
+			'start' => gmdate( 'Ymd', strtotime( '+60 days' ) ),
+			'end'   => gmdate( 'Ymd', strtotime( '+90 days' ) ),
 		),
 	);
 
 	if ( '1' !== get_option( 'rentfetch_options_disable_school_year_date_range' ) ) {
-		$all_options[ 'fall-' . $fall_year ]   = array(
+		$all_options[ 'fall-' . $fall_year ]     = array(
 			'label' => 'Fall ' . $fall_year . ' Semester',
 			'start' => $fall_year . '0630',
 			'end'   => $fall_year . '1001',
@@ -127,7 +133,7 @@ function rentfetch_search_filters_date() {
 		);
 	}
 
-	// Filter options to only show those with availability
+	// Filter options to only show those with availability.
 	$options = array();
 	foreach ( $all_options as $key => $option ) {
 		if ( rentfetch_date_option_has_availability( $option['start'], $option['end'] ) ) {
@@ -148,7 +154,7 @@ function rentfetch_search_filters_date() {
 		// Check if the value is in the GET parameter array.
 		$checked = in_array( $value, $active_parameters, true );
 
-		// Generate CSS class based on value
+		// Generate CSS class based on value.
 		if ( strpos( $value, 'fall-' ) === 0 ) {
 			$css_class = 'date-fall';
 		} elseif ( strpos( $value, 'spring-' ) === 0 ) {
@@ -159,9 +165,9 @@ function rentfetch_search_filters_date() {
 
 		printf(
 			'<label class="%s">
-				<input type="checkbox" 
+				<input type="checkbox"
 					name="search-dates[]"
-					value="%s" 
+					value="%s"
 					%s />
 				<span>%s</span>
 			</label>',
@@ -195,19 +201,19 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 		return $floorplans_args;
 	}
 
-	$current_year = date( 'Y' );
-	$ranges = array();
+	$current_year = current_time( 'Y' );
+	$ranges       = array();
 
 	foreach ( $selected as $sel ) {
-		if ( $sel === 'now-30' ) {
-			$start = date( 'Ymd', strtotime( '-1 year' ) );
-			$end   = date( 'Ymd', strtotime( '+30 days' ) );
-		} elseif ( $sel === '30-60' ) {
-			$start = date( 'Ymd', strtotime( '+30 days' ) );
-			$end   = date( 'Ymd', strtotime( '+60 days' ) );
-		} elseif ( $sel === '60-90' ) {
-			$start = date( 'Ymd', strtotime( '+60 days' ) );
-			$end   = date( 'Ymd', strtotime( '+90 days' ) );
+		if ( 'now-30' === $sel ) {
+			$start = gmdate( 'Ymd', strtotime( '-1 year' ) );
+			$end   = gmdate( 'Ymd', strtotime( '+30 days' ) );
+		} elseif ( '30-60' === $sel ) {
+			$start = gmdate( 'Ymd', strtotime( '+30 days' ) );
+			$end   = gmdate( 'Ymd', strtotime( '+60 days' ) );
+		} elseif ( '60-90' === $sel ) {
+			$start = gmdate( 'Ymd', strtotime( '+60 days' ) );
+			$end   = gmdate( 'Ymd', strtotime( '+90 days' ) );
 		} elseif ( strpos( $sel, 'fall-' ) === 0 ) {
 			$year  = str_replace( 'fall-', '', $sel );
 			$start = $year . '0630';
@@ -217,16 +223,19 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 			$start = $year . '0301';
 			$end   = $year . '0531';
 		} else {
-			continue; // Invalid selection
+			continue; // Invalid selection.
 		}
-		$ranges[] = array( 'start' => $start, 'end' => $end );
+		$ranges[] = array(
+			'start' => $start,
+			'end'   => $end,
+		);
 	}
 
 	if ( empty( $ranges ) ) {
 		return $floorplans_args;
 	}
 
-	$transient_key = 'rentfetch_date_search_' . md5( serialize( $selected ) );
+	$transient_key = 'rentfetch_date_search_' . md5( wp_json_encode( $selected ) );
 	$floorplan_ids = false;
 	if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 		$floorplan_ids = rentfetch_get_cache_transient( $transient_key );
@@ -237,12 +246,12 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 		global $wpdb;
 
 		foreach ( $ranges as $range ) {
-			$start = $range['start'];
-			$end   = $range['end'];
-			$start_date = date( 'Y-m-d', strtotime( $start ) );
-			$end_date   = date( 'Y-m-d', strtotime( $end ) );
+			$start      = $range['start'];
+			$end        = $range['end'];
+			$start_date = gmdate( 'Y-m-d', strtotime( $start ) );
+			$end_date   = gmdate( 'Y-m-d', strtotime( $end ) );
 
-			// Get floorplans directly (availability_date stored as Ymd numeric)
+			// Get floorplans directly (availability_date stored as Ymd numeric).
 			$floorplan_query = $wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p
 				JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
@@ -252,10 +261,11 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 				$start,
 				$end
 			);
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared immediately above and the combined result is cached below.
 			$floorplan_ids_direct = $wpdb->get_col( $floorplan_query );
-			$floorplan_ids         = array_merge( $floorplan_ids, $floorplan_ids_direct );
+			$floorplan_ids        = array_merge( $floorplan_ids, $floorplan_ids_direct );
 
-			// Get from units (availability_date stored as m/d/Y)
+			// Get from units (availability_date stored as m/d/Y).
 			$unit_query = $wpdb->prepare(
 				"SELECT DISTINCT p.ID FROM {$wpdb->posts} p
 				JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id
@@ -264,32 +274,39 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 				$start_date,
 				$end_date
 			);
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared immediately above and the combined result is cached below.
 			$unit_ids_from_query = $wpdb->get_col( $unit_query );
 
 			if ( ! empty( $unit_ids_from_query ) ) {
-				$how_many_units = count( $unit_ids_from_query );
+				$how_many_units    = count( $unit_ids_from_query );
 				$unit_placeholders = array_fill( 0, $how_many_units, '%d' );
-				$unit_format = implode( ', ', $unit_placeholders );
+				$unit_format       = implode( ', ', $unit_placeholders );
 
-				// Get the YARDI IDs from the units
+				// Get the YARDI IDs from the units.
+				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholder count is generated from the integer unit-ID array.
 				$yardi_ids_from_units_query = $wpdb->prepare(
 					"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'floorplan_id' AND post_id IN ( $unit_format )",
 					...$unit_ids_from_query
 				);
+				// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared immediately above and the combined result is cached below.
 				$yardi_ids = $wpdb->get_col( $yardi_ids_from_units_query );
 
 				if ( ! empty( $yardi_ids ) ) {
-					$how_many_yardi = count( $yardi_ids );
+					$how_many_yardi     = count( $yardi_ids );
 					$yardi_placeholders = array_fill( 0, $how_many_yardi, '%s' );
-					$yardi_format = implode( ', ', $yardi_placeholders );
+					$yardi_format       = implode( ', ', $yardi_placeholders );
 
-					// Get the WP post IDs for floorplans that have a matching YARDI ID
+					// Get the WP post IDs for floorplans that have a matching YARDI ID.
+					// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholder count is generated from the prepared floor-plan ID array.
 					$floorplan_ids_from_units_query = $wpdb->prepare(
 						"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'floorplan_id' AND meta_value IN ( $yardi_format )",
 						...$yardi_ids
 					);
+					// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query is prepared immediately above and the combined result is cached below.
 					$floorplan_ids_from_units = $wpdb->get_col( $floorplan_ids_from_units_query );
-					$floorplan_ids = array_merge( $floorplan_ids, $floorplan_ids_from_units );
+					$floorplan_ids            = array_merge( $floorplan_ids, $floorplan_ids_from_units );
 				}
 			}
 		}
@@ -303,7 +320,7 @@ function rentfetch_search_floorplans_args_date( $floorplans_args ) {
 	if ( ! empty( $floorplan_ids ) ) {
 		$floorplans_args['post__in'] = $floorplan_ids;
 	} else {
-		// If no floorplans found, set post__in to [0] to ensure zero results
+		// If no floorplans found, set post__in to [0] to ensure zero results.
 		$floorplans_args['post__in'] = array( 0 );
 	}
 
@@ -319,8 +336,10 @@ add_filter( 'rentfetch_search_floorplans_query_args', 'rentfetch_search_floorpla
  * @param mixed  $new_value The new option value.
  */
 function rentfetch_clear_date_availability_cache_on_update( $option, $old_value, $new_value ) {
-	if ( $option === 'rentfetch_options_disable_query_caching' ) {
+	unset( $old_value, $new_value );
+	if ( 'rentfetch_options_disable_query_caching' === $option ) {
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- This intentionally invalidates the plugin's persisted date-availability cache.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'rentfetch_date_availability_%' ) );
 	}
 }

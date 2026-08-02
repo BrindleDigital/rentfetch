@@ -33,9 +33,9 @@ function rentfetch_single_properties_parts_amenities() {
 
 			printf( '<ul class="amenities %s">', esc_attr( $number_class ) );
 
-				foreach ( $terms as $term ) {
-					printf( '<li>%s</li>', esc_attr( $term->name ) );
-				}
+	foreach ( $terms as $term ) {
+		printf( '<li>%s</li>', esc_attr( $term->name ) );
+	}
 
 			echo '</ul>';
 		echo '</div>'; // .wrap.

@@ -41,11 +41,11 @@ function rentfetch_search_properties_dialog_filters() {
 	if ( ! empty( $options_dialog_filters ) && in_array( 'category_search', $options_dialog_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_property_categories' );
 	}
-	
+
 	if ( ! empty( $options_dialog_filters ) && in_array( 'city_search', $options_dialog_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_cities' );
 	}
-	
+
 	if ( ! empty( $options_dialog_filters ) && in_array( 'type_search', $options_dialog_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_dialog_filters', 'rentfetch_search_filters_property_types' );
 	}
@@ -100,7 +100,7 @@ function rentfetch_search_properties_featured_filters() {
 	if ( ! empty( $options_featured_filters ) && in_array( 'squarefoot_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_squarefoot' );
 	}
-	
+
 	if ( ! empty( $options_featured_filters ) && in_array( 'city_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_cities' );
 	}
@@ -112,11 +112,11 @@ function rentfetch_search_properties_featured_filters() {
 	if ( ! empty( $options_featured_filters ) && in_array( 'type_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_property_types' );
 	}
-	
+
 	if ( ! empty( $options_featured_filters ) && in_array( 'floorplan_category_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_floorplan_categories' );
 	}
-	
+
 	if ( ! empty( $options_featured_filters ) && in_array( 'floorplan_type_search', $options_featured_filters, true ) ) {
 		add_action( 'rentfetch_do_search_properties_featured_filters', 'rentfetch_search_filters_floorplan_types' );
 	}
@@ -159,7 +159,7 @@ function rentfetch_get_shortcode_attributes( string $shortcode_tag, int $post_id
 		return null;
 	}
 
-	$pattern = get_shortcode_regex( [ $shortcode_tag ] );
+	$pattern = get_shortcode_regex( array( $shortcode_tag ) );
 	if ( ! preg_match_all( '/' . $pattern . '/s', $content, $matches, PREG_SET_ORDER ) ) {
 		return null;
 	}

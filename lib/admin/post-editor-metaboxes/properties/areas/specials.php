@@ -1,5 +1,15 @@
 <?php
 /**
+ * Property editor specials fields.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Properties specials metabox callback
  *
  * @param object $post The post object.

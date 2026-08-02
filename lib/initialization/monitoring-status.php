@@ -153,7 +153,7 @@ function rentfetch_get_monitoring_public_key( $key_id ) {
 	}
 
 	if ( defined( 'RENTFETCH_MONITORING_PUBLIC_KEY' ) ) {
-		$default_key_id = defined( 'RENTFETCH_MONITORING_KEY_ID' ) ? (string) constant( 'RENTFETCH_MONITORING_KEY_ID' ) : 'monitoring-v1';
+		$default_key_id          = defined( 'RENTFETCH_MONITORING_KEY_ID' ) ? (string) constant( 'RENTFETCH_MONITORING_KEY_ID' ) : 'monitoring-v1';
 		$keys[ $default_key_id ] = (string) constant( 'RENTFETCH_MONITORING_PUBLIC_KEY' );
 	}
 
@@ -188,7 +188,8 @@ U1SxP/9og7ejLnW+mZECC7PpU1i4TRjWmL7V78//a64c1wEbmoc7zHIVRLXqXZT7
 tqUIF5U0z2Q2qtxyUwxYXdeaqUeb7/SX4EcymcisVbvg8zRqFkXrPLqkHBL85Pqu
 oufCffD+pLXe55uvp3M0zYUCAwEAAQ==
 -----END PUBLIC KEY-----
-PEM,
+PEM
+		,
 	);
 
 	return apply_filters( 'rentfetch_monitoring_fallback_public_keys', $fallback_keys );
@@ -229,7 +230,7 @@ function rentfetch_get_monitoring_status_payload() {
 			'rentfetch_version'     => defined( 'RENTFETCH_VERSION' ) ? RENTFETCH_VERSION : 'unknown',
 			'rentfetchsync_version' => defined( 'RENTFETCHSYNC_VERSION' ) ? RENTFETCHSYNC_VERSION : 'not-installed',
 			'wordpress_version'     => get_bloginfo( 'version' ),
-			'generated_at'          => gmdate( 'c', current_time( 'timestamp', true ) ),
+			'generated_at'          => gmdate( 'c', time() ),
 		),
 		'summary'          => array(
 			'properties' => rentfetch_get_monitoring_summary_for_post_type( 'properties' ),
@@ -269,7 +270,7 @@ function rentfetch_get_monitoring_summary_for_post_type( $post_type ) {
 	);
 
 	foreach ( $post_ids as $post_id ) {
-		$state = rentfetch_get_monitoring_sync_state_label( $post_id );
+		$state  = rentfetch_get_monitoring_sync_state_label( $post_id );
 		$health = rentfetch_get_monitoring_record_health( $post_id, $state );
 
 		if ( isset( $summary[ $state ] ) ) {
@@ -454,13 +455,13 @@ function rentfetch_get_monitoring_property_rollups() {
 	$rollups          = array();
 
 	foreach ( $property_ids as $post_id ) {
-		$property_id       = (string) get_post_meta( $post_id, 'property_id', true );
-		$sync_state        = rentfetch_get_monitoring_sync_state_label( $post_id );
-		$sync_status       = rentfetch_get_monitoring_sync_status_map( $post_id );
-		$floorplan_ids     = isset( $floorplan_groups[ $property_id ] ) ? $floorplan_groups[ $property_id ] : array();
-		$unit_ids          = isset( $unit_groups[ $property_id ] ) ? $unit_groups[ $property_id ] : array();
-		$property_health   = rentfetch_get_monitoring_record_health( $post_id, $sync_state );
-		$rollups[]         = array(
+		$property_id     = (string) get_post_meta( $post_id, 'property_id', true );
+		$sync_state      = rentfetch_get_monitoring_sync_state_label( $post_id );
+		$sync_status     = rentfetch_get_monitoring_sync_status_map( $post_id );
+		$floorplan_ids   = isset( $floorplan_groups[ $property_id ] ) ? $floorplan_groups[ $property_id ] : array();
+		$unit_ids        = isset( $unit_groups[ $property_id ] ) ? $unit_groups[ $property_id ] : array();
+		$property_health = rentfetch_get_monitoring_record_health( $post_id, $sync_state );
+		$rollups[]       = array(
 			'post_id'           => (int) $post_id,
 			'property_id'       => $property_id,
 			'title'             => get_the_title( $post_id ),
@@ -477,7 +478,7 @@ function rentfetch_get_monitoring_property_rollups() {
 
 	usort(
 		$rollups,
-		function( $left, $right ) {
+		function ( $left, $right ) {
 			$left_score  = rentfetch_get_monitoring_health_severity( isset( $left['health'] ) ? (string) $left['health'] : 'gray' );
 			$right_score = rentfetch_get_monitoring_health_severity( isset( $right['health'] ) ? (string) $right['health'] : 'gray' );
 
@@ -511,7 +512,7 @@ function rentfetch_get_monitoring_child_posts_grouped_by_property( $post_type ) 
 			'no_found_rows'  => true,
 		)
 	);
-	$grouped = array();
+	$grouped  = array();
 
 	foreach ( $post_ids as $post_id ) {
 		$property_id = trim( (string) get_post_meta( $post_id, 'property_id', true ) );
@@ -600,7 +601,7 @@ function rentfetch_get_monitoring_record_health( $post_id, $sync_state = null ) 
 		return 'gray';
 	}
 
-	$hours_diff = ( current_time( 'timestamp' ) - $timestamp ) / HOUR_IN_SECONDS;
+	$hours_diff = ( time() - $timestamp ) / HOUR_IN_SECONDS;
 
 	if ( $hours_diff <= 24 ) {
 		return 'green';
@@ -687,8 +688,8 @@ function rentfetch_get_monitoring_property_related_failing_endpoints( $property_
 	$failing_endpoints = rentfetch_get_monitoring_failing_endpoints( $property_sync_status );
 
 	foreach ( array_merge( $floorplan_ids, $unit_ids ) as $child_post_id ) {
-		$child_sync_status   = rentfetch_get_monitoring_sync_status_map( (int) $child_post_id );
-		$failing_endpoints   = array_merge( $failing_endpoints, rentfetch_get_monitoring_failing_endpoints( $child_sync_status ) );
+		$child_sync_status = rentfetch_get_monitoring_sync_status_map( (int) $child_post_id );
+		$failing_endpoints = array_merge( $failing_endpoints, rentfetch_get_monitoring_failing_endpoints( $child_sync_status ) );
 	}
 
 	$failing_endpoints = array_values( array_unique( $failing_endpoints ) );

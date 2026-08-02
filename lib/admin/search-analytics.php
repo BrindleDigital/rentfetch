@@ -10,28 +10,148 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Get limits for the analytics-only copy of public search parameters.
+ *
+ * These limits do not affect parameters passed to search query filters.
+ *
+ * @return array<string, int> Analytics storage limits.
+ */
+function rentfetch_get_search_analytics_limits() {
+	$limits = array(
+		'max_depth'         => 3,
+		'max_items'         => 100,
+		'max_string_length' => 250,
+		'max_searches'      => 500,
+	);
+
+	/**
+	 * Filter limits applied only to search analytics storage.
+	 *
+	 * @param array<string, int> $limits Analytics storage limits.
+	 */
+	$limits = apply_filters( 'rentfetch_search_analytics_limits', $limits );
+
+	return array(
+		'max_depth'         => max( 1, (int) ( $limits['max_depth'] ?? 3 ) ),
+		'max_items'         => max( 1, (int) ( $limits['max_items'] ?? 100 ) ),
+		'max_string_length' => max( 1, (int) ( $limits['max_string_length'] ?? 250 ) ),
+		'max_searches'      => max( 1, (int) ( $limits['max_searches'] ?? 500 ) ),
+	);
+}
+
+/**
+ * Recursively sanitize and bound search parameters for analytics storage.
+ *
+ * @param array $params     Search parameters.
+ * @param array $limits     Analytics storage limits.
+ * @param int   $depth      Current nesting depth.
+ * @param int   $item_count Number of items accepted so far.
+ * @return array Sanitized and bounded parameters.
+ */
+function rentfetch_sanitize_search_params_recursive( $params, $limits, $depth, &$item_count ) {
+	if ( $depth > $limits['max_depth'] || $item_count >= $limits['max_items'] ) {
+		return array();
+	}
+
+	$sanitized = array();
+	foreach ( $params as $key => $value ) {
+		if ( $item_count >= $limits['max_items'] ) {
+			break;
+		}
+
+		$sanitized_key = substr( sanitize_key( (string) $key ), 0, 64 );
+		if ( '' === $sanitized_key ) {
+			continue;
+		}
+
+		if ( is_array( $value ) ) {
+			$nested = rentfetch_sanitize_search_params_recursive( $value, $limits, $depth + 1, $item_count );
+			if ( array() !== $nested ) {
+				$sanitized[ $sanitized_key ] = $nested;
+			}
+			continue;
+		}
+
+		if ( ! is_scalar( $value ) ) {
+			continue;
+		}
+
+		$sanitized_value = sanitize_text_field( wp_unslash( (string) $value ) );
+		$sanitized_value = substr( $sanitized_value, 0, $limits['max_string_length'] );
+		if ( '' === $sanitized_value ) {
+			continue;
+		}
+
+		$sanitized[ $sanitized_key ] = $sanitized_value;
+		++$item_count;
+	}
+
+	return $sanitized;
+}
+
+/**
  * Sanitize search parameters for analytics storage/output.
+ *
+ * This creates a separate, bounded copy. It never changes the parameters used
+ * by the public search or passed to third-party query filters.
  *
  * @param array $params Search parameters.
  * @return array Sanitized parameters.
  */
 function rentfetch_sanitize_search_params( $params ) {
-	$sanitized = array();
-
-	foreach ( $params as $key => $value ) {
-		if ( is_array( $value ) ) {
-			$sanitized[ $key ] = rentfetch_sanitize_search_params( $value );
-			continue;
-		}
-
-		if ( is_object( $value ) ) {
-			continue;
-		}
-
-		$sanitized[ $key ] = sanitize_text_field( wp_unslash( (string) $value ) );
+	if ( ! is_array( $params ) ) {
+		return array();
 	}
 
-	return $sanitized;
+	$limits     = rentfetch_get_search_analytics_limits();
+	$item_count = 0;
+
+	return rentfetch_sanitize_search_params_recursive( $params, $limits, 1, $item_count );
+}
+
+/**
+ * Sort search parameters recursively for a stable analytics key.
+ *
+ * @param array $params Search parameters.
+ * @return array Sorted parameters.
+ */
+function rentfetch_sort_search_params( $params ) {
+	foreach ( $params as $key => $value ) {
+		if ( is_array( $value ) ) {
+			$params[ $key ] = rentfetch_sort_search_params( $value );
+		}
+	}
+
+	ksort( $params );
+
+	return $params;
+}
+
+/**
+ * Keep the most useful tracked searches within the analytics storage limit.
+ *
+ * @param array $searches     Tracked searches.
+ * @param int   $max_searches Maximum stored searches.
+ * @return array Bounded tracked searches.
+ */
+function rentfetch_bound_tracked_searches( $searches, $max_searches ) {
+	if ( count( $searches ) <= $max_searches ) {
+		return $searches;
+	}
+
+	uasort(
+		$searches,
+		function ( $first, $second ) {
+			$count_comparison = (int) ( $second['count'] ?? 0 ) <=> (int) ( $first['count'] ?? 0 );
+			if ( 0 !== $count_comparison ) {
+				return $count_comparison;
+			}
+
+			return (int) ( $second['last_used'] ?? 0 ) <=> (int) ( $first['last_used'] ?? 0 );
+		}
+	);
+
+	return array_slice( $searches, 0, $max_searches, true );
 }
 
 /**
@@ -47,10 +167,15 @@ function rentfetch_track_search( $search_type, $params, $skip_tracking = false )
 		return;
 	}
 
+	$search_type = sanitize_key( $search_type );
+	if ( ! in_array( $search_type, array( 'properties', 'floorplans' ), true ) || ! is_array( $params ) ) {
+		return;
+	}
+
 	// Clean up params - remove empty values and internal params.
 	$clean_params = array_filter(
 		$params,
-		function( $value, $key ) {
+		function ( $value, $key ) {
 			return ! empty( $value ) && ! in_array( $key, array( 'action', 'nonce', '_wpnonce' ), true );
 		},
 		ARRAY_FILTER_USE_BOTH
@@ -60,10 +185,10 @@ function rentfetch_track_search( $search_type, $params, $skip_tracking = false )
 	$clean_params = array_filter( $clean_params );
 
 	// Sort params for consistent cache keys.
-	ksort( $clean_params );
+	$clean_params = rentfetch_sort_search_params( $clean_params );
 
 	$query_string = http_build_query( $clean_params );
-	$search_key   = $search_type . '|' . $query_string;
+	$search_key   = $search_type . '|' . hash( 'sha256', $query_string );
 
 	// Get current tracking data - using 'rf_analytics' prefix to avoid cache clearing operations.
 	$cache_key = 'rf_analytics_searches';
@@ -76,15 +201,17 @@ function rentfetch_track_search( $search_type, $params, $skip_tracking = false )
 	// Increment count for this search.
 	if ( ! isset( $searches[ $search_key ] ) ) {
 		$searches[ $search_key ] = array(
-			'count'      => 0,
-			'last_used'  => time(),
-			'type'       => $search_type,
-			'params'     => $clean_params,
+			'count'     => 0,
+			'last_used' => time(),
+			'type'      => $search_type,
+			'params'    => $clean_params,
 		);
 	}
 
-	$searches[ $search_key ]['count']++;
+	++$searches[ $search_key ]['count'];
 	$searches[ $search_key ]['last_used'] = time();
+	$limits                               = rentfetch_get_search_analytics_limits();
+	$searches                             = rentfetch_bound_tracked_searches( $searches, $limits['max_searches'] );
 
 	// Store for 30 days - using 'rf_analytics' prefix to avoid cache clearing operations.
 	set_transient( 'rf_analytics_searches', $searches, 30 * DAY_IN_SECONDS );
@@ -107,7 +234,7 @@ function rentfetch_get_popular_searches( $limit = 50 ) {
 	// Sort by count (descending).
 	uasort(
 		$searches,
-		function( $a, $b ) {
+		function ( $a, $b ) {
 			return $b['count'] - $a['count'];
 		}
 	);
@@ -211,7 +338,7 @@ function rentfetch_log_cache_preload_failure( $detail ) {
 /**
  * Warm one tracked search entry.
  *
- * @param array $search_data Tracked search data.
+ * @param array       $search_data Tracked search data.
  * @param string|null $error_message Failure message.
  * @return bool True when a response was generated successfully.
  */
@@ -247,7 +374,7 @@ function rentfetch_warm_popular_search_entry( $search_data, &$error_message = nu
 	} finally {
 		$GLOBALS['rentfetch_prioritize_search_query_cache'] = false;
 		$GLOBALS['rentfetch_force_cache_write']             = false;
-		$_POST                                             = $previous_post;
+		$_POST = $previous_post;
 	}
 
 	if ( is_wp_error( $response ) ) {
@@ -307,8 +434,8 @@ function rentfetch_warm_popular_searches( $limit = 50 ) {
  * The pool limit controls how many tracked searches should eventually be kept
  * warm. The batch size controls how much work a single request is allowed to do.
  *
- * @param int $pool_limit Number of popular searches in the warming pool.
- * @param int $batch_size Number of searches to warm in this request.
+ * @param int  $pool_limit Number of popular searches in the warming pool.
+ * @param int  $batch_size Number of searches to warm in this request.
  * @param bool $reset_cursor Whether to start from the beginning of the warming pool.
  * @return array Results with count and status.
  */

@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Property hierarchy callback.
  *
@@ -126,10 +130,10 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 		}
 
 		$floorplan_data[ $floorplan->ID ] = array(
-			'external_id' => $external_id,
-			'beds'        => get_post_meta( $floorplan->ID, 'beds', true ),
-			'baths'       => get_post_meta( $floorplan->ID, 'baths', true ),
-			'source'      => get_post_meta( $floorplan->ID, 'floorplan_source', true ),
+			'external_id'  => $external_id,
+			'beds'         => get_post_meta( $floorplan->ID, 'beds', true ),
+			'baths'        => get_post_meta( $floorplan->ID, 'baths', true ),
+			'source'       => get_post_meta( $floorplan->ID, 'floorplan_source', true ),
 			'api_response' => get_post_meta( $floorplan->ID, 'api_response', true ),
 		);
 	}
@@ -156,8 +160,8 @@ function rentfetch_render_hierarchy( $post, $current_type ) {
 	$units_by_floorplan = array();
 	$unit_data          = array();
 	foreach ( $units as $unit ) {
-		$unit_floorplan_id = get_post_meta( $unit->ID, 'floorplan_id', true );
-		$unit_data[ $unit->ID ] = array(
+		$unit_floorplan_id                                   = get_post_meta( $unit->ID, 'floorplan_id', true );
+		$unit_data[ $unit->ID ]                              = array(
 			'availability' => get_post_meta( $unit->ID, 'availability_date', true ),
 			'unit_id'      => get_post_meta( $unit->ID, 'unit_id', true ),
 		);

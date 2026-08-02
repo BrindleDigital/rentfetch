@@ -183,7 +183,7 @@ function rentfetch_save_settings_property_archives() {
 		$property_display = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_pricing_display'] ) );
 		update_option( 'rentfetch_options_property_pricing_display', $property_display );
 	}
-	
+
 	// Select field.
 	if ( isset( $_POST['rentfetch_options_property_external_linking_behavior'] ) ) {
 		$property_link_behavior = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_property_external_linking_behavior'] ) );

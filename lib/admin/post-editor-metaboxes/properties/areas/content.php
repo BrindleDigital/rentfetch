@@ -1,5 +1,15 @@
 <?php
 /**
+ * Property editor display-information fields.
+ *
+ * @package rentfetch
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
  * Properties display information metabox callback
  *
  * @param object $post The post object.
@@ -33,23 +43,10 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 			</div>
 		</div>
 
-		<?php
-		// * Property Pets
-		// $pets = get_post_meta( $post->ID, 'pets', true );
-		?>
-		<!-- <div class="field">
-			<div class="column">
-				<label for="pets">Pets</label>
-			</div>
-			<div class="column">
-				<input type="text" id="pets" name="pets" value="<?php // echo esc_attr( $pets ); ?>">
-			</div>
-		</div> -->
-		
-		<?php
-		// * Property Content Area
-		$content_area = get_post_meta( $post->ID, 'content_area', true );
-		?>
+			<?php
+			// * Property Content Area.
+			$content_area = get_post_meta( $post->ID, 'content_area', true );
+			?>
 		<div class="field">
 			<div class="column">
 				<label for="content_area">Content area</label>

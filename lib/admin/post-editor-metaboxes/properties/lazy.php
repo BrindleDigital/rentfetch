@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Render a requested property-editor fragment.
  *
@@ -56,11 +60,11 @@ function rentfetch_ajax_get_property_editor_fragment() {
 	}
 
 	ob_start();
-	$previous_post    = $GLOBALS['post'] ?? null;
+	$previous_post   = $GLOBALS['post'] ?? null;
 	$GLOBALS['post'] = $post;
 	setup_postdata( $post );
 	rentfetch_render_property_editor_fragment( $fragment, $post );
-	$html = ob_get_clean();
+	$html            = ob_get_clean();
 	$GLOBALS['post'] = $previous_post;
 	if ( $previous_post instanceof WP_Post ) {
 		setup_postdata( $previous_post );

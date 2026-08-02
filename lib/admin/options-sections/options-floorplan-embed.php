@@ -5,10 +5,15 @@
  * @package rentfetch
  */
 
-if (!defined('ABSPATH')) {
-  exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
 }
 
+/**
+ * Render the floor plan shortcode documentation settings section.
+ *
+ * @return void.
+ */
 function rentfetch_settings_floorplans_floorplan_embed() {
 	?>
 	<div class="header">
@@ -56,7 +61,6 @@ function rentfetch_settings_floorplans_floorplan_embed() {
 	<?php rentfetch_shortcode_copy_script(); ?>
 	<?php
 }
-add_action('rentfetch_do_settings_floorplans_floorplan_embed', 'rentfetch_settings_floorplans_floorplan_embed');
-
+add_action( 'rentfetch_do_settings_floorplans_floorplan_embed', 'rentfetch_settings_floorplans_floorplan_embed' );
 
 

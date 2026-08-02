@@ -41,7 +41,7 @@ function rentfetch_search_filters_pets() {
 		3 => 'Pet-friendly',
 		4 => 'Pets not allowed',
 	);
-	
+
 	$label = apply_filters( 'rentfetch_search_filters_pets_label', 'Pets' );
 
 	// * build the pets search

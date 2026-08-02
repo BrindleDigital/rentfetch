@@ -19,28 +19,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_default_units_admin_columns( $columns ) {
 
 	$columns = array(
-		'cb'                    => '<input type="checkbox" />',
-		'title'                 => __( 'Title', 'rentfetch' ),
-		'sync_status'           => __( 'Syncing', 'rentfetch' ),
-		'unit_id'               => __( 'Unit ID', 'rentfetch' ),
-		'building_name'         => __( 'Building Name', 'rentfetch' ),
-		'floor_number'          => __( 'Floor Number', 'rentfetch' ),
-		'floorplan_id'          => __( 'Floorplan ID', 'rentfetch' ),
-		'floorplan_name'        => __( 'Floorplan Name', 'rentfetch' ),
-		'property_id'           => __( 'Property ID', 'rentfetch' ),
-		'apply_online_url'      => __( 'Apply URL', 'rentfetch' ),
-		'availability_date'     => __( 'Availability date', 'rentfetch' ),
-		'baths'                 => __( 'Baths', 'rentfetch' ),
-		'beds'                  => __( 'Beds', 'rentfetch' ),
-		'deposit'               => __( 'Deposit', 'rentfetch' ),
-		'minimum_rent'          => __( 'Min Rent', 'rentfetch' ),
-		'maximum_rent'          => __( 'Max Rent', 'rentfetch' ),
-		'sqrft'                 => __( 'Sqrft', 'rentfetch' ),
-		// 'yardi_unit_image_urls' => __( 'Synced Images', 'rentfetch' ),
-		'amenities'             => __( 'Amenities', 'rentfetch' ),
-		// 'specials'              => __( 'Specials', 'rentfetch' ),
-		'unit_source'           => __( 'Integration', 'rentfetch' ),
-		'api_response'          => __( 'API response', 'rentfetch' ),
+		'cb'                => '<input type="checkbox" />',
+		'title'             => __( 'Title', 'rentfetch' ),
+		'sync_status'       => __( 'Syncing', 'rentfetch' ),
+		'unit_id'           => __( 'Unit ID', 'rentfetch' ),
+		'building_name'     => __( 'Building Name', 'rentfetch' ),
+		'floor_number'      => __( 'Floor Number', 'rentfetch' ),
+		'floorplan_id'      => __( 'Floorplan ID', 'rentfetch' ),
+		'floorplan_name'    => __( 'Floorplan Name', 'rentfetch' ),
+		'property_id'       => __( 'Property ID', 'rentfetch' ),
+		'apply_online_url'  => __( 'Apply URL', 'rentfetch' ),
+		'availability_date' => __( 'Availability date', 'rentfetch' ),
+		'baths'             => __( 'Baths', 'rentfetch' ),
+		'beds'              => __( 'Beds', 'rentfetch' ),
+		'deposit'           => __( 'Deposit', 'rentfetch' ),
+		'minimum_rent'      => __( 'Min Rent', 'rentfetch' ),
+		'maximum_rent'      => __( 'Max Rent', 'rentfetch' ),
+		'sqrft'             => __( 'Sqrft', 'rentfetch' ),
+		'amenities'         => __( 'Amenities', 'rentfetch' ),
+		'unit_source'       => __( 'Integration', 'rentfetch' ),
+		'api_response'      => __( 'API response', 'rentfetch' ),
 	);
 
 	return $columns;
@@ -72,8 +70,8 @@ function rentfetch_units_orderby_availability_date( $query ) {
 	if ( 'availability_date' === $query->get( 'orderby' ) ) {
 		$query->set( 'meta_key', 'availability_date' );
 		$query->set( 'orderby', 'meta_value' );
-		
-		// For units, availability_date is stored as m/d/Y, so we need custom ordering
+
+		// For units, availability_date is stored as m/d/Y, so we need custom ordering.
 		add_filter( 'posts_orderby', 'rentfetch_units_orderby_availability_date_custom' );
 	}
 }
@@ -87,8 +85,8 @@ add_action( 'pre_get_posts', 'rentfetch_units_orderby_availability_date' );
  */
 function rentfetch_units_orderby_availability_date_custom( $orderby ) {
 	global $wpdb;
-	
-	// Replace the standard meta_value ordering with date conversion that handles multiple formats
+
+	// Replace the standard meta_value ordering with date conversion that handles multiple formats.
 	$orderby = str_replace(
 		"{$wpdb->postmeta}.meta_value",
 		"COALESCE(
@@ -102,7 +100,7 @@ function rentfetch_units_orderby_availability_date_custom( $orderby ) {
 		)",
 		$orderby
 	);
-	
+
 	return $orderby;
 }
 
@@ -117,7 +115,10 @@ function rentfetch_units_filter_by_unit_source( $post_type ) {
 	}
 
 	global $wpdb;
-	$unit_sources = $wpdb->get_col( $wpdb->prepare( "
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- This is a bounded administrator-only lookup used to build the current list-table filter.
+	$unit_sources = $wpdb->get_col(
+		$wpdb->prepare(
+			"
 		SELECT DISTINCT pm.meta_value
 		FROM {$wpdb->postmeta} pm
 		INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
@@ -125,15 +126,25 @@ function rentfetch_units_filter_by_unit_source( $post_type ) {
 		AND pm.meta_value != ''
 		AND p.post_type = %s
 		ORDER BY pm.meta_value ASC
-	", 'unit_source', 'units' ) );
+	",
+			'unit_source',
+			'units'
+		)
+	);
 
-	$current = isset( $_GET['unit_source_filter'] ) ? $_GET['unit_source_filter'] : '';
+	$current = isset( $_GET['unit_source_filter'] )
+		? sanitize_key( wp_unslash( $_GET['unit_source_filter'] ) )
+		: '';
 
 	echo '<select name="unit_source_filter">';
-	echo '<option value="">' . __( 'All Integrations', 'rentfetch' ) . '</option>';
+	echo '<option value="">' . esc_html__( 'All Integrations', 'rentfetch' ) . '</option>';
 	foreach ( $unit_sources as $source ) {
-		$selected = ( $source === $current ) ? ' selected="selected"' : '';
-		echo '<option value="' . esc_attr( $source ) . '"' . $selected . '>' . esc_html( $source ) . '</option>';
+		printf(
+			'<option value="%1$s"%2$s>%3$s</option>',
+			esc_attr( $source ),
+			selected( $source, $current, false ),
+			esc_html( $source )
+		);
 	}
 	echo '</select>';
 }
@@ -165,13 +176,16 @@ function rentfetch_units_filter_query( $query ) {
 	}
 
 	if ( isset( $_GET['unit_source_filter'] ) && ! empty( $_GET['unit_source_filter'] ) ) {
-		$query->set( 'meta_query', array(
+		$query->set(
+			'meta_query',
 			array(
-				'key'     => 'unit_source',
-				'value'   => sanitize_text_field( $_GET['unit_source_filter'] ),
-				'compare' => '=',
-			),
-		) );
+				array(
+					'key'     => 'unit_source',
+					'value'   => sanitize_key( wp_unslash( $_GET['unit_source_filter'] ) ),
+					'compare' => '=',
+				),
+			)
+		);
 	}
 }
 add_action( 'pre_get_posts', 'rentfetch_units_filter_query' );
@@ -201,24 +215,24 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 			'sync-red'    => '#dc3545',
 			'sync-gray'   => '#6c757d',
 		);
-		$tooltip = function_exists( 'rentfetch_get_column_sync_tooltip' )
+		$tooltip     = function_exists( 'rentfetch_get_column_sync_tooltip' )
 			? rentfetch_get_column_sync_tooltip( __( 'Units APIs', 'rentfetch' ), array( $post_id ) )
 			: __( 'No sync status available.', 'rentfetch' );
 
 		echo '<span class="rentfetch-sync-dot" tabindex="0" data-tooltip="' . esc_attr( $tooltip ) . '" aria-label="' . esc_attr( $tooltip ) . '" style="color: ' . esc_attr( $sync_colors[ $sync_status ] ?? '#6c757d' ) . ';">●</span>';
 	}
-	
+
 	if ( 'unit_source' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'unit_source', true ) );
-		
+
 		// let's also run the script for this post here, showing disabled fields.
 		$array_disabled_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields', array(), $post_id );
-				
-		// Output the inline script to add 'disabled' class
+
+		// Output the inline script to add 'disabled' class.
 		echo '<script>
 			document.addEventListener("DOMContentLoaded", function() {
-				var disabledFields = ' . json_encode( $array_disabled_fields ) . ';
-				var postId = ' . json_encode( $post_id ) . ';
+				var disabledFields = ' . wp_json_encode( $array_disabled_fields ) . ';
+				var postId = ' . wp_json_encode( $post_id ) . ';
 				
 				disabledFields.forEach(function(field) {
 					document.querySelectorAll("tr#post-" + postId + " td." + field).forEach(function(td) {
@@ -227,16 +241,16 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 				});
 			});
 		</script>';
-		
+
 	}
 
 	if ( 'unit_id' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'unit_id', true ) );
 	}
-	
+
 	if ( 'building_name' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'building_name', true ) );
-	
+
 	}
 	if ( 'floor_number' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'floor_number', true ) );
@@ -267,7 +281,7 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 				),
 			),
 		);
-		
+
 		if ( 0 !== $property_id ) {
 			$args['meta_query'][] = array(
 				'key'     => 'property_id',
@@ -299,21 +313,21 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 	if ( 'availability_date' === $column ) {
 		$date_string = get_post_meta( $post_id, 'availability_date', true );
 		if ( $date_string ) {
-			// Try different date formats that might exist in the data
+			// Try different date formats that might exist in the data.
 			$formats = array( 'm/d/Y', 'Y-m-d', 'Ymd', 'm-d-Y', 'd/m/Y', 'Y-m-d H:i:s', 'Y-m-d H:i', 'm/d/Y H:i:s', 'm/d/Y H:i' );
-			$date = false;
-			
+			$date    = false;
+
 			foreach ( $formats as $format ) {
 				$date = DateTime::createFromFormat( $format, $date_string );
-				if ( $date !== false ) {
+				if ( false !== $date ) {
 					break;
 				}
 			}
-			
+
 			if ( $date ) {
 				echo esc_attr( $date->format( 'm/d/Y' ) );
 			} else {
-				// If no format works, show the raw value
+				// If no format works, show the raw value.
 				echo esc_attr( $date_string );
 			}
 		}
@@ -346,7 +360,7 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 	if ( 'specials' === $column ) {
 		echo esc_attr( get_post_meta( $post_id, 'specials', true ) );
 	}
-	
+
 	if ( 'amenities' === $column ) {
 		echo esc_html( get_post_meta( $post_id, 'amenities', true ) );
 	}

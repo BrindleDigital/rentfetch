@@ -5,7 +5,7 @@
  * @package rentfetch
  */
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
@@ -16,15 +16,18 @@ require_once __DIR__ . '/../shortcode-documentation.php';
  *
  * @return void.
  */
-function rentfetch_shortcodes_page_html()
-{
-	if (!current_user_can('manage_options')) {
+function rentfetch_shortcodes_page_html() {
+	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
 
-
-	add_filter('admin_footer_text', 'rentfetch_override_admin_footer');
-	add_filter('update_footer', function () { echo ''; });
+	add_filter( 'admin_footer_text', 'rentfetch_override_admin_footer' );
+	add_filter(
+		'update_footer',
+		function () {
+			echo '';
+		}
+	);
 
 	?>
 	<?php rentfetch_shortcode_copy_script(); ?>
@@ -33,7 +36,7 @@ function rentfetch_shortcodes_page_html()
 	echo '<div class="wrap">';
 	echo '<h1>Rent Fetch Shortcodes</h1>';
 	echo '<p>Rent Fetch includes a number of shortcodes that can be used wherever you\'d like on your site. <strong>Click any of them below to copy them.</strong></p>';
-	do_action('rentfetch_do_documentation_shortcodes');
+	do_action( 'rentfetch_do_documentation_shortcodes' );
 	echo '</div>';
 }
 
@@ -42,8 +45,7 @@ function rentfetch_shortcodes_page_html()
  *
  * @return void.
  */
-function rentfetch_documentation_shortcodes()
-{
+function rentfetch_documentation_shortcodes() {
 	?>
 	<section id="rent-fetch-shortcodes-page" class="shortcodes-container">
 		<div class="row">
@@ -64,4 +66,3 @@ function rentfetch_documentation_shortcodes()
 	</section>
 	<?php
 }
-// add_action('rentfetch_do_documentation_shortcodes', 'rentfetch_documentation_shortcodes');

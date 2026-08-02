@@ -100,8 +100,8 @@ function rentfetch_units_identifiers_metabox_callback( $post ) {
 				<div class="column">
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="floorplan_id" name="floorplan_id" value="<?php echo esc_attr( $floorplan_id ); ?>">
 					<?php
-					// get the floorplan title from the ID (this is the floorplan_id meta, not the post ID)
-					$args = array(
+					// Get the floorplan title from the ID (this is the floorplan_id meta, not the post ID).
+					$args  = array(
 						'post_type'      => 'floorplans',
 						'posts_per_page' => 1,
 						'post_status'    => 'publish',
@@ -127,14 +127,14 @@ function rentfetch_units_identifiers_metabox_callback( $post ) {
 					} else {
 						echo '<p class="description">When this is filled out, just save and refresh the page to see a link to the associated floorplan.</p>';
 					}
-					?>					
-				</div>
+					?>
+									</div>
 			</div>
 			
 			<?php
 			// * Unit ID
-			$unit_id = get_post_meta( $post->ID, 'unit_id', true );
-			$disabled     = in_array( 'unit_id', $array_disabled_fields, true ) ? 'disabled' : '';
+			$unit_id  = get_post_meta( $post->ID, 'unit_id', true );
+			$disabled = in_array( 'unit_id', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
@@ -206,8 +206,8 @@ function rentfetch_units_info_metabox_callback( $post ) {
 			
 			<?php
 			// * Sqrft
-			$sqrft = get_post_meta( $post->ID, 'sqrft', true );
-			$disabled     = in_array( 'sqrft', $array_disabled_fields, true ) ? 'disabled' : '';
+			$sqrft    = get_post_meta( $post->ID, 'sqrft', true );
+			$disabled = in_array( 'sqrft', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
@@ -221,7 +221,7 @@ function rentfetch_units_info_metabox_callback( $post ) {
 			<?php
 			// * Building Name
 			$building_name = get_post_meta( $post->ID, 'building_name', true );
-			$disabled     = in_array( 'building_name', $array_disabled_fields, true ) ? 'disabled' : '';
+			$disabled      = in_array( 'building_name', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
@@ -296,8 +296,8 @@ function rentfetch_units_info_metabox_callback( $post ) {
 			
 			<?php
 			// * Deposit
-			$deposit = get_post_meta( $post->ID, 'deposit', true );
-			$disabled        = in_array( 'deposit', $array_disabled_fields, true ) ? 'disabled' : '';
+			$deposit  = get_post_meta( $post->ID, 'deposit', true );
+			$disabled = in_array( 'deposit', $array_disabled_fields, true ) ? 'disabled' : '';
 			?>
 			<div class="field">
 				<div class="column">
@@ -402,6 +402,20 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 				'property_id'  => 'Property ID',
 				'floorplan_id' => 'Floor Plan ID',
 				'unit_id'      => 'Unit ID',
+			),
+			array(
+				'unit_source'  => isset( $_POST['unit_source'] )
+					? sanitize_key( wp_unslash( $_POST['unit_source'] ) )
+					: null,
+				'property_id'  => isset( $_POST['property_id'] )
+					? sanitize_text_field( wp_unslash( $_POST['property_id'] ) )
+					: null,
+				'floorplan_id' => isset( $_POST['floorplan_id'] )
+					? sanitize_text_field( wp_unslash( $_POST['floorplan_id'] ) )
+					: null,
+				'unit_id'      => isset( $_POST['unit_id'] )
+					? sanitize_text_field( wp_unslash( $_POST['unit_id'] ) )
+					: null,
 			)
 		)
 	) {
@@ -447,9 +461,9 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 	}
 
 	if ( isset( $_POST['unit_id'] ) ) {
-		$submitted_unit_id = sanitize_text_field( wp_unslash( $_POST['unit_id'] ) );
-		$current_unit_id   = (string) get_post_meta( $post_id, 'unit_id', true );
-		$original_unit_id  = isset( $_POST['rentfetch_unit_id_original'] )
+		$submitted_unit_id  = sanitize_text_field( wp_unslash( $_POST['unit_id'] ) );
+		$current_unit_id    = (string) get_post_meta( $post_id, 'unit_id', true );
+		$original_unit_id   = isset( $_POST['rentfetch_unit_id_original'] )
 			? sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_id_original'] ) )
 			: $current_unit_id;
 		$override_confirmed = isset( $_POST['rentfetch_unit_id_override_confirmed'] )
@@ -517,11 +531,11 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 	if ( isset( $_POST['apply_online_url'] ) ) {
 		update_post_meta( $post_id, 'apply_online_url', esc_url_raw( wp_unslash( $_POST['apply_online_url'] ) ) );
 	}
-	
+
 	if ( isset( $_POST['floor_number'] ) ) {
 		update_post_meta( $post_id, 'floor_number', sanitize_text_field( wp_unslash( $_POST['floor_number'] ) ) );
 	}
-	
+
 	if ( isset( $_POST['building_name'] ) ) {
 		update_post_meta( $post_id, 'building_name', sanitize_text_field( wp_unslash( $_POST['building_name'] ) ) );
 	}
@@ -529,7 +543,6 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 	if ( isset( $_POST['amenities'] ) ) {
 		update_post_meta( $post_id, 'amenities', sanitize_text_field( wp_unslash( $_POST['amenities'] ) ) );
 	}
-	
 }
 add_action( 'save_post', 'rentfetch_save_units_metaboxes' );
 
@@ -561,7 +574,7 @@ function rentfetch_units_api_response_metabox_callback( $post ) {
 					printf( '<textarea class="rentfetch-api-response-json" readonly rows="10" style="width:100%%;">%s</textarea>', esc_textarea( $formatted ) );
 					echo '</div>';
 				} elseif ( is_array( $subvalue ) ) {
-					// Handle nested arrays (like 304 responses)
+					// Handle nested arrays (like 304 responses).
 					echo '<div class="nested-array" style="background-color: #f5f5f5; padding: 10px; margin: 5px 0; border-radius: 3px;">';
 					if ( ! is_numeric( $subkey ) ) {
 						printf( '<h4>%s</h4>', esc_html( $subkey ) );
@@ -592,5 +605,4 @@ function rentfetch_units_api_response_metabox_callback( $post ) {
 	}
 
 	echo '</div>';
-
 }

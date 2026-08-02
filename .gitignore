@@ -1,4 +1,11 @@
 /composer.lock
 /phpcs.xml
+.DS_Store
 node_modules/
-
+/vendor/autoload.php
+/vendor/bin/
+/vendor/composer/
+/vendor/dealerdirect/
+/vendor/phpcsstandards/
+/vendor/squizlabs/
+/vendor/wp-coding-standards/

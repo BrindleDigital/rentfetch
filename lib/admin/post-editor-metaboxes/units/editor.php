@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Get unit editor tab definitions.
  *
@@ -45,7 +49,7 @@ function rentfetch_get_unit_editor_tabs() {
  * Render one section inside a unit editor tab.
  *
  * @param array<string, mixed> $section Section definition.
- * @param WP_Post             $post    Current unit.
+ * @param WP_Post              $post    Current unit.
  * @return void
  */
 function rentfetch_render_unit_editor_section( $section, $post ) {

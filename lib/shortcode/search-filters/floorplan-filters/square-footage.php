@@ -28,7 +28,7 @@ function rentfetch_search_filters_squarefoot() {
 	if ( isset( $_GET['sqftbig'] ) && $_GET['sqftbig'] > 0 ) {
 		$value_big = intval( sanitize_text_field( wp_unslash( $_GET['sqftbig'] ) ) );
 	}
-	
+
 	$label = apply_filters( 'rentfetch_search_filters_sqft_label', 'Sqft' );
 
 	// * build the price search.

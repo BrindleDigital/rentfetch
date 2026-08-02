@@ -40,7 +40,7 @@ function rentfetch_search_filters_price() {
 	if ( 0 === intval( $value_big ) ) {
 		$value_big = null;
 	}
-	
+
 	$label = apply_filters( 'rentfetch_search_filters_price_label', 'Price' );
 
 	// * build the price search
@@ -100,10 +100,8 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 	// if there are no values here, let's bail and return the original args.
 	if ( null === $pricesmall && null === $pricebig ) {
 		return $floorplans_args;
-	}
-
-	// if both values are set, then do a between query.
-	elseif ( intval( $pricesmall ) > 0 && intval( $pricebig ) > 0 ) {
+	} elseif ( intval( $pricesmall ) > 0 && intval( $pricebig ) > 0 ) {
+		// if both values are set, then do a between query.
 		// if both values are set, then do a between query.
 		$floorplans_args['meta_query'][] = array(
 			array(
@@ -113,10 +111,8 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 				'compare' => 'BETWEEN',
 			),
 		);
-	}
-
-	// if only the small value is set, then do a greater than or equal to query.
-	elseif ( intval( $pricesmall ) > 0 && null === $pricebig ) {
+	} elseif ( intval( $pricesmall ) > 0 && null === $pricebig ) {
+		// if only the small value is set, then do a greater than or equal to query.
 
 		$floorplans_args['meta_query'][] = array(
 			'relation' => 'AND',
@@ -134,10 +130,8 @@ function rentfetch_search_floorplans_args_price( $floorplans_args ) {
 			),
 		);
 
-	}
-
-	// if only the big value is set, then do a between query between 1 and the big value.
-	elseif ( intval( $pricebig ) > 0 && empty( $pricesmall ) ) {
+	} elseif ( intval( $pricebig ) > 0 && empty( $pricesmall ) ) {
+		// if only the big value is set, then do a between query between 1 and the big value.
 
 		$floorplans_args['meta_query'][] = array(
 			array(

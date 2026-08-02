@@ -14,6 +14,5 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function rentfetch_documentation_submenu_open_new_tab() {
 	wp_enqueue_script( 'rentfetch-options-documentation-submenu' );
-	
 }
 add_action( 'admin_footer', 'rentfetch_documentation_submenu_open_new_tab' );

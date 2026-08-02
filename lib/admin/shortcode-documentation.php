@@ -5,7 +5,7 @@
  * @package rentfetch
  */
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
@@ -14,8 +14,7 @@ if (!defined('ABSPATH')) {
  *
  * @return void.
  */
-function rentfetch_property_search_shortcode_docs()
-{
+function rentfetch_property_search_shortcode_docs() {
 	?>
 	<p><strong>We strongly recommend using this somewhere it can span the full width of the screen.</strong></p>
 	<p>The main properties search can be rendered using the default shortcode, which will create a side-by-side layout
@@ -44,8 +43,7 @@ function rentfetch_property_search_shortcode_docs()
  *
  * @return void.
  */
-function rentfetch_properties_grid_shortcode_docs()
-{
+function rentfetch_properties_grid_shortcode_docs() {
 	?>
 	<p>This layout ignores availability and shows all properties in a grid, without a map view. We strongly recommend
 		using this somewhere it can span the full width of the screen.</p>
@@ -59,8 +57,7 @@ function rentfetch_properties_grid_shortcode_docs()
  *
  * @return void.
  */
-function rentfetch_property_components_shortcode_docs()
-{
+function rentfetch_property_components_shortcode_docs() {
 	?>
 	<h3>Property components</h3>
 	<p>Use these shortcodes to display individual pieces of property information anywhere on your site. These work great for headers, footers, or custom layouts.</p>
@@ -107,8 +104,7 @@ function rentfetch_property_components_shortcode_docs()
  *
  * @return void.
  */
-function rentfetch_floorplans_shortcode_docs()
-{
+function rentfetch_floorplans_shortcode_docs() {
 	?>
 	<h3>Floorplans search</h3>
 	<p>You can use a parameter to customize by property, so that only a given property (or multiple properties) will
@@ -145,8 +141,7 @@ function rentfetch_floorplans_shortcode_docs()
  *
  * @return void.
  */
-function rentfetch_shortcode_copy_script()
-{
+function rentfetch_shortcode_copy_script() {
 	?>
 	<script>
 		jQuery(document).ready(function ($) {

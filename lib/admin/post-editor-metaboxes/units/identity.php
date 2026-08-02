@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Get source choices available to a unit.
  *
@@ -96,15 +100,15 @@ function rentfetch_get_unit_floorplan_options() {
  * @return void
  */
 function rentfetch_render_unit_identity_bar( $post ) {
-	$unit_source      = sanitize_key( get_post_meta( $post->ID, 'unit_source', true ) );
-	$property_id      = trim( (string) get_post_meta( $post->ID, 'property_id', true ) );
-	$floorplan_id     = trim( (string) get_post_meta( $post->ID, 'floorplan_id', true ) );
-	$unit_id          = trim( (string) get_post_meta( $post->ID, 'unit_id', true ) );
-	$source_options   = rentfetch_get_unit_source_options( $post->ID );
-	$property_options = rentfetch_get_floorplan_property_options();
+	$unit_source       = sanitize_key( get_post_meta( $post->ID, 'unit_source', true ) );
+	$property_id       = trim( (string) get_post_meta( $post->ID, 'property_id', true ) );
+	$floorplan_id      = trim( (string) get_post_meta( $post->ID, 'floorplan_id', true ) );
+	$unit_id           = trim( (string) get_post_meta( $post->ID, 'unit_id', true ) );
+	$source_options    = rentfetch_get_unit_source_options( $post->ID );
+	$property_options  = rentfetch_get_floorplan_property_options();
 	$floorplan_options = rentfetch_get_unit_floorplan_options();
-	$property_found   = false;
-	$floorplan_found  = false;
+	$property_found    = false;
+	$floorplan_found   = false;
 	?>
 	<div class="rf-property-identity rf-unit-identity" data-rf-unit-identity>
 		<div class="rf-property-identity-item rf-property-identity-source">

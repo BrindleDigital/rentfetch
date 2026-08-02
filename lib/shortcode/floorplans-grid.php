@@ -38,7 +38,7 @@ function rentfetch_floorplans( $atts ) {
 
 	// The Loop.
 	if ( $custom_query->have_posts() ) {
-		
+
 		do_action( 'rentfetch_before_floorplans_simple_grid' );
 
 		echo '<div class="floorplans-simple-grid">';
@@ -60,7 +60,7 @@ function rentfetch_floorplans( $atts ) {
 		}
 
 		echo '</div>';
-		
+
 		do_action( 'rentfetch_after_floorplans_simple_grid' );
 
 		// Restore postdata.
@@ -160,7 +160,7 @@ add_filter( 'rentfetch_floorplans_simple_grid_query_args', 'rentfetch_floorplans
 /**
  * Apply the $atts for sort to the query args
  *
- * @param   array $args arguments.
+ * @param array $floorplans_args Floor plan query arguments.
  *
  * @return array  the modified query args.
  */
@@ -193,9 +193,9 @@ function rentfetch_floorplans_simple_grid_query_args_order( $floorplans_args ) {
 
 		// if it's price low to high.
 		if ( 'pricelow' === $sort ) {
-			$floorplans_args['orderby']    = 'meta_value_num';
+			$floorplans_args['orderby']      = 'meta_value_num';
 			$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
-			$floorplans_args['order']      = 'ASC';
+			$floorplans_args['order']        = 'ASC';
 			$floorplans_args['meta_query'][] = array( // phpcs:ignore
 				'key'     => 'minimum_rent',
 				'value'   => 100,
@@ -206,9 +206,9 @@ function rentfetch_floorplans_simple_grid_query_args_order( $floorplans_args ) {
 
 		// if it's price high to low.
 		if ( 'pricehigh' === $sort ) {
-			$floorplans_args['orderby']    = 'meta_value_num';
+			$floorplans_args['orderby']      = 'meta_value_num';
 			$floorplans_args['meta_key']   = 'minimum_rent'; // phpcs:ignore
-			$floorplans_args['order']      = 'DESC';
+			$floorplans_args['order']        = 'DESC';
 			$floorplans_args['meta_query'][] = array( // phpcs:ignore
 				'key'     => 'minimum_rent',
 				'value'   => 100,
@@ -216,17 +216,17 @@ function rentfetch_floorplans_simple_grid_query_args_order( $floorplans_args ) {
 				'compare' => '>',
 			);
 		}
-		
+
 		// if it's alphabetical...
 		if ( 'alphabetical' === $sort ) {
-			$floorplans_args['orderby']  = 'title';
-			$floorplans_args['order']    = 'ASC';
+			$floorplans_args['orderby'] = 'title';
+			$floorplans_args['order']   = 'ASC';
 		}
-		
+
 		// if it's menu_order...
 		if ( 'menu_order' === $sort ) {
-			$floorplans_args['orderby']  = 'menu_order';
-			$floorplans_args['order']    = 'ASC';
+			$floorplans_args['orderby'] = 'menu_order';
+			$floorplans_args['order']   = 'ASC';
 		}
 	}
 

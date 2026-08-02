@@ -22,20 +22,20 @@ function rentfetch_get_floorplan_images() {
 		return;
 	}
 
-	$manual_images   = rentfetch_get_floorplan_images_manual();
-	$yardi_images    = rentfetch_get_floorplan_images_yardi();
-	$entrata_images    = rentfetch_get_floorplan_images_entrata();
-	$rentmanager_images    = rentfetch_get_floorplan_images_rentmanager();
-	$engrain_images  = rentfetch_get_floorplan_images_engrain();
-	$fallback_images = rentfetch_get_floorplan_images_fallback();
+	$manual_images      = rentfetch_get_floorplan_images_manual();
+	$yardi_images       = rentfetch_get_floorplan_images_yardi();
+	$entrata_images     = rentfetch_get_floorplan_images_entrata();
+	$rentmanager_images = rentfetch_get_floorplan_images_rentmanager();
+	$engrain_images     = rentfetch_get_floorplan_images_engrain();
+	$fallback_images    = rentfetch_get_floorplan_images_fallback();
 
 	if ( $manual_images ) {
 		return $manual_images;
 	} elseif ( $yardi_images ) {
 		return $yardi_images;
-	} elseif( $entrata_images ) {
+	} elseif ( $entrata_images ) {
 		return $entrata_images;
-	} elseif( $rentmanager_images) {
+	} elseif ( $rentmanager_images ) {
 		return $rentmanager_images;
 	} elseif ( $engrain_images ) {
 		return $engrain_images;
@@ -88,16 +88,15 @@ function rentfetch_get_floorplan_images_manual() {
  */
 function rentfetch_get_floorplan_images_yardi() {
 	global $post;
-	
-	$images_string = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
+
+	$images_string    = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
 	$floorplan_source = get_post_meta( get_the_ID(), 'floorplan_source', true );
-	
 
 	// bail if there's no yardi images.
 	if ( ! $images_string ) {
 		return;
 	}
-	
+
 	// bail if this isn't a yardi floorplan.
 	if ( 'yardi' !== $floorplan_source ) {
 		return;
@@ -122,16 +121,15 @@ function rentfetch_get_floorplan_images_yardi() {
  */
 function rentfetch_get_floorplan_images_entrata() {
 	global $post;
-	
-	$images_string = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
+
+	$images_string    = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
 	$floorplan_source = get_post_meta( get_the_ID(), 'floorplan_source', true );
-	
 
 	// bail if there's no yardi images.
 	if ( ! $images_string ) {
 		return;
 	}
-	
+
 	// bail if this isn't a yardi floorplan.
 	if ( 'entrata' !== $floorplan_source ) {
 		return;
@@ -156,10 +154,10 @@ function rentfetch_get_floorplan_images_entrata() {
  */
 function rentfetch_get_floorplan_images_rentmanager() {
 	global $post;
-		
-	$images_source = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
+
+	$images_source    = get_post_meta( get_the_ID(), 'floorplan_image_url', true );
 	$floorplan_source = get_post_meta( get_the_ID(), 'floorplan_source', true );
-	
+
 	// bail if there's no images.
 	if ( ! $images_source || ! is_array( $images_source ) ) {
 		return;
@@ -171,7 +169,7 @@ function rentfetch_get_floorplan_images_rentmanager() {
 	}
 
 	$images_return = array();
-		
+
 	foreach ( $images_source as $image ) {
 		$images_return[] = array(
 			'url' => esc_url( $image['File']['DownloadURL'] ),

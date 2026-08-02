@@ -5,6 +5,10 @@
  * @package rentfetch
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Save the Rent Fetch floor plan fields.
  *
@@ -31,6 +35,17 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 			array(
 				'property_id'  => 'Property ID',
 				'floorplan_id' => 'Floor Plan ID',
+			),
+			array(
+				'floorplan_source' => isset( $_POST['floorplan_source'] )
+					? sanitize_key( wp_unslash( $_POST['floorplan_source'] ) )
+					: null,
+				'property_id'      => isset( $_POST['property_id'] )
+					? sanitize_text_field( wp_unslash( $_POST['property_id'] ) )
+					: null,
+				'floorplan_id'     => isset( $_POST['floorplan_id'] )
+					? sanitize_text_field( wp_unslash( $_POST['floorplan_id'] ) )
+					: null,
 			)
 		)
 	) {
