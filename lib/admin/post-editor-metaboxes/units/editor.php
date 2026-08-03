@@ -33,10 +33,6 @@ function rentfetch_get_unit_editor_tabs() {
 			'lazy'     => 'diagnostics',
 			'sections' => array(
 				array(
-					'label'    => 'Property Hierarchy',
-					'callback' => 'rentfetch_units_hierarchy_metabox_callback',
-				),
-				array(
 					'label'    => 'API Responses',
 					'callback' => 'rentfetch_units_api_response_metabox_callback',
 				),

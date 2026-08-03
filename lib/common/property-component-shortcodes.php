@@ -151,11 +151,15 @@ function rentfetch_property_shortcode( $atts ) {
 			break;
 
 		case 'specials':
-			$content = rentfetch_get_property_specials_from_meta( $property_id );
+			$content = rentfetch_get_property_specials_markup_from_meta( $property_id );
 			break;
 
 		case 'specials_content':
 			$content = rentfetch_get_property_specials_content_from_meta( $property_id );
+			break;
+
+		case 'specials_heading':
+			$content = rentfetch_get_property_specials_from_meta( $property_id );
 			break;
 
 		case 'description':

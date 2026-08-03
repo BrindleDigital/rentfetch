@@ -2683,6 +2683,29 @@ function rentfetch_get_property_specials_content_from_meta( $property_id = null 
 }
 
 /**
+ * Get minimally marked-up property specials.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return string The property specials markup.
+ */
+function rentfetch_get_property_specials_markup_from_meta( $property_id = null ) {
+	$special = rentfetch_get_effective_property_special( $property_id );
+
+	if ( ! $special ) {
+		return '';
+	}
+
+	$output  = '<span class="specials">';
+	$output .= '<span class="specials-heading">' . esc_html( $special['heading'] ) . '</span>';
+	if ( ! empty( $special['content'] ) ) {
+		$output .= '<span class="specials-content">' . esc_html( $special['content'] ) . '</span>';
+	}
+	$output .= '</span>';
+
+	return apply_filters( 'rentfetch_filter_property_specials_markup_from_meta', $output, $property_id );
+}
+
+/**
  * Get the allowed HTML for a special callout.
  *
  * @return array<string, mixed>

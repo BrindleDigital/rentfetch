@@ -42,7 +42,11 @@ function rentfetch_properties_api_response_metabox_callback( $post ) {
 					}
 					echo '</div>';
 				} else {
-					printf( '<p>%s</p>', esc_html( $subvalue ) );
+					if ( 'updated' === $subkey && rentfetch_parse_sync_timestamp( $subvalue ) ) {
+						$subvalue = rentfetch_format_sync_timestamp( $subvalue ) . ' · ' . rentfetch_get_relative_time( $subvalue );
+					}
+					$label = ucwords( str_replace( '_', ' ', (string) $subkey ) );
+					printf( '<p><strong>%s:</strong> %s</p>', esc_html( $label ), esc_html( $subvalue ) );
 				}
 			}
 		} else {

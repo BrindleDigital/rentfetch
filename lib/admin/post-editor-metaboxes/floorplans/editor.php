@@ -64,10 +64,6 @@ function rentfetch_get_floorplan_editor_tabs() {
 			'lazy'     => 'diagnostics',
 			'sections' => array(
 				array(
-					'label'    => 'Property Hierarchy',
-					'callback' => 'rentfetch_floorplans_hierarchy_metabox_callback',
-				),
-				array(
 					'label'    => 'API Responses',
 					'callback' => 'rentfetch_floorplans_api_response_metabox_callback',
 				),

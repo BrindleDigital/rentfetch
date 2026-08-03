@@ -74,13 +74,9 @@ function rentfetch_get_property_editor_tabs() {
 			'lazy'     => 'diagnostics',
 			'sections' => array(
 				array(
-					'label'            => 'Property Hierarchy',
-					'callback'         => 'rentfetch_properties_hierarchy_metabox_callback',
+					'label'            => 'API Responses',
+					'callback'         => 'rentfetch_properties_api_response_metabox_callback',
 					'actions_callback' => 'rentfetch_properties_related_records_callback',
-				),
-				array(
-					'label'    => 'API Responses',
-					'callback' => 'rentfetch_properties_api_response_metabox_callback',
 				),
 			),
 		),

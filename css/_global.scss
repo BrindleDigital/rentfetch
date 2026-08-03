@@ -130,6 +130,11 @@ pre {
 	line-height: 1.2em;
 }
 
+.specials-heading,
+.specials-content {
+	display: block;
+}
+
 // Shared pricing line styles used by shortcode outputs outside template-specific contexts.
 .rentfetch-property-rent-lines,
 .rentfetch-floorplan-rent-lines,

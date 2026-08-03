@@ -682,14 +682,6 @@ function rentfetch_save_settings_general_data_sync() {
 		update_option( 'rentfetch_options_yardi_integration_creds_yardi_password', $options_yardi_integration_creds_yardi_password );
 	}
 
-	// Engrain API key.
-	if ( isset( $_POST['rentfetch_options_engrain_integration_creds_engrain_api_key'] ) ) {
-		update_option(
-			'rentfetch_options_engrain_integration_creds_engrain_api_key',
-			sanitize_text_field( wp_unslash( $_POST['rentfetch_options_engrain_integration_creds_engrain_api_key'] ) )
-		);
-	}
-
 	// Engrain asset IDs.
 	if ( isset( $_POST['rentfetch_options_engrain_integration_creds_engrain_asset_ids'] ) ) {
 		$raw_asset_ids = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_engrain_integration_creds_engrain_asset_ids'] ) );
