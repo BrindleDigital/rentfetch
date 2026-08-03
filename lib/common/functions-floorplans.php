@@ -378,27 +378,102 @@ function rentfetch_floorplan_pricing() {
 // * Move in special
 
 /**
- * Get the move-in special markup.
+ * Resolve the special that should be shown for a floor plan.
  *
- * @return string the move-in special markup.
+ * Floor-plan values stay on the floor plan. Property values are read only when
+ * the property explicitly allows the special to show on floor plans and units.
+ *
+ * @param int|null $floorplan_post_id Optional floor plan post ID.
+ * @return array<string, mixed>|null
  */
-function rentfetch_get_floorplan_specials() {
+function rentfetch_get_effective_floorplan_special( $floorplan_post_id = null ) {
+	if ( ! $floorplan_post_id ) {
+		$floorplan_post_id = get_the_ID();
+	}
 
-	$specials               = get_post_meta( get_the_ID(), 'has_specials', true );
-	$specials_override_text = get_post_meta( get_the_ID(), 'specials_override_text', true );
+	$floorplan_post_id = (int) $floorplan_post_id;
+	if ( $floorplan_post_id <= 0 ) {
+		return null;
+	}
 
-	// Sanitize the override text to plain text to prevent HTML from being output.
-	$specials_override_text = sanitize_text_field( $specials_override_text );
+	$floorplan_has_specials = get_post_meta( $floorplan_post_id, 'has_specials', true );
+	$floorplan_heading      = sanitize_text_field( get_post_meta( $floorplan_post_id, 'specials_override_text', true ) );
+	$floorplan_heading      = function_exists( 'mb_substr' ) ? mb_substr( $floorplan_heading, 0, 25 ) : substr( $floorplan_heading, 0, 25 );
+	$floorplan_content      = sanitize_textarea_field( get_post_meta( $floorplan_post_id, 'specials_content', true ) );
+	$has_floorplan_special  = in_array( $floorplan_has_specials, array( '1', 1, true ), true );
 
-	if ( $specials && ! $specials_override_text ) {
+	if ( $has_floorplan_special ) {
+		if ( ! rentfetch_property_specials_are_active_by_date( $floorplan_post_id ) ) {
+			return null;
+		}
+
+		return array(
+			'source'  => 'floorplan',
+			'post_id' => $floorplan_post_id,
+			'heading' => $floorplan_heading,
+			'content' => $floorplan_content,
+		);
+	}
+
+	$exclude_property_special = get_post_meta( $floorplan_post_id, 'specials_exclude_property', true );
+	if ( in_array( $exclude_property_special, array( '1', 1, true ), true ) ) {
+		return null;
+	}
+
+	$property_post_id      = rentfetch_get_connected_property_post_id_for_floorplan( $floorplan_post_id );
+	$show_on_floorplans    = $property_post_id ? get_post_meta( $property_post_id, 'specials_show_on_floorplans', true ) : null;
+	$property_has_specials = $property_post_id ? get_post_meta( $property_post_id, 'has_specials', true ) : null;
+
+	if ( ! $property_post_id || ! in_array( $show_on_floorplans, array( '1', 1, true ), true ) || ! in_array( $property_has_specials, array( '1', 1, true ), true ) ) {
+		return null;
+	}
+
+	if ( ! rentfetch_property_specials_are_active_by_date( $property_post_id ) ) {
+		return null;
+	}
+
+	$property_heading = sanitize_text_field( get_post_meta( $property_post_id, 'specials_override_text', true ) );
+	$property_heading = function_exists( 'mb_substr' ) ? mb_substr( $property_heading, 0, 25 ) : substr( $property_heading, 0, 25 );
+
+	return array(
+		'source'  => 'property',
+		'post_id' => $property_post_id,
+		'heading' => $property_heading,
+		'content' => sanitize_textarea_field( get_post_meta( $property_post_id, 'specials_content', true ) ),
+	);
+}
+
+/**
+ * Get the short special title for a floor plan.
+ *
+ * @param int|null $floorplan_post_id Optional floor plan post ID.
+ * @return string|null
+ */
+function rentfetch_get_floorplan_specials( $floorplan_post_id = null ) {
+	$specials      = rentfetch_get_effective_floorplan_special( $floorplan_post_id );
+	$specials_text = $specials ? $specials['heading'] : null;
+
+	if ( $specials && ! $specials_text ) {
 		$specials_text = 'Specials available';
-	} elseif ( $specials_override_text ) {
-		$specials_text = $specials_override_text;
-	} else {
-		$specials_text = null;
 	}
 
 	return apply_filters( 'rentfetch_filter_floorplan_specials', $specials_text );
+}
+
+/**
+ * Get the full special callout for a floor plan.
+ *
+ * @param int|null $floorplan_post_id Optional floor plan post ID.
+ * @return string|null
+ */
+function rentfetch_get_floorplan_specials_callout( $floorplan_post_id = null ) {
+	$specials = rentfetch_get_effective_floorplan_special( $floorplan_post_id );
+
+	if ( ! $specials || ( ! $specials['heading'] && ! $specials['content'] ) ) {
+		return null;
+	}
+
+	return rentfetch_get_specials_callout_markup( $specials['heading'], $specials['content'] );
 }
 
 /**
@@ -904,21 +979,14 @@ function rentfetch_floorplan_unit_display_get_columns( $args ) {
 	}
 
 	// * Specials.
-	// We need to add an array to args that looks for 'specials' in the meta key and makes sure the value is non-empty.
-	$args_specials      = $args;
-	$args_specials_meta = array(
-		'key'     => 'specials',
-		'value'   => '',
-		'compare' => '!=',
-	);
+	// Specials are inherited through each unit's floor plan, so check the same displayed units used by both layouts.
+	$posts_specials = get_posts( $args );
 
-	$args_specials['meta_query'][] = $args_specials_meta;
-
-	$posts_specials = get_posts( $args_specials );
-
-	// if $posts_specials is an array with at least one item, then we'll add the specials column.
-	if ( is_array( $posts_specials ) && count( $posts_specials ) > 0 ) {
-		$columns[] = 'specials';
+	foreach ( $posts_specials as $unit ) {
+		if ( rentfetch_get_unit_specials( $unit->ID ) ) {
+			$columns[] = 'specials';
+			break;
+		}
 	}
 
 	// * Building name.
@@ -1194,7 +1262,7 @@ function rentfetch_floorplan_unit_list() {
 				printf( '<li class="unit-amenities"><span class="label">Amenities:</span> %s</li>', esc_html( $amenities ) );
 			}
 
-			if ( $specials ) {
+			if ( in_array( 'specials', $columns, true ) && $specials ) {
 				printf( '<li class="unit-specials">Specials: %s</li>', esc_html( $specials ) );
 			}
 

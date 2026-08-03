@@ -2,8 +2,10 @@
 	&:has(.property-specials-callout) {
 		padding-top: var(--rentfetch-property-specials-section-gap);
 	}
+}
 
-	.property-specials-callout {
+#details .property-specials-callout,
+body.single-floorplans .container-current-floorplan-info .property-specials-callout {
 		display: grid;
 		grid-template-columns: var(--rentfetch-property-specials-icon-size) minmax(0, 1fr);
 		gap: var(--rentfetch-space-md);
@@ -71,7 +73,8 @@
 		}
 	}
 
-	.property-details-header {
+	#details {
+		.property-details-header {
 		display: flex;
 		justify-content: space-between;
 		gap: var(--rentfetch-space-xl);

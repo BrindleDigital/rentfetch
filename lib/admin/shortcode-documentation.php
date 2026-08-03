@@ -83,7 +83,8 @@ function rentfetch_property_components_shortcode_docs() {
 		<li><code>square_feet</code> - Square footage</li>
 		<li><code>pricing</code> - Price range</li>
 		<li><code>availability</code> - Available units count</li>
-		<li><code>specials</code> - Current specials</li>
+		<li><code>specials</code> - Current specials heading</li>
+		<li><code>specials_content</code> - Current specials content without the styled callout</li>
 		<li><code>description</code> - Property description</li>
 		<li><code>tour_embed</code> - Virtual tour embed</li>
 		<li><code>google_link</code> - Google maps link</li>

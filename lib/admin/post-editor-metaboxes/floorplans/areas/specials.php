@@ -1,6 +1,6 @@
 <?php
 /**
- * Property editor specials fields.
+ * Floor plan specials fields.
  *
  * @package rentfetch
  */
@@ -10,62 +10,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Properties specials metabox callback
+ * Render floor plan specials fields.
  *
- * @param object $post The post object.
- *
- * @return void.
+ * @param WP_Post $post Floor plan post.
+ * @return void
  */
-function rentfetch_properties_specials_metabox_callback( $post ) {
-	$array_disabled_fields = apply_filters( 'rentfetch_filter_property_syncing_fields', array(), $post->ID );
-	wp_enqueue_script( 'jquery' );
+function rentfetch_floorplans_specials_metabox_callback( $post ) {
+	$disabled_fields = apply_filters( 'rentfetch_filter_floorplan_syncing_fields', array(), $post->ID );
 	wp_enqueue_script( 'rentfetch-flatpickr-script' );
 	wp_enqueue_script( 'rentfetch-metabox-properties' );
 	wp_enqueue_style( 'rentfetch-flatpickr-style' );
+
+	$has_specials             = get_post_meta( $post->ID, 'has_specials', true );
+	$specials_override_text   = get_post_meta( $post->ID, 'specials_override_text', true );
+	$specials_content         = get_post_meta( $post->ID, 'specials_content', true );
+	$specials_start_date      = get_post_meta( $post->ID, 'specials_start_date', true );
+	$specials_end_date        = get_post_meta( $post->ID, 'specials_end_date', true );
+	$exclude_property_special = get_post_meta( $post->ID, 'specials_exclude_property', true );
+	$conditional_class        = $has_specials ? '' : ' hidden is-hidden';
+	$conditional_hidden       = $has_specials ? '' : ' hidden';
 	?>
-	<div class="rf-metabox rf-metabox-properties rf-property-specials-metabox">
-		<?php
-		// * Has Specials
-		$has_specials = get_post_meta( $post->ID, 'has_specials', true );
-		$disabled     = in_array( 'has_specials', $array_disabled_fields, true ) ? 'disabled' : '';
-		?>
+	<div class="rf-metabox rf-metabox-floorplans rf-floorplan-specials-metabox">
 		<div class="field">
 			<div class="rf-toggle-control">
-				<input class="rf-toggle-input" type="checkbox" <?php echo esc_attr( $disabled ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
+				<input class="rf-toggle-input" type="checkbox" <?php disabled( in_array( 'has_specials', $disabled_fields, true ) ); ?> id="has_specials" name="has_specials" <?php checked( $has_specials, '1' ); ?>>
 				<label class="rf-toggle-label" for="has_specials">
 					<span class="rf-toggle-track" aria-hidden="true"><span class="rf-toggle-thumb"></span></span>
-					<span class="rf-toggle-text">Show specials for this property</span>
+					<span class="rf-toggle-text">Use a floor plan special</span>
 				</label>
 			</div>
+			<p class="description">A floor plan special takes priority over an inherited property special.</p>
 		</div>
 
-		<?php
-		// * Specials heading
-		$specials_override_text = get_post_meta( $post->ID, 'specials_override_text', true );
-		$specials_content       = get_post_meta( $post->ID, 'specials_content', true );
-		$specials_start_date    = get_post_meta( $post->ID, 'specials_start_date', true );
-		$specials_end_date      = get_post_meta( $post->ID, 'specials_end_date', true );
-		$show_on_floorplans     = get_post_meta( $post->ID, 'specials_show_on_floorplans', true );
-		$conditional_class      = $has_specials ? '' : ' hidden is-hidden';
-		$conditional_hidden     = $has_specials ? '' : ' hidden';
-		?>
 		<div class="field rf-specials-conditional-field<?php echo esc_attr( $conditional_class ); ?>"<?php echo esc_attr( $conditional_hidden ); ?>>
-			<div class="rf-toggle-control">
-				<input class="rf-toggle-input" type="checkbox" id="specials_show_on_floorplans" name="specials_show_on_floorplans" <?php checked( $show_on_floorplans, '1' ); ?>>
-				<label class="rf-toggle-label" for="specials_show_on_floorplans">
-					<span class="rf-toggle-track" aria-hidden="true"><span class="rf-toggle-thumb"></span></span>
-					<span class="rf-toggle-text">Show on floor plans and units</span>
-				</label>
-			</div>
-			<p class="description">Floor plans inherit this special unless they have their own special or hide the property special. Units follow their floor plan.</p>
-		</div>
-		<div class="field rf-specials-conditional-field<?php echo esc_attr( $conditional_class ); ?>"<?php echo esc_attr( $conditional_hidden ); ?>>
-			<label for="specials_override_text">Specials Heading</label>
+			<label for="specials_override_text">Specials Title</label>
 			<input type="text" id="specials_override_text" name="specials_override_text" maxlength="25" value="<?php echo esc_attr( $specials_override_text ); ?>">
+			<p class="description"><em>Maximum 25 characters</em></p>
 		</div>
 
 		<div class="field rf-specials-conditional-field<?php echo esc_attr( $conditional_class ); ?>"<?php echo esc_attr( $conditional_hidden ); ?>>
-			<label for="specials_content">Specials Content</label>
+			<label for="specials_content">Specials Description</label>
 			<textarea id="specials_content" name="specials_content" rows="3"><?php echo esc_textarea( $specials_content ); ?></textarea>
 		</div>
 
@@ -93,10 +77,21 @@ function rentfetch_properties_specials_metabox_callback( $post ) {
 			<input type="hidden" id="specials_end_date" name="specials_end_date" value="<?php echo esc_attr( $specials_end_date ); ?>">
 			<button type="button" class="rf-specials-date-clear">Clear dates</button>
 		</div>
+
+		<div class="field">
+			<div class="rf-toggle-control">
+				<input class="rf-toggle-input" type="checkbox" id="specials_exclude_property" name="specials_exclude_property" <?php checked( $exclude_property_special, '1' ); ?>>
+				<label class="rf-toggle-label" for="specials_exclude_property">
+					<span class="rf-toggle-track" aria-hidden="true"><span class="rf-toggle-thumb"></span></span>
+					<span class="rf-toggle-text">Hide the property special on this floor plan</span>
+				</label>
+			</div>
+			<p class="description">Use this when this floor plan should show no property special. It does not hide a floor plan special.</p>
+		</div>
 	</div>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-			var metabox = document.querySelector('.rf-property-specials-metabox');
+			var metabox = document.querySelector('.rf-floorplan-specials-metabox');
 			var toggle = metabox ? metabox.querySelector('#has_specials') : null;
 			var conditionalFields = metabox ? metabox.querySelectorAll('.rf-specials-conditional-field') : [];
 

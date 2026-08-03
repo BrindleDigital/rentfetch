@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_get_property_editor_tabs() {
 	return array(
 		'overview'     => array(
-			'label'    => 'Contact Information',
+			'label'    => 'Basic Information',
 			'sections' => array(
 				array(
 					'label'    => 'Contact Information',
@@ -37,6 +37,12 @@ function rentfetch_get_property_editor_tabs() {
 			'label'    => 'Content',
 			'sections' => array(
 				array( 'callback' => 'rentfetch_properties_display_information_metabox_callback' ),
+			),
+		),
+		'taxonomies'   => array(
+			'label'    => 'Categories',
+			'sections' => array(
+				array( 'callback' => 'rentfetch_editor_taxonomies_metabox_callback' ),
 			),
 		),
 		'specials'     => array(

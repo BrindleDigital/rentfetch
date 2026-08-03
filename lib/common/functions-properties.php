@@ -2486,18 +2486,10 @@ add_filter( 'rentfetch_filter_property_availability_date', 'rentfetch_default_pr
  * @return string The property specials.
  */
 function rentfetch_get_property_specials( $property_id = null ) {
-	if ( ! $property_id ) {
-		$property_id = sanitize_text_field( get_post_meta( get_the_ID(), 'property_id', true ) );
-	}
+	$special       = rentfetch_get_effective_property_special( $property_id );
+	$specials_text = $special ? $special['heading'] : null;
 
-	$floorplan_data = rentfetch_get_floorplans( $property_id );
-
-	if ( ! isset( $floorplan_data['property_has_specials'] ) ) {
-		return;
-	}
-
-	$specials = apply_filters( 'rentfetch_filter_property_specials', $floorplan_data['property_has_specials'] );
-	return $specials;
+	return apply_filters( 'rentfetch_filter_property_specials', $specials_text );
 }
 
 /**
@@ -2559,43 +2551,86 @@ function rentfetch_property_specials_are_active_by_date( $post_id ) {
 }
 
 /**
- * Get property specials based on property-level meta fields (similar to floorplan specials).
+ * Get the effective special for a property or its active floor plans.
+ *
+ * Property-level specials take precedence. When no active property special
+ * exists, a single active floor-plan special keeps its title and content;
+ * multiple active floor-plan specials use a generic label.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return array<string, mixed>|null
+ */
+function rentfetch_get_effective_property_special( $property_id = null ) {
+	if ( $property_id ) {
+		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
+	} else {
+		$post_id = get_the_ID();
+	}
+
+	if ( ! $post_id ) {
+		return null;
+	}
+
+	$property_id_meta      = trim( (string) get_post_meta( $post_id, 'property_id', true ) );
+	$has_property_special  = get_post_meta( $post_id, 'has_specials', true );
+	$property_heading      = sanitize_text_field( get_post_meta( $post_id, 'specials_override_text', true ) );
+	$property_heading      = function_exists( 'mb_substr' ) ? mb_substr( $property_heading, 0, 25 ) : substr( $property_heading, 0, 25 );
+	$property_content      = sanitize_textarea_field( get_post_meta( $post_id, 'specials_content', true ) );
+	$property_special_live = in_array( $has_property_special, array( '1', 1, true ), true ) && rentfetch_property_specials_are_active_by_date( $post_id );
+
+	if ( $property_special_live ) {
+		return array(
+			'source'           => 'property',
+			'post_id'          => (int) $post_id,
+			'property_post_id' => (int) $post_id,
+			'heading'          => $property_heading ? $property_heading : 'Specials available',
+			'content'          => $property_content,
+		);
+	}
+
+	if ( '' === $property_id_meta ) {
+		return null;
+	}
+
+	$floorplan_data     = rentfetch_get_floorplans( $property_id_meta );
+	$floorplan_specials = isset( $floorplan_data['property_specials'] ) && is_array( $floorplan_data['property_specials'] )
+		? array_values( array_filter( $floorplan_data['property_specials'] ) )
+		: array();
+
+	if ( empty( $floorplan_specials ) ) {
+		return null;
+	}
+
+	if ( count( $floorplan_specials ) > 1 ) {
+		return array(
+			'source'           => 'floorplans',
+			'post_id'          => 0,
+			'property_post_id' => (int) $post_id,
+			'heading'          => 'Specials available',
+			'content'          => '',
+		);
+	}
+
+	$floorplan_special = $floorplan_specials[0];
+
+	return array(
+		'source'           => 'floorplan',
+		'post_id'          => isset( $floorplan_special['post_id'] ) ? (int) $floorplan_special['post_id'] : 0,
+		'property_post_id' => (int) $post_id,
+		'heading'          => ! empty( $floorplan_special['heading'] ) ? $floorplan_special['heading'] : 'Specials available',
+		'content'          => isset( $floorplan_special['content'] ) ? $floorplan_special['content'] : '',
+	);
+}
+
+/**
+ * Get the effective property special from property or floor-plan meta fields.
  *
  * @param string $property_id Optional property_id meta value.
  * @return string|null The property specials text.
  */
 function rentfetch_get_property_specials_from_meta( $property_id = null ) {
-	if ( $property_id ) {
-		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
-		if ( ! $post_id ) {
-			return null;
-		}
-	} else {
-		$post_id = get_the_ID();
-	}
-
-	$has_specials           = get_post_meta( $post_id, 'has_specials', true );
-	$specials_override_text = get_post_meta( $post_id, 'specials_override_text', true );
-
-	// Sanitize the override text to plain text to prevent HTML from being output.
-	$specials_override_text = sanitize_text_field( $specials_override_text );
-	$specials_override_text = function_exists( 'mb_substr' ) ? mb_substr( $specials_override_text, 0, 25 ) : substr( $specials_override_text, 0, 25 );
-
-	if ( ! $has_specials ) {
-		return apply_filters( 'rentfetch_filter_property_specials_from_meta', null );
-	}
-
-	if ( ! rentfetch_property_specials_are_active_by_date( $post_id ) ) {
-		return apply_filters( 'rentfetch_filter_property_specials_from_meta', null );
-	}
-
-	if ( $has_specials && ! $specials_override_text ) {
-		$specials_text = 'Specials available';
-	} elseif ( $specials_override_text ) {
-		$specials_text = $specials_override_text;
-	} else {
-		$specials_text = null;
-	}
+	$specials      = rentfetch_get_effective_property_special( $property_id );
+	$specials_text = $specials ? $specials['heading'] : null;
 
 	return apply_filters( 'rentfetch_filter_property_specials_from_meta', $specials_text );
 }
@@ -2632,78 +2667,62 @@ function rentfetch_property_specials_label( $specials_text ) {
 add_filter( 'rentfetch_filter_property_specials_from_meta', 'rentfetch_property_specials_label', 10, 1 );
 
 /**
- * Get property specials content based on property-level meta fields.
+ * Get effective property special content from property or floor-plan meta fields.
  *
  * @param string $property_id Optional property_id meta value.
  * @return string|null The property specials content.
  */
 function rentfetch_get_property_specials_content_from_meta( $property_id = null ) {
-	if ( $property_id ) {
-		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
-		if ( ! $post_id ) {
-			return null;
-		}
-	} else {
-		$post_id = get_the_ID();
-	}
+	$special = rentfetch_get_effective_property_special( $property_id );
 
-	$has_specials = get_post_meta( $post_id, 'has_specials', true );
-
-	if ( ! $has_specials ) {
+	if ( ! $special || empty( $special['content'] ) ) {
 		return null;
 	}
 
-	if ( ! rentfetch_property_specials_are_active_by_date( $post_id ) ) {
-		return null;
-	}
-
-	$specials_content = get_post_meta( $post_id, 'specials_content', true );
-	$specials_content = sanitize_textarea_field( $specials_content );
-
-	if ( empty( $specials_content ) ) {
-		return null;
-	}
-
-	return apply_filters( 'rentfetch_filter_property_specials_content_from_meta', $specials_content, $post_id );
+	return apply_filters( 'rentfetch_filter_property_specials_content_from_meta', $special['content'], $special['property_post_id'] );
 }
 
 /**
- * Get the single-property specials callout markup.
+ * Get the allowed HTML for a special callout.
  *
- * @param string $property_id Optional property_id meta value.
- * @return string|null The property specials callout markup.
+ * @return array<string, mixed>
  */
-function rentfetch_get_property_specials_callout_from_meta( $property_id = null ) {
-	if ( $property_id ) {
-		$post_id = rentfetch_get_post_id_from_property_id( $property_id );
-		if ( ! $post_id ) {
-			return null;
-		}
-	} else {
-		$post_id = get_the_ID();
-	}
+function rentfetch_get_specials_callout_allowed_html() {
+	return array_merge(
+		wp_kses_allowed_html( 'post' ),
+		array(
+			'svg'    => array(
+				'xmlns'        => true,
+				'fill'         => true,
+				'viewbox'      => true,
+				'stroke-width' => true,
+				'stroke'       => true,
+				'aria-hidden'  => true,
+				'focusable'    => true,
+			),
+			'path'   => array(
+				'stroke-linecap'  => true,
+				'stroke-linejoin' => true,
+				'd'               => true,
+			),
+			'circle' => array(
+				'cx' => true,
+				'cy' => true,
+				'r'  => true,
+			),
+		)
+	);
+}
 
-	$has_specials = get_post_meta( $post_id, 'has_specials', true );
-
-	if ( ! $has_specials ) {
-		return null;
-	}
-
-	if ( ! rentfetch_property_specials_are_active_by_date( $post_id ) ) {
-		return null;
-	}
-
-	$specials_heading = get_post_meta( $post_id, 'specials_override_text', true );
-	$specials_heading = sanitize_text_field( $specials_heading );
-	$specials_heading = function_exists( 'mb_substr' ) ? mb_substr( $specials_heading, 0, 25 ) : substr( $specials_heading, 0, 25 );
-	$specials_content = get_post_meta( $post_id, 'specials_content', true );
-	$specials_content = sanitize_textarea_field( $specials_content );
-
-	if ( ! $specials_heading && ! $specials_content ) {
-		return null;
-	}
-
-	$specials_icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="m83.332 50c0-1.7422 0.91797-4.1953 1.8008-6.5703 1.6914-4.5391 3.6094-9.6797 0.95313-14.27-2.7305-4.7266-8.2461-5.6289-13.109-6.4258-2.4219-0.39453-4.9258-0.80469-6.3086-1.6094-1.2734-0.73828-2.8125-2.6367-4.2969-4.4805-2.9922-3.7031-6.7188-8.3125-12.371-8.3125-5.6602 0-9.3789 4.6094-12.371 8.3125-1.4883 1.8438-3.0234 3.7461-4.3008 4.4844-1.3828 0.80078-3.8867 1.207-6.3086 1.6055-4.8594 0.79297-10.371 1.6992-13.102 6.4258-2.6602 4.5898-0.74219 9.7305 0.94922 14.27 0.88281 2.375 1.8008 4.8281 1.8008 6.5703s-0.91797 4.1953-1.8008 6.5664c-1.6914 4.543-3.6094 9.6836-0.95313 14.27 2.7344 4.7305 8.2461 5.6328 13.113 6.4297 2.4219 0.39453 4.9258 0.80469 6.3008 1.6055 1.2734 0.73828 2.8086 2.6406 4.2969 4.4805 2.9922 3.707 6.7148 8.3164 12.375 8.3164 5.6523 0 9.3828-4.6094 12.375-8.3164 1.4883-1.8359 3.0234-3.7422 4.2969-4.4805 1.3789-0.79688 3.8828-1.207 6.3047-1.6055 4.8672-0.79688 10.379-1.6992 13.109-6.4258 2.6602-4.5898 0.74219-9.7344-0.95313-14.273-0.88281-2.3711-1.8008-4.8242-1.8008-6.5664zm-50-10.418c0-3.4492 2.8008-6.25 6.25-6.25 3.4531 0 6.25 2.8008 6.25 6.25 0 3.4531-2.7969 6.25-6.25 6.25-3.4492 0-6.25-2.7969-6.25-6.25zm7.1133 25.863-5.8906-5.8906 25-25 5.8906 5.8906zm19.973 1.2227c-3.4492 0-6.25-2.8008-6.25-6.25s2.8008-6.25 6.25-6.25 6.25 2.8008 6.25 6.25-2.8008 6.25-6.25 6.25z" /></svg>';
+/**
+ * Build the shared special callout markup.
+ *
+ * @param string $specials_heading Special heading.
+ * @param string $specials_content Special content.
+ * @return string
+ */
+function rentfetch_get_specials_callout_markup( $specials_heading, $specials_content ) {
+	$specials_icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="m83.332 50c0-1.7422 0.91797-4.1953 1.8008-6.5703 1.6914-4.5391 3.6094-9.6797 0.95313-14.27-2.7305-4.7266-8.2461-5.6289-13.109-6.4258-2.4219-0.3945-4.9258-0.8047-6.3086-1.6094-1.2734-0.7383-2.8125-2.6367-4.2969-4.4805-2.9922-3.7031-6.7188-8.3125-12.371-8.3125-5.6602 0-9.3789 4.6094-12.371 8.3125-1.4883 1.8438-3.0234 3.7461-4.3008 4.4844-1.3828 0.8008-3.8867 1.207-6.3086 1.6055-4.8594 0.79297-10.371 1.6992-13.102 6.4258-2.6602 4.5898-0.7422 9.7305 0.94922 14.27 0.8828 2.375 1.8008 4.8281 1.8008 6.5703s-0.91797 4.1953-1.8008 6.5664c-1.6914 4.543-3.6094 9.6836-0.95313 14.27 2.7344 4.7305 8.2461 5.6328 13.113 6.4297 2.4219 0.3945 4.9258 0.8047 6.3008 1.6055 1.2734 0.7383 2.8086 2.6406 4.2969 4.4805 2.9922 3.707 6.7148 8.3164 12.375 8.3164 5.6523 0 9.3828-4.6094 12.375-8.3164 1.4883-1.8359 3.0234-3.7422 4.2969-4.4805 1.3789-0.7969 3.8828-1.207 6.3047-1.6055 4.8672-0.7969 10.379-1.6992 13.109-6.4258 2.6602-4.5898 0.7422-9.7344-0.95313-14.273-0.8828-2.3711-1.8008-4.8242-1.8008-6.5664zm-50-10.418c0-3.4492 2.8008-6.25 6.25-6.25 3.4531 0 6.25 2.8008 6.25 6.25 0 3.4531-2.7969 6.25-6.25 6.25-3.4492 0-6.25-2.7969-6.25-6.25zm7.1133 25.863-5.8906-5.8906 25-25 5.8906 5.8906zm19.973 1.2227c-3.4492 0-6.25-2.8008-6.25-6.25s2.8008-6.25 6.25-6.25 6.25 2.8008 6.25 6.25-2.8008 6.25-6.25 6.25z" /></svg>';
 
 	ob_start();
 	?>
@@ -2722,7 +2741,23 @@ function rentfetch_get_property_specials_callout_from_meta( $property_id = null 
 		</div>
 	</div>
 	<?php
-	return apply_filters( 'rentfetch_filter_property_specials_callout_from_meta', ob_get_clean(), $property_id );
+	return ob_get_clean();
+}
+
+/**
+ * Get the single-property specials callout markup.
+ *
+ * @param string $property_id Optional property_id meta value.
+ * @return string|null The property specials callout markup.
+ */
+function rentfetch_get_property_specials_callout_from_meta( $property_id = null ) {
+	$specials = rentfetch_get_effective_property_special( $property_id );
+
+	if ( ! $specials ) {
+		return null;
+	}
+
+	return apply_filters( 'rentfetch_filter_property_specials_callout_from_meta', rentfetch_get_specials_callout_markup( $specials['heading'], $specials['content'] ), $property_id );
 }
 
 /**
@@ -2735,32 +2770,7 @@ function rentfetch_property_specials_callout_from_meta( $property_id = null ) {
 	$specials_callout = rentfetch_get_property_specials_callout_from_meta( $property_id );
 
 	if ( $specials_callout ) {
-		$allowed_html = array_merge(
-			wp_kses_allowed_html( 'post' ),
-			array(
-				'svg'    => array(
-					'xmlns'        => true,
-					'fill'         => true,
-					'viewbox'      => true,
-					'stroke-width' => true,
-					'stroke'       => true,
-					'aria-hidden'  => true,
-					'focusable'    => true,
-				),
-				'path'   => array(
-					'stroke-linecap'  => true,
-					'stroke-linejoin' => true,
-					'd'               => true,
-				),
-				'circle' => array(
-					'cx' => true,
-					'cy' => true,
-					'r'  => true,
-				),
-			)
-		);
-
-		echo wp_kses( $specials_callout, $allowed_html );
+		echo wp_kses( $specials_callout, rentfetch_get_specials_callout_allowed_html() );
 	}
 }
 
@@ -2928,6 +2938,25 @@ function rentfetch_property_fees_embed( $property_id_or_post_id = null ) {
 }
 
 /**
+ * Resolve a property meta ID first, then fall back to a property post ID.
+ *
+ * @param string|int|null $property_id_or_post_id Property ID meta value or Post ID.
+ * @return int|null The property post ID.
+ */
+function rentfetch_resolve_property_post_id( $property_id_or_post_id = null ) {
+	if ( ! $property_id_or_post_id ) {
+		return get_the_ID();
+	}
+
+	$post_id = rentfetch_get_post_id_from_property_id( $property_id_or_post_id );
+	if ( ! $post_id && is_numeric( $property_id_or_post_id ) && 'properties' === get_post_type( (int) $property_id_or_post_id ) ) {
+		$post_id = (int) $property_id_or_post_id;
+	}
+
+	return $post_id;
+}
+
+/**
  * Get the active fees-display source context for a property.
  *
  * Mirrors the same precedence used by the frontend fees embed renderer.
@@ -2937,17 +2966,7 @@ function rentfetch_property_fees_embed( $property_id_or_post_id = null ) {
  * @return array
  */
 function rentfetch_get_property_fees_display_source_context( $property_id_or_post_id = null, $respect_frontend_visibility = true ) {
-	$post_id = null;
-
-	if ( $property_id_or_post_id ) {
-		if ( is_numeric( $property_id_or_post_id ) ) {
-			$post_id = (int) $property_id_or_post_id;
-		} else {
-			$post_id = rentfetch_get_post_id_from_property_id( $property_id_or_post_id );
-		}
-	} else {
-		$post_id = get_the_ID();
-	}
+	$post_id = rentfetch_resolve_property_post_id( $property_id_or_post_id );
 
 	$context = array(
 		'source_key'   => 'none',
@@ -3045,18 +3064,7 @@ function rentfetch_get_property_fees_embed( $property_id_or_post_id = null, $res
 		return '';
 	}
 
-	// Figure out the post ID to use for getting the fees.
-	$post_id = null;
-
-	if ( $property_id_or_post_id ) {
-		if ( is_numeric( $property_id_or_post_id ) ) {
-			$post_id = $property_id_or_post_id;
-		} else {
-			$post_id = rentfetch_get_post_id_from_property_id( $property_id_or_post_id );
-		}
-	} else {
-		$post_id = get_the_ID();
-	}
+	$post_id = rentfetch_resolve_property_post_id( $property_id_or_post_id );
 
 	$property_fees_markup       = '';
 	$api_fees_are_authoritative = false;

@@ -122,7 +122,6 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 		'minimum_sqft',
 		'maximum_sqft',
 		'availability_date',
-		'specials_override_text',
 		'availability_url',
 		'available_units',
 	);
@@ -135,6 +134,38 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 
 	if ( isset( $_POST['floorplan_description'] ) ) {
 		update_post_meta( $post_id, 'floorplan_description', wp_kses_post( wp_unslash( $_POST['floorplan_description'] ) ) );
+	}
+
+	if ( isset( $_POST['specials_override_text'] ) ) {
+		$specials_heading = sanitize_text_field( wp_unslash( $_POST['specials_override_text'] ) );
+		$specials_heading = function_exists( 'mb_substr' ) ? mb_substr( $specials_heading, 0, 25 ) : substr( $specials_heading, 0, 25 );
+		update_post_meta( $post_id, 'specials_override_text', $specials_heading );
+	}
+
+	if ( isset( $_POST['specials_content'] ) ) {
+		update_post_meta( $post_id, 'specials_content', sanitize_textarea_field( wp_unslash( $_POST['specials_content'] ) ) );
+	}
+
+	foreach ( array( 'specials_start_date', 'specials_end_date' ) as $specials_date_field ) {
+		if ( ! isset( $_POST[ $specials_date_field ] ) ) {
+			continue;
+		}
+
+		$specials_date = sanitize_text_field( wp_unslash( $_POST[ $specials_date_field ] ) );
+
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $specials_date ) ) {
+			update_post_meta( $post_id, $specials_date_field, $specials_date );
+		} else {
+			delete_post_meta( $post_id, $specials_date_field );
+		}
+	}
+
+	$specials_start_date = get_post_meta( $post_id, 'specials_start_date', true );
+	$specials_end_date   = get_post_meta( $post_id, 'specials_end_date', true );
+
+	if ( $specials_start_date && $specials_end_date && $specials_start_date > $specials_end_date ) {
+		update_post_meta( $post_id, 'specials_start_date', $specials_end_date );
+		update_post_meta( $post_id, 'specials_end_date', $specials_start_date );
 	}
 
 	if ( isset( $_POST['tour'] ) ) {
@@ -152,7 +183,7 @@ function rentfetch_save_floorplans_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'tour', wp_kses( wp_unslash( $_POST['tour'] ), $allowed_tags ) );
 	}
 
-	foreach ( array( 'property_show_specials', 'has_specials' ) as $checkbox ) {
+	foreach ( array( 'property_show_specials', 'has_specials', 'specials_exclude_property' ) as $checkbox ) {
 		if ( isset( $_POST[ $checkbox ] ) ) {
 			update_post_meta( $post_id, $checkbox, '1' );
 		} else {

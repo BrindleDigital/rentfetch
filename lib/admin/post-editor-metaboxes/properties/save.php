@@ -309,6 +309,12 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		delete_post_meta( $post_id, 'has_specials' );
 	}
 
+	if ( isset( $_POST['specials_show_on_floorplans'] ) ) {
+		update_post_meta( $post_id, 'specials_show_on_floorplans', '1' );
+	} else {
+		delete_post_meta( $post_id, 'specials_show_on_floorplans' );
+	}
+
 	if ( isset( $_POST['specials_override_text'] ) ) {
 		$specials_heading = sanitize_text_field( wp_unslash( $_POST['specials_override_text'] ) );
 		$specials_heading = function_exists( 'mb_substr' ) ? mb_substr( $specials_heading, 0, 25 ) : substr( $specials_heading, 0, 25 );

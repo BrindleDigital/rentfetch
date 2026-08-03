@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.3
-Stable tag: 0.38.1
+Stable tag: 0.38.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,7 @@ Rent Fetch is the engine behind our sites at [Brindle Digital Marketing](https:/
 == Features ==
 
 * Native WordPress content types are used for everything, so a developer can create their own layouts.
+* Property and floor plan editors include searchable Categories tabs with native WordPress term selection and creation controls.
 * Google Maps integration (both for the property search and for use on each property page. To use this, you’ll need to set up an API key for the Google Maps Javascript API at [maps.googleapis.com](https://maps.googleapis.com))
 * Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed  [Blaze Slider](https://blaze-slider.dev) for these, and you don’t need to set up anything for these to work)
 * Your floorplans can display [Matterport](https://my.matterport.com) and [YouTube](https://www.youtube.com) tours.
@@ -102,6 +103,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.38.2 =
+
+* Added searchable Categories tabs to the property and floor plan editors using native WordPress term controls and filtered taxonomy labels.
+* Removed the duplicate taxonomy sidebar boxes.
+* Standardized the first property and floor plan editor tab label as Basic Information.
 
 = 0.38.1 =
 

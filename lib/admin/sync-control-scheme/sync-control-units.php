@@ -134,7 +134,6 @@ function rentfetch_unit_syncing_fields_engrain( $array_fields, $post_id ) {
 		'maximum_total_monthly_price',
 		'minimum_rent',
 		'minimum_total_monthly_price',
-		'specials',
 		'sqrft',
 	);
 }

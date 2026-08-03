@@ -358,7 +358,7 @@ function rentfetch_units_default_column_content( $column, $post_id ) {
 	}
 
 	if ( 'specials' === $column ) {
-		echo esc_attr( get_post_meta( $post_id, 'specials', true ) );
+		echo esc_html( rentfetch_get_unit_specials( $post_id ) );
 	}
 
 	if ( 'amenities' === $column ) {

@@ -143,12 +143,25 @@ function rentfetch_enqueue_hierarchy_assets( $hook ) {
 		return;
 	}
 
+	$hierarchy_script_version = file_exists( RENTFETCH_DIR . 'js/property-hierarchy.js' )
+		? filemtime( RENTFETCH_DIR . 'js/property-hierarchy.js' )
+		: RENTFETCH_VERSION;
+
 	wp_enqueue_script(
 		'rentfetch-property-hierarchy',
 		RENTFETCH_PATH . 'js/property-hierarchy.js',
 		array(),
-		RENTFETCH_VERSION,
+		$hierarchy_script_version,
 		true
+	);
+	wp_localize_script(
+		'rentfetch-property-hierarchy',
+		'rentfetchHierarchy',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'action'  => 'rentfetch_get_sync_tooltip',
+			'nonce'   => wp_create_nonce( 'rentfetch_sync_tooltip' ),
+		)
 	);
 }
 add_action( 'admin_enqueue_scripts', 'rentfetch_enqueue_hierarchy_assets' );

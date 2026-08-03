@@ -14,6 +14,67 @@
 			return;
 		}
 
+		editor.querySelectorAll('[data-rf-taxonomy-search]').forEach(function (box) {
+			var input = box.querySelector('[data-rf-taxonomy-search-input]');
+			var checklist = box.querySelector('[id$="checklist"]');
+			var noResults = box.querySelector('[data-rf-taxonomy-no-results]');
+
+			if (!input || !checklist) {
+				return;
+			}
+
+			function normalize(value) {
+				return value
+					.normalize('NFD')
+					.replace(/[\u0300-\u036f]/g, '')
+					.toLowerCase();
+			}
+
+			function filterTerms() {
+				var words = normalize(input.value).trim().split(/\s+/).filter(Boolean);
+				var items = Array.from(checklist.querySelectorAll('li'));
+				var matches = 0;
+				var allTermsTab = box.querySelector(
+					'.category-tabs a[href="#' + checklist.id.replace(/checklist$/, '-all') + '"]'
+				);
+
+				if (words.length && allTermsTab && 'true' !== allTermsTab.getAttribute('aria-selected')) {
+					allTermsTab.click();
+				}
+
+				items.forEach(function (item) {
+					item.hidden = words.length > 0;
+				});
+
+				if (words.length) {
+					items.forEach(function (item) {
+						var label = Array.from(item.children).find(function (child) {
+							return 'LABEL' === child.tagName;
+						});
+						var text = normalize(label ? label.textContent : '');
+
+						if (!words.every(function (word) { return text.indexOf(word) !== -1; })) {
+							return;
+						}
+
+						matches += 1;
+						item.hidden = false;
+
+						for (var parent = item.parentElement.closest('li'); parent; parent = parent.parentElement.closest('li')) {
+							parent.hidden = false;
+						}
+					});
+				}
+
+				if (noResults) {
+					noResults.hidden = !words.length || matches > 0;
+				}
+			}
+
+			input.addEventListener('input', filterTerms);
+			new MutationObserver(filterTerms).observe(checklist, { childList: true, subtree: true });
+		});
+
 		function getHashTab() {
 			var hash = window.location.hash.replace(/^#/, '');
 

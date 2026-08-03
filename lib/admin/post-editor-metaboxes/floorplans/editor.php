@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_get_floorplan_editor_tabs() {
 	return array(
 		'overview'     => array(
-			'label'    => 'Floor Plan Information',
+			'label'    => 'Basic Information',
 			'sections' => array(
 				array( 'callback' => 'rentfetch_floorplans_info_metabox_callback' ),
 			),
@@ -35,16 +35,28 @@ function rentfetch_get_floorplan_editor_tabs() {
 				),
 			),
 		),
-		'availability' => array(
-			'label'    => 'Availability',
+		'taxonomies'   => array(
+			'label'    => 'Categories',
 			'sections' => array(
-				array( 'callback' => 'rentfetch_floorplans_availability_metabox_callback' ),
+				array( 'callback' => 'rentfetch_editor_taxonomies_metabox_callback' ),
+			),
+		),
+		'specials'     => array(
+			'label'    => 'Specials',
+			'sections' => array(
+				array( 'callback' => 'rentfetch_floorplans_specials_metabox_callback' ),
 			),
 		),
 		'images'       => array(
 			'label'    => 'Images',
 			'sections' => array(
 				array( 'callback' => 'rentfetch_floorplans_images_metabox_callback' ),
+			),
+		),
+		'availability' => array(
+			'label'    => 'Availability',
+			'sections' => array(
+				array( 'callback' => 'rentfetch_floorplans_availability_metabox_callback' ),
 			),
 		),
 		'diagnostics'  => array(

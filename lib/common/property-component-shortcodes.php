@@ -154,6 +154,10 @@ function rentfetch_property_shortcode( $atts ) {
 			$content = rentfetch_get_property_specials_from_meta( $property_id );
 			break;
 
+		case 'specials_content':
+			$content = rentfetch_get_property_specials_content_from_meta( $property_id );
+			break;
+
 		case 'description':
 			$content = rentfetch_get_property_description( $property_id );
 			break;

@@ -443,10 +443,16 @@ function rentfetch_get_unit_floor_number() {
 /**
  * Get the specials for the unit
  *
+ * @param int|null $unit_post_id Optional unit post ID.
  * @return  string the specials.
  */
-function rentfetch_get_unit_specials() {
-	$specials = get_post_meta( get_the_ID(), 'specials', true );
+function rentfetch_get_unit_specials( $unit_post_id = null ) {
+	if ( ! $unit_post_id ) {
+		$unit_post_id = get_the_ID();
+	}
+
+	$floorplan_post_id = rentfetch_get_connected_floorplan_post_id_for_unit( $unit_post_id );
+	$specials          = $floorplan_post_id ? rentfetch_get_floorplan_specials( $floorplan_post_id ) : null;
 	return apply_filters( 'rentfetch_filter_unit_specials', $specials );
 }
 

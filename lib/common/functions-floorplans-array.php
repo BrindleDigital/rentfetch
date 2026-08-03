@@ -32,6 +32,10 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 		'available_units',
 		'availability_date',
 		'has_specials',
+		'specials_override_text',
+		'specials_content',
+		'specials_start_date',
+		'specials_end_date',
 	);
 	$meta_keys_sql = implode( "','", $meta_keys );
 
@@ -49,7 +53,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 
 	// Pseudocache: use a transient keyed by the query args to avoid expensive SQL on
 	// repeated calls.
-	$cache_key = 'rentfetch_floorplans_array_sql_' . md5( wp_json_encode( $args ) );
+	$cache_key = 'rentfetch_floorplans_array_sql_v2_' . current_time( 'Y-m-d' ) . '_' . md5( wp_json_encode( $args ) );
 	if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 		$cached = rentfetch_get_cache_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) ) {
@@ -143,6 +147,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	}
 
 	// Aggregate by property_id, storing all values as arrays of strings (like original).
+	$today = current_time( 'Y-m-d' );
 	foreach ( $floorplan_meta as $fid => $meta ) {
 		$property_id                 = isset( $meta['property_id'] ) ? $meta['property_id'] : '';
 		$beds                        = isset( $meta['beds'] ) ? $meta['beds'] : '';
@@ -156,6 +161,22 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 		$available_units             = isset( $meta['available_units'] ) ? $meta['available_units'] : '';
 		$availability_date           = isset( $meta['availability_date'] ) ? $meta['availability_date'] : '';
 		$has_specials                = isset( $meta['has_specials'] ) ? $meta['has_specials'] : '';
+		$specials_heading            = isset( $meta['specials_override_text'] ) ? sanitize_text_field( $meta['specials_override_text'] ) : '';
+		$specials_heading            = function_exists( 'mb_substr' ) ? mb_substr( $specials_heading, 0, 25 ) : substr( $specials_heading, 0, 25 );
+		$specials_content            = isset( $meta['specials_content'] ) ? sanitize_textarea_field( $meta['specials_content'] ) : '';
+		$specials_start_date         = isset( $meta['specials_start_date'] ) ? $meta['specials_start_date'] : '';
+		$specials_end_date           = isset( $meta['specials_end_date'] ) ? $meta['specials_end_date'] : '';
+		$has_manual_special          = in_array( $has_specials, array( '1', 1, true ), true );
+		$has_active_special          = $has_manual_special
+			&& ( ! $specials_start_date || $today >= $specials_start_date )
+			&& ( ! $specials_end_date || $today <= $specials_end_date );
+		$floorplan_special           = $has_active_special
+			? array(
+				'post_id' => (int) $fid,
+				'heading' => $specials_heading,
+				'content' => $specials_content,
+			)
+			: null;
 
 		// Always store as arrays, even if empty string.
 		if ( ! isset( $floorplans[ $property_id ] ) ) {
@@ -172,6 +193,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 				'available_units'             => array( $available_units ),
 				'availability_date'           => array( $availability_date ),
 				'has_specials'                => array( $has_specials ),
+				'specials'                    => array( $floorplan_special ),
 			);
 		} else {
 			$floorplans[ $property_id ]['id'][]                          = $fid;
@@ -186,6 +208,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 			$floorplans[ $property_id ]['available_units'][]             = $available_units;
 			$floorplans[ $property_id ]['availability_date'][]           = $availability_date;
 			$floorplans[ $property_id ]['has_specials'][]                = $has_specials;
+			$floorplans[ $property_id ]['specials'][]                    = $floorplan_special;
 		}
 	}
 
@@ -263,11 +286,8 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 		}
 
 		// * SPECIALS
-		$floorplans[ $key ]['property_has_specials'] = false;
-		$has_specials                                = $floorplan['has_specials']; // keep as string array.
-		if ( in_array( '1', $has_specials, true ) || in_array( 1, $has_specials, true ) || in_array( true, $has_specials, true ) ) {
-			$floorplans[ $key ]['property_has_specials'] = true;
-		}
+		$floorplans[ $key ]['property_specials']     = array_values( array_filter( $floorplan['specials'] ) );
+		$floorplans[ $key ]['property_has_specials'] = ! empty( $floorplans[ $key ]['property_specials'] );
 	}
 
 	// Save computed floorplans to transient to improve performance.

@@ -1,6 +1,13 @@
 # Rent Fetch changelog
 
 
+## 0.38.2
+
+- Added responsive Categories tabs to the property and floor plan editors, with native WordPress term selection and creation controls plus live multi-word filtering.
+- Removed the duplicate taxonomy sidebar boxes and used each taxonomy's currently registered labels so custom label filters are reflected throughout the editor UI.
+- Standardized the first property and floor plan editor tab label as Basic Information.
+
+
 ## 0.38.1
 
 - Completed a plugin-wide compatibility and code-quality pass using WordPress Plugin Check and PHPCS with the WordPress Coding Standards.

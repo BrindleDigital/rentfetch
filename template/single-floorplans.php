@@ -21,6 +21,7 @@ if ( have_posts() ) {
 
 		// vars.
 		$specials         = rentfetch_get_floorplan_specials();
+		$specials_callout = rentfetch_get_floorplan_specials_callout();
 		$floorplan_title  = rentfetch_get_floorplan_title();
 		$beds             = rentfetch_get_floorplan_bedrooms();
 		$baths            = rentfetch_get_floorplan_bathrooms();
@@ -57,10 +58,6 @@ if ( have_posts() ) {
 					echo '</div>';
 					echo '<div class="content-column">';
 
-		if ( $specials ) {
-			printf( '<p class="specials">%s</p>', esc_html( $specials ) );
-		}
-
 		if ( $floorplan_title ) {
 			printf( '<h1>%s</h1>', esc_html( $floorplan_title ) );
 		}
@@ -91,6 +88,12 @@ if ( have_posts() ) {
 
 		if ( $description ) {
 			printf( '<div class="floorplan-description">%s</div>', wp_kses_post( $description ) );
+		}
+
+		if ( $specials_callout ) {
+			echo wp_kses( $specials_callout, rentfetch_get_specials_callout_allowed_html() );
+		} elseif ( $specials ) {
+			printf( '<p class="specials">%s</p>', esc_html( $specials ) );
 		}
 
 					echo '</div>'; // .content-column

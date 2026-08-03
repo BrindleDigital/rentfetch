@@ -49,9 +49,12 @@ The built-in WordPress text search ... isn't good. Relevanssi fills in that gap.
 
 ### Included Taxonomies
 
--   Property types (properties)
--   Floorplan types
--   Amenities (properties)
+-   Property types, property categories, and amenities (properties)
+-   Floor plan types and floor plan categories (floor plans)
+
+### Editing properties and floor plans
+
+The property and floor plan editors begin with a **Basic Information** tab and include a **Categories** tab for their taxonomies. Each category panel uses WordPress's native term checklist and add-term controls, adds live multi-word filtering for existing terms, and displays the taxonomy names currently registered with WordPress so label filters remain reflected in the editor.
 
 ### Included WordPress templates
 
