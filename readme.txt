@@ -107,6 +107,8 @@ Start from your WordPress dashboard.
 = 0.38.2 =
 
 * Added searchable Categories tabs to the property and floor plan editors using native WordPress term controls and filtered taxonomy labels.
+* Added compact, expandable hierarchy navigation to property, floor plan, and unit editors, with immediate sync-status tooltips that remain interactive for copying and scrolling.
+* Displayed Engrain-synced property, floor plan, and unit images in editor Images tabs alongside Yardi-synced images.
 * Removed the duplicate taxonomy sidebar boxes.
 * Standardized the first property and floor plan editor tab label as Basic Information.
 

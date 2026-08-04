@@ -115,7 +115,8 @@ add_action( 'wp_enqueue_scripts', 'rentfetch_enqueue_scripts_stylesheets' );
 function rentfetch_enqueue_in_admin_metabox_properties() {
 
 	// The main admin stylesheet.
-	wp_enqueue_style( 'rentfetch-admin', RENTFETCH_PATH . 'css/admin.css', array(), RENTFETCH_VERSION );
+	$admin_style_version = file_exists( RENTFETCH_DIR . 'css/admin.css' ) ? filemtime( RENTFETCH_DIR . 'css/admin.css' ) : RENTFETCH_VERSION;
+	wp_enqueue_style( 'rentfetch-admin', RENTFETCH_PATH . 'css/admin.css', array(), $admin_style_version );
 
 	// Metabox scripts.
 	wp_register_script( 'rentfetch-metabox-properties-images', RENTFETCH_PATH . 'js/metabox-properties-images.js', array( 'jquery' ), RENTFETCH_VERSION, true );

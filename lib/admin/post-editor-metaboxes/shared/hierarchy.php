@@ -319,6 +319,8 @@ function rentfetch_render_hierarchy_navigation( $post, $current_type ) {
 	$floorplan_data       = $context['floorplan_data'];
 	$current_floorplan    = $context['current_floorplan'];
 	$units_by_floorplan   = $context['units_by_floorplan'];
+	$unit_count           = array_sum( array_map( 'count', $units_by_floorplan ) );
+	$navigation_expanded  = isset( $_COOKIE['rentfetch_hierarchy_navigation_expanded'] ) && '1' === sanitize_key( wp_unslash( $_COOKIE['rentfetch_hierarchy_navigation_expanded'] ) );
 	$property_is_current  = 'properties' === $current_type;
 	$property_is_ancestor = ! $property_is_current && in_array( $current_type, array( 'floorplans', 'units' ), true );
 
@@ -341,16 +343,18 @@ function rentfetch_render_hierarchy_navigation( $post, $current_type ) {
 	} else {
 		echo '<span class="rf-hierarchy-navigation-empty">Unavailable</span>';
 	}
-	echo '<span class="rf-hierarchy-navigation-count">(' . absint( count( $floorplans ) ) . ' ' . ( 1 === count( $floorplans ) ? 'floor plan' : 'floor plans' ) . ')</span>';
+	echo '<span class="rf-hierarchy-navigation-count">(' . absint( count( $floorplans ) ) . ' ' . ( 1 === count( $floorplans ) ? 'floor plan' : 'floor plans' ) . ' &middot; ' . absint( $unit_count ) . ' ' . ( 1 === $unit_count ? 'unit' : 'units' ) . ')</span>';
+	echo '<button type="button" class="button-link rf-hierarchy-navigation-toggle" aria-expanded="' . ( $navigation_expanded ? 'true' : 'false' ) . '" aria-controls="rf-hierarchy-navigation-details">' . ( $navigation_expanded ? 'Hide navigation' : 'Show navigation' ) . '</button>';
 	echo '</div>';
 
-	echo '<div class="rf-hierarchy-navigation-floorplans">';
+	echo '<div id="rf-hierarchy-navigation-details" class="rf-hierarchy-navigation-floorplans"' . ( $navigation_expanded ? '' : ' hidden' ) . '>';
 	echo '<div class="rf-hierarchy-navigation-floorplan-list">';
 	foreach ( $floorplans as $floorplan ) {
 		$data             = $floorplan_data[ $floorplan->ID ];
 		$units            = $units_by_floorplan[ $data['external_id'] ] ?? array();
 		$title            = get_the_title( $floorplan );
 		$label            = $title ? $title : 'Untitled plan';
+		$short_label      = wp_html_excerpt( $label, 50, '…' );
 		$details          = array();
 		$details[]        = 'Floor Plan ID: ' . $data['external_id'];
 		$details[]        = trim( $data['beds'] . ' bed, ' . $data['baths'] . ' bath' );
@@ -363,7 +367,7 @@ function rentfetch_render_hierarchy_navigation( $post, $current_type ) {
 		echo '<div class="rf-hierarchy-navigation-floorplan-label-row">';
 		rentfetch_render_hierarchy_navigation_item(
 			$floorplan->ID,
-			$label,
+			$short_label,
 			$aria_label,
 			$tooltip,
 			rentfetch_get_sync_status_class( $floorplan->ID ),

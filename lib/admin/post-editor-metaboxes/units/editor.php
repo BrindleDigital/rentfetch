@@ -28,6 +28,12 @@ function rentfetch_get_unit_editor_tabs() {
 				array( 'callback' => 'rentfetch_units_availability_metabox_callback' ),
 			),
 		),
+		'images'       => array(
+			'label'    => 'Images',
+			'sections' => array(
+				array( 'callback' => 'rentfetch_units_images_metabox_callback' ),
+			),
+		),
 		'diagnostics'  => array(
 			'label'    => 'Diagnostics',
 			'lazy'     => 'diagnostics',

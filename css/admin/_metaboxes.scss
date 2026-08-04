@@ -985,11 +985,22 @@
 	font-size: 20px;
 	font-weight: 600;
 	line-height: 1.2;
-	text-decoration: underline;
+	text-decoration: none;
 	text-underline-offset: 5px;
 }
 
+.rf-hierarchy-navigation-property-shell > .rf-hierarchy-navigation-item.is-ancestor {
+	text-decoration: none;
+}
+
+.rf-hierarchy-navigation-property-shell > .rf-hierarchy-navigation-item:hover,
+.rf-hierarchy-navigation-property-shell > .rf-hierarchy-navigation-item:focus-visible {
+	text-decoration: underline;
+	text-decoration-color: currentColor;
+}
+
 .rf-hierarchy-navigation-property-shell > .rf-hierarchy-navigation-item.is-current {
+	text-decoration: underline;
 	text-decoration-color: var(--wp-admin-theme-color, #2271b1);
 }
 
@@ -1002,6 +1013,14 @@
 	color: #646970;
 	font-size: 15px;
 	font-weight: 400;
+	line-height: 1.2;
+}
+
+.rf-hierarchy-navigation-property-shell > .rf-hierarchy-navigation-toggle {
+	flex: 0 0 auto;
+	margin-left: auto;
+	padding: 4px 0 4px 12px;
+	font-size: 13px;
 	line-height: 1.2;
 }
 

@@ -3,16 +3,44 @@
 
 	var currentTooltip = null;
 	var currentTooltipTarget = null;
-	var pendingTooltipTarget = null;
-	var tooltipActivationTimer = null;
 	var tooltipRemovalTimer = null;
 	var tooltipSelector =
 		'.rentfetch-hierarchy [data-tooltip], .rf-hierarchy-navigation [data-tooltip]';
+	var hierarchyToggle = document.querySelector(
+		'.rf-hierarchy-navigation-toggle'
+	);
+	var hierarchyDetails = document.querySelector(
+		'#rf-hierarchy-navigation-details'
+	);
+	var hierarchyCookie = 'rentfetch_hierarchy_navigation_expanded';
 
-	function cancelTooltipActivation() {
-		window.clearTimeout(tooltipActivationTimer);
-		tooltipActivationTimer = null;
-		pendingTooltipTarget = null;
+	function setHierarchyExpanded(expanded) {
+		if (!hierarchyToggle || !hierarchyDetails) {
+			return;
+		}
+
+		hierarchyDetails.hidden = !expanded;
+		hierarchyToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+		hierarchyToggle.textContent = expanded
+			? 'Hide navigation'
+			: 'Show navigation';
+		if (!expanded) {
+			removeTooltip();
+		}
+	}
+
+	if (hierarchyToggle && hierarchyDetails) {
+		hierarchyToggle.addEventListener('click', function () {
+			var expanded = hierarchyToggle.getAttribute('aria-expanded') !== 'true';
+
+			setHierarchyExpanded(expanded);
+			document.cookie =
+				hierarchyCookie +
+				'=' +
+				(expanded ? '1' : '0') +
+				'; path=/; max-age=31536000; SameSite=Lax' +
+				(window.location.protocol === 'https:' ? '; Secure' : '');
+		});
 	}
 
 	function cancelTooltipRemoval() {
@@ -21,7 +49,6 @@
 	}
 
 	function removeTooltip() {
-		cancelTooltipActivation();
 		cancelTooltipRemoval();
 		if (currentTooltip && currentTooltip.parentNode) {
 			currentTooltip.parentNode.removeChild(currentTooltip);
@@ -32,11 +59,19 @@
 
 	function scheduleTooltipRemoval() {
 		cancelTooltipRemoval();
-		tooltipRemovalTimer = window.setTimeout(removeTooltip, 150);
+		tooltipRemovalTimer = window.setTimeout(function () {
+			if (
+				(currentTooltipTarget && currentTooltipTarget.matches(':hover')) ||
+				(currentTooltip && currentTooltip.matches(':hover'))
+			) {
+				return;
+			}
+
+			removeTooltip();
+		}, 150);
 	}
 
 	function keepTooltipOpen() {
-		cancelTooltipActivation();
 		cancelTooltipRemoval();
 	}
 
@@ -192,17 +227,16 @@
 	}
 
 	function activateTooltip(target) {
+		if (
+			target.closest('.rf-hierarchy-navigation') &&
+			(!hierarchyDetails || hierarchyDetails.hidden)
+		) {
+			return;
+		}
+
 		removeTooltip();
 		currentTooltipTarget = target;
 		refreshTooltip(target);
-	}
-
-	function scheduleTooltipActivation(target) {
-		cancelTooltipActivation();
-		pendingTooltipTarget = target;
-		tooltipActivationTimer = window.setTimeout(function () {
-			activateTooltip(target);
-		}, 250);
 	}
 
 	document.addEventListener('mouseover', function (event) {
@@ -212,11 +246,7 @@
 		}
 
 		cancelTooltipRemoval();
-		if (target === currentTooltipTarget) {
-			cancelTooltipActivation();
-		} else if (currentTooltip) {
-			scheduleTooltipActivation(target);
-		} else {
+		if (target !== currentTooltipTarget) {
 			activateTooltip(target);
 		}
 	});
@@ -252,10 +282,6 @@
 			return;
 		}
 
-		if (target === pendingTooltipTarget) {
-			cancelTooltipActivation();
-		}
-
 		if (
 			(!currentTooltip || !currentTooltip.contains(event.relatedTarget)) &&
 			(!event.relatedTarget ||
@@ -268,5 +294,19 @@
 
 	document.addEventListener('mouseleave', removeTooltip);
 	window.addEventListener('resize', removeTooltip);
-	window.addEventListener('scroll', removeTooltip, true);
+	window.addEventListener(
+		'scroll',
+		function (event) {
+			if (
+				currentTooltip &&
+				event.target instanceof window.Node &&
+				currentTooltip.contains(event.target)
+			) {
+				return;
+			}
+
+			removeTooltip();
+		},
+		true
+	);
 })(document);

@@ -72,7 +72,7 @@ function rentfetch_properties_images_metabox_callback( $post ) {
 		<?php
 
 		$property_source = get_post_meta( $post->ID, 'property_source', true );
-		if ( 'yardi' === $property_source || 'entrata' === $property_source ) {
+		if ( in_array( $property_source, array( 'yardi', 'entrata', 'engrain' ), true ) ) {
 			?>
 			 
 			<div class="field">
@@ -107,6 +107,8 @@ function rentfetch_render_property_synced_images_preview( $post ) {
 		$property_images = rentfetch_get_property_images_yardi( null );
 	} elseif ( 'entrata' === $property_source ) {
 		$property_images = rentfetch_get_property_images_entrata( null );
+	} elseif ( 'engrain' === $property_source ) {
+		$property_images = rentfetch_get_property_images_engrain( null );
 	}
 
 	if ( empty( $property_images ) ) {

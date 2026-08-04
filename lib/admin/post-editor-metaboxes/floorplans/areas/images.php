@@ -55,7 +55,7 @@ function rentfetch_floorplans_images_metabox_callback( $post ) {
 
 		<?php
 		$floorplan_source = get_post_meta( $post->ID, 'floorplan_source', true );
-		if ( in_array( $floorplan_source, array( 'yardi', 'entrata' ), true ) ) :
+		if ( in_array( $floorplan_source, array( 'yardi', 'entrata', 'engrain' ), true ) ) :
 			?>
 			<div class="field">
 				<div class="column">
@@ -79,9 +79,20 @@ function rentfetch_floorplans_images_metabox_callback( $post ) {
  */
 function rentfetch_render_floorplan_synced_images_preview( $post ) {
 	$image_urls = array_filter(
-		array_map(
-			'trim',
-			explode( ',', (string) get_post_meta( $post->ID, 'floorplan_image_url', true ) )
+		array_unique(
+			array_map(
+				'trim',
+				explode(
+					',',
+					implode(
+						',',
+						array(
+							(string) get_post_meta( $post->ID, 'floorplan_image_url', true ),
+							(string) get_post_meta( $post->ID, 'floorplan_secondary_image_url', true ),
+						)
+					)
+				)
+			)
 		)
 	);
 
