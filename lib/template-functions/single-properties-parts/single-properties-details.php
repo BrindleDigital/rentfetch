@@ -247,6 +247,11 @@ function rentfetch_single_properties_parts_details() {
 
 								rentfetch_property_tour_button();
 
+		if ( count( rentfetch_get_single_property_tour_embeds() ) > 1 ) {
+			$all_tours_label = apply_filters( 'rentfetch_property_tours_link_label', 'View all tours' );
+			printf( '<a class="property-tours-section-link" href="#tours">%s</a>', esc_html( $all_tours_label ) );
+		}
+
 								echo '</div>'; // .property-links.
 	}
 			echo '</div>'; // .property-details-body.

@@ -57,6 +57,7 @@
 		height: 0;
 		padding-top: 66.7%;
 		position: relative;
+		border-bottom: 1px solid var(--rentfetch-base-2);
 
 		img.floorplan-single-image,
 		img.floorplan-image {
@@ -65,6 +66,11 @@
 			height: 100%;
 			position: absolute;
 			inset: 0;
+		}
+
+		&.is-photo-image img.floorplan-single-image,
+		&.is-photo-image img.floorplan-image {
+			object-fit: cover;
 		}
 	}
 
@@ -100,6 +106,7 @@
 		line-height: 1.35;
 
 		p {
+			color: var(--rentfetch-text-secondary);
 			font-size: var(--rentfetch-font-size-smallest);
 			line-height: 1.35;
 			display: block;
@@ -139,6 +146,7 @@
 	}
 
 	p.pricing {
+		color: var(--rentfetch-dark);
 		font-size: var(--rentfetch-font-size-medium);
 		font-weight: bold;
 
@@ -160,6 +168,7 @@
 		}
 
 		.rentfetch-floorplan-base-rent {
+			color: var(--rentfetch-text-secondary);
 			display: block;
 			font-size: var(--rentfetch-font-size-smallest);
 			font-weight: 400;

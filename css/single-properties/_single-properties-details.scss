@@ -89,6 +89,7 @@ body.single-floorplans .container-current-floorplan-info .property-specials-call
 		}
 
 		h1 {
+			color: var(--rentfetch-dark);
 			margin-bottom: 0.3em;
 		}
 
@@ -99,6 +100,7 @@ body.single-floorplans .container-current-floorplan-info .property-specials-call
 		}
 
 		.location {
+			color: var(--rentfetch-text-secondary);
 			font-size: var(--rentfetch-font-size-medium);
 			line-height: 1.35;
 
@@ -117,8 +119,13 @@ body.single-floorplans .container-current-floorplan-info .property-specials-call
 			}
 
 			.rentfetch-property-rent-with-fees {
+				color: var(--rentfetch-dark);
 				font-size: var(--rentfetch-font-size-larger);
 				font-weight: 700;
+			}
+
+			.rentfetch-property-base-rent {
+				color: var(--rentfetch-text-secondary);
 			}
 		}
 	}
@@ -157,7 +164,7 @@ body.single-floorplans .container-current-floorplan-info .property-specials-call
 
 	.property-stat-label {
 		margin-bottom: 0.45em;
-		color: var(--rentfetch-default);
+		color: var(--rentfetch-text-secondary);
 		font-size: clamp(11px, 0.65rem + 0.08vw, 12px);
 		font-weight: 700;
 		line-height: 1.1;
@@ -397,6 +404,13 @@ body.single-floorplans .container-current-floorplan-info .property-specials-call
 
 			.property-sidebar-actions + .tour-link {
 				margin-top: var(--rentfetch-space-xs);
+			}
+
+			.property-tours-section-link {
+				color: var(--rentfetch-text-secondary);
+				display: block;
+				font-size: var(--rentfetch-font-size-smallest);
+				text-align: center;
 			}
 		}
 	}

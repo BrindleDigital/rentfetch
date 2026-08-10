@@ -24,10 +24,6 @@ function rentfetch_get_property_editor_tabs() {
 					'callback' => 'rentfetch_properties_contact_metabox_callback',
 				),
 				array(
-					'label'    => 'Virtual Tour',
-					'callback' => 'rentfetch_properties_tour_callback',
-				),
-				array(
 					'label'    => 'Location',
 					'callback' => 'rentfetch_properties_location_metabox_callback',
 				),
@@ -55,6 +51,18 @@ function rentfetch_get_property_editor_tabs() {
 			'label'    => 'Images',
 			'sections' => array(
 				array( 'callback' => 'rentfetch_properties_images_metabox_callback' ),
+			),
+		),
+		'videos-tours' => array(
+			'label'    => 'Videos & Tours',
+			'sections' => array(
+				array(
+					'label'    => 'Manual Tour',
+					'callback' => 'rentfetch_properties_tour_callback',
+				),
+				array(
+					'callback' => 'rentfetch_synced_tours_metabox_callback',
+				),
 			),
 		),
 		'office-hours' => array(

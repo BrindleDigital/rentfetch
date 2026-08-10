@@ -29,10 +29,6 @@ function rentfetch_get_floorplan_editor_tabs() {
 					'label'    => 'Description',
 					'callback' => 'rentfetch_floorplans_description_callback',
 				),
-				array(
-					'label'    => 'Virtual Tour',
-					'callback' => 'rentfetch_floorplans_tour_callback',
-				),
 			),
 		),
 		'taxonomies'   => array(
@@ -51,6 +47,18 @@ function rentfetch_get_floorplan_editor_tabs() {
 			'label'    => 'Images',
 			'sections' => array(
 				array( 'callback' => 'rentfetch_floorplans_images_metabox_callback' ),
+			),
+		),
+		'videos-tours' => array(
+			'label'    => 'Videos & Tours',
+			'sections' => array(
+				array(
+					'label'    => 'Manual Tour',
+					'callback' => 'rentfetch_floorplans_tour_callback',
+				),
+				array(
+					'callback' => 'rentfetch_synced_tours_metabox_callback',
+				),
 			),
 		),
 		'availability' => array(

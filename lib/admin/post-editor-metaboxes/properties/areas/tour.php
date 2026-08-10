@@ -23,11 +23,11 @@ function rentfetch_properties_tour_callback( $post ) {
 	<div class="rf-metabox rf-metabox-properties">
 		<div class="field">
 			<div class="column">
-				<label for="tour">Tour Link (Youtube or Matterport)</label>
+				<label for="tour">Video or virtual tour URL or iframe code</label>
 			</div>
 			<div class="column">
 				<input type="text" id="tour" name="tour" value="<?php echo esc_attr( $tour ); ?>">
-				<p class="description">Example: https://my.matterport.com/show/?m=sc3ykepsN4s</p>
+				<p class="description">Paste a direct URL or iframe embed code.</p>
 				<div id="tour-preview"></div>
 			</div>
 		</div>

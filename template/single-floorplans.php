@@ -1,6 +1,6 @@
 <?php
 /**
- * Single floorplans template
+ * Single floorplans template.
  *
  * @package rentfetch
  */
@@ -12,164 +12,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_header();
 
 if ( have_posts() ) {
-
 	while ( have_posts() ) {
-
 		the_post();
 
-		global $post;
-
-		// vars.
-		$specials         = rentfetch_get_floorplan_specials();
-		$specials_callout = rentfetch_get_floorplan_specials_callout();
-		$floorplan_title  = rentfetch_get_floorplan_title();
-		$beds             = rentfetch_get_floorplan_bedrooms();
-		$baths            = rentfetch_get_floorplan_bathrooms();
-		$square_feet      = rentfetch_get_floorplan_square_feet();
-		$available_units  = rentfetch_get_floorplan_available_units();
-		$links            = rentfetch_get_floorplan_links();
-		$pricing          = rentfetch_get_floorplan_pricing();
-		$units_count      = rentfetch_get_floorplan_units_count_from_cpt();
-		$description      = rentfetch_get_floorplan_description();
 		$tracking_context = rentfetch_get_floorplan_tracking_context( get_the_ID() );
 
-		echo '<div class="single-floorplans-container-outer container-current-floorplan-info"';
-		if ( ! empty( $tracking_context['property_id'] ) ) {
-			printf( ' data-rentfetch-property-id="%s"', esc_attr( $tracking_context['property_id'] ) );
-		}
-		if ( ! empty( $tracking_context['property_name'] ) ) {
-			printf( ' data-rentfetch-property-name="%s"', esc_attr( $tracking_context['property_name'] ) );
-		}
-		if ( ! empty( $tracking_context['property_city'] ) ) {
-			printf( ' data-rentfetch-property-city="%s"', esc_attr( $tracking_context['property_city'] ) );
-		}
-		if ( ! empty( $tracking_context['floorplan_id'] ) ) {
-			printf( ' data-rentfetch-floorplan-id="%s"', esc_attr( $tracking_context['floorplan_id'] ) );
-		}
-		if ( ! empty( $tracking_context['floorplan_name'] ) ) {
-			printf( ' data-rentfetch-floorplan-name="%s"', esc_attr( $tracking_context['floorplan_name'] ) );
+		echo '<div class="single-floorplans-wrap"';
+		foreach ( array( 'property_id', 'property_name', 'property_city', 'floorplan_id', 'floorplan_name' ) as $tracking_key ) {
+			if ( ! empty( $tracking_context[ $tracking_key ] ) ) {
+				printf( ' data-rentfetch-%s="%s"', esc_attr( str_replace( '_', '-', $tracking_key ) ), esc_attr( $tracking_context[ $tracking_key ] ) );
+			}
 		}
 		echo '>';
-			echo '<div class="single-floorplans-container-inner">';
-				echo '<div class="current-floorplan-info">';
 
-					echo '<div class="images-column">';
-						do_action( 'rentfetch_do_floorplan_images' );
-					echo '</div>';
-					echo '<div class="content-column">';
+			do_action( 'rentfetch_do_single_floorplans_parts' );
 
-		if ( $floorplan_title ) {
-			printf( '<h1>%s</h1>', esc_html( $floorplan_title ) );
-		}
-
-		if ( $pricing ) {
-			printf( '<p class="pricing">%s</p>', wp_kses_post( $pricing ) );
-		}
-
-						echo '<div class="floorplan-attributes">';
-
-		if ( $beds ) {
-			printf( '<p class="beds">%s</p>', wp_kses_post( $beds ) );
-		}
-
-		if ( $baths ) {
-			printf( '<p class="baths">%s</p>', wp_kses_post( $baths ) );
-		}
-
-		if ( $square_feet ) {
-			printf( '<p class="square-feet">%s</p>', wp_kses_post( $square_feet ) );
-		}
-
-						echo '</div>';
-
-						echo '<div class="floorplan-buttons">';
-							do_action( 'rentfetch_do_floorplan_buttons' );
-						echo '</div>';
-
-		if ( $description ) {
-			printf( '<div class="floorplan-description">%s</div>', wp_kses_post( $description ) );
-		}
-
-		if ( $specials_callout ) {
-			echo wp_kses( $specials_callout, rentfetch_get_specials_callout_allowed_html() );
-		} elseif ( $specials ) {
-			printf( '<p class="specials">%s</p>', esc_html( $specials ) );
-		}
-
-					echo '</div>'; // .content-column
-				echo '</div>'; // .current-floorplan-info
-			echo '</div>'; // .container-inner
-		echo '</div>'; // .container-outer
-
-		// if there are available units, show them.
-		if ( $units_count > 0 ) {
-			echo '<div class="single-floorplans-container-outer container-units">';
-				echo '<div class="single-floorplans-container-inner">';
-					echo '<div class="units">';
-
-						echo wp_kses_post( apply_filters( 'rentfetch_single_floorplan_units_headline', '<h2>Units</h2>' ) );
-
-						// typically there will be two things hooked to this, a desktop <table> and a mobile <details>.
-						do_action( 'rentfetch_floorplan_do_unit_table' );
-
-					echo '</div>'; // .units.
-				echo '</div>'; // .container-inner.
-			echo '</div>'; // .container-outer.
-		}
-
-		$embed = rentfetch_get_property_fee_embed_from_floorplan_id( get_the_ID() );
-
-		if ( $embed ) {
-			echo '<div class="single-floorplans-container-outer container-property-fees">';
-				echo '<div class="single-floorplans-container-inner">';
-					echo '<div class="property-fees">';
-
-						echo wp_kses_post( apply_filters( 'rentfetch_single_floorplan_property_fees_headline', '<h2>Property Fees</h2>' ) );
-						echo wp_kses( $embed, rentfetch_get_allowed_embed_html() );
-
-					echo '</div>'; // .property-fees
-				echo '</div>'; // .container-inner
-			echo '</div>'; // .container-outer
-		}
-
-		$iframe = rentfetch_get_floorplan_tour_embed();
-
-		if ( $iframe ) {
-			echo '<div class="single-floorplans-container-outer container-tour">';
-				echo '<div class="single-floorplans-container-inner">';
-					echo '<div class="tour">';
-
-					echo wp_kses_post( apply_filters( 'rentfetch_single_floorplan_tour_headline', '<h2>Take a look around</h2>' ) );
-					rentfetch_floorplan_tour_embed();
-
-					echo '</div>'; // .tour
-				echo '</div>'; // .container-inner
-			echo '</div>'; // .container-outer
-		}
-
-		// do a query for similar floorplans (which share a property_id and the number of beds).
-		$similar_floorplans = rentfetch_get_similar_floorplans();
-
-		if ( $similar_floorplans ) {
-
-			// set a flag to tell the floorplan-images.php template to not use a slider.
-			global $floorplan_images_use_slider;
-			$floorplan_images_use_slider = false;
-
-			echo '<div class="single-floorplans-container-outer container-similar-floorplans">';
-				echo '<div class="single-floorplans-container-inner">';
-					echo '<div class="similar-floorplans">';
-
-						echo wp_kses_post( apply_filters( 'rentfetch_single_floorplan_more_floorplans_headline', '<h2>Similar Floor Plans</h2>' ) );
-						rentfetch_similar_floorplans();
-
-					echo '</div>'; // .similar-floorplans
-				echo '</div>'; // .container-inner
-			echo '</div>'; // .container-outer
-
-			$floorplan_images_use_slider = null;
-		}
-	} // end while
+		echo '</div>';
+	}
 } else {
 	echo 'So sorry! Nothing found.';
 }

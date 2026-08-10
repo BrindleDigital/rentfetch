@@ -81,6 +81,7 @@ function rentfetch_get_property_images_manual( $args ) {
 	foreach ( $manual_image_ids as $manual_image_id ) {
 
 		$manual_images[] = array(
+			'id'      => $manual_image_id,
 			'url'     => wp_get_attachment_image_url( $manual_image_id, $size ),
 			'title'   => get_the_title( $manual_image_id ),
 			'alt'     => get_post_meta( $manual_image_id, '_wp_attachment_image_alt', true ),
@@ -303,6 +304,32 @@ function rentfetch_get_property_images_fallback( $args ) {
 }
 
 /**
+ * Add supported RentCafe CDN image-resizing parameters.
+ *
+ * @param string $url Image URL.
+ * @param int    $width Requested width in pixels.
+ * @return string Resized CDN URL, or the original URL for other hosts.
+ */
+function rentfetch_get_resized_rentcafe_image_url( $url, $width ) {
+	$parts = wp_parse_url( $url );
+	$host  = strtolower( (string) ( $parts['host'] ?? '' ) );
+	$path  = strtolower( (string) ( $parts['path'] ?? '' ) );
+
+	if ( ( 'rentcafe.com' !== $host && '.rentcafe.com' !== substr( $host, -13 ) ) || false === strpos( $path, '/dmslivecafe/' ) ) {
+		return $url;
+	}
+
+	return add_query_arg(
+		array(
+			'width'   => max( 1, (int) $width ),
+			'height'  => -1,
+			'quality' => 80,
+		),
+		$url
+	);
+}
+
+/**
  * Output the property images grid
  *
  * @param   array $args the image size (optional).
@@ -339,14 +366,32 @@ function rentfetch_property_images_grid( $args = null ) {
 
 	printf( '<div class="property-images-grid %s">', esc_attr( $count_class ) );
 
-	foreach ( $images as $image ) {
+	foreach ( $images as $index => $image ) {
 
 		// if there's no alt text, fall back to the property title.
 		if ( empty( $image['alt'] ) ) {
 			$image['alt'] = get_the_title();
 		}
 
-		printf( '<div class="image-item"><a class="property-image-grid-link" data-gallery="property-images-grid" href="%s"><img src="%s" alt="%s" title="%s" /></a></div>', esc_url( $image['url'] ), esc_url( $image['url'] ), esc_html( $image['alt'] ), esc_html( $image['title'] ) );
+		$loading  = 0 === $index ? 'eager' : 'lazy';
+		$priority = 0 === $index ? ' fetchpriority="high"' : '';
+		$sizes    = $number_of_images < 5 ? '100vw' : ( 0 === $index ? '(max-width: 600px) 100vw, 50vw' : '(max-width: 600px) 100vw, 25vw' );
+		$src      = rentfetch_get_resized_rentcafe_image_url( $image['url'], 0 === $index ? 1280 : 768 );
+		$srcset   = '';
+
+		if ( ! empty( $image['id'] ) ) {
+			$manual_src    = wp_get_attachment_image_url( $image['id'], 'large' );
+			$src           = $manual_src ? $manual_src : $image['url'];
+			$manual_srcset = wp_get_attachment_image_srcset( $image['id'], 'full' );
+			$srcset        = $manual_srcset ? sprintf( ' srcset="%s" sizes="%s"', esc_attr( $manual_srcset ), esc_attr( $sizes ) ) : '';
+		} elseif ( $src !== $image['url'] ) {
+			foreach ( array( 480, 768, 1280, 1920 ) as $width ) {
+				$srcset .= sprintf( '%s %sw, ', rentfetch_get_resized_rentcafe_image_url( $image['url'], $width ), $width );
+			}
+			$srcset = sprintf( ' srcset="%s" sizes="%s"', esc_attr( rtrim( $srcset, ', ' ) ), esc_attr( $sizes ) );
+		}
+
+		printf( '<div class="image-item"><a class="property-image-grid-link" data-gallery="property-images-grid" href="%s"><img src="%s"%s alt="%s" title="%s" loading="%s" decoding="async"%s /></a></div>', esc_url( $image['url'] ), esc_url( $src ), $srcset, esc_html( $image['alt'] ), esc_html( $image['title'] ), esc_attr( $loading ), $priority ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	if ( $number_of_images > 1 ) {

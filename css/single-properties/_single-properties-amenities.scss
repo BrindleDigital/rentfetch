@@ -1,6 +1,6 @@
 #amenities {
 	ul.amenities {
-		margin: 1em 0 0;
+		margin: var(--rentfetch-space-lg) 0 0;
 		padding: 0;
 		list-style: none;
 		display: grid;

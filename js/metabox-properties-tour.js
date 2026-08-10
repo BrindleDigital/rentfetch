@@ -1,28 +1,57 @@
 jQuery(document).ready(function ($) {
-	function updateTourPreview() {
-		// Get the URL input field and its value
-		const tourInput = $('input#tour');
-		const iframeCode = tourInput.val();
+	function getTourEmbedUrl(value) {
+		const iframeMatch = value.match(/<iframe[^>]+src\s*=\s*["']([^"']+)["']/i);
+		const rawUrl = (iframeMatch ? iframeMatch[1] : value).trim();
 
-		// Get the oembed container element
-		const oembedContainer = $('#tour-preview');
+		try {
+			const url = new URL(rawUrl);
+			const host = url.hostname.toLowerCase();
+			const hostMatches = (domain) => host === domain || host.endsWith(`.${domain}`);
 
-		// Remove any existing oembed content
-		oembedContainer.empty();
+			if (hostMatches('youtu.be')) {
+				return `https://www.youtube.com/embed/${url.pathname.split('/').filter(Boolean)[0]}`;
+			}
 
-		// Check if the input is not empty
-		if (iframeCode.trim() !== '') {
-			// Create a new HTML element for the iframe code
-			const iframeContent = $('<div></div>').html(iframeCode);
+			if (hostMatches('youtube.com') || hostMatches('youtube-nocookie.com')) {
+				const pathMatch = url.pathname.match(/\/(?:embed|shorts)\/([^/]+)/);
+				const videoId = url.searchParams.get('v') || (pathMatch && pathMatch[1]);
+				return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+			}
 
-			// Add the iframe content to the container element
-			oembedContainer.append(iframeContent);
+			if (hostMatches('vimeo.com')) {
+				const videoId = url.pathname.match(/\/(?:video\/)?(\d+)\/?$/);
+				return videoId ? `https://player.vimeo.com/video/${videoId[1]}` : '';
+			}
+
+			if (host === 'drive.google.com') {
+				return url.href.replace(/\/view(?:\?.*)?$/, '/preview');
+			}
+
+			return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+		} catch (error) {
+			return '';
 		}
 	}
 
-	// Trigger the function when the input changes
-	$('input#tour').on('input', updateTourPreview);
+	function updateTourPreview() {
+		const tourInput = $('input#tour');
+		const embedUrl = getTourEmbedUrl(tourInput.val());
+		const oembedContainer = $('#tour-preview');
+		oembedContainer.empty();
 
-	// Trigger on page load
+		if (embedUrl) {
+			oembedContainer.append(
+				$('<iframe>', {
+					allow: 'autoplay; encrypted-media; fullscreen; picture-in-picture; xr-spatial-tracking',
+					allowfullscreen: true,
+					loading: 'lazy',
+					src: embedUrl,
+					title: 'Manual video or tour preview',
+				})
+			);
+		}
+	}
+
+	$('input#tour').on('input', updateTourPreview);
 	updateTourPreview();
 });

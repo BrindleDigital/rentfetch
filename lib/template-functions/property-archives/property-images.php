@@ -34,14 +34,19 @@ function rentfetch_property_single_image() {
 	echo '<div class="property-single-image-wrap">';
 	if ( ! empty( $images ) && isset( $images[0]['url'] ) ) {
 
-		$alt = $images[0]['alt'] ?? '';
+		$alt       = $images[0]['alt'] ?? '';
+		$image_url = rentfetch_get_resized_rentcafe_image_url( $images[0]['url'], 480 );
+		if ( ! empty( $images[0]['id'] ) ) {
+			$large_url = wp_get_attachment_image_url( $images[0]['id'], 'large' );
+			$image_url = $large_url ? $large_url : $images[0]['url'];
+		}
 
 		if ( ! $alt ) {
 			// set the alt to the name of the property.
 			$alt = get_the_title();
 		}
 
-		printf( '<img class="property-single-image" src="%s" alt="%s" loading="lazy" decoding="async" />', esc_url( $images[0]['url'] ), esc_html( $alt ) );
+		printf( '<img class="property-single-image" src="%s" alt="%s" loading="lazy" decoding="async" />', esc_url( $image_url ), esc_html( $alt ) );
 	} else {
 		// Fallback: empty image placeholder (keeps layout stable).
 		echo '<img class="property-single-image" src="" alt="" loading="lazy" decoding="async" />';

@@ -23,6 +23,7 @@ function rentfetch_floorplan_search_default_layout( $atts ) {
 	wp_enqueue_style( 'rentfetch-glightbox-style' );
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
 	wp_enqueue_script( 'rentfetch-glightbox-init' );
+	wp_enqueue_script( 'rentfetch-floorplan-images-slider-init' );
 
 	// Ensure tooltip behavior is available for pricing/fees in AJAX-loaded results.
 	wp_enqueue_script( 'rentfetch-tooltip' );

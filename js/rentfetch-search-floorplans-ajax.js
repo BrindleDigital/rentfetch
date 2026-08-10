@@ -506,6 +506,9 @@ jQuery(function ($) {
 
 				$reset.text('Clear All'); // changing the button label
 				$response.html(response.html); // insert HTML from REST response
+				if (window.rentfetchClassifyFloorplanSingleImages) {
+					window.rentfetchClassifyFloorplanSingleImages($response[0]);
+				}
 
 				var toggles = outputToggles(toggleData);
 				$filterToggles.html(toggles);

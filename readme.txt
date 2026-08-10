@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.3
-Stable tag: 0.38.2
+Stable tag: 0.39.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,7 +51,7 @@ Rent Fetch is the engine behind our sites at [Brindle Digital Marketing](https:/
 * Property and floor plan editors include searchable Categories tabs with native WordPress term selection and creation controls.
 * Google Maps integration (both for the property search and for use on each property page. To use this, you’ll need to set up an API key for the Google Maps Javascript API at [maps.googleapis.com](https://maps.googleapis.com))
 * Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed  [Blaze Slider](https://blaze-slider.dev) for these, and you don’t need to set up anything for these to work)
-* Your floorplans can display [Matterport](https://my.matterport.com) and [YouTube](https://www.youtube.com) tours.
+* Properties and floor plans can display manual or synced video and virtual tours from YouTube, Vimeo, Matterport, Zillow 3D Home, TheViewVR, Google Drive, and compatible iframe or oEmbed providers.
 * TONS of hooks, letting you (or your developer) customize to your heart’s content. The single layouts for both floorplans and properties can be fully replaced by the theme, and we have lots of helpful functions to let you grab preprocessed information for display.
 * This plugin works with both single-property apartment websites and websites that showcase hundreds of properties.
 * Adding mini search capability
@@ -103,6 +103,15 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.39.0 =
+
+* Rebuilt the single floor plan template with consistent full-width sections, an availability-focused hero, refined feature and fee layouts, and improved secondary-text styling shared with single property pages.
+* Reworked available units into a spacious desktop table and responsive mobile cards, with regular-sized application buttons, availability and amenity pills, styled specials, complete unit details, and no unit lightboxes.
+* Added combined manual and synced Videos & Tours support for properties, floor plans, and units, including provider-aware video and virtual-tour handling, editor previews, and responsive front-end tour sections.
+* Improved property and floor plan imagery with responsive image delivery, gallery thumbnails, full-size lightbox sources, and automatic contain-or-cover handling that keeps floor plan drawings aligned without cropping property photos.
+* Reordered property fees to appear immediately before maps on single properties and last on single floor plans, while refining amenities, headings, section spacing, and supporting text colors across both templates.
+* Preserved legacy hooks, filters, theme template overrides, and CSS selectors where possible, and hardened tour parsing, external links, iframe output, and supported CDN URL handling.
 
 = 0.38.2 =
 

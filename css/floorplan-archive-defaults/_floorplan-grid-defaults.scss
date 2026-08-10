@@ -66,7 +66,7 @@
 		height: 0;
 		padding-top: 66.7%;
 		position: relative;
-		margin: var(--rentfetch-space-md) var(--rentfetch-space-md) 0;
+		border-bottom: 1px solid var(--rentfetch-base-2);
 		// max-width: 100%;
 
 		img.floorplan-single-image,
@@ -76,6 +76,11 @@
 			height: 100%;
 			position: absolute;
 			inset: 0;
+		}
+
+		&.is-photo-image img.floorplan-single-image,
+		&.is-photo-image img.floorplan-image {
+			object-fit: cover;
 		}
 	}
 
@@ -124,6 +129,7 @@
 		line-height: 1.35;
 
 		p {
+			color: var(--rentfetch-text-secondary);
 			font-size: var(--rentfetch-font-size-smallest);
 			line-height: 1.35;
 			display: block;
@@ -175,6 +181,7 @@
 	}
 
 	p.pricing {
+		color: var(--rentfetch-dark);
 		font-size: var(--rentfetch-font-size-medium);
 		font-weight: bold;
 		margin: 0;
@@ -197,6 +204,7 @@
 		}
 
 		.rentfetch-floorplan-base-rent {
+			color: var(--rentfetch-text-secondary);
 			display: block;
 			font-size: var(--rentfetch-font-size-smallest);
 			font-weight: 400;

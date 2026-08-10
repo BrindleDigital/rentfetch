@@ -524,7 +524,7 @@ function rentfetch_unit_button() {
 
 	if ( $apply_online_url ) {
 		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_applyonline_click', rentfetch_get_floorplan_tracking_context() );
-		$markup         = sprintf( '<a href="%s" class="rentfetch-button rentfetch-button-small" target="_blank"%s>Apply Online</a>', $apply_online_url, $tracking_attrs );
+		$markup         = sprintf( '<a href="%s" class="rentfetch-button rentfetch-button-small" target="_blank" rel="noopener noreferrer"%s>Apply Online</a>', esc_url( $apply_online_url ), $tracking_attrs );
 		echo wp_kses_post( apply_filters( 'rentfetch_filter_unit_apply_button_markup', $markup ) );
 	} else {
 		rentfetch_unit_default_contact_button();
@@ -566,12 +566,12 @@ function rentfetch_unit_default_contact_button_markup() {
 	}
 
 	if ( true === $external ) {
-		$target = 'target="_blank"';
+		$target = 'target="_blank" rel="noopener noreferrer"';
 	} else {
 		$target = 'target="_self"';
 	}
 
-	$button_markup = sprintf( '<a href="%s" %s class="rentfetch-button rentfetch-button-small rentfetch-button-no-highlight">%s</a>', $link, $target, $button_label );
+	$button_markup = sprintf( '<a href="%s" %s class="rentfetch-button rentfetch-button-small rentfetch-button-no-highlight">%s</a>', esc_url( $link ), $target, esc_html( $button_label ) );
 	return $button_markup;
 }
 add_filter( 'rentfetch_filter_unit_default_contact_button_markup', 'rentfetch_unit_default_contact_button_markup' );

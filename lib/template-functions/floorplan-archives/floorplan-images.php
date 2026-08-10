@@ -39,6 +39,7 @@ add_action( 'rentfetch_do_floorplan_images', 'rentfetch_floorplan_images' );
 function rentfetch_floorplan_single_image() {
 
 	$images = rentfetch_get_floorplan_images();
+	wp_enqueue_script( 'rentfetch-floorplan-images-slider-init' );
 
 	echo '<div class="floorplan-single-image-wrap">';
 		printf( '<img class="floorplan-single-image" src="%s" loading="lazy">', esc_url( $images[0]['url'] ) );
@@ -53,6 +54,9 @@ function rentfetch_floorplan_single_image() {
 function rentfetch_floorplan_image_slider() {
 
 	$images = rentfetch_get_floorplan_images();
+	if ( ! $images ) {
+		return;
+	}
 
 	wp_enqueue_script( 'blaze-script' );
 	wp_enqueue_script( 'rentfetch-floorplan-images-slider-init' );
@@ -65,21 +69,26 @@ function rentfetch_floorplan_image_slider() {
 	// random number.
 	$rand = wp_rand( 10, 10000 );
 
-	echo '<div class="floorplan-images-slider blaze-slider">';
+	$is_single_floorplan = is_singular( 'floorplans' );
+	$slider_classes      = $is_single_floorplan ? 'floorplan-images-slider blaze-slider has-floorplan-image-thumbnails' : 'floorplan-images-slider blaze-slider';
+
+	printf( '<div class="%s">', esc_attr( $slider_classes ) );
 		echo '<div class="blaze-container">';
 			echo '<div class="blaze-track-container">';
 				echo '<div class="blaze-track">';
 
-	foreach ( $images as $image ) {
+	foreach ( $images as $index => $image ) {
+		$alt         = $image['alt'] ?? get_the_title();
+		$display_url = $image['display_url'] ?? ( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image['url'], 600 ) : $image['url'] );
 
 		// check if the image url includes "fallback".
 		if ( strpos( $image['url'], 'fallback' ) !== false ) {
-			echo '<div class="floorplan-image-slide">';
-				printf( '<img class="floorplan-image" src="%s" loading="lazy">', esc_url( $image['url'] ) );
+			printf( '<div class="floorplan-image-slide" data-floorplan-image-index="%s">', (int) $index );
+				printf( '<img class="floorplan-image" src="%s" alt="%s" loading="lazy" decoding="async">', esc_url( $display_url ), esc_attr( $alt ) );
 			echo '</div>';
 		} else {
-			echo '<div class="floorplan-image-slide">';
-				printf( '<img class="floorplan-image floorplan-image-gallery" data-dallery="gallery-%s" src="%s" loading="lazy">', (int) $rand, esc_url( $image['url'] ) );
+			printf( '<div class="floorplan-image-slide" data-floorplan-image-index="%s">', (int) $index );
+				printf( '<img class="floorplan-image floorplan-image-gallery" data-gallery="gallery-%s" data-href="%s" src="%s" alt="%s" loading="lazy" decoding="async">', (int) $rand, esc_url( $image['url'] ), esc_url( $display_url ), esc_attr( $alt ) );
 			echo '</div>';
 		}
 	}
@@ -89,11 +98,30 @@ function rentfetch_floorplan_image_slider() {
 
 	if ( count( $images ) > 1 ) {
 		echo '<div class="blaze-buttons">';
-			echo '<button class="blaze-prev"></button>';
-			echo '<button class="blaze-next"></button>';
+			echo '<button class="blaze-prev" type="button" aria-label="Previous photo"></button>';
+			echo '<button class="blaze-next" type="button" aria-label="Next photo"></button>';
 		echo '</div>'; // .blaze-buttons.
 	}
 
 		echo '</div>'; // .blaze-container.
+
+	if ( $is_single_floorplan && count( $images ) > 1 ) {
+		echo '<div class="floorplan-image-thumbnails" aria-label="Choose a floorplan photo">';
+		foreach ( $images as $index => $image ) {
+			$thumbnail_url = $image['thumbnail_url'] ?? $image['url'];
+			$current       = 0 === $index ? ' is-active' : '';
+			$aria_current  = 0 === $index ? ' aria-current="true"' : '';
+			printf(
+				'<button class="floorplan-image-thumbnail%s" type="button" data-floorplan-image-index="%s" data-floorplan-sample-src="%s" aria-label="View photo %s"%s><img src="%s" alt="" loading="lazy" decoding="async"></button>',
+				esc_attr( $current ),
+				(int) $index,
+				esc_url( $thumbnail_url ),
+				(int) $index + 1,
+				$aria_current, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				esc_url( $thumbnail_url )
+			);
+		}
+		echo '</div>';
+	}
 	echo '</div>'; // .blaze-slider.
 }

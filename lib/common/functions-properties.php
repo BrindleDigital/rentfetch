@@ -914,7 +914,7 @@ function rentfetch_get_property_tour_button( $property_id = null, $css_class = '
 		$post_id = get_the_ID();
 	}
 
-	$iframe         = get_post_meta( $post_id, 'tour', true );
+	$tours          = rentfetch_get_property_tours( $post_id );
 	$embedlink      = null;
 	$tour_link_text = 'Video Tour';
 	$svg            = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 tour-icon">
@@ -923,7 +923,7 @@ function rentfetch_get_property_tour_button( $property_id = null, $css_class = '
 </svg>';
 
 	// bail if we don't have anything to show.
-	if ( ! $iframe ) {
+	if ( ! $tours ) {
 		return;
 	}
 
@@ -931,56 +931,20 @@ function rentfetch_get_property_tour_button( $property_id = null, $css_class = '
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
 	wp_enqueue_script( 'rentfetch-glightbox-init' );
 
-	// check against youtube - handle both iframe HTML and direct URLs.
-	$youtube_pattern = '/src="https:\/\/www\.youtube\.com\/embed\/([^?"]+)\?/';
-	preg_match( $youtube_pattern, $iframe, $youtube_matches );
+	$tour = $tours[0];
 
-	// Also check for direct YouTube URLs.
-	if ( ! isset( $youtube_matches[1] ) ) {
-		preg_match( '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $iframe, $youtube_matches );
+	$classes = 'tour-link property-link';
+	if ( in_array( $tour['type'], array( 'youtube', 'matterport' ), true ) ) {
+		$classes .= ' tour-link-' . $tour['type'];
+	}
+	if ( ! empty( $css_class ) ) {
+		$classes .= ' ' . esc_attr( $css_class );
 	}
 
-	// if it's youtube and it's a full iframe.
-	if ( isset( $youtube_matches[1] ) ) {
-		$video_id   = $youtube_matches[1];
-		$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
-		$classes    = 'tour-link property-link tour-link-youtube';
-		if ( ! empty( $css_class ) ) {
-			$classes .= ' ' . esc_attr( $css_class );
-		}
-		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_tour_click', rentfetch_get_property_tracking_context( $property_id, $post_id ) );
-		$embedlink      = sprintf( '<a class="%s" data-gallery="post-%s" data-glightbox="type: video;" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
-	}
-
-	$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
-	preg_match( $matterport_pattern, $iframe, $matterport_matches );
-
-	// Also check for direct Matterport URLs.
-	if ( ! isset( $matterport_matches[1] ) && strpos( $iframe, 'matterport.com' ) !== false ) {
-		$matterport_matches[1] = $iframe;
-	}
-
-	// if it's matterport and it's a full iframe.
-	if ( isset( $matterport_matches[1] ) ) {
-		$oembedlink = $matterport_matches[1];
-		$classes    = 'tour-link property-link tour-link-matterport';
-		if ( ! empty( $css_class ) ) {
-			$classes .= ' ' . esc_attr( $css_class );
-		}
-		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_tour_click', rentfetch_get_property_tracking_context( $property_id, $post_id ) );
-		$embedlink      = sprintf( '<a class="%s" data-gallery="post-%s" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
-	}
-
-	// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
-	if ( ! $embedlink ) {
-		$oembedlink = $iframe;
-		$classes    = 'tour-link property-link';
-		if ( ! empty( $css_class ) ) {
-			$classes .= ' ' . esc_attr( $css_class );
-		}
-		$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_tour_click', rentfetch_get_property_tracking_context( $property_id, $post_id ) );
-		$embedlink      = sprintf( '<a class="%s" target="_blank" data-gallery="post-%s" href="%s"%s>%s%s</a>', $classes, $post_id, $oembedlink, $tracking_attrs, $svg, $tour_link_text );
-	}
+	$target         = in_array( $tour['type'], array( 'youtube', 'matterport' ), true ) ? '' : ' target="_blank" rel="noopener noreferrer"';
+	$lightbox       = 'youtube' === $tour['type'] ? ' data-glightbox="type: video;"' : '';
+	$tracking_attrs = rentfetch_get_tracking_data_attributes( 'rentfetch_tour_click', rentfetch_get_property_tracking_context( $property_id, $post_id ) );
+	$embedlink      = sprintf( '<a class="%s"%s%s data-gallery="post-%s" href="%s"%s>%s%s</a>', $classes, $target, $lightbox, $post_id, esc_url( $tour['link_url'] ), $tracking_attrs, $svg, $tour_link_text );
 
 	return apply_filters( 'rentfetch_filter_property_tour_button', $embedlink, $property_id, $css_class );
 }
@@ -2882,70 +2846,32 @@ function rentfetch_get_property_tour( $property_id = null, $embed_direct = false
 		$post_id = get_the_ID();
 	}
 
-	$iframe    = get_post_meta( $post_id, 'tour', true );
-	$embedlink = null;
-
-	if ( $iframe ) {
-
-		if ( $embed_direct ) {
-			// Return the iframe directly - convert URLs to iframe HTML if needed.
-			if ( strpos( $iframe, '<iframe' ) === 0 ) {
-				// Already iframe HTML, use as-is.
-				$embedlink = $iframe;
-			} elseif ( preg_match( '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $iframe, $youtube_matches ) ) {
-				// YouTube URL, convert to embed iframe.
-				$video_id  = $youtube_matches[1];
-				$embedlink = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' . $video_id . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-			} elseif ( strpos( $iframe, 'matterport.com' ) !== false ) {
-				// Matterport URL, convert to embed iframe.
-				$embedlink = '<iframe width="853" height="480" src="' . esc_url( $iframe ) . '" frameborder="0" allowfullscreen allow="xr-spatial-tracking"></iframe>';
-			} else {
-				// Fallback: assume it's already iframe HTML or wrap as iframe.
-				$embedlink = $iframe;
-			}
-		} else {
-			// Return links for lightbox/modal (existing behavior).
-			wp_enqueue_style( 'rentfetch-glightbox-style' );
-			wp_enqueue_script( 'rentfetch-glightbox-script' );
-			wp_enqueue_script( 'rentfetch-glightbox-init' );
-
-			// check against youtube - handle both iframe HTML and direct URLs.
-			$youtube_pattern = '/src="https:\/\/www\.youtube\.com\/embed\/([^?"]+)\?/';
-			preg_match( $youtube_pattern, $iframe, $youtube_matches );
-
-			// Also check for direct YouTube URLs.
-			if ( ! isset( $youtube_matches[1] ) ) {
-				preg_match( '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/', $iframe, $youtube_matches );
-			}
-
-			// if it's youtube and it's a full iframe.
-			if ( isset( $youtube_matches[1] ) ) {
-				$video_id   = $youtube_matches[1];
-				$oembedlink = 'https://www.youtube.com/watch?v=' . $video_id;
-				$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-youtube" data-gallery="post-%s" data-glightbox="type: video;" href="%s"></a></div>', $post_id, $oembedlink );
-			}
-
-			$matterport_pattern = '/src="([^"]*matterport[^"]*)"/i'; // Added "matterport" to the pattern.
-			preg_match( $matterport_pattern, $iframe, $matterport_matches );
-
-			// Also check for direct Matterport URLs.
-			if ( ! isset( $matterport_matches[1] ) && strpos( $iframe, 'matterport.com' ) !== false ) {
-				$matterport_matches[1] = $iframe;
-			}
-
-			// if it's matterport and it's a full iframe.
-			if ( isset( $matterport_matches[1] ) ) {
-				$oembedlink = $matterport_matches[1];
-				$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link tour-link-matterport" data-gallery="post-%s" href="%s"></a></div>', $post_id, $oembedlink );
-			}
-
-			// if it's anything else (like just an oembed, including an oembed for either matterport or youtube).
-			if ( ! $embedlink ) {
-				$oembedlink = $iframe;
-				$embedlink  = sprintf( '<div class="tour-link-wrapper"><a class="tour-link" target="_blank" data-gallery="post-%s" href="%s"></a></div>', $post_id, $oembedlink );
-			}
-		}
+	$tours = rentfetch_get_property_tours( $post_id );
+	if ( ! $tours ) {
+		return apply_filters( 'rentfetch_filter_property_tour', null );
 	}
+
+	$tour = $tours[0];
+	if ( $embed_direct ) {
+		return apply_filters( 'rentfetch_filter_property_tour', rentfetch_get_tour_embed_html( $tour['url'] ) );
+	}
+
+	wp_enqueue_style( 'rentfetch-glightbox-style' );
+	wp_enqueue_script( 'rentfetch-glightbox-script' );
+	wp_enqueue_script( 'rentfetch-glightbox-init' );
+
+	$class    = 'tour-link';
+	$lightbox = '';
+	$target   = ' target="_blank" rel="noopener noreferrer"';
+	if ( in_array( $tour['type'], array( 'youtube', 'matterport' ), true ) ) {
+		$class .= ' tour-link-' . $tour['type'];
+		$target = '';
+	}
+	if ( 'youtube' === $tour['type'] ) {
+		$lightbox = ' data-glightbox="type: video;"';
+	}
+
+	$embedlink = sprintf( '<div class="tour-link-wrapper"><a class="%s"%s%s data-gallery="post-%s" href="%s"></a></div>', $class, $target, $lightbox, $post_id, esc_url( $tour['link_url'] ) );
 
 	return apply_filters( 'rentfetch_filter_property_tour', $embedlink );
 }

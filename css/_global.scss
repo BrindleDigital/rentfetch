@@ -13,6 +13,7 @@ html {
 	--rentfetch-base-2: #eaeaea;
 	--rentfetch-base-3: #d4d4d4;
 	--rentfetch-default: #999999;
+	--rentfetch-text-secondary: color-mix(in srgb, var(--rentfetch-dark) 60%, transparent);
 	--rentfetch-dark: #000000;
 	--rentfetch-accent-specials-background: #ffebb1;
 	--rentfetch-accent-specials-star: #fbbc00;
@@ -79,6 +80,10 @@ html {
 	--rentfetch-section-padding-block: var(--rentfetch-space-3xl);
 	--rentfetch-section-padding-inline: var(--rentfetch-space-lg);
 	--rentfetch-content-gap: var(--rentfetch-space-2xl);
+}
+
+.glightbox-container .gslide-image img {
+	background-color: var(--rentfetch-white);
 }
 
 /* ==========================================================================

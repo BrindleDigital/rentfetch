@@ -71,10 +71,12 @@ function rentfetch_get_floorplan_images_manual() {
 	foreach ( $manual_image_ids as $manual_image_id ) {
 
 		$manual_images[] = array(
-			'url'     => wp_get_attachment_image_url( $manual_image_id, 'large' ),
-			'title'   => get_the_title( $manual_image_id ),
-			'alt'     => get_post_meta( $manual_image_id, '_wp_attachment_image_alt', true ),
-			'caption' => get_the_excerpt( $manual_image_id ),
+			'url'           => wp_get_attachment_image_url( $manual_image_id, 'large' ),
+			'display_url'   => wp_get_attachment_image_url( $manual_image_id, 'medium_large' ),
+			'thumbnail_url' => wp_get_attachment_image_url( $manual_image_id, 'medium' ),
+			'title'         => get_the_title( $manual_image_id ),
+			'alt'           => get_post_meta( $manual_image_id, '_wp_attachment_image_alt', true ),
+			'caption'       => get_the_excerpt( $manual_image_id ),
 		);
 	}
 
@@ -107,7 +109,8 @@ function rentfetch_get_floorplan_images_yardi() {
 
 	foreach ( $images_array_source as $image ) {
 		$images_array_return[] = array(
-			'url' => esc_url( $image ),
+			'url'           => esc_url( $image ),
+			'thumbnail_url' => esc_url( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image, 240 ) : $image ),
 		);
 	}
 
@@ -140,7 +143,8 @@ function rentfetch_get_floorplan_images_entrata() {
 
 	foreach ( $images_array_source as $image ) {
 		$images_array_return[] = array(
-			'url' => esc_url( $image ),
+			'url'           => esc_url( $image ),
+			'thumbnail_url' => esc_url( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image, 240 ) : $image ),
 		);
 	}
 
@@ -171,8 +175,10 @@ function rentfetch_get_floorplan_images_rentmanager() {
 	$images_return = array();
 
 	foreach ( $images_source as $image ) {
+		$image_url       = $image['File']['DownloadURL'];
 		$images_return[] = array(
-			'url' => esc_url( $image['File']['DownloadURL'] ),
+			'url'           => esc_url( $image_url ),
+			'thumbnail_url' => esc_url( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image_url, 240 ) : $image_url ),
 		);
 	}
 
@@ -201,7 +207,10 @@ function rentfetch_get_floorplan_images_engrain() {
 
 	$images = array();
 	foreach ( $image_urls as $image_url ) {
-		$images[] = array( 'url' => esc_url( $image_url ) );
+		$images[] = array(
+			'url'           => esc_url( $image_url ),
+			'thumbnail_url' => esc_url( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image_url, 240 ) : $image_url ),
+		);
 	}
 
 	return $images;

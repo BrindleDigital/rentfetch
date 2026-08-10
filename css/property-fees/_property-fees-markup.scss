@@ -4,6 +4,7 @@
 
 .property-fees-description {
 	margin-bottom: 1.5em;
+	color: var(--rentfetch-text-secondary);
 }
 
 /* ==========================================================================
@@ -77,9 +78,14 @@ table.property-fees-table {
 
 	.fee-frequency {
 		display: inline;
+		color: var(--rentfetch-text-secondary);
 		font-size: var(--rentfetch-font-size-smallest);
 		font-style: italic;
 		text-transform: lowercase;
+	}
+
+	.fee-description {
+		color: var(--rentfetch-text-secondary);
 	}
 
 	.fee-notes {
