@@ -656,6 +656,10 @@
 	}
 }
 
+.rf-confirmation-dialog:not([open]) {
+	display: none;
+}
+
 .rf-confirmation-dialog-header {
 	padding: 22px 24px 0;
 
