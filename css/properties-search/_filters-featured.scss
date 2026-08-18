@@ -248,6 +248,20 @@
 		}
 	}
 
+	fieldset.sort button.toggle {
+		position: relative;
+		padding-right: 43px;
+
+		&:after {
+			content: '';
+			position: absolute;
+			inset: 0 var(--rentfetch-space-md) 0 auto;
+			width: 18px;
+			margin: 0;
+			background: url('../images/search-icon-sort.svg') center / contain no-repeat;
+		}
+	}
+
 	input[type='text'],
 	input[type='number'],
 	input[type='date'] {
@@ -320,14 +334,42 @@
 
 .rent-fetch-property-search-default-layout {
 	#featured-filters {
+		align-items: flex-start;
+		flex-wrap: nowrap;
+
+		.featured-filters-fields {
+			display: flex;
+			flex: 1 1 auto;
+			flex-wrap: wrap;
+			gap: var(--rentfetch-space-xs);
+			min-width: 0;
+		}
+
+		.featured-filters-actions {
+			display: flex;
+			flex: 0 0 auto;
+			gap: var(--rentfetch-space-xs);
+		}
+
 		@include mobile {
 			display: grid;
 			grid-template-columns: 2fr auto;
 			gap: var(--rentfetch-space-2xs);
+
+			.featured-filters-fields {
+				gap: var(--rentfetch-space-2xs);
+			}
+
+			.featured-filters-actions {
+				button.toggle,
+				button#open-search-filters {
+					line-height: 50px;
+				}
+			}
 		}
 	}
 
-	fieldset:not(.text-based-search) {
+	.featured-filters-fields fieldset:not(.text-based-search) {
 		@include mobile {
 			display: none;
 		}

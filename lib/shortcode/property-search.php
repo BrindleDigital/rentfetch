@@ -96,8 +96,13 @@ function rentfetch_propertysearchfilters( $atts ) {
 		esc_attr( $shortcode_attributes_json )
 	);
 		echo '<div id="featured-filters">';
-			do_action( 'rentfetch_do_search_properties_featured_filters' );
-			echo '<button type="button" id="open-search-filters">Filters</button>';
+			echo '<div class="featured-filters-fields">';
+				do_action( 'rentfetch_do_search_properties_featured_filters' );
+			echo '</div>';
+			echo '<div class="featured-filters-actions">';
+				echo '<button type="button" id="open-search-filters">Filters</button>';
+				rentfetch_search_filters_sort_properties();
+			echo '</div>';
 		echo '</div>';
 		echo '<div id="filter-toggles"></div>';
 	echo '</div>'; // .filters-wrap.
@@ -211,6 +216,9 @@ function rentfetch_render_property_query_results_data( $property_args ) {
 	ob_start();
 
 	$propertyquery = new WP_Query( $property_args );
+	if ( isset( $_POST['sort'] ) ) {
+		$propertyquery->posts = rentfetch_sort_property_posts( $propertyquery->posts, sanitize_text_field( wp_unslash( $_POST['sort'] ) ) );
+	}
 	$map_points    = array();
 
 	if ( $propertyquery->have_posts() ) {

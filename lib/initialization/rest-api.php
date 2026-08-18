@@ -199,7 +199,7 @@ function rentfetch_normalize_builtin_search_value( $value, $rule ) {
 	}
 
 	if ( 'sort' === $rule ) {
-		return in_array( $value, array( 'availability', 'beds', 'baths', 'pricelow', 'pricehigh', 'alphabetical', 'menu_order' ), true ) ? $value : null;
+		return in_array( $value, array( 'default', 'availability', 'beds', 'baths', 'pricelow', 'pricehigh', 'alphabetical', 'menu_order' ), true ) ? $value : null;
 	}
 
 	if ( 'pets' === $rule ) {
@@ -354,6 +354,9 @@ function rentfetch_rest_search_properties( $request ) {
 	$can_read_markup_cache  = get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1';
 	$can_write_markup_cache = $can_read_markup_cache && ( ! is_user_logged_in() || ! empty( $GLOBALS['rentfetch_force_cache_write'] ) );
 	$request_params         = rentfetch_get_behavioral_search_request_params( $request, 'properties' );
+	if ( 'available' === get_option( 'rentfetch_options_property_availability_display' ) ) {
+		$request_params['availability'] = true;
+	}
 
 	// Track this search for analytics (before checking cache), unless it's a cache warming request.
 	if ( function_exists( 'rentfetch_track_search' ) ) {

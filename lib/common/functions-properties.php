@@ -1359,6 +1359,27 @@ function rentfetch_get_normalized_property_rent_values( $values ) {
 }
 
 /**
+ * Get floorplan values only where the corresponding floorplan has availability.
+ *
+ * @param array  $floorplan_data Aggregated floorplan data.
+ * @param string $key            Value key to return.
+ * @return array
+ */
+function rentfetch_get_available_property_floorplan_values( $floorplan_data, $key ) {
+	$values          = $floorplan_data[ $key ] ?? array();
+	$available_units = $floorplan_data['available_units'] ?? array();
+	$available       = array();
+
+	foreach ( $values as $index => $value ) {
+		if ( (int) ( $available_units[ $index ] ?? 0 ) > 0 ) {
+			$available[] = $value;
+		}
+	}
+
+	return $available;
+}
+
+/**
  * Format a rent value as a currency string.
  *
  * @param float $value Rent value.
@@ -2246,32 +2267,20 @@ function rentfetch_get_property_pricing( $property_id = null ) {
 
 	$floorplan_data  = rentfetch_get_floorplans( $property_id );
 	$pricing_display = get_option( 'rentfetch_options_property_pricing_display', 'range' );
-	$rent_range      = $floorplan_data['rentrange'] ?? null;
+	$available_units = array_filter( array_map( 'intval', $floorplan_data['available_units'] ?? array() ), fn( $units ) => $units > 0 );
+	if ( empty( $available_units ) ) {
+		return null;
+	}
 
-	$min_rent_values  = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_rent'] ?? array() );
-	$max_rent_values  = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_rent'] ?? array() );
-	$min_total_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['minimum_total_monthly_price'] ?? array() );
-	$max_total_values = rentfetch_get_normalized_property_rent_values( $floorplan_data['maximum_total_monthly_price'] ?? array() );
+	$min_rent_values  = rentfetch_get_normalized_property_rent_values( rentfetch_get_available_property_floorplan_values( $floorplan_data, 'minimum_rent' ) );
+	$max_rent_values  = rentfetch_get_normalized_property_rent_values( rentfetch_get_available_property_floorplan_values( $floorplan_data, 'maximum_rent' ) );
+	$min_total_values = rentfetch_get_normalized_property_rent_values( rentfetch_get_available_property_floorplan_values( $floorplan_data, 'minimum_total_monthly_price' ) );
+	$max_total_values = rentfetch_get_normalized_property_rent_values( rentfetch_get_available_property_floorplan_values( $floorplan_data, 'maximum_total_monthly_price' ) );
 
 	$min_rent = ! empty( $min_rent_values ) ? min( $min_rent_values ) : null;
 	$max_rent = ! empty( $max_rent_values ) ? max( $max_rent_values ) : null;
 
 	// Fallback to parsing rentrange when API min/max arrays are not available.
-	if ( null === $min_rent && ! empty( $rent_range ) ) {
-		preg_match_all( '/\d[\d,]*(?:\.\d+)?/', (string) $rent_range, $matches );
-		$range_numbers = array_map(
-			function ( $number ) {
-				return (float) str_replace( ',', '', $number );
-			},
-			$matches[0] ?? array()
-		);
-		$range_numbers = rentfetch_get_normalized_property_rent_values( $range_numbers );
-		if ( ! empty( $range_numbers ) ) {
-			$min_rent = min( $range_numbers );
-			$max_rent = max( $range_numbers );
-		}
-	}
-
 	if ( null === $min_rent && null !== $max_rent ) {
 		$min_rent = $max_rent;
 	}

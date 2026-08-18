@@ -314,6 +314,11 @@ jQuery(function ($) {
 			}
 		});
 
+		var featuredSort = $featuredFilters.find('input[name="sort"]:checked').val();
+		if (featuredSort) {
+			queryParams.sort = featuredSort;
+		}
+
 		$.each(queryParams, function (key, value) {
 			if (
 				value === '' ||
@@ -377,6 +382,9 @@ jQuery(function ($) {
 							}
 						});
 						buttonContent = legend + ': ' + labels.join(', ');
+						break;
+					case dataId === 'sort':
+						buttonContent += activeFields.first().next('span').text();
 						break;
 					default:
 						buttonContent += dataValues.replace(/,/g, ', ');
