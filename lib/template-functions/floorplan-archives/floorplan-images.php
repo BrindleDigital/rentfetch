@@ -88,7 +88,7 @@ function rentfetch_floorplan_image_slider() {
 			echo '</div>';
 		} else {
 			printf( '<div class="floorplan-image-slide" data-floorplan-image-index="%s">', (int) $index );
-				printf( '<img class="floorplan-image floorplan-image-gallery" data-gallery="gallery-%s" data-href="%s" src="%s" alt="%s" loading="lazy" decoding="async">', (int) $rand, esc_url( $image['url'] ), esc_url( $display_url ), esc_attr( $alt ) );
+				printf( '<img class="floorplan-image floorplan-image-gallery" data-glightbox="type: image;" data-gallery="gallery-%s" data-href="%s" src="%s" alt="%s" loading="lazy" decoding="async">', (int) $rand, esc_url( $image['url'] ), esc_url( $display_url ), esc_attr( $alt ) );
 			echo '</div>';
 		}
 	}

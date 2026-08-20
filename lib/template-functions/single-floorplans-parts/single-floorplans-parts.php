@@ -655,7 +655,7 @@ function rentfetch_single_floorplans_parts_gallery() {
 				$alt           = $image['alt'] ?? get_the_title();
 				$hidden_class  = $index > 2 ? ' is-lightbox-only' : '';
 				printf( '<div class="floorplan-gallery-image%s" data-floorplan-image-index="%s" data-floorplan-sample-src="%s">', esc_attr( $hidden_class ), (int) $index, esc_url( $sample_url ) );
-				printf( '<a class="floorplan-gallery-link" href="%s" data-gallery="floorplan-lower-gallery"><img src="%s" alt="%s" loading="lazy" decoding="async">', esc_url( $image_url ), esc_url( $display_url ), esc_attr( $alt ) );
+				printf( '<a class="floorplan-gallery-link" href="%s" data-glightbox="type: image;" data-gallery="floorplan-lower-gallery"><img src="%s" alt="%s" loading="lazy" decoding="async">', esc_url( $image_url ), esc_url( $display_url ), esc_attr( $alt ) );
 				if ( 2 === $index ) {
 					printf( '<span class="floorplan-gallery-view-all">View all %s photos</span>', (int) count( $images ) );
 				}

@@ -391,7 +391,7 @@ function rentfetch_property_images_grid( $args = null ) {
 			$srcset = sprintf( ' srcset="%s" sizes="%s"', esc_attr( rtrim( $srcset, ', ' ) ), esc_attr( $sizes ) );
 		}
 
-		printf( '<div class="image-item"><a class="property-image-grid-link" data-gallery="property-images-grid" href="%s"><img src="%s"%s alt="%s" title="%s" loading="%s" decoding="async"%s /></a></div>', esc_url( $image['url'] ), esc_url( $src ), $srcset, esc_html( $image['alt'] ), esc_html( $image['title'] ), esc_attr( $loading ), $priority ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		printf( '<div class="image-item"><a class="property-image-grid-link" data-glightbox="type: image;" data-gallery="property-images-grid" href="%s"><img src="%s"%s alt="%s" title="%s" loading="%s" decoding="async"%s /></a></div>', esc_url( $image['url'] ), esc_url( $src ), $srcset, esc_html( $image['alt'] ), esc_html( $image['title'] ), esc_attr( $loading ), $priority ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	if ( $number_of_images > 1 ) {
