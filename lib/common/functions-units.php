@@ -33,6 +33,67 @@ function rentfetch_unit_title() {
 	}
 }
 
+/**
+ * Get the images synced for a unit.
+ *
+ * @param int|null $unit_post_id Optional unit post ID.
+ * @return string[]
+ */
+function rentfetch_get_unit_image_urls( $unit_post_id = null ) {
+	$unit_post_id = $unit_post_id ? (int) $unit_post_id : get_the_ID();
+	$image_urls   = get_post_meta( $unit_post_id, 'unit_image_urls', true );
+
+	if ( empty( $image_urls ) ) {
+		$image_urls = get_post_meta( $unit_post_id, 'yardi_unit_image_urls', true );
+	}
+
+	$image_urls = preg_split( '/\s*,\s*(?=https?:\/\/)/', implode( ',', (array) $image_urls ) );
+	$image_urls = array_map( 'esc_url_raw', $image_urls );
+
+	return array_values( array_unique( array_filter( $image_urls ) ) );
+}
+
+/**
+ * Output a compact unit image pile linked to its lightbox gallery.
+ *
+ * @param int|null $unit_post_id Optional unit post ID.
+ * @param string   $context      Gallery render context.
+ * @return void
+ */
+function rentfetch_unit_image_gallery( $unit_post_id = null, $context = 'table' ) {
+	$unit_post_id = $unit_post_id ? (int) $unit_post_id : get_the_ID();
+	$image_urls   = rentfetch_get_unit_image_urls( $unit_post_id );
+	$context      = sanitize_html_class( $context );
+
+	if ( empty( $image_urls ) ) {
+		return;
+	}
+
+	wp_enqueue_style( 'rentfetch-glightbox-style' );
+	wp_enqueue_script( 'rentfetch-glightbox-script' );
+	wp_enqueue_script( 'rentfetch-glightbox-init' );
+
+	printf( '<span class="unit-image-gallery%s">', count( $image_urls ) > 1 ? ' has-multiple-images' : '' );
+	foreach ( $image_urls as $index => $image_url ) {
+		printf(
+			'<a class="unit-gallery-link unit-gallery-link-%s%s" href="%s" data-glightbox="type: image;" data-gallery="unit-gallery-%s-%s" aria-label="View image %s of %s for apartment %s"><img src="%s" alt="" loading="lazy" decoding="async"></a>',
+			esc_attr( $context ),
+			$index > 2 ? ' is-lightbox-only' : '',
+			esc_url( $image_url ),
+			(int) $unit_post_id,
+			esc_attr( $context ),
+			(int) $index + 1,
+			count( $image_urls ),
+			esc_attr( rentfetch_get_unit_title() ),
+			esc_url( $image_url )
+		);
+	}
+	if ( count( $image_urls ) > 1 ) {
+		printf( '<span class="unit-image-count" aria-hidden="true">%s</span>', (int) count( $image_urls ) );
+	}
+	echo '</span>';
+}
+
 // * Pricing
 
 /**

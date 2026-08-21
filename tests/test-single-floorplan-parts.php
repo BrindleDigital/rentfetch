@@ -109,6 +109,15 @@ function get_post_meta( $post_id, $key ) {
 				),
 			),
 		),
+		9 => array(
+			'unit_image_urls' => array(
+				'https://example.com/unit-1.jpg',
+				'https://example.com/unit-2.jpg',
+			),
+		),
+		10 => array(
+			'yardi_unit_image_urls' => array( 'https://example.com/unit-3.jpg,https://example.com/unit-4.jpg' ),
+		),
 	);
 
 	return $meta[ $post_id ][ $key ] ?? '';
@@ -210,6 +219,8 @@ assert( 'virtual_tour' === rentfetch_single_floorplan_get_featured_media( 6 )['t
 assert( 'youtube' === rentfetch_single_floorplan_get_featured_media( 7 )['video']['type'] );
 assert( 'virtual_tour' === rentfetch_single_floorplan_get_featured_media( 7 )['tour']['type'] );
 assert( 'virtual_tour' === rentfetch_single_floorplan_get_featured_media( 8 )['tour']['type'] );
+assert( array( 'https://example.com/unit-1.jpg', 'https://example.com/unit-2.jpg' ) === rentfetch_get_unit_image_urls( 9 ) );
+assert( array( 'https://example.com/unit-3.jpg', 'https://example.com/unit-4.jpg' ) === rentfetch_get_unit_image_urls( 10 ) );
 
 ob_start();
 rentfetch_single_floorplan_media_tabs(

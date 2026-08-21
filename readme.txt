@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.3
-Stable tag: 0.39.3
+Stable tag: 0.39.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.39.4 =
+
+* Added unit-level photo galleries to desktop availability tables and mobile unit details, including compact stacked previews when multiple images are available.
+* Added consistent desktop thumbnail navigation to property, floor plan, and unit lightboxes, with rails that size themselves to the number of images.
+* Made Escape reliably close every image lightbox, including while it is opening.
 
 = 0.39.3 =
 

@@ -103,7 +103,8 @@ html.rentfetch-property-gallery-open {
 			z-index: 100000;
 			display: flex;
 			flex: 0 0 auto;
-			width: min(728px, calc(100% - (2 * var(--rentfetch-space-lg))));
+			width: fit-content;
+			max-width: min(728px, calc(100% - (2 * var(--rentfetch-space-lg))));
 			overflow: hidden;
 			padding: var(--rentfetch-space-xs);
 			margin: 0 auto var(--rentfetch-space-sm);

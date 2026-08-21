@@ -18,6 +18,30 @@ function rentfetch_glightbox_init_when_images_ready() {
 }
 
 function rentfetch_glightbox_init() {
+	if (!window.rentfetchLightboxEscapeInitialized) {
+		document.addEventListener('keydown', function (event) {
+			if (event.key !== 'Escape') {
+				return;
+			}
+
+			var closeButton = document.querySelector('.glightbox-container .gclose');
+			if (closeButton) {
+				event.preventDefault();
+				event.stopPropagation();
+				closeButton.click();
+				return;
+			}
+
+			window.setTimeout(function () {
+				var delayedCloseButton = document.querySelector('.glightbox-container .gclose');
+				if (delayedCloseButton) {
+					delayedCloseButton.click();
+				}
+			}, 50);
+		}, true);
+		window.rentfetchLightboxEscapeInitialized = true;
+	}
+
 	var lightboxVideo = GLightbox({
 		selector: '.tour-link',
 	});
@@ -28,26 +52,27 @@ function rentfetch_glightbox_init() {
 	});
 
 	var propertyGalleryLinks = document.querySelectorAll('.property-image-grid-link');
-	if (propertyGalleryLinks.length > 1) {
-		lightboxPropertyGallery.on('open', function () {
-			if (window.matchMedia('(min-width: 769px)').matches) {
-				rentfetch_add_property_gallery_thumbnails(lightboxPropertyGallery, propertyGalleryLinks);
-			}
-		});
-		lightboxPropertyGallery.on('slide_before_change', function (event) {
-			rentfetch_set_active_property_gallery_thumbnail(event.current.slideIndex);
-		});
-		lightboxPropertyGallery.on('slide_changed', function () {
-			rentfetch_set_active_property_gallery_thumbnail(lightboxPropertyGallery.getActiveSlideIndex());
-		});
-		lightboxPropertyGallery.on('close', function () {
-			document.documentElement.classList.remove('rentfetch-property-gallery-open');
-		});
-	}
+	rentfetch_enable_gallery_thumbnails(lightboxPropertyGallery, propertyGalleryLinks, 'Property image gallery');
 
 	var lightboxFloorplanGallery = GLightbox({
 		selector: '.floorplan-image-gallery',
 		loop: true,
+	});
+	var floorplanImageLinks = document.querySelectorAll('.floorplan-image-gallery');
+	rentfetch_enable_gallery_thumbnails(lightboxFloorplanGallery, floorplanImageLinks, 'Floor plan image gallery');
+
+	document.querySelectorAll('.unit-image-gallery').forEach(function (gallery) {
+		var unitGalleryLinks = gallery.querySelectorAll('.unit-gallery-link');
+		var galleryName = unitGalleryLinks.length ? unitGalleryLinks[0].getAttribute('data-gallery') : '';
+		if (!galleryName) {
+			return;
+		}
+
+		var lightboxUnitGallery = GLightbox({
+			selector: '[data-gallery="' + galleryName + '"]',
+			loop: true,
+		});
+		rentfetch_enable_gallery_thumbnails(lightboxUnitGallery, unitGalleryLinks, 'Unit image gallery');
 	});
 
 	var floorplanGalleryLinks = document.querySelectorAll('.floorplan-gallery-link');
@@ -55,25 +80,31 @@ function rentfetch_glightbox_init() {
 		selector: '.floorplan-gallery-link',
 		loop: true,
 	});
-	if (floorplanGalleryLinks.length > 1) {
-		lightboxFloorplanLowerGallery.on('open', function () {
-			if (window.matchMedia('(min-width: 769px)').matches) {
-				rentfetch_add_property_gallery_thumbnails(lightboxFloorplanLowerGallery, floorplanGalleryLinks);
-			}
-		});
-		lightboxFloorplanLowerGallery.on('slide_before_change', function (event) {
-			rentfetch_set_active_property_gallery_thumbnail(event.current.slideIndex);
-		});
-		lightboxFloorplanLowerGallery.on('slide_changed', function () {
-			rentfetch_set_active_property_gallery_thumbnail(lightboxFloorplanLowerGallery.getActiveSlideIndex());
-		});
-		lightboxFloorplanLowerGallery.on('close', function () {
-			document.documentElement.classList.remove('rentfetch-property-gallery-open');
-		});
-	}
+	rentfetch_enable_gallery_thumbnails(lightboxFloorplanLowerGallery, floorplanGalleryLinks, 'Floor plan image gallery');
 }
 
-function rentfetch_add_property_gallery_thumbnails(lightbox, links) {
+function rentfetch_enable_gallery_thumbnails(lightbox, links, label) {
+	if (links.length < 2) {
+		return;
+	}
+
+	lightbox.on('open', function () {
+		if (window.matchMedia('(min-width: 769px)').matches) {
+			rentfetch_add_property_gallery_thumbnails(lightbox, links, label);
+		}
+	});
+	lightbox.on('slide_before_change', function (event) {
+		rentfetch_set_active_property_gallery_thumbnail(event.current.slideIndex);
+	});
+	lightbox.on('slide_changed', function () {
+		rentfetch_set_active_property_gallery_thumbnail(lightbox.getActiveSlideIndex());
+	});
+	lightbox.on('close', function () {
+		document.documentElement.classList.remove('rentfetch-property-gallery-open');
+	});
+}
+
+function rentfetch_add_property_gallery_thumbnails(lightbox, links, label) {
 	var container = document.querySelector('#glightbox-body .gcontainer');
 	if (!container || container.querySelector('.rentfetch-property-gallery-thumbnails')) {
 		return;
@@ -82,7 +113,7 @@ function rentfetch_add_property_gallery_thumbnails(lightbox, links) {
 	var thumbnails = document.createElement('div');
 	var track = document.createElement('div');
 	thumbnails.className = 'rentfetch-property-gallery-thumbnails';
-	thumbnails.setAttribute('aria-label', 'Property image gallery');
+	thumbnails.setAttribute('aria-label', label);
 	track.className = 'rentfetch-property-gallery-thumbnail-track';
 
 	links.forEach(function (link, index) {
@@ -132,9 +163,9 @@ function rentfetch_set_active_property_gallery_thumbnail(index) {
 }
 
 function rentfetch_get_property_gallery_thumbnail_url(link) {
-	var image = link.querySelector('img');
+	var image = link.matches('img') ? link : link.querySelector('img');
 	var srcset = image ? image.getAttribute('srcset') : '';
-	var url = srcset ? srcset.split(',')[0].trim().split(/\s+/)[0] : (image ? image.currentSrc || image.src : link.href);
+	var url = srcset ? srcset.split(',')[0].trim().split(/\s+/)[0] : (image ? image.currentSrc || image.src : link.getAttribute('data-href') || link.href);
 
 	try {
 		var thumbnailUrl = new URL(url, window.location.href);

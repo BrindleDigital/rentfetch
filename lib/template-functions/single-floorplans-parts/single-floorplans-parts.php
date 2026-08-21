@@ -344,6 +344,13 @@ function rentfetch_single_floorplan_unit_table() {
 
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
 	$unit_posts        = array();
+	$show_unit_images  = false;
+	foreach ( $units_query->posts as $unit_post ) {
+		if ( rentfetch_get_unit_image_urls( $unit_post->ID ) ) {
+			$show_unit_images = true;
+			break;
+		}
+	}
 	?>
 	<div class="unit-details-table-scroll" tabindex="0" aria-label="Available units table">
 		<table class="unit-details-table single-floorplan-unit-table">
@@ -353,6 +360,9 @@ function rentfetch_single_floorplan_unit_table() {
 				if ( in_array( 'title', $columns, true ) ) :
 					?>
 					<th class="unit-title" scope="col">Apt #</th><?php endif; ?>
+				<?php if ( $show_unit_images ) : ?>
+					<th class="unit-images" scope="col">Photos</th>
+				<?php endif; ?>
 				<?php
 				if ( in_array( 'building_name', $columns, true ) ) :
 					?>
@@ -401,6 +411,9 @@ function rentfetch_single_floorplan_unit_table() {
 					if ( in_array( 'title', $columns, true ) ) :
 						?>
 						<th class="unit-title" scope="row"><?php echo esc_html( rentfetch_get_unit_title() ); ?></th><?php endif; ?>
+					<?php if ( $show_unit_images ) : ?>
+						<td class="unit-images"><?php rentfetch_unit_image_gallery(); ?></td>
+					<?php endif; ?>
 					<?php
 					if ( in_array( 'building_name', $columns, true ) ) :
 						?>
@@ -470,6 +483,9 @@ function rentfetch_single_floorplan_unit_table() {
 					</p>
 				</summary>
 				<ul class="unit-details-list-wrap">
+					<?php if ( rentfetch_get_unit_image_urls() ) : ?>
+						<li class="unit-images"><span class="unit-detail-label label">Photos</span><?php rentfetch_unit_image_gallery( null, 'list' ); ?></li>
+					<?php endif; ?>
 					<?php
 					if ( in_array( 'building_name', $columns, true ) && rentfetch_get_unit_building_name() ) :
 						?>

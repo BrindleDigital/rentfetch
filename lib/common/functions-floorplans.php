@@ -1020,6 +1020,13 @@ function rentfetch_floorplan_unit_table() {
 
 	// The Query.
 	$units_table_query = new WP_Query( $args );
+	$show_unit_images  = false;
+	foreach ( $units_table_query->posts as $unit_post ) {
+		if ( rentfetch_get_unit_image_urls( $unit_post->ID ) ) {
+			$show_unit_images = true;
+			break;
+		}
+	}
 
 	// The Loop.
 	if ( $units_table_query->have_posts() ) {
@@ -1033,6 +1040,10 @@ function rentfetch_floorplan_unit_table() {
 
 		if ( in_array( 'title', $columns, true ) ) {
 			echo '<th class="unit-title">Apt #</th>';
+		}
+
+		if ( $show_unit_images ) {
+			echo '<th class="unit-images">Photos</th>';
 		}
 
 		if ( in_array( 'floor_number', $columns, true ) ) {
@@ -1088,6 +1099,12 @@ function rentfetch_floorplan_unit_table() {
 
 			if ( in_array( 'title', $columns, true ) ) {
 				printf( '<td class="unit-title">%s</td>', esc_html( $title ) );
+			}
+
+			if ( $show_unit_images ) {
+				echo '<td class="unit-images">';
+					rentfetch_unit_image_gallery( null, 'list' );
+				echo '</td>';
 			}
 
 			if ( in_array( 'floor_number', $columns, true ) ) {
@@ -1195,6 +1212,12 @@ function rentfetch_floorplan_unit_list() {
 			}
 				echo '</summary>';
 				echo '<ul class="unit-details-list-wrap">';
+
+			if ( rentfetch_get_unit_image_urls() ) {
+				echo '<li class="unit-images"><span class="label">Photos:</span> ';
+					rentfetch_unit_image_gallery();
+				echo '</li>';
+			}
 
 			if ( $building_name ) {
 				printf( '<li class="unit-building-name"><span class="label">Building:</span> %s</li>', esc_html( $building_name ) );
