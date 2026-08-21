@@ -335,7 +335,8 @@ function rentfetch_single_floorplan_unit_table() {
 	$columns        = rentfetch_floorplan_unit_display_get_columns( $args );
 	$post           = $floorplan_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	setup_postdata( $post );
-	$units_query = new WP_Query( $args );
+	$floorplan_image_urls = array_column( (array) rentfetch_get_floorplan_images(), 'url' );
+	$units_query          = new WP_Query( $args );
 
 	if ( ! $units_query->have_posts() ) {
 		wp_reset_postdata();
@@ -412,7 +413,7 @@ function rentfetch_single_floorplan_unit_table() {
 						?>
 						<th class="unit-title" scope="row"><?php echo esc_html( rentfetch_get_unit_title() ); ?></th><?php endif; ?>
 					<?php if ( $show_unit_images ) : ?>
-						<td class="unit-images"><?php rentfetch_unit_image_gallery(); ?></td>
+						<td class="unit-images"><?php rentfetch_unit_image_gallery( null, 'table', $floorplan_image_urls ); ?></td>
 					<?php endif; ?>
 					<?php
 					if ( in_array( 'building_name', $columns, true ) ) :
@@ -483,8 +484,8 @@ function rentfetch_single_floorplan_unit_table() {
 					</p>
 				</summary>
 				<ul class="unit-details-list-wrap">
-					<?php if ( rentfetch_get_unit_image_urls() ) : ?>
-						<li class="unit-images"><span class="unit-detail-label label">Photos</span><?php rentfetch_unit_image_gallery( null, 'list' ); ?></li>
+					<?php if ( $show_unit_images ) : ?>
+						<li class="unit-images"><span class="unit-detail-label label">Photos</span><?php rentfetch_unit_image_gallery( null, 'list', $floorplan_image_urls ); ?></li>
 					<?php endif; ?>
 					<?php
 					if ( in_array( 'building_name', $columns, true ) && rentfetch_get_unit_building_name() ) :

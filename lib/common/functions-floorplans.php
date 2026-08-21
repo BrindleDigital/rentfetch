@@ -992,6 +992,7 @@ function rentfetch_floorplan_unit_table() {
 
 	// get the current post.
 	global $post;
+	$floorplan_post = $post;
 
 	$floorplan_id = get_post_meta( get_the_ID(), 'floorplan_id', true );
 	$property_id  = get_post_meta( get_the_ID(), 'property_id', true );
@@ -1017,6 +1018,7 @@ function rentfetch_floorplan_unit_table() {
 	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
+	$floorplan_image_urls = array_column( (array) rentfetch_get_floorplan_images(), 'url' );
 
 	// The Query.
 	$units_table_query = new WP_Query( $args );
@@ -1103,7 +1105,7 @@ function rentfetch_floorplan_unit_table() {
 
 			if ( $show_unit_images ) {
 				echo '<td class="unit-images">';
-					rentfetch_unit_image_gallery( null, 'list' );
+					rentfetch_unit_image_gallery( null, 'table', $floorplan_image_urls );
 				echo '</td>';
 			}
 
@@ -1146,6 +1148,9 @@ function rentfetch_floorplan_unit_table() {
 		echo '</table>';
 
 	}
+
+	$post = $floorplan_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+	setup_postdata( $post );
 }
 add_action( 'rentfetch_floorplan_do_unit_table', 'rentfetch_floorplan_unit_table' );
 
@@ -1155,6 +1160,8 @@ add_action( 'rentfetch_floorplan_do_unit_table', 'rentfetch_floorplan_unit_table
  * @return void.
  */
 function rentfetch_floorplan_unit_list() {
+	global $post;
+	$floorplan_post = $post;
 
 	$floorplan_id = get_post_meta( get_the_ID(), 'floorplan_id', true );
 	$property_id  = get_post_meta( get_the_ID(), 'property_id', true );
@@ -1180,9 +1187,17 @@ function rentfetch_floorplan_unit_list() {
 	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
+	$floorplan_image_urls = array_column( (array) rentfetch_get_floorplan_images(), 'url' );
 
 	// The Query.
 	$units_list_query = new WP_Query( $args );
+	$show_unit_images = false;
+	foreach ( $units_list_query->posts as $unit_post ) {
+		if ( rentfetch_get_unit_image_urls( $unit_post->ID ) ) {
+			$show_unit_images = true;
+			break;
+		}
+	}
 
 	// The Loop.
 	if ( $units_list_query->have_posts() ) {
@@ -1213,9 +1228,9 @@ function rentfetch_floorplan_unit_list() {
 				echo '</summary>';
 				echo '<ul class="unit-details-list-wrap">';
 
-			if ( rentfetch_get_unit_image_urls() ) {
+			if ( $show_unit_images ) {
 				echo '<li class="unit-images"><span class="label">Photos:</span> ';
-					rentfetch_unit_image_gallery();
+					rentfetch_unit_image_gallery( null, 'list', $floorplan_image_urls );
 				echo '</li>';
 			}
 
@@ -1260,6 +1275,8 @@ function rentfetch_floorplan_unit_list() {
 	}
 
 	wp_reset_postdata();
+	$post = $floorplan_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+	setup_postdata( $post );
 }
 add_action( 'rentfetch_floorplan_do_unit_table', 'rentfetch_floorplan_unit_list' );
 

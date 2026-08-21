@@ -48,6 +48,11 @@ function get_the_ID() { // phpcs:ignore WordPress.NamingConventions.ValidFunctio
 	return 1;
 }
 
+/** Return a focused unit title. */
+function get_the_title() {
+	return 'Test unit';
+}
+
 /**
  * Return whether the focused request is a floorplan.
  *
@@ -160,6 +165,11 @@ function esc_url_raw( $url ) {
 	return filter_var( $url, FILTER_VALIDATE_URL ) ? $url : '';
 }
 
+/** Minimal escaped URL output. */
+function esc_url( $url ) {
+	return esc_url_raw( $url );
+}
+
 /**
  * Return escaped attribute text.
  *
@@ -180,6 +190,14 @@ function esc_html( $value ) {
 
 /** No-op script enqueue for the focused check. */
 function wp_enqueue_script() {}
+
+/** No-op style enqueue for the focused check. */
+function wp_enqueue_style() {}
+
+/** Minimal HTML class sanitizer. */
+function sanitize_html_class( $value ) {
+	return preg_replace( '/[^A-Za-z0-9_-]/', '', (string) $value );
+}
 
 /**
  * Minimal text sanitizer for this focused check.
@@ -221,6 +239,11 @@ assert( 'virtual_tour' === rentfetch_single_floorplan_get_featured_media( 7 )['t
 assert( 'virtual_tour' === rentfetch_single_floorplan_get_featured_media( 8 )['tour']['type'] );
 assert( array( 'https://example.com/unit-1.jpg', 'https://example.com/unit-2.jpg' ) === rentfetch_get_unit_image_urls( 9 ) );
 assert( array( 'https://example.com/unit-3.jpg', 'https://example.com/unit-4.jpg' ) === rentfetch_get_unit_image_urls( 10 ) );
+
+ob_start();
+rentfetch_unit_image_gallery( 11, 'table', array( 'https://example.com/floorplan.jpg' ) );
+$fallback_gallery = ob_get_clean();
+assert( false !== strpos( $fallback_gallery, 'href="https://example.com/floorplan.jpg"' ) );
 
 ob_start();
 rentfetch_single_floorplan_media_tabs(

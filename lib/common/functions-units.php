@@ -56,14 +56,18 @@ function rentfetch_get_unit_image_urls( $unit_post_id = null ) {
 /**
  * Output a compact unit image pile linked to its lightbox gallery.
  *
- * @param int|null $unit_post_id Optional unit post ID.
- * @param string   $context      Gallery render context.
+ * @param int|null $unit_post_id      Optional unit post ID.
+ * @param string   $context           Gallery render context.
+ * @param string[] $fallback_image_urls Images used when the unit has none.
  * @return void
  */
-function rentfetch_unit_image_gallery( $unit_post_id = null, $context = 'table' ) {
+function rentfetch_unit_image_gallery( $unit_post_id = null, $context = 'table', $fallback_image_urls = array() ) {
 	$unit_post_id = $unit_post_id ? (int) $unit_post_id : get_the_ID();
 	$image_urls   = rentfetch_get_unit_image_urls( $unit_post_id );
 	$context      = sanitize_html_class( $context );
+	if ( empty( $image_urls ) ) {
+		$image_urls = array_values( array_unique( array_filter( array_map( 'esc_url_raw', $fallback_image_urls ) ) ) );
+	}
 
 	if ( empty( $image_urls ) ) {
 		return;
