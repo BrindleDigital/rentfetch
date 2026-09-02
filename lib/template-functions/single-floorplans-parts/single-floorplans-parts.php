@@ -22,6 +22,16 @@ function rentfetch_single_floorplans_set_up_parts() {
 	add_action( 'rentfetch_do_single_floorplans_parts', 'rentfetch_single_floorplans_parts_gallery', 50 );
 	add_action( 'rentfetch_do_single_floorplans_parts', 'rentfetch_single_floorplans_parts_similar', 60 );
 	add_action( 'rentfetch_do_single_floorplans_parts', 'rentfetch_single_floorplans_parts_property_fees', 70 );
+
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_summary', 'rentfetch_single_floorplan_unit_mobile_summary', 10, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_specials', 10, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_images', 20, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_pricing', 30, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_deposit', 40, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_attributes', 50, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_location', 60, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_amenities', 70, 1 );
+	add_action( 'rentfetch_single_floorplan_do_unit_mobile_details', 'rentfetch_single_floorplan_unit_mobile_buttons', 80, 1 );
 }
 add_action( 'wp_loaded', 'rentfetch_single_floorplans_set_up_parts' );
 
@@ -302,6 +312,215 @@ function rentfetch_single_floorplan_unit_availability( $availability ) {
 }
 
 /**
+ * Build the availability text used in a mobile unit summary.
+ *
+ * @param string $availability Formatted availability value.
+ * @return string
+ */
+function rentfetch_single_floorplan_get_unit_mobile_availability( $availability ) {
+	$availability = trim( (string) $availability );
+	$normalized   = strtolower( $availability );
+
+	if ( ! $availability || in_array( $normalized, array( 'available now', 'please inquire' ), true ) ) {
+		$label = $availability;
+	} else {
+		$label = 'Available ' . $availability;
+	}
+
+	return apply_filters( 'rentfetch_single_floorplan_unit_mobile_availability', $label, $availability );
+}
+
+/**
+ * Get the reusable values for one mobile unit layout.
+ *
+ * @param string[] $columns              Enabled unit columns.
+ * @param bool     $show_unit_images     Whether the unit list includes photos.
+ * @param string[] $floorplan_image_urls Floorplan image fallbacks.
+ * @param array    $floorplan_attributes Floorplan attribute fallbacks.
+ * @return array<string, mixed>
+ */
+function rentfetch_single_floorplan_get_unit_mobile_context( $columns, $show_unit_images, $floorplan_image_urls, $floorplan_attributes = array() ) {
+	$beds    = rentfetch_get_unit_bedrooms();
+	$baths   = rentfetch_get_unit_bathrooms();
+	$context = array(
+		'unit_post_id'         => get_the_ID(),
+		'columns'              => $columns,
+		'title'                => rentfetch_get_unit_title(),
+		'availability'         => rentfetch_get_unit_availability_date(),
+		'specials'             => rentfetch_get_unit_specials(),
+		'pricing'              => rentfetch_get_unit_pricing(),
+		'deposit'              => rentfetch_get_unit_deposit(),
+		'beds'                 => null !== $beds ? $beds : ( $floorplan_attributes['beds'] ?? null ),
+		'baths'                => null !== $baths ? $baths : ( $floorplan_attributes['baths'] ?? null ),
+		'square_feet'          => rentfetch_get_unit_square_feet(),
+		'building_name'        => rentfetch_get_unit_building_name(),
+		'floor_number'         => rentfetch_get_unit_floor_number(),
+		'amenities'            => rentfetch_get_unit_amenities(),
+		'show_unit_images'     => $show_unit_images,
+		'floorplan_image_urls' => $floorplan_image_urls,
+	);
+
+	return apply_filters( 'rentfetch_single_floorplan_unit_mobile_context', $context, get_the_ID() );
+}
+
+/**
+ * Output the apartment title and availability in a mobile unit summary.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_summary( $context ) {
+	$availability = in_array( 'availability_date', $context['columns'], true ) ? rentfetch_single_floorplan_get_unit_mobile_availability( $context['availability'] ?? '' ) : '';
+
+	echo '<p class="unit-summary-title unit-title">';
+	printf( '<span class="unit-summary-apartment">Apt #%s</span>', esc_html( $context['title'] ?? '' ) );
+	if ( $availability ) {
+		echo '<span class="unit-summary-availability">';
+		rentfetch_single_floorplan_unit_availability( $availability );
+		echo '</span>';
+	}
+	echo '<span class="dropdown" aria-hidden="true"></span></p>';
+}
+
+/**
+ * Output specials at the top of a mobile unit's details.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_specials( $context ) {
+	if ( empty( $context['specials'] ) || ! in_array( 'specials', $context['columns'], true ) ) {
+		return;
+	}
+
+	printf( '<li class="unit-specials"><span class="unit-specials-pill">%s</span></li>', esc_html( $context['specials'] ) );
+}
+
+/**
+ * Output photos near the top of a mobile unit's details.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_images( $context ) {
+	if ( empty( $context['show_unit_images'] ) ) {
+		return;
+	}
+
+	echo '<li class="unit-images"><span class="unit-detail-label label">Photos</span>';
+	rentfetch_unit_image_gallery( $context['unit_post_id'], 'list', $context['floorplan_image_urls'] );
+	echo '</li>';
+}
+
+/**
+ * Output pricing in a mobile unit's details.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_pricing( $context ) {
+	if ( empty( $context['pricing'] ) || ! in_array( 'pricing', $context['columns'], true ) ) {
+		return;
+	}
+
+	printf( '<li class="unit-starting-at"><span class="unit-detail-label label">Starting At</span><span>%s</span></li>', wp_kses_post( $context['pricing'] ) );
+}
+
+/**
+ * Output the deposit directly after pricing in a mobile unit's details.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_deposit( $context ) {
+	if ( empty( $context['deposit'] ) || ! in_array( 'deposit', $context['columns'], true ) ) {
+		return;
+	}
+
+	printf( '<li class="unit-deposit"><span class="unit-detail-label label">Deposit</span><span>%s</span></li>', esc_html( $context['deposit'] ) );
+}
+
+/**
+ * Output beds, baths, and square footage using floorplan attribute markup.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_attributes( $context ) {
+	$beds        = $context['beds'] ?? null;
+	$baths       = $context['baths'] ?? null;
+	$square_feet = in_array( 'sqrft', $context['columns'], true ) && ! empty( $context['square_feet'] ) ? apply_filters( 'rentfetch_get_square_feet_number_label', $context['square_feet'] ) : null;
+
+	if ( ! $beds && ! $baths && ! $square_feet ) {
+		return;
+	}
+
+	echo '<li class="unit-attributes floorplan-attributes">';
+	if ( $beds ) {
+		printf( '<p class="floorplan-stat beds"><svg class="floorplan-stat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5v9m16.5 0v-5.25a3 3 0 0 0-3-3H9.75v8.25m-6 0h16.5m-16.5-6h6m-6 0V6.75A1.5 1.5 0 0 1 5.25 5.25h3A1.5 1.5 0 0 1 9.75 6.75v1.5" /></svg><span class="floorplan-stat-text"><span class="floorplan-stat-label">Bedrooms</span><span class="floorplan-stat-value">%s</span></span></p>', wp_kses_post( $beds ) );
+	}
+	if ( $baths ) {
+		printf( '<p class="floorplan-stat baths"><svg class="floorplan-stat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5v1.5a4.5 4.5 0 0 1-4.5 4.5h-7.5a4.5 4.5 0 0 1-4.5-4.5V12Zm2.25 0V6.75a2.25 2.25 0 0 1 4.5 0M6.75 18v1.5M17.25 18v1.5" /></svg><span class="floorplan-stat-text"><span class="floorplan-stat-label">Bathrooms</span><span class="floorplan-stat-value">%s</span></span></p>', wp_kses_post( $baths ) );
+	}
+	if ( $square_feet ) {
+		printf( '<p class="floorplan-stat square-feet"><svg class="floorplan-stat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.25h13.5v13.5H5.25z" /><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15.75v-7.5h7.5" /></svg><span class="floorplan-stat-text"><span class="floorplan-stat-label">Square Feet</span><span class="floorplan-stat-value">%s</span></span></p>', wp_kses_post( $square_feet ) );
+	}
+	echo '</li>';
+}
+
+/**
+ * Output building and floor together in a mobile unit's details.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_location( $context ) {
+	$building_name = in_array( 'building_name', $context['columns'], true ) ? $context['building_name'] : '';
+	$floor_number  = in_array( 'floor_number', $context['columns'], true ) ? $context['floor_number'] : '';
+
+	if ( ! $building_name && ! $floor_number ) {
+		return;
+	}
+
+	echo '<li class="unit-location">';
+	if ( $building_name ) {
+		printf( '<span class="unit-location-item unit-building-name"><span class="unit-detail-label label">Building</span><span>%s</span></span>', esc_html( $building_name ) );
+	}
+	if ( $floor_number ) {
+		printf( '<span class="unit-location-item unit-floor-number"><span class="unit-detail-label label">Floor</span><span>%s</span></span>', esc_html( $floor_number ) );
+	}
+	echo '</li>';
+}
+
+/**
+ * Output amenity pills in a mobile unit's details.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_amenities( $context ) {
+	if ( empty( $context['amenities'] ) || ! in_array( 'amenities', $context['columns'], true ) ) {
+		return;
+	}
+
+	echo '<li class="unit-amenities"><span class="unit-detail-label label">Amenities</span>';
+	rentfetch_single_floorplan_unit_amenity_pills( $context['amenities'] );
+	echo '</li>';
+}
+
+/**
+ * Output unit action buttons at the bottom of a mobile unit's details.
+ *
+ * @param array<string, mixed> $context Mobile unit context.
+ * @return void
+ */
+function rentfetch_single_floorplan_unit_mobile_buttons( $context ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	echo '<li class="unit-buttons">';
+	do_action( 'rentfetch_do_unit_button' );
+	echo '</li>';
+}
+
+/**
  * Output the single-floorplan unit table and mobile unit list.
  *
  * @return void
@@ -336,6 +555,10 @@ function rentfetch_single_floorplan_unit_table() {
 	$post           = $floorplan_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	setup_postdata( $post );
 	$floorplan_image_urls = array_column( (array) rentfetch_get_floorplan_images(), 'url' );
+	$floorplan_attributes = array(
+		'beds'  => rentfetch_get_floorplan_bedrooms(),
+		'baths' => rentfetch_get_floorplan_bathrooms(),
+	);
 	$units_query          = new WP_Query( $args );
 
 	if ( ! $units_query->have_posts() ) {
@@ -466,60 +689,14 @@ function rentfetch_single_floorplan_unit_table() {
 			<?php
 			$post = $unit_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $post );
-			$availability_date = rentfetch_get_unit_availability_date();
-			$amenities         = rentfetch_get_unit_amenities();
-			$specials          = rentfetch_get_unit_specials();
-			$pricing           = rentfetch_get_unit_pricing();
+			$unit_mobile_context = rentfetch_single_floorplan_get_unit_mobile_context( $columns, $show_unit_images, $floorplan_image_urls, $floorplan_attributes );
 			?>
-			<details class="unit-details">
+			<details class="unit-details" name="rentfetch-floorplan-units-<?php echo (int) $floorplan_post->ID; ?>">
 				<summary class="unit-summary">
-					<p class="unit-summary-title unit-title">
-						<?php
-						printf( 'Apt #%s', esc_html( rentfetch_get_unit_title() ) );
-						if ( $pricing ) {
-							printf( ', <span class="label">starting at</span> %s', wp_kses_post( $pricing ) );
-						}
-						?>
-						<span class="dropdown" aria-hidden="true"></span>
-					</p>
+					<?php do_action( 'rentfetch_single_floorplan_do_unit_mobile_summary', $unit_mobile_context ); ?>
 				</summary>
 				<ul class="unit-details-list-wrap">
-					<?php if ( $show_unit_images ) : ?>
-						<li class="unit-images"><span class="unit-detail-label label">Photos</span><?php rentfetch_unit_image_gallery( null, 'list', $floorplan_image_urls ); ?></li>
-					<?php endif; ?>
-					<?php
-					if ( in_array( 'building_name', $columns, true ) && rentfetch_get_unit_building_name() ) :
-						?>
-						<li class="unit-building-name"><span class="unit-detail-label label">Building</span><span><?php echo esc_html( rentfetch_get_unit_building_name() ); ?></span></li><?php endif; ?>
-					<?php
-					if ( in_array( 'floor_number', $columns, true ) && rentfetch_get_unit_floor_number() ) :
-						?>
-						<li class="unit-floor-number"><span class="unit-detail-label label">Floor</span><span><?php echo esc_html( rentfetch_get_unit_floor_number() ); ?></span></li><?php endif; ?>
-					<?php
-					if ( in_array( 'sqrft', $columns, true ) && rentfetch_get_unit_square_feet() ) :
-						?>
-						<li class="unit-sqrft"><span class="unit-detail-label label"><?php echo esc_html( $square_feet_label ); ?></span><span><?php echo esc_html( rentfetch_get_unit_square_feet() ); ?></span></li><?php endif; ?>
-					<?php
-					if ( in_array( 'pricing', $columns, true ) ) :
-						?>
-						<li class="unit-starting-at"><span class="unit-detail-label label">Starting At</span><span><?php echo wp_kses_post( $pricing ); ?></span></li><?php endif; ?>
-					<?php
-					if ( in_array( 'deposit', $columns, true ) && rentfetch_get_unit_deposit() ) :
-						?>
-						<li class="unit-deposit"><span class="unit-detail-label label">Deposit</span><span><?php echo esc_html( rentfetch_get_unit_deposit() ); ?></span></li><?php endif; ?>
-					<?php
-					if ( in_array( 'availability_date', $columns, true ) && $availability_date ) :
-						?>
-						<li class="unit-availability"><span class="unit-detail-label label">Availability</span><?php rentfetch_single_floorplan_unit_availability( $availability_date ); ?></li><?php endif; ?>
-					<?php
-					if ( in_array( 'amenities', $columns, true ) && $amenities ) :
-						?>
-						<li class="unit-amenities"><span class="unit-detail-label label">Amenities</span><?php rentfetch_single_floorplan_unit_amenity_pills( $amenities ); ?></li><?php endif; ?>
-					<?php
-					if ( in_array( 'specials', $columns, true ) && $specials ) :
-						?>
-						<li class="unit-specials"><span class="unit-detail-label label">Specials</span><span class="unit-specials-pill"><?php echo esc_html( $specials ); ?></span></li><?php endif; ?>
-					<li class="unit-buttons"><?php do_action( 'rentfetch_do_unit_button' ); ?></li>
+					<?php do_action( 'rentfetch_single_floorplan_do_unit_mobile_details', $unit_mobile_context ); ?>
 				</ul>
 			</details>
 		<?php endforeach; ?>

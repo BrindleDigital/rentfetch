@@ -33,6 +33,58 @@ function rentfetch_unit_title() {
 	}
 }
 
+// * Bedrooms
+
+/**
+ * Get the bedroom label for a unit.
+ *
+ * @return string|null Bedroom label, or null when the unit has no bedroom data.
+ */
+function rentfetch_get_unit_bedrooms() {
+	$beds = get_post_meta( get_the_ID(), 'beds', true );
+	if ( '' === $beds ) {
+		return null;
+	}
+
+	$beds = apply_filters( 'rentfetch_filter_unit_bedrooms', (int) $beds );
+	return apply_filters( 'rentfetch_get_bedroom_number_label', $beds );
+}
+
+/**
+ * Output the bedroom label for a unit.
+ *
+ * @return void
+ */
+function rentfetch_unit_bedrooms() {
+	echo wp_kses_post( rentfetch_get_unit_bedrooms() );
+}
+
+// * Bathrooms
+
+/**
+ * Get the bathroom label for a unit.
+ *
+ * @return string|null Bathroom label, or null when the unit has no bathroom data.
+ */
+function rentfetch_get_unit_bathrooms() {
+	$baths = get_post_meta( get_the_ID(), 'baths', true );
+	if ( '' === $baths ) {
+		return null;
+	}
+
+	$baths = apply_filters( 'rentfetch_filter_unit_bathrooms', (float) $baths );
+	return apply_filters( 'rentfetch_get_bathroom_number_label', $baths );
+}
+
+/**
+ * Output the bathroom label for a unit.
+ *
+ * @return void
+ */
+function rentfetch_unit_bathrooms() {
+	echo wp_kses_post( rentfetch_get_unit_bathrooms() );
+}
+
 /**
  * Get the images synced for a unit.
  *
