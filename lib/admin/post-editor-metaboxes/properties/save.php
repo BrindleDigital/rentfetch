@@ -126,6 +126,10 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'phone', sanitize_text_field( wp_unslash( $_POST['phone'] ) ) );
 	}
 
+	if ( isset( $_POST['phone_override'] ) ) {
+		update_post_meta( $post_id, 'phone_override', sanitize_text_field( wp_unslash( $_POST['phone_override'] ) ) );
+	}
+
 	if ( isset( $_POST['url'] ) ) {
 		update_post_meta( $post_id, 'url', sanitize_text_field( wp_unslash( $_POST['url'] ) ) );
 	}

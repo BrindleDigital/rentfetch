@@ -521,7 +521,14 @@ function rentfetch_get_property_phone( $property_id = null ) {
 	} else {
 		$post_id = get_the_ID();
 	}
-	$phone = sanitize_text_field( get_post_meta( $post_id, 'phone', true ) );
+	$phone          = get_post_meta( $post_id, 'phone', true );
+	$phone_override = get_post_meta( $post_id, 'phone_override', true );
+
+	if ( $phone_override ) {
+		$phone = $phone_override;
+	}
+
+	$phone = sanitize_text_field( $phone );
 
 	if ( $phone ) {
 

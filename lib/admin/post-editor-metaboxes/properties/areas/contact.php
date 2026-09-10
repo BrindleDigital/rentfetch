@@ -21,7 +21,7 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 	?>
 	<div class="rf-metabox rf-metabox-properties rf-property-contact-metabox">
 		
-		<div class="columns columns-2 rf-contact-primary-fields">
+		<div class="columns">
 			
 			<?php
 			// * Property Email
@@ -36,6 +36,10 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="email" name="email" value="<?php echo esc_attr( $email ); ?>">
 				</div>
 			</div>
+
+		</div>
+
+		<div class="columns columns-2 rf-contact-primary-fields">
 			
 			<?php
 			// * Property Phone
@@ -50,10 +54,24 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="phone" name="phone" value="<?php echo esc_attr( $phone ); ?>">
 				</div>
 			</div>
+
+			<?php
+			// * Property Phone Override
+			$phone_override = get_post_meta( $post->ID, 'phone_override', true );
+			?>
+			<div class="field">
+				<div class="column">
+					<label for="phone_override">Phone override</label>
+				</div>
+				<div class="column">
+					<input type="text" id="phone_override" name="phone_override" value="<?php echo esc_attr( $phone_override ); ?>">
+					<p class="description">Override the synced phone number here.</p>
+				</div>
+			</div>
 			
 		</div>
 		
-		<div class="columns columns-4 rf-contact-link-fields">
+		<div class="columns columns-2 rf-contact-link-fields">
 			
 			<?php
 			// * Property URL
@@ -80,9 +98,13 @@ function rentfetch_properties_contact_metabox_callback( $post ) {
 				</div>
 				<div class="column">
 					<input type="text" <?php echo esc_attr( $disabled ); ?> id="url_override" name="url_override" value="<?php echo esc_attr( $url ); ?>">
-					<p class="description">Some APIs don't allow for full control. Override the synced URL here.</p>
+					<p class="description">Override the synced URL here.</p>
 				</div>
 			</div>
+
+		</div>
+
+		<div class="columns">
 
 			<?php
 			// * Resident Portal Link
