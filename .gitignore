@@ -9,3 +9,4 @@ node_modules/
 /vendor/phpcsstandards/
 /vendor/squizlabs/
 /vendor/wp-coding-standards/
+AGENTS.md
