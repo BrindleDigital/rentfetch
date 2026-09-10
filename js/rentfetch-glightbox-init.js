@@ -71,6 +71,8 @@ function rentfetch_glightbox_init() {
 		var lightboxUnitGallery = GLightbox({
 			selector: '[data-gallery="' + galleryName + '"]',
 			loop: true,
+			touchNavigation: true,
+			touchFollowAxis: true,
 		});
 		rentfetch_enable_gallery_thumbnails(lightboxUnitGallery, unitGalleryLinks, 'Unit image gallery');
 	});
@@ -84,15 +86,21 @@ function rentfetch_glightbox_init() {
 }
 
 function rentfetch_enable_gallery_thumbnails(lightbox, links, label) {
+	lightbox.on('open', function () {
+		var closeButton = document.querySelector('.glightbox-container .gclose');
+		if (closeButton) {
+			closeButton.focus();
+		}
+
+		if (links.length > 1 && window.matchMedia('(min-width: 769px)').matches) {
+			rentfetch_add_property_gallery_thumbnails(lightbox, links, label);
+		}
+	});
+
 	if (links.length < 2) {
 		return;
 	}
 
-	lightbox.on('open', function () {
-		if (window.matchMedia('(min-width: 769px)').matches) {
-			rentfetch_add_property_gallery_thumbnails(lightbox, links, label);
-		}
-	});
 	lightbox.on('slide_before_change', function (event) {
 		rentfetch_set_active_property_gallery_thumbnail(event.current.slideIndex);
 	});
