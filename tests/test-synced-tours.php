@@ -101,6 +101,9 @@ assert( 'https://player.vimeo.com/video/123456' === rentfetch_parse_tour_value( 
 assert( 'https://www.youtube.com/embed/abc123' === rentfetch_parse_tour_value( '<iframe src="https://www.youtube.com/embed/abc123"></iframe>' )['embed_url'] );
 assert( 'youtube' === rentfetch_parse_tour_value( 'https://www.youtube-nocookie.com/embed/abc123' )['type'] );
 assert( 'virtual_tour' === rentfetch_parse_tour_value( 'https://www.zillow.com/view-3d-home/017a85bd-6596-47d7-95c2-514bb27cacdc' )['type'] );
+assert( 'virtual_tour' === rentfetch_parse_tour_value( 'https://a.peek.us/viewer?token=FD2XkD0mQh' )['type'] );
+assert( false !== strpos( rentfetch_get_tour_embed_html( 'https://a.peek.us/viewer?token=FD2XkD0mQh' ), 'src="https://a.peek.us/viewer?token=FD2XkD0mQh"' ) );
+assert( 'link' === rentfetch_parse_tour_value( 'https://peek.us.example.org/viewer?token=example' )['type'] );
 assert( 'link' === rentfetch_parse_tour_value( 'https://youtube.com.example.org/watch?v=abc123' )['type'] );
 assert( 'link' === rentfetch_parse_tour_value( 'https://zillow.com.example.org/view-3d-home/example' )['type'] );
 assert( 'iframe' === rentfetch_parse_tour_value( '<iframe src="https://custom-tour.example/embed/123"></iframe>' )['type'] );

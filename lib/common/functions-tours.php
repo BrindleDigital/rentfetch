@@ -70,7 +70,7 @@ function rentfetch_parse_tour_value( $value ) {
 		$tour['type']      = 'youtube';
 	} elseif ( rentfetch_tour_host_matches( $host, 'matterport.com' ) ) {
 		$tour['type'] = 'matterport';
-	} elseif ( rentfetch_tour_host_matches( $host, 'theviewvr.com' ) ) {
+	} elseif ( rentfetch_tour_host_matches( $host, 'theviewvr.com' ) || rentfetch_tour_host_matches( $host, 'peek.us' ) ) {
 		$tour['type'] = 'virtual_tour';
 	} elseif ( rentfetch_tour_host_matches( $host, 'zillow.com' ) && 0 === strpos( $path, 'view-3d-home/' ) ) {
 		$tour['type'] = 'virtual_tour';
