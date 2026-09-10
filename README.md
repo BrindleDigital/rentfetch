@@ -5,6 +5,14 @@ A plugin which displays property, floorplan and unit availability and informatio
 
 We plan long-term to offer this plugin entirely free through the WordPress repo, and that will (hopefully) soon be the only place to get it. Until the plugin is approved, we need some mechanism to let people stay up to date, so we'll offer it here on Github as well.
 
+## What's new in 0.39.6
+
+- **More control over contact numbers:** Set a phone override in the property editor to choose the number visitors see and call, while keeping the original synced number intact.
+- **Correct Peek tour handling:** Peek links are now recognized as virtual tours so they appear with tour content instead of videos.
+- **Easier apartment browsing on mobile:** Refreshed unit cards put availability up front and organize photos, pricing, deposits, beds, baths, and square footage into a clearer layout. Cards open one at a time, and photo galleries have a more prominent mobile Close control.
+
+See [the full changelog](readme.txt) for release history.
+
 ## Getting Started
 
 If you'll be entering your information manually, just start adding some properties and floorplans. Please note that the property ID for a given floorplan MUST match the property ID of one of the properties for it to be found in search.
