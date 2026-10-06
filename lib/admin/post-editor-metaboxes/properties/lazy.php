@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function rentfetch_render_property_editor_fragment( $fragment, $post ) {
 	switch ( $fragment ) {
 		case 'diagnostics':
-			$tabs     = rentfetch_get_property_editor_tabs();
+			$tabs     = rentfetch_get_property_editor_tabs( $post );
 			$sections = $tabs['diagnostics']['sections'] ?? array();
 
 			foreach ( $sections as $section ) {

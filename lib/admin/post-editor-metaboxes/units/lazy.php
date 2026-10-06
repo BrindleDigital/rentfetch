@@ -21,7 +21,7 @@ function rentfetch_render_unit_editor_fragment( $fragment, $post ) {
 		return;
 	}
 
-	$tabs     = rentfetch_get_unit_editor_tabs();
+	$tabs     = rentfetch_get_unit_editor_tabs( $post );
 	$sections = $tabs['diagnostics']['sections'] ?? array();
 
 	foreach ( $sections as $section ) {

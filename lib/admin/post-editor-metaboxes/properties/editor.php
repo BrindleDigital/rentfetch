@@ -10,12 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Get the property editor tab definitions.
+ * Get property editor tab definitions.
  *
+ * @param WP_Post|null $post Current record, when available.
  * @return array<string, array<string, mixed>>
  */
-function rentfetch_get_property_editor_tabs() {
-	return array(
+function rentfetch_get_property_editor_tabs( $post = null ) {
+	$tabs = array(
 		'overview'     => array(
 			'label'    => 'Basic Information',
 			'sections' => array(
@@ -89,6 +90,18 @@ function rentfetch_get_property_editor_tabs() {
 			),
 		),
 	);
+
+	/**
+	 * Filter the property editor tabs and their sections.
+	 *
+	 * Each tab is keyed by a unique ID and contains a label and sections array.
+	 * Each section has a callable callback receiving the current WP_Post, and
+	 * may include a label. Callbacks render fields; extensions own their saving.
+	 *
+	 * @param array<string, array<string, mixed>> $tabs Editor tab definitions.
+	 * @param WP_Post|null                       $post Current record, when available.
+	 */
+	return apply_filters( 'rentfetch_property_editor_tabs', $tabs, $post );
 }
 
 /**
@@ -147,7 +160,7 @@ function rentfetch_render_property_editor_lazy_fragment( $fragment, $post_id ) {
  * @return void
  */
 function rentfetch_properties_editor_callback( $post ) {
-	$tabs = rentfetch_get_property_editor_tabs();
+	$tabs = rentfetch_get_property_editor_tabs( $post );
 
 	wp_nonce_field( 'rentfetch_properties_metabox_nonce', 'rentfetch_properties_metabox_nonce' );
 	rentfetch_render_property_identity_bar( $post );

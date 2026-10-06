@@ -10,12 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Get the floor plan editor tab definitions.
+ * Get floor plan editor tab definitions.
  *
+ * @param WP_Post|null $post Current record, when available.
  * @return array<string, array<string, mixed>>
  */
-function rentfetch_get_floorplan_editor_tabs() {
-	return array(
+function rentfetch_get_floorplan_editor_tabs( $post = null ) {
+	$tabs = array(
 		'overview'     => array(
 			'label'    => 'Basic Information',
 			'sections' => array(
@@ -78,6 +79,18 @@ function rentfetch_get_floorplan_editor_tabs() {
 			),
 		),
 	);
+
+	/**
+	 * Filter the floor plan editor tabs and their sections.
+	 *
+	 * Each tab is keyed by a unique ID and contains a label and sections array.
+	 * Each section has a callable callback receiving the current WP_Post, and
+	 * may include a label. Callbacks render fields; extensions own their saving.
+	 *
+	 * @param array<string, array<string, mixed>> $tabs Editor tab definitions.
+	 * @param WP_Post|null                       $post Current record, when available.
+	 */
+	return apply_filters( 'rentfetch_floorplan_editor_tabs', $tabs, $post );
 }
 
 /**
@@ -129,7 +142,7 @@ function rentfetch_render_floorplan_editor_lazy_fragment( $fragment, $post_id ) 
  * @return void
  */
 function rentfetch_floorplans_editor_callback( $post ) {
-	$tabs = rentfetch_get_floorplan_editor_tabs();
+	$tabs = rentfetch_get_floorplan_editor_tabs( $post );
 
 	wp_nonce_field( 'rentfetch_floorplans_metabox_nonce', 'rentfetch_floorplans_metabox_nonce' );
 	rentfetch_render_floorplan_identity_bar( $post );
