@@ -64,6 +64,28 @@ The built-in WordPress text search ... isn't good. Relevanssi fills in that gap.
 
 The property and floor plan editors begin with a **Basic Information** tab and include a **Categories** tab for their taxonomies. Each category panel uses WordPress's native term checklist and add-term controls, adds live multi-word filtering for existing terms, and displays the taxonomy names currently registered with WordPress so label filters remain reflected in the editor.
 
+### Extending the editor tabs
+
+Use `rentfetch_property_editor_tabs`, `rentfetch_floorplan_editor_tabs`, or `rentfetch_unit_editor_tabs` to add sections to an existing tab or add a new tab from PHP. Each filter receives the tab array and the current `WP_Post` (or `null` when the tab getter is called without a post).
+
+For example, a customization plugin can append a section to Basic Information:
+
+```php
+add_filter( 'rentfetch_property_editor_tabs', function ( $tabs, $post ) {
+    $tabs['overview']['sections'][] = array(
+        'label'    => 'Additional Settings',
+        'callback' => 'my_plugin_render_property_settings',
+    );
+    return $tabs;
+}, 10, 2 );
+```
+
+Define the named callback in your plugin; it receives the current `WP_Post` and outputs the section's HTML. Sections accept an optional `label` and a callable `callback`. To create a tab, add a unique key to `$tabs` with a `label` and a `sections` array of these definitions. Array order controls display order. The first tab uses the `overview` key; keep it when extending the editor.
+
+The filters also run when loading the Diagnostics tab via AJAX, with the same post context. New tabs render their sections with the initial edit form; omit `lazy`, which is reserved for built-in fragments. No custom JavaScript is required to add sections or tabs.
+
+Custom fields must use their own save handler, nonce, permission checks, and sanitization. WordPress provides `save_post_properties`, `save_post_floorplans`, and `save_post_units` for this. Use distinct meta keys to avoid collisions with Rent Fetch's fields, and do not clear fields that are absent from a submission (for example, an unopened lazy tab).
+
 ### Included WordPress templates
 
 -   single-properties.php (override this in your theme if you like by dropping a file into your main theme directory)
