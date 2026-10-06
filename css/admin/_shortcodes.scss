@@ -42,3 +42,77 @@
 		width: 100%;
 	}
 }
+
+body.rent-fetch_page_rentfetch-property-shortcodes,
+body.rent-fetch_page_rentfetch-floorplan-shortcodes {
+	background-color: var(--rentfetch-branding-base);
+
+	#wpcontent {
+		padding-left: 0;
+	}
+}
+
+#rent-fetch-wrap-page.rentfetch-shortcode-reference {
+	.nav-container {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 16px 32px;
+		padding: 24px;
+	}
+
+	.rentfetch-reference-label {
+		margin: 0;
+		color: var(--rentfetch-branding-contrast);
+		font-size: var(--rentfetch-font-size-small);
+	}
+
+	.options-container {
+		grid-template-columns: 255px minmax(0, 1fr);
+	}
+
+	.rent-fetch-options-nav-wrap {
+		color: var(--rentfetch-branding-contrast);
+
+		.dashicons {
+			margin-bottom: 12px;
+		}
+
+		h2 {
+			margin: 0 0 12px;
+			font-size: var(--rentfetch-font-size-medium);
+		}
+
+		p {
+			margin: 0;
+			line-height: 1.6;
+		}
+	}
+
+	.container {
+		box-sizing: border-box;
+		min-width: 0;
+		padding-top: 36px;
+	}
+
+	.shortcode {
+		box-sizing: border-box;
+		max-width: 100%;
+		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 960px) {
+		.options-container {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.rent-fetch-options-nav-wrap {
+			border-right: 0;
+			border-bottom: 1px solid var(--rentfetch-base-3);
+		}
+
+		.rent-fetch-options-sticky-wrap {
+			position: static;
+		}
+	}
+}

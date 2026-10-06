@@ -245,7 +245,7 @@
 			panel.style.pointerEvents = 'auto';
 
 			var header = document.createElement( 'div' );
-			header.textContent = 'Rentfetch Analytics Debug';
+			header.textContent = 'Rent Fetch Analytics Debug';
 			header.style.fontWeight = '600';
 			header.style.marginBottom = '8px';
 

@@ -325,7 +325,7 @@ function rentfetch_log_cache_preload_failure( $detail ) {
 
 	error_log(
 		sprintf(
-			'[RentFetch preload] Failed to preload %1$s search at pool index %2$s: %3$s | query=%4$s | params=%5$s',
+			'[Rent Fetch preload] Failed to preload %1$s search at pool index %2$s: %3$s | query=%4$s | params=%5$s',
 			isset( $detail['type'] ) && '' !== $detail['type'] ? $detail['type'] : 'unknown',
 			isset( $detail['index'] ) && null !== $detail['index'] ? (string) $detail['index'] : 'n/a',
 			isset( $detail['message'] ) ? $detail['message'] : 'Unknown failure',

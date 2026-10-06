@@ -35,7 +35,7 @@ function rentfetch_options_page_html() {
 
 		printf( '<form method="post" class="rent-fetch-options" action="%s">', esc_url( $action ) );
 
-			echo '<h1 style="display: none;">RentFetch</h1>';
+			echo '<h1 style="display: none;">Rent Fetch</h1>';
 
 			echo '<section class="nav-container">';
 				echo '<a class="rentfetch-logo-link" href="/wp-admin/admin.php?page=rentfetch-options"><img class="rentfetch-logo" src="' . esc_url( RENTFETCH_PATH . 'images/logo.svg' ) . '" alt="logo" /></a>';
@@ -125,7 +125,7 @@ function rentfetch_settings_properties() {
 					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=global-property-fees" class="tab %s">Property fees</a></li>', esc_html( $active ) );
 
 					$active = ( 'property-settings-embed' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Property shortcodes</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=properties&section=property-settings-embed" class="tab %s">Property embeds</a></li>', esc_html( $active ) );
 
 				echo '</ul>';
 
@@ -187,7 +187,7 @@ function rentfetch_settings_floorplans() {
 					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-buttons" class="tab %s">Floor plan buttons</a></li>', esc_html( $active ) );
 
 					$active = ( 'floorplan-embed' === $section ) ? 'tab-active' : '';
-					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Floor plan shortcodes</a></li>', esc_html( $active ) );
+					printf( '<li><a href="?page=rentfetch-options&tab=floorplans&section=floorplan-embed" class="tab %s">Floor plan embeds</a></li>', esc_html( $active ) );
 
 				echo '</ul>';
 			echo '</div>';

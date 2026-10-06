@@ -406,7 +406,7 @@ function rentfetch_settings_general_performance() {
 							progress.failed += parseInt(data.failed || 0, 10);
 							progress.steps += 1;
 							if (data.errors && data.errors.length && window.console && window.console.warn) {
-								window.console.warn('RentFetch preload failures', data.errors);
+								window.console.warn('Rent Fetch preload failures', data.errors);
 							}
 
 							if (progress.processed > progress.total) {

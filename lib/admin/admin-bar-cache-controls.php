@@ -592,7 +592,7 @@ function rentfetch_get_admin_bar_title() {
 	return sprintf(
 		'<span class="rentfetch-admin-bar-title"><span class="rentfetch-admin-bar-icon" aria-hidden="true">%1$s</span><span class="rentfetch-admin-bar-label">%2$s</span></span>',
 		$icon,
-		esc_html__( 'RentFetch', 'rentfetch' )
+		esc_html__( 'Rent Fetch', 'rentfetch' )
 	);
 }
 
@@ -610,7 +610,7 @@ function rentfetch_get_admin_bar_panel_markup( $content, $states, $show_performa
 
 	ob_start();
 	?>
-	<div class="rentfetch-admin-bar-panel" role="menu" aria-label="<?php esc_attr_e( 'RentFetch', 'rentfetch' ); ?>">
+	<div class="rentfetch-admin-bar-panel" role="menu" aria-label="<?php esc_attr_e( 'Rent Fetch', 'rentfetch' ); ?>">
 		<div id="wp-admin-bar-rentfetch-content-section" class="rentfetch-admin-bar-section">
 			<?php echo wp_kses_post( rentfetch_get_admin_bar_section_title( 'Content' ) ); ?>
 		</div>
@@ -1356,7 +1356,7 @@ function rentfetch_admin_bar_cache_controls_script() {
 						progress.failed += parseInt(data.failed || 0, 10);
 						progress.steps += 1;
 						if (data.errors && data.errors.length && window.console && window.console.warn) {
-							window.console.warn('RentFetch preload failures', data.errors);
+							window.console.warn('Rent Fetch preload failures', data.errors);
 						}
 
 						if (progress.processed > progress.total) {
