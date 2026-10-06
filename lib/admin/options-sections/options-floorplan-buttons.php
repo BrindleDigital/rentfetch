@@ -56,7 +56,7 @@ function rentfetch_settings_floorplans_floorplan_buttons() {
 							<input type="checkbox" name="rentfetch_options_availability_button_enabled_hide_when_unavailable" id="rentfetch_options_availability_button_enabled_hide_when_unavailable" <?php checked( get_option( 'rentfetch_options_availability_button_enabled_hide_when_unavailable' ), '1' ); ?>>
 							Hide unavailable
 						</label>
-						<p>Only show this button when the floor plan *also* has units available or a date when they'll become avialable.</p>
+						<p>Only show this button when the floor plan *also* has units available or a date when they'll become available.</p>
 					</li>
 				</ul>
 				

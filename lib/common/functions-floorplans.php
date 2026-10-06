@@ -633,8 +633,8 @@ function rentfetch_floorplan_buttons() {
  */
 function rentfetch_floorplan_default_availability_button() {
 
-	$button_enabled        = (int) get_option( 'rentfetch_options_availability_button_enabled', false );
-	$hide_if_no_availabily = (int) get_option( 'rentfetch_options_availability_button_enabled_hide_when_unavailable', false );
+	$button_enabled          = (int) get_option( 'rentfetch_options_availability_button_enabled', false );
+	$hide_if_no_availability = (int) get_option( 'rentfetch_options_availability_button_enabled_hide_when_unavailable', false );
 
 	// bail if the button is not enabled.
 	if ( 1 !== $button_enabled ) {
@@ -642,7 +642,7 @@ function rentfetch_floorplan_default_availability_button() {
 	}
 
 	// if the button is set to hide when there's not availability, let's check for availability and do the needful.
-	if ( $hide_if_no_availabily ) {
+	if ( $hide_if_no_availability ) {
 		$available_units   = get_post_meta( get_the_ID(), 'available_units', true );
 		$availability_date = get_post_meta( get_the_ID(), 'availability_date', true );
 
