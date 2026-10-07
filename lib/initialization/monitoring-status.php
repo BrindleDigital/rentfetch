@@ -227,6 +227,7 @@ function rentfetch_get_monitoring_status_payload() {
 			'site_url'              => untrailingslashit( get_site_url() ),
 			'site_host'             => rentfetch_get_monitoring_site_host(),
 			'site_icon_url'         => function_exists( 'get_site_icon_url' ) ? get_site_icon_url( 64 ) : '',
+			'sync_paused'           => 'updatesync' !== get_option( 'rentfetch_options_data_sync' ),
 			'rentfetch_version'     => defined( 'RENTFETCH_VERSION' ) ? RENTFETCH_VERSION : 'unknown',
 			'rentfetchsync_version' => defined( 'RENTFETCHSYNC_VERSION' ) ? RENTFETCHSYNC_VERSION : 'not-installed',
 			'wordpress_version'     => get_bloginfo( 'version' ),
