@@ -310,6 +310,10 @@ body.single-floorplans .container-current-floorplan-info .property-specials-call
 			border-radius: var(--rentfetch-border-radius, 4px);
 			padding: var(--rentfetch-space-xl);
 
+			> .rentfetch-property-logo {
+				margin-bottom: var(--rentfetch-space-xl);
+			}
+
 			@include mobile {
 				order: 1;
 				position: static;

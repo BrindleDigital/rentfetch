@@ -140,6 +140,14 @@ pre {
 	display: block;
 }
 
+.rentfetch-property-logo {
+	display: block;
+	max-width: 100%;
+	max-height: 100px;
+	width: auto;
+	height: auto;
+}
+
 // Shared pricing line styles used by shortcode outputs outside template-specific contexts.
 .rentfetch-property-rent-lines,
 .rentfetch-floorplan-rent-lines,

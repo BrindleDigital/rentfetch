@@ -62,6 +62,10 @@ function rentfetch_property_shortcode( $atts ) {
 			$content = rentfetch_get_property_title( $property_id );
 			break;
 
+		case 'logo':
+			$content = rentfetch_get_property_logo( $property_id, $class );
+			break;
+
 		case 'address':
 			$content = rentfetch_get_property_address( $property_id );
 			break;

@@ -129,6 +129,65 @@ function rentfetch_property_title( $property_id = null ) {
 	}
 }
 
+// * PROPERTY LOGO
+
+/**
+ * Get the manually managed logo attachment ID for a property post.
+ *
+ * @param int $post_id WordPress property post ID.
+ * @return int The attachment ID, or zero when no logo is selected.
+ */
+function rentfetch_get_property_logo_id( $post_id ) {
+	if ( ! $post_id ) {
+		return 0;
+	}
+
+	// Preserve logos selected before this field moved into Core.
+	$meta_key = metadata_exists( 'post', $post_id, 'property_logo_id' )
+		? 'property_logo_id'
+		: '_land_co_property_logo_id';
+
+	return absint( get_post_meta( $post_id, $meta_key, true ) );
+}
+
+/**
+ * Get the property logo image markup.
+ *
+ * @param string|null $property_id Optional property_id meta value.
+ * @param string      $css_class   Additional image CSS classes.
+ * @return string The logo markup, or an empty string when unavailable.
+ */
+function rentfetch_get_property_logo( $property_id = null, $css_class = '' ) {
+	$post_id = $property_id ? rentfetch_get_post_id_from_property_id( $property_id ) : get_the_ID();
+	$logo_id = rentfetch_get_property_logo_id( $post_id );
+
+	if ( ! $logo_id || ! wp_attachment_is_image( $logo_id ) ) {
+		return '';
+	}
+
+	$logo = wp_get_attachment_image(
+		$logo_id,
+		'large',
+		false,
+		array(
+			'class' => trim( 'rentfetch-property-logo ' . $css_class ),
+		)
+	);
+
+	return apply_filters( 'rentfetch_filter_property_logo', $logo, $property_id, $css_class );
+}
+
+/**
+ * Echo the property logo.
+ *
+ * @param string|null $property_id Optional property_id meta value.
+ * @param string      $css_class   Additional image CSS classes.
+ * @return void
+ */
+function rentfetch_property_logo( $property_id = null, $css_class = '' ) {
+	echo wp_kses_post( rentfetch_get_property_logo( $property_id, $css_class ) );
+}
+
 // * PROPERTY LOCATION
 
 /**

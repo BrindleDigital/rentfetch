@@ -65,6 +65,7 @@ function rentfetch_property_components_shortcode_docs() {
 	<p>The <code>info</code> parameter determines what information to display. Available options:</p>
 	<ul>
 		<li><code>title</code> - Property title</li>
+		<li><code>logo</code> - Manually selected property logo image</li>
 		<li><code>address</code> - Full street address</li>
 		<li><code>city</code> - City name</li>
 		<li><code>state</code> - State abbreviation</li>
@@ -97,6 +98,10 @@ function rentfetch_property_components_shortcode_docs() {
 	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_property_info info="phone" before=" call us at " after=" today!"]<!-- /wp:shortcode --></span></p>
 	<p>For link-type shortcodes (ending in "_link"), you can use the <code>class</code> parameter to add custom CSS classes to the link element.</p>
 	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_property_info info="phone_link" class="btn btn-primary"]<!-- /wp:shortcode --></span></p>
+	<p>Choose a property logo in the Images tab of the property editor. Logos are managed manually and are never synced. The <code>logo</code> output preserves the image proportions within 100% of its container's content width and 100 pixels tall, and supports the <code>class</code> parameter for custom image CSS classes. If no logo is selected, the shortcode returns no content, including any <code>before</code> or <code>after</code> wrappers.</p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_property_info info="logo"]<!-- /wp:shortcode --></span></p>
+	<p><span class="shortcode"><!-- wp:shortcode -->[rentfetch_property_info info="logo" property_id="p1234" class="site-property-logo"]<!-- /wp:shortcode --></span></p>
+	<p>The <code>property_id</code> parameter uses the property's Property ID, rather than its WordPress post ID. In PHP templates, use <code>rentfetch_property_logo()</code> to output the logo or <code>rentfetch_get_property_logo()</code> to return its markup; both accept an optional Property ID and additional CSS classes.</p>
 	<p>If no <code>property_id</code> is specified, the shortcode will attempt to determine it from context (current property page or single-property site).</p>
 	<?php
 }

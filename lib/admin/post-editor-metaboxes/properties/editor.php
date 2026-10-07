@@ -52,6 +52,7 @@ function rentfetch_get_property_editor_tabs( $post = null ) {
 			'label'    => 'Images',
 			'sections' => array(
 				array( 'callback' => 'rentfetch_properties_images_metabox_callback' ),
+				array( 'callback' => 'rentfetch_properties_logo_metabox_callback' ),
 			),
 		),
 		'videos-tours' => array(

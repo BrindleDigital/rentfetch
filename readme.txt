@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.3
-Stable tag: 0.39.7
+Stable tag: 0.39.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,7 @@ Rent Fetch is the engine behind our sites at [Brindle Digital Marketing](https:/
 * Sliders to show property images, floorplan images, and nearby properties (we use the MIT-licensed  [Blaze Slider](https://blaze-slider.dev) for these, and you don’t need to set up anything for these to work)
 * Properties and floor plans can display manual or synced video and virtual tours from YouTube, Vimeo, Matterport, Zillow 3D Home, TheViewVR, Peek, Google Drive, and compatible iframe or oEmbed providers.
 * Override a property's displayed phone number in WordPress while keeping its original synced number intact.
+* Manually select a property logo to display above the address in the property sidebar, or insert it elsewhere with `[rentfetch_property_info info="logo"]`.
 * TONS of hooks, letting you (or your developer) customize to your heart’s content. The single layouts for both floorplans and properties can be fully replaced by the theme, and we have lots of helpful functions to let you grab preprocessed information for display.
 * This plugin works with both single-property apartment websites and websites that showcase hundreds of properties.
 * Adding mini search capability
@@ -104,6 +105,13 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.39.8 =
+
+* Added a manually managed property logo picker below the other fields in the property editor's Images tab. Logos are never synced.
+* Displayed the logo above the address in the single-property sidebar, sized to fit the sidebar's inner width while preserving its proportions. Spacing below the logo matches the sidebar padding and applies only within the sidebar.
+* Added `[rentfetch_property_info info="logo"]`, reusable PHP logo helpers, and shortcode documentation, including support for custom CSS classes.
+* Preserved existing logo selections when moving property logo support into Rent Fetch Core.
 
 = 0.39.7 =
 
