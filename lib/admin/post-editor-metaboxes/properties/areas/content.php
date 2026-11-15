@@ -28,12 +28,12 @@ function rentfetch_properties_display_information_metabox_callback( $post ) {
 		?>
 		<div class="field">
 			<div class="column">
-				<label for="description">Description</label>
+				<label for="rentfetch_property_description">Description</label>
 			</div>
 			<div class="column">                
 				<textarea
-					id="description"
-					name="description"
+					id="rentfetch_property_description"
+					name="rentfetch_property_description"
 					class="wp-editor-area rf-property-lazy-editor"
 					rows="3"
 					data-rf-rich-editor

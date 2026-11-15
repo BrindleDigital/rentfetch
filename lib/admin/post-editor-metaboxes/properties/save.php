@@ -196,8 +196,9 @@ function rentfetch_save_properties_metaboxes( $post_id ) {
 		update_post_meta( $post_id, 'images', $property_images );
 	}
 
-	if ( isset( $_POST['description'] ) ) {
-		update_post_meta( $post_id, 'description', wp_kses_post( wp_unslash( $_POST['description'] ) ) );
+	// Namespace the form field to avoid SEO editor collisions; preserve the synced meta key.
+	if ( isset( $_POST['rentfetch_property_description'] ) ) {
+		update_post_meta( $post_id, 'description', wp_kses_post( wp_unslash( $_POST['rentfetch_property_description'] ) ) );
 	}
 
 	if ( isset( $_POST['tour'] ) ) {
