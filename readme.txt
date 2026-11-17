@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.3
-Stable tag: 0.39.11
+Stable tag: 0.39.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.39.12 =
+
+* Added an enabled-by-default setting and editable label for the single floor plan Available Units button, preserving its visibility on existing sites after updates.
+* Added a downward arrow to the button and clarified floor plan button settings to distinguish the unit-list jump from leasing, contact, and tour links.
+* Clarified default availability-link and no-availability-link labels without replacing saved site labels.
 
 = 0.39.11 =
 

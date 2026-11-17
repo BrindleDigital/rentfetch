@@ -662,7 +662,7 @@ add_action( 'rentfetch_do_floorplan_buttons', 'rentfetch_floorplan_default_avail
  */
 function rentfetch_floorplan_default_availability_button_markup() {
 
-	$button_label = get_option( 'rentfetch_options_availability_button_button_label', 'availability' );
+	$button_label = get_option( 'rentfetch_options_availability_button_button_label', 'Check Availability' );
 
 	$link           = get_post_meta( get_the_ID(), 'availability_url', true );
 	$target         = rentfetch_get_link_target( $link );
@@ -710,7 +710,7 @@ function rentfetch_floorplan_default_unavailability_button_markup() {
 		return false;
 	}
 
-	$button_label = get_option( 'rentfetch_options_unavailability_button_button_label', 'availability' );
+	$button_label = get_option( 'rentfetch_options_unavailability_button_button_label', 'Contact Us' );
 
 	$link           = get_option( 'rentfetch_options_unavailability_button_link' );
 	$target         = rentfetch_get_link_target( $link );

@@ -234,8 +234,8 @@ function rentfetch_single_floorplans_parts_overview() {
 					</div>
 
 					<div class="floorplan-buttons">
-						<?php if ( $available_units > 0 ) : ?>
-							<a class="rentfetch-button rentfetch-floorplan-apply-now-button" href="#available-units">View Availability</a>
+						<?php if ( $available_units > 0 && (int) get_option( 'rentfetch_options_view_availability_button_enabled', '1' ) === 1 ) : ?>
+							<a class="rentfetch-button rentfetch-floorplan-apply-now-button" href="#available-units"><?php echo esc_html( get_option( 'rentfetch_options_view_availability_button_button_label', 'View Availability' ) ); ?><svg class="rentfetch-availability-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-6-6 6 6 6-6" /></svg></a>
 						<?php endif; ?>
 						<?php do_action( 'rentfetch_do_floorplan_buttons' ); ?>
 					</div>

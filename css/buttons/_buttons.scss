@@ -33,3 +33,15 @@ body .rentfetch-button {
 		background-color: var(--rentfetch-accent-active);
 	}
 }
+
+body .rentfetch-floorplan-apply-now-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+
+	.rentfetch-availability-arrow {
+		flex: 0 0 16px;
+		width: 16px;
+		height: 16px;
+	}
+}
