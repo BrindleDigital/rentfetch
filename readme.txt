@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.3
-Stable tag: 0.39.10
+Stable tag: 0.39.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,10 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.39.11 =
+
+* Fixed tour play icon sizing and alignment so site text-size settings do not resize the icon.
 
 = 0.39.10 =
 

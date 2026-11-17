@@ -7,7 +7,8 @@
 	a {
 		color: var(--rentfetch-white);
 		background-color: var(--rentfetch-dark);
-		font-size: var(--rentfetch-font-size-medium);
+		// Keep the fixed-size icon independent of site typography tokens.
+		font-size: 16px;
 		text-decoration: none;
 		line-height: 1;
 		position: relative;
@@ -33,7 +34,7 @@
 		}
 
 		&:before {
-			font-size: var(--rentfetch-font-size-medium);
+			font-size: inherit;
 			content: '\f522';
 			font-family: 'dashicons';
 			color: var(--rentfetch-dark);

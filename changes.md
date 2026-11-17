@@ -1,5 +1,9 @@
 # Changes
 
+## 0.39.11
+
+* Fixed tour play icon sizing and alignment by using a fixed 16px icon size instead of the medium text-size token, so site typography changes do not resize the icon.
+
 ## 0.39.10
 
 * Added frontend image alt text that prioritizes image-specific API descriptions and captions, with property, floor plan, or apartment names as fallbacks.
