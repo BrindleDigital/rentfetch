@@ -104,12 +104,14 @@ function rentfetch_get_floorplan_images_yardi() {
 		return;
 	}
 
-	$images_array_source = explode( ',', $images_string );
+	$images_array_source = preg_split( '/\s*,\s*(?=https?:\/\/)/', $images_string, -1, PREG_SPLIT_NO_EMPTY );
+	$image_alts          = rentfetch_get_yardi_image_alts( $images_array_source, get_post_meta( get_the_ID(), 'floorplan_image_alt_text', true ) );
 	$images_array_return = array();
 
 	foreach ( $images_array_source as $image ) {
 		$images_array_return[] = array(
 			'url'           => esc_url( $image ),
+			'alt'           => $image_alts[ esc_url_raw( trim( $image ) ) ] ?? '',
 			'thumbnail_url' => esc_url( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image, 240 ) : $image ),
 		);
 	}
@@ -138,12 +140,21 @@ function rentfetch_get_floorplan_images_entrata() {
 		return;
 	}
 
+	$api_data   = rentfetch_get_image_api_response( get_the_ID(), 'floorplans_api' );
+	$image_alts = array();
+	foreach ( (array) ( $api_data['File'] ?? array() ) as $file ) {
+		if ( is_array( $file ) && ! empty( $file['Src'] ) ) {
+			$description                               = trim( (string) ( $file['Description'] ?? '' ) );
+			$image_alts[ esc_url_raw( $file['Src'] ) ] = '' !== $description ? $description : ( $file['Caption'] ?? '' );
+		}
+	}
 	$images_array_source = explode( ',', $images_string );
 	$images_array_return = array();
 
 	foreach ( $images_array_source as $image ) {
 		$images_array_return[] = array(
 			'url'           => esc_url( $image ),
+			'alt'           => $image_alts[ esc_url_raw( trim( $image ) ) ] ?? '',
 			'thumbnail_url' => esc_url( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image, 240 ) : $image ),
 		);
 	}
@@ -176,8 +187,10 @@ function rentfetch_get_floorplan_images_rentmanager() {
 
 	foreach ( $images_source as $image ) {
 		$image_url       = $image['File']['DownloadURL'];
+		$description     = trim( (string) ( $image['File']['Description'] ?? '' ) );
 		$images_return[] = array(
 			'url'           => esc_url( $image_url ),
+			'alt'           => '' !== $description ? $description : ( $image['Caption'] ?? '' ),
 			'thumbnail_url' => esc_url( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image_url, 240 ) : $image_url ),
 		);
 	}

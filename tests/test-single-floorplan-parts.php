@@ -29,6 +29,8 @@ function remove_action( $hook = '', $callback = '' ) {
 	$GLOBALS['rentfetch_test_removed_actions'][] = array( $hook, $callback );
 }
 
+function wp_strip_all_tags( $value ) { return strip_tags( $value ); }
+
 /** No-op filter registration for this focused check. */
 function add_filter() {}
 
@@ -211,6 +213,7 @@ function sanitize_text_field( $value ) {
 }
 
 require_once dirname( __DIR__ ) . '/lib/common/functions-tours.php';
+require_once dirname( __DIR__ ) . '/lib/common/functions-image-alt.php';
 require_once dirname( __DIR__ ) . '/lib/common/functions-units.php';
 require_once dirname( __DIR__ ) . '/lib/template-functions/single-floorplans-parts/single-floorplans-parts.php';
 

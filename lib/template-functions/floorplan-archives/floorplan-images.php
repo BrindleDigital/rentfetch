@@ -42,7 +42,7 @@ function rentfetch_floorplan_single_image() {
 	wp_enqueue_script( 'rentfetch-floorplan-images-slider-init' );
 
 	echo '<div class="floorplan-single-image-wrap">';
-		printf( '<img class="floorplan-single-image" src="%s" loading="lazy">', esc_url( $images[0]['url'] ) );
+		printf( '<img class="floorplan-single-image" src="%s" alt="%s" loading="lazy">', esc_url( $images[0]['url'] ), esc_attr( rentfetch_get_image_alt( $images[0]['alt'] ?? '', get_the_title() ) ) );
 	echo '</div>';
 }
 
@@ -78,7 +78,7 @@ function rentfetch_floorplan_image_slider() {
 				echo '<div class="blaze-track">';
 
 	foreach ( $images as $index => $image ) {
-		$alt         = $image['alt'] ?? get_the_title();
+		$alt         = rentfetch_get_image_alt( $image['alt'] ?? '', get_the_title() );
 		$display_url = $image['display_url'] ?? ( function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image['url'], 600 ) : $image['url'] );
 
 		// check if the image url includes "fallback".
@@ -112,13 +112,14 @@ function rentfetch_floorplan_image_slider() {
 			$current       = 0 === $index ? ' is-active' : '';
 			$aria_current  = 0 === $index ? ' aria-current="true"' : '';
 			printf(
-				'<button class="floorplan-image-thumbnail%s" type="button" data-floorplan-image-index="%s" data-floorplan-sample-src="%s" aria-label="View photo %s"%s><img src="%s" alt="" loading="lazy" decoding="async"></button>',
+				'<button class="floorplan-image-thumbnail%s" type="button" data-floorplan-image-index="%s" data-floorplan-sample-src="%s" aria-label="View photo %s"%s><img src="%s" alt="%s" loading="lazy" decoding="async"></button>',
 				esc_attr( $current ),
 				(int) $index,
 				esc_url( $thumbnail_url ),
 				(int) $index + 1,
 				$aria_current, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				esc_url( $thumbnail_url )
+				esc_url( $thumbnail_url ),
+				esc_attr( rentfetch_get_image_alt( $image['alt'] ?? '', get_the_title() ) )
 			);
 		}
 		echo '</div>';

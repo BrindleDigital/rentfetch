@@ -110,20 +110,36 @@ function rentfetch_get_unit_image_urls( $unit_post_id = null ) {
  *
  * @param int|null $unit_post_id      Optional unit post ID.
  * @param string   $context           Gallery render context.
- * @param string[] $fallback_image_urls Images used when the unit has none.
+ * @param array    $fallback_image_urls Image records or URLs used when the unit has none.
  * @return void
  */
 function rentfetch_unit_image_gallery( $unit_post_id = null, $context = 'table', $fallback_image_urls = array() ) {
 	$unit_post_id = $unit_post_id ? (int) $unit_post_id : get_the_ID();
 	$image_urls   = rentfetch_get_unit_image_urls( $unit_post_id );
 	$context      = sanitize_html_class( $context );
+	$image_alts   = array();
+	if ( 'yardi' === get_post_meta( $unit_post_id, 'unit_source', true ) ) {
+		$unit_data  = rentfetch_get_image_api_response( $unit_post_id, 'apartmentavailability_api' );
+		$image_alts = rentfetch_get_yardi_image_alts( ! empty( $unit_data['unitImageURLsArray'] ) ? $unit_data['unitImageURLsArray'] : ( $unit_data['unitImageURLs'] ?? '' ), $unit_data['unitImageAltText'] ?? '' );
+	}
 	if ( empty( $image_urls ) ) {
-		$image_urls = array_values( array_unique( array_filter( array_map( 'esc_url_raw', $fallback_image_urls ) ) ) );
+		foreach ( $fallback_image_urls as $image ) {
+			$url = esc_url_raw( is_array( $image ) ? ( $image['url'] ?? '' ) : $image );
+			if ( $url ) {
+				$image_urls[]       = $url;
+				$image_alts[ $url ] = is_array( $image ) ? ( $image['alt'] ?? '' ) : '';
+			}
+		}
+		$image_urls = array_values( array_unique( $image_urls ) );
 	}
 
 	if ( empty( $image_urls ) ) {
 		return;
 	}
+
+	$floorplan_post_id = rentfetch_get_connected_floorplan_post_id_for_unit( $unit_post_id );
+	$fallback_alt      = $floorplan_post_id ? get_the_title( $floorplan_post_id ) : '';
+	$fallback_alt      = rentfetch_get_image_alt( $fallback_alt, get_the_title( $unit_post_id ) );
 
 	wp_enqueue_style( 'rentfetch-glightbox-style' );
 	wp_enqueue_script( 'rentfetch-glightbox-script' );
@@ -132,7 +148,7 @@ function rentfetch_unit_image_gallery( $unit_post_id = null, $context = 'table',
 	printf( '<span class="unit-image-gallery%s">', count( $image_urls ) > 1 ? ' has-multiple-images' : '' );
 	foreach ( $image_urls as $index => $image_url ) {
 		printf(
-			'<a class="unit-gallery-link unit-gallery-link-%s%s" href="%s" data-glightbox="type: image;" data-gallery="unit-gallery-%s-%s" aria-label="View image %s of %s for apartment %s"><img src="%s" alt="" loading="lazy" decoding="async"></a>',
+			'<a class="unit-gallery-link unit-gallery-link-%s%s" href="%s" data-glightbox="type: image;" data-gallery="unit-gallery-%s-%s" aria-label="View image %s of %s for apartment %s"><img src="%s" alt="%s" loading="lazy" decoding="async"></a>',
 			esc_attr( $context ),
 			$index > 2 ? ' is-lightbox-only' : '',
 			esc_url( $image_url ),
@@ -141,7 +157,8 @@ function rentfetch_unit_image_gallery( $unit_post_id = null, $context = 'table',
 			(int) $index + 1,
 			count( $image_urls ),
 			esc_attr( rentfetch_get_unit_title() ),
-			esc_url( $image_url )
+			esc_url( $image_url ),
+			esc_attr( rentfetch_get_image_alt( $image_alts[ $image_url ] ?? '', $fallback_alt ) )
 		);
 	}
 	if ( count( $image_urls ) > 1 ) {

@@ -18,6 +18,14 @@ function rentfetch_glightbox_init_when_images_ready() {
 }
 
 function rentfetch_glightbox_init() {
+	// GLightbox does not inherit alt text from an image inside a gallery link.
+	document.querySelectorAll('.property-image-grid-link, .floorplan-gallery-link, .unit-gallery-link').forEach(function (link) {
+		var image = link.querySelector('img');
+		if (image) {
+			link.setAttribute('data-alt', image.alt);
+		}
+	});
+
 	if (!window.rentfetchLightboxEscapeInitialized) {
 		document.addEventListener('keydown', function (event) {
 			if (event.key !== 'Escape') {
@@ -129,7 +137,8 @@ function rentfetch_add_property_gallery_thumbnails(lightbox, links, label) {
 		var image = document.createElement('img');
 		button.type = 'button';
 		button.setAttribute('aria-label', 'View image ' + (index + 1));
-		image.alt = '';
+		var sourceImage = link.matches('img') ? link : link.querySelector('img');
+		image.alt = sourceImage ? sourceImage.alt : link.getAttribute('data-alt') || '';
 		image.loading = 'lazy';
 		image.decoding = 'async';
 		image.src = rentfetch_get_property_gallery_thumbnail_url(link);

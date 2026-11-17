@@ -1018,7 +1018,7 @@ function rentfetch_floorplan_unit_table() {
 	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
-	$floorplan_image_urls = array_column( (array) rentfetch_get_floorplan_images(), 'url' );
+	$floorplan_images  = (array) rentfetch_get_floorplan_images();
 
 	// The Query.
 	$units_table_query = new WP_Query( $args );
@@ -1105,7 +1105,7 @@ function rentfetch_floorplan_unit_table() {
 
 			if ( $show_unit_images ) {
 				echo '<td class="unit-images">';
-					rentfetch_unit_image_gallery( null, 'table', $floorplan_image_urls );
+					rentfetch_unit_image_gallery( null, 'table', $floorplan_images );
 				echo '</td>';
 			}
 
@@ -1187,7 +1187,7 @@ function rentfetch_floorplan_unit_list() {
 	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
-	$floorplan_image_urls = array_column( (array) rentfetch_get_floorplan_images(), 'url' );
+	$floorplan_images  = (array) rentfetch_get_floorplan_images();
 
 	// The Query.
 	$units_list_query = new WP_Query( $args );
@@ -1230,7 +1230,7 @@ function rentfetch_floorplan_unit_list() {
 
 			if ( $show_unit_images ) {
 				echo '<li class="unit-images"><span class="label">Photos:</span> ';
-					rentfetch_unit_image_gallery( null, 'list', $floorplan_image_urls );
+					rentfetch_unit_image_gallery( null, 'list', $floorplan_images );
 				echo '</li>';
 			}
 

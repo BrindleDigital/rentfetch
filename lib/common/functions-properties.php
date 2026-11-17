@@ -171,6 +171,7 @@ function rentfetch_get_property_logo( $property_id = null, $css_class = '' ) {
 		false,
 		array(
 			'class' => trim( 'rentfetch-property-logo ' . $css_class ),
+			'alt'   => rentfetch_get_image_alt( get_post_meta( $logo_id, '_wp_attachment_image_alt', true ), get_the_title( $post_id ) ),
 		)
 	);
 

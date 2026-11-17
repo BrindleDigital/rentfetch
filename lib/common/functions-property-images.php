@@ -191,14 +191,15 @@ function rentfetch_get_property_images_rentmanager( $args ) {
 
 	foreach ( $source_images_array as $source_image ) {
 
-		$url = $source_image['File']['DownloadURL'];
-		$url = str_replace( '&#038;', '&', $url );
+		$url         = $source_image['File']['DownloadURL'];
+		$url         = str_replace( '&#038;', '&', $url );
+		$description = trim( (string) ( $source_image['File']['Description'] ?? '' ) );
 
 		$return_images[] = array(
 			'url'     => esc_url( $url ),
 			'title'   => esc_html( $source_image['ImageType']['Name'] ),
-			'alt'     => esc_html( $source_image['ImageType']['Description'] ),
-			'caption' => esc_html( $source_image['ImageType']['Description'] ),
+			'alt'     => '' !== $description ? $description : ( $source_image['Caption'] ?? '' ),
+			'caption' => $source_image['Caption'] ?? '',
 		);
 	}
 
@@ -240,7 +241,7 @@ function rentfetch_get_property_images_entrata( $args ) {
 		$return_images[] = array(
 			'url'     => esc_url( $url ),
 			'title'   => isset( $source_image['Name'] ) ? esc_html( $source_image['Name'] ) : null,
-			'alt'     => isset( $source_image['Description'] ) ? esc_html( $source_image['Description'] ) : null,
+			'alt'     => ! empty( trim( (string) ( $source_image['Description'] ?? '' ) ) ) ? $source_image['Description'] : ( $source_image['Caption'] ?? '' ),
 			'caption' => isset( $source_image['Caption'] ) ? esc_html( $source_image['Caption'] ) : null,
 		);
 	}
@@ -369,9 +370,7 @@ function rentfetch_property_images_grid( $args = null ) {
 	foreach ( $images as $index => $image ) {
 
 		// if there's no alt text, fall back to the property title.
-		if ( empty( $image['alt'] ) ) {
-			$image['alt'] = get_the_title();
-		}
+		$image['alt'] = rentfetch_get_image_alt( $image['alt'] ?? '', get_the_title() );
 
 		$loading  = 0 === $index ? 'eager' : 'lazy';
 		$priority = 0 === $index ? ' fetchpriority="high"' : '';
@@ -391,7 +390,7 @@ function rentfetch_property_images_grid( $args = null ) {
 			$srcset = sprintf( ' srcset="%s" sizes="%s"', esc_attr( rtrim( $srcset, ', ' ) ), esc_attr( $sizes ) );
 		}
 
-		printf( '<div class="image-item"><a class="property-image-grid-link" data-glightbox="type: image;" data-gallery="property-images-grid" href="%s"><img src="%s"%s alt="%s" title="%s" loading="%s" decoding="async"%s /></a></div>', esc_url( $image['url'] ), esc_url( $src ), $srcset, esc_html( $image['alt'] ), esc_html( $image['title'] ), esc_attr( $loading ), $priority ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		printf( '<div class="image-item"><a class="property-image-grid-link" data-glightbox="type: image;" data-gallery="property-images-grid" href="%s"><img src="%s"%s alt="%s" title="%s" loading="%s" decoding="async"%s /></a></div>', esc_url( $image['url'] ), esc_url( $src ), $srcset, esc_attr( $image['alt'] ), esc_html( $image['title'] ), esc_attr( $loading ), $priority ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	if ( $number_of_images > 1 ) {

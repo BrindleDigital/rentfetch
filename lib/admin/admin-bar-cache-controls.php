@@ -939,7 +939,7 @@ function rentfetch_admin_bar_cache_controls_styles() {
 			height: auto;
 			line-height: 1.2;
 			min-width: 220px;
-			padding-bottom: 1px;
+			padding-bottom: 6px;
 			padding-top: 0;
 			white-space: normal;
 			width: 100%;
@@ -963,6 +963,7 @@ function rentfetch_admin_bar_cache_controls_styles() {
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-line {
 			display: grid;
+			font-size: 12px;
 			grid-template-columns: minmax(0, 1fr);
 			row-gap: 1px;
 			width: 100%;
@@ -989,19 +990,20 @@ function rentfetch_admin_bar_cache_controls_styles() {
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-label {
 			display: block;
+			font-size: inherit;
 			line-height: 1.25;
 			white-space: nowrap;
 		}
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-sync {
-			align-items: center;
+			align-items: flex-start;
 			border-radius: 2px;
 			color: #a7aaad;
 			display: inline-flex;
 			flex-wrap: nowrap;
-			font-size: 9px;
+			font-size: 11px;
 			gap: 4px;
-			line-height: 1.05;
+			line-height: 1.35;
 			margin-top: 0;
 			max-width: 100%;
 			min-width: 0;
@@ -1014,14 +1016,19 @@ function rentfetch_admin_bar_cache_controls_styles() {
 		}
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-panel a.rentfetch-admin-bar-count-sync {
-			align-items: center;
+			align-items: flex-start;
 			display: inline-flex;
+			font-size: 11px;
+			line-height: 1.35;
 			min-width: 0;
 			padding: 0 2px 0 10px;
 			width: fit-content;
 		}
 
 		#wpadminbar #wp-admin-bar-rentfetch-admin-bar .rentfetch-admin-bar-count-sync-label {
+			/* Override WordPress admin bar typography on nested spans. */
+			font-size: inherit;
+			line-height: inherit;
 			min-width: 0;
 			overflow-wrap: anywhere;
 		}
@@ -1045,6 +1052,7 @@ function rentfetch_admin_bar_cache_controls_styles() {
 			flex: 0 0 auto;
 			height: 7px;
 			margin-left: 0;
+			margin-top: 4px;
 			vertical-align: middle;
 			width: 7px;
 		}

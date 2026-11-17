@@ -335,11 +335,11 @@ function rentfetch_single_floorplan_get_unit_mobile_availability( $availability 
  *
  * @param string[] $columns              Enabled unit columns.
  * @param bool     $show_unit_images     Whether the unit list includes photos.
- * @param string[] $floorplan_image_urls Floorplan image fallbacks.
+ * @param array[]  $floorplan_images    Floorplan image fallbacks.
  * @param array    $floorplan_attributes Floorplan attribute fallbacks.
  * @return array<string, mixed>
  */
-function rentfetch_single_floorplan_get_unit_mobile_context( $columns, $show_unit_images, $floorplan_image_urls, $floorplan_attributes = array() ) {
+function rentfetch_single_floorplan_get_unit_mobile_context( $columns, $show_unit_images, $floorplan_images, $floorplan_attributes = array() ) {
 	$beds    = rentfetch_get_unit_bedrooms();
 	$baths   = rentfetch_get_unit_bathrooms();
 	$context = array(
@@ -357,7 +357,8 @@ function rentfetch_single_floorplan_get_unit_mobile_context( $columns, $show_uni
 		'floor_number'         => rentfetch_get_unit_floor_number(),
 		'amenities'            => rentfetch_get_unit_amenities(),
 		'show_unit_images'     => $show_unit_images,
-		'floorplan_image_urls' => $floorplan_image_urls,
+		'floorplan_image_urls' => array_column( $floorplan_images, 'url' ),
+		'floorplan_images'     => $floorplan_images,
 	);
 
 	return apply_filters( 'rentfetch_single_floorplan_unit_mobile_context', $context, get_the_ID() );
@@ -408,7 +409,7 @@ function rentfetch_single_floorplan_unit_mobile_images( $context ) {
 	}
 
 	echo '<li class="unit-images"><span class="unit-detail-label label">Photos</span>';
-	rentfetch_unit_image_gallery( $context['unit_post_id'], 'list', $context['floorplan_image_urls'] );
+	rentfetch_unit_image_gallery( $context['unit_post_id'], 'list', $context['floorplan_images'] );
 	echo '</li>';
 }
 
@@ -554,7 +555,7 @@ function rentfetch_single_floorplan_unit_table() {
 	$columns        = rentfetch_floorplan_unit_display_get_columns( $args );
 	$post           = $floorplan_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	setup_postdata( $post );
-	$floorplan_image_urls = array_column( (array) rentfetch_get_floorplan_images(), 'url' );
+	$floorplan_images     = (array) rentfetch_get_floorplan_images();
 	$floorplan_attributes = array(
 		'beds'  => rentfetch_get_floorplan_bedrooms(),
 		'baths' => rentfetch_get_floorplan_bathrooms(),
@@ -636,7 +637,7 @@ function rentfetch_single_floorplan_unit_table() {
 						?>
 						<th class="unit-title" scope="row"><?php echo esc_html( rentfetch_get_unit_title() ); ?></th><?php endif; ?>
 					<?php if ( $show_unit_images ) : ?>
-						<td class="unit-images"><?php rentfetch_unit_image_gallery( null, 'table', $floorplan_image_urls ); ?></td>
+						<td class="unit-images"><?php rentfetch_unit_image_gallery( null, 'table', $floorplan_images ); ?></td>
 					<?php endif; ?>
 					<?php
 					if ( in_array( 'building_name', $columns, true ) ) :
@@ -689,7 +690,7 @@ function rentfetch_single_floorplan_unit_table() {
 			<?php
 			$post = $unit_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $post );
-			$unit_mobile_context = rentfetch_single_floorplan_get_unit_mobile_context( $columns, $show_unit_images, $floorplan_image_urls, $floorplan_attributes );
+			$unit_mobile_context = rentfetch_single_floorplan_get_unit_mobile_context( $columns, $show_unit_images, $floorplan_images, $floorplan_attributes );
 			?>
 			<details class="unit-details" name="rentfetch-floorplan-units-<?php echo (int) $floorplan_post->ID; ?>">
 				<summary class="unit-summary">
@@ -846,7 +847,7 @@ function rentfetch_single_floorplans_parts_gallery() {
 				$display_width = 0 === $index ? 900 : 600;
 				$display_url   = function_exists( 'rentfetch_get_resized_rentcafe_image_url' ) ? rentfetch_get_resized_rentcafe_image_url( $image_url, $display_width ) : $image_url;
 				$sample_url    = $image['thumbnail_url'] ?? $display_url;
-				$alt           = $image['alt'] ?? get_the_title();
+				$alt           = rentfetch_get_image_alt( $image['alt'] ?? '', get_the_title() );
 				$hidden_class  = $index > 2 ? ' is-lightbox-only' : '';
 				printf( '<div class="floorplan-gallery-image%s" data-floorplan-image-index="%s" data-floorplan-sample-src="%s">', esc_attr( $hidden_class ), (int) $index, esc_url( $sample_url ) );
 				printf( '<a class="floorplan-gallery-link" href="%s" data-glightbox="type: image;" data-gallery="floorplan-lower-gallery"><img src="%s" alt="%s" loading="lazy" decoding="async">', esc_url( $image_url ), esc_url( $display_url ), esc_attr( $alt ) );
