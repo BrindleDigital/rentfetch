@@ -1,5 +1,9 @@
 # Changes
 
+## 0.39.13
+
+* Fixed office-hours displays dropping minutes from manually entered and synced times in property shortcodes and sidebar dropdowns, while preserving compact whole-hour formatting.
+
 ## 0.39.12
 
 * Added an enabled-by-default setting and editable label for the single floor plan Available Units button, preserving its visibility on existing sites after updates.

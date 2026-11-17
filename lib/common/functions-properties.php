@@ -1215,8 +1215,8 @@ function rentfetch_get_property_office_hours_button( $property_id = null, $css_c
 		$office_hours_content     .= '<div class="office-hours-day">';
 			$office_hours_content .= '<span class="day-name">' . esc_html( ucfirst( $day ) . ':' ) . '</span> ';
 		if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
-			$start_time            = gmdate( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
-			$end_time              = gmdate( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
+			$start_time            = str_replace( ':00', '', gmdate( 'g:ia', strtotime( $office_hours[ $day ]['start'] ) ) );
+			$end_time              = str_replace( ':00', '', gmdate( 'g:ia', strtotime( $office_hours[ $day ]['end'] ) ) );
 			$office_hours_content .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
 		} else {
 			$office_hours_content .= '<span class="day-hours">Closed</span>';
@@ -3934,8 +3934,8 @@ function rentfetch_get_property_office_hours( $property_id = null, $include_head
 		$output     .= '<div class="office-hours-day">';
 			$output .= '<span class="day-name">' . esc_html( ucfirst( $day ) . ':' ) . '</span> ';
 		if ( isset( $office_hours[ $day ] ) && ! empty( $office_hours[ $day ]['start'] ) && ! empty( $office_hours[ $day ]['end'] ) ) {
-			$start_time = gmdate( 'ga', strtotime( $office_hours[ $day ]['start'] ) );
-			$end_time   = gmdate( 'ga', strtotime( $office_hours[ $day ]['end'] ) );
+			$start_time = str_replace( ':00', '', gmdate( 'g:ia', strtotime( $office_hours[ $day ]['start'] ) ) );
+			$end_time   = str_replace( ':00', '', gmdate( 'g:ia', strtotime( $office_hours[ $day ]['end'] ) ) );
 			$output    .= '<span class="day-hours">' . esc_html( $start_time . ' to ' . $end_time ) . '</span>';
 		} else {
 			$output .= '<span class="day-hours">Closed</span>';
