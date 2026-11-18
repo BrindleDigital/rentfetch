@@ -1,5 +1,9 @@
 # Changes
 
+## 0.39.14
+
+* Added property-wide Yardi floor-plan API failure details to monitoring, including the specific API, endpoint, error, affected plans, and timezone-aware timestamps, while suppressing older errors after a successful full refresh.
+
 ## 0.39.13
 
 * Fixed office-hours displays dropping minutes from manually entered and synced times in property shortcodes and sidebar dropdowns, while preserving compact whole-hour formatting.

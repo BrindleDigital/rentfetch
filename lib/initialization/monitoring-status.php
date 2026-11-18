@@ -462,6 +462,7 @@ function rentfetch_get_monitoring_property_rollups() {
 		$floorplan_ids   = isset( $floorplan_groups[ $property_id ] ) ? $floorplan_groups[ $property_id ] : array();
 		$unit_ids        = isset( $unit_groups[ $property_id ] ) ? $unit_groups[ $property_id ] : array();
 		$property_health = rentfetch_get_monitoring_record_health( $post_id, $sync_state );
+		$endpoint_errors = rentfetch_get_monitoring_floorplan_errors( $post_id, $floorplan_ids );
 		$rollups[]       = array(
 			'post_id'           => (int) $post_id,
 			'property_id'       => $property_id,
@@ -471,7 +472,8 @@ function rentfetch_get_monitoring_property_rollups() {
 			'health'            => $property_health,
 			'last_attempt_at'   => (string) get_post_meta( $post_id, 'last_sync_attempt_at', true ),
 			'last_success_at'   => (string) get_post_meta( $post_id, 'last_synced_at', true ),
-			'failing_endpoints' => rentfetch_get_monitoring_property_related_failing_endpoints( $sync_status, $floorplan_ids, $unit_ids ),
+			'failing_endpoints' => array_values( array_unique( array_merge( rentfetch_get_monitoring_property_related_failing_endpoints( $sync_status, $floorplan_ids, $unit_ids ), array_keys( $endpoint_errors ) ) ) ),
+			'endpoint_errors'   => $endpoint_errors,
 			'floorplans'        => rentfetch_get_monitoring_summary_for_post_ids( $floorplan_ids ),
 			'units'             => rentfetch_get_monitoring_summary_for_post_ids( $unit_ids ),
 		);
@@ -495,6 +497,59 @@ function rentfetch_get_monitoring_property_rollups() {
 	);
 
 	return $rollups;
+}
+
+/**
+ * Export a failed property-wide floorplan request without exposing raw API data.
+ * Old snapshots can survive recovery, so ignore failures older than every plan's success.
+ *
+ * @param int   $post_id       Property post ID.
+ * @param int[] $floorplan_ids Related floorplan post IDs.
+ * @return array
+ */
+function rentfetch_get_monitoring_floorplan_errors( $post_id, $floorplan_ids ) {
+	if ( 'yardi' !== get_post_meta( $post_id, 'property_source', true ) ) {
+		return array();
+	}
+	$responses = get_post_meta( $post_id, 'api_response', true );
+	$response  = is_array( $responses ) ? ( $responses['floorplans_api'] ?? null ) : null;
+	if ( ! is_array( $response ) ) {
+		return array();
+	}
+	$failed_reasons = array( 'missing_credentials', 'request_error', 'unexpected_response_code', 'invalid_json', 'missing_floorplan_ids', 'missing_floorplans_key', 'blank_response' );
+	$status = (int) ( $response['status_code'] ?? 0 );
+	if ( 204 === $status || ( $status < 400 && ! in_array( $response['reason'] ?? '', $failed_reasons, true ) ) ) {
+		return array();
+	}
+
+	$attempt = (string) ( $response['updated'] ?? '' );
+	$oldest_success = '';
+	foreach ( $floorplan_ids as $floorplan_id ) {
+		$success = (string) get_post_meta( $floorplan_id, 'last_synced_at', true );
+		if ( '' === $success ) {
+			$oldest_success = '';
+			break;
+		}
+		if ( '' === $oldest_success || $success < $oldest_success ) {
+			$oldest_success = $success;
+		}
+	}
+	if ( '' !== $attempt && '' !== $oldest_success && $oldest_success > $attempt ) {
+		return array();
+	}
+
+	$decoded = json_decode( (string) ( $response['api_response'] ?? '' ), true );
+	$message = is_array( $decoded ) && is_string( $decoded['errorMessage'] ?? null ) ? $decoded['errorMessage'] : '';
+	return array( 'floorplans_api' => array(
+		'api'              => 'Yardi/RentCafe Floor Plans',
+		'endpoint'         => '/floorplan/getfloorplans',
+		'status_code'      => $status,
+		'message'          => mb_substr( sanitize_text_field( $message ), 0, 500 ),
+		'reason'           => sanitize_key( $response['reason'] ?? '' ),
+		'last_attempt_at'  => '' !== $attempt ? get_gmt_from_date( $attempt, 'c' ) : '',
+		'last_success_at'  => '' !== $oldest_success ? get_gmt_from_date( $oldest_success, 'c' ) : '',
+		'affected_records' => count( $floorplan_ids ),
+	) );
 }
 
 /**
