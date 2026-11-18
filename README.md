@@ -90,3 +90,7 @@ Custom fields must use their own save handler, nonce, permission checks, and san
 
 -   single-properties.php (override this in your theme if you like by dropping a file into your main theme directory)
 -   single-floorplans.php (override this in your theme if you like by dropping a file into your main theme directory, currently not used for anything)
+
+## Releasing
+
+See [RELEASING.md](RELEASING.md) for tag-triggered WordPress.org publishing, required version checks, and the marketing-site change-note checklist.

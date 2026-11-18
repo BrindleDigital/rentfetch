@@ -1,0 +1,66 @@
+name: Publish to WordPress.org
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+      - 'v[0-9]*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wordpress-org-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the tagged release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate release versions
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          php <<'PHP'
+          <?php
+          $tag = getenv( 'RELEASE_TAG' );
+          if ( ! preg_match( '/^v?(\d+\.\d+\.\d+)$/', $tag, $match ) ) {
+              fwrite( STDERR, "Use a release tag such as 0.39.15 or v0.39.15.\n" );
+              exit( 1 );
+          }
+          $version = $match[1];
+          $plugin = file_get_contents( 'rentfetch.php' );
+          $readme = file_get_contents( 'readme.txt' );
+          $checks = array(
+              'Plugin header' => preg_match( '/^\s*\* Version:\s*(\S+)/m', $plugin, $header ) ? $header[1] : '',
+              'Version constant' => preg_match( "/define\(\s*'RENTFETCH_VERSION',\s*'([^']+)'\s*\)/", $plugin, $constant ) ? $constant[1] : '',
+              'Stable tag' => preg_match( '/^Stable tag:\s*(\S+)/m', $readme, $stable ) ? $stable[1] : '',
+          );
+          foreach ( $checks as $label => $actual ) {
+              if ( $actual !== $version ) {
+                  fwrite( STDERR, "$label ($actual) does not match release tag ($version).\n" );
+                  exit( 1 );
+              }
+          }
+          echo "Release versions match $version.\n";
+          PHP
+
+      - name: Check PHP syntax and standalone regressions
+        run: |
+          php -l rentfetch.php
+          find lib -type f -name '*.php' -print0 | xargs -0 -n 1 php -l
+          php -d zend.assertions=1 -d assert.exception=1 tests/test-office-hours.php
+          php -d zend.assertions=1 -d assert.exception=1 tests/test-synced-tours.php
+          php -d zend.assertions=1 -d assert.exception=1 tests/test-image-alt.php
+
+      - name: Publish the tag to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
+        env:
+          SLUG: rentfetch
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}

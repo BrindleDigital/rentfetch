@@ -21,3 +21,7 @@
 /vendor/wp-coding-standards
 /webpack.mix.js
 **/.DS_Store
+
+/.github
+/tests
+/RELEASING.md
