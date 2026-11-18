@@ -59,6 +59,11 @@ The marketing site's WordPress credentials are separate from WordPress.org SVN.
 
    Both `0.39.15` and `v0.39.15` are accepted. The tag's numeric version must match
    all three version fields. Do not move or re-push an existing release tag.
+   For a prepared tag that predates this workflow, or an explicitly authorized
+   retry, use **Actions → Publish to WordPress.org → Run workflow** on `main` and
+   enter the existing Git tag as `release_tag`. This publishes that tag's exact
+   commit; it does not move the Git tag or publish the latest `main` code instead.
+
 3. Check **Actions → Publish to WordPress.org**. The workflow deploys the tagged
    commit, not whatever happens to be on `main` afterward. The existing `.distignore`
    determines the release package; committed runtime assets are shipped without
@@ -74,7 +79,6 @@ The marketing site's WordPress credentials are separate from WordPress.org SVN.
    version, product taxonomy, public status, and URL, and report the link. If the
    release remains private or is postponed, keep the note as a draft and say so.
 
-Adding this workflow does not publish tags that were already pushed. The release
-tag must include the workflow files; an older tagged commit without them does not
-acquire the workflow retroactively. Marketing notes are deliberately a separate
+Adding this workflow does not publish tags that were already pushed. Automatic tag-triggered runs require the workflow to be present in the tagged
+commit. Use the manual existing-tag option above for an older tag; do not move it. Marketing notes are deliberately a separate
 human/agent step, not an automatic side effect of the WordPress.org deployment.

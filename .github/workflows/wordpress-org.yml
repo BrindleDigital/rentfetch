@@ -1,6 +1,12 @@
 name: Publish to WordPress.org
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing Git version tag to publish
+        required: true
+        type: string
   push:
     tags:
       - '[0-9]*'
@@ -21,10 +27,12 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          ref: ${{ inputs.release_tag || github.ref }}
 
       - name: Validate release versions
+        id: versions
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
           php <<'PHP'
           <?php
@@ -47,6 +55,7 @@ jobs:
                   exit( 1 );
               }
           }
+          file_put_contents( getenv( 'GITHUB_OUTPUT' ), "version=$version\n", FILE_APPEND );
           echo "Release versions match $version.\n";
           PHP
 
@@ -62,5 +71,6 @@ jobs:
         uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
         env:
           SLUG: rentfetch
+          VERSION: ${{ steps.versions.outputs.version }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
