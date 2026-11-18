@@ -64,7 +64,11 @@ The marketing site's WordPress credentials are separate from WordPress.org SVN.
    enter the existing Git tag as `release_tag`. This publishes that tag's exact
    commit; it does not move the Git tag or publish the latest `main` code instead.
 
-3. Check **Actions → Publish to WordPress.org**. The workflow deploys the tagged
+3. **Share the direct GitHub Actions run URL immediately after starting a release.**
+   Give the person releasing it a clickable link in the progress update so they can
+   follow the run without searching GitHub. Do not wait until it finishes to share
+   the link. Include the same run link again when reporting the final outcome.
+   Check **Actions → Publish to WordPress.org**. The workflow deploys the tagged
    commit, not whatever happens to be on `main` afterward. The existing `.distignore`
    determines the release package; committed runtime assets are shipped without
    rebuilding them. SVN directory assets are left intact unless a `.wordpress-org`
