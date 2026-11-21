@@ -21,6 +21,7 @@ function rentfetch_get_unit_source_options( $post_id ) {
 	$source_labels   = apply_filters(
 		'rentfetch_unit_source_labels',
 		array(
+			'rentegi'     => 'RentEGI',
 			'engrain'     => 'Engrain / SightMap',
 			'entrata'     => 'Entrata',
 			'realpage'    => 'RealPage',
@@ -81,12 +82,16 @@ function rentfetch_get_unit_floorplan_options() {
 		}
 
 		$title     = get_the_title( $floorplan );
+		$parent_post_id = rentfetch_get_parent_property_post_id( $floorplan->ID );
+		$source_options = rentfetch_get_floorplan_source_options( $floorplan->ID );
+		$source_label = $source_options[ rentfetch_get_record_source( $floorplan->ID ) ] ?? 'Manual';
 		$options[] = array(
 			'id'           => $floorplan->ID,
 			'floorplan_id' => $floorplan_id,
 			'property_id'  => $property_id,
+			'property_post_id' => $parent_post_id,
 			'title'        => $title,
-			'label'        => sprintf( '%1$s — ID: %2$s', $title, $floorplan_id ),
+			'label'        => sprintf( '%1$s — %2$s (%3$s) — ID: %4$s', $title, $parent_post_id ? get_the_title( $parent_post_id ) : 'Unlinked property', $source_label, $floorplan_id ),
 		);
 	}
 
@@ -107,9 +112,12 @@ function rentfetch_render_unit_identity_bar( $post ) {
 	$source_options    = rentfetch_get_unit_source_options( $post->ID );
 	$property_options  = rentfetch_get_floorplan_property_options();
 	$floorplan_options = rentfetch_get_unit_floorplan_options();
+	$parent_plan_post_id = rentfetch_resolve_floorplan_post_id( $post->ID );
+	$parent_property_post_id = rentfetch_get_parent_property_post_id( $post->ID );
 	$property_found    = false;
 	$floorplan_found   = false;
 	?>
+	<input type="hidden" name="rentfetch_floorplan_post_id" value="<?php echo esc_attr( $parent_plan_post_id ); ?>">
 	<div class="rf-property-identity rf-unit-identity" data-rf-unit-identity>
 		<div class="rf-property-identity-item rf-property-identity-source">
 			<div class="rf-property-identity-label-row">
@@ -139,9 +147,9 @@ function rentfetch_render_unit_identity_bar( $post ) {
 					<select id="property_id" name="property_id" required>
 						<option value="">Select a property</option>
 						<?php foreach ( $property_options as $property_option ) : ?>
-							<?php $selected_property = $property_id === $property_option['property_id']; ?>
+							<?php $selected_property = $parent_property_post_id === (int) $property_option['id']; ?>
 							<?php $property_found = $property_found || $selected_property; ?>
-							<option value="<?php echo esc_attr( $property_option['property_id'] ); ?>" <?php selected( $selected_property ); ?>><?php echo esc_html( $property_option['label'] ); ?></option>
+							<option value="<?php echo esc_attr( $property_option['property_id'] ); ?>" data-property-post-id="<?php echo esc_attr( $property_option['id'] ); ?>" <?php selected( $selected_property ); ?>><?php echo esc_html( $property_option['label'] ); ?></option>
 						<?php endforeach; ?>
 						<?php if ( '' !== $property_id && ! $property_found ) : ?>
 							<option value="<?php echo esc_attr( $property_id ); ?>" selected>Unknown property — ID: <?php echo esc_html( $property_id ); ?></option>
@@ -164,11 +172,13 @@ function rentfetch_render_unit_identity_bar( $post ) {
 					<select id="floorplan_id" name="floorplan_id" required>
 						<option value="">Select a floor plan</option>
 						<?php foreach ( $floorplan_options as $floorplan_option ) : ?>
-							<?php $selected_floorplan = $floorplan_id === $floorplan_option['floorplan_id']; ?>
+							<?php $selected_floorplan = $parent_plan_post_id === (int) $floorplan_option['id']; ?>
 							<?php $floorplan_found = $floorplan_found || $selected_floorplan; ?>
 							<option
 								value="<?php echo esc_attr( $floorplan_option['floorplan_id'] ); ?>"
 								data-property-id="<?php echo esc_attr( $floorplan_option['property_id'] ); ?>"
+								data-floorplan-post-id="<?php echo esc_attr( $floorplan_option['id'] ); ?>"
+								data-property-post-id="<?php echo esc_attr( $floorplan_option['property_post_id'] ?? 0 ); ?>"
 								<?php selected( $selected_floorplan ); ?>
 							><?php echo esc_html( $floorplan_option['label'] ); ?></option>
 						<?php endforeach; ?>

@@ -57,7 +57,7 @@ function rentfetch_single_properties_parts_floorplans() {
 			),
 		);
 
-		$floorplans_query = new WP_Query( $args );
+		$floorplans_query = new WP_Query( rentfetch_get_property_floorplan_query_args( (int) $id, $args ) );
 
 		if ( $floorplans_query->have_posts() ) {
 
@@ -108,19 +108,7 @@ function rentfetch_maybe_property_part_floorplans() {
 	}
 
 	// bail if this property doesn't have any floorplans.
-	$floorplans = get_posts(
-		array(
-			'post_type'      => 'floorplans',
-			'posts_per_page' => -1,
-			'meta_query'     => array(
-				array(
-					'key'     => 'property_id',
-					'value'   => get_post_meta( get_the_ID(), 'property_id', true ),
-					'compare' => '=',
-				),
-			),
-		)
-	);
+	$floorplans = get_posts( rentfetch_get_property_floorplan_query_args( get_the_ID(), array( 'posts_per_page' => -1, 'fields' => 'ids' ) ) );
 
 	if ( ! $floorplans ) {
 		return false;

@@ -21,6 +21,7 @@ function apply_filters( $hook, $value ) { return $value; }
 function get_the_ID() { return 1; }
 function get_the_title( $id = null ) { return 2 === $id ? 'Birch floor plan' : 'Apartment 101'; }
 function get_posts() { return array( 2 ); }
+function rentfetch_resolve_floorplan_post_id( $unit_id ) { return 2; }
 function get_post_meta( $id, $key, $single = true ) { return $GLOBALS['image_test_meta'][ $key ] ?? ''; }
 
 require dirname( __DIR__ ) . '/lib/common/functions-image-alt.php';

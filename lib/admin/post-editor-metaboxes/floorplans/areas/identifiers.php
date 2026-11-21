@@ -21,6 +21,7 @@ function rentfetch_get_floorplan_source_options( $post_id ) {
 	$source_labels   = apply_filters(
 		'rentfetch_floorplan_source_labels',
 		array(
+			'rentegi'     => 'RentEGI',
 			'engrain'     => 'Engrain / SightMap',
 			'entrata'     => 'Entrata',
 			'realpage'    => 'RealPage',

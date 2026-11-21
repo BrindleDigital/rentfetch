@@ -29,26 +29,19 @@ function rentfetch_should_show_property_fees() {
  * @param string $property_id The property_id meta value.
  * @return int|null The post ID if found, null otherwise.
  */
-function rentfetch_get_post_id_from_property_id( $property_id ) {
-	if ( ! $property_id ) {
-		return null;
+function rentfetch_get_post_id_from_property_id( $property_id, $source = null ) {
+	if ( null === $property_id || '' === trim( (string) $property_id ) ) { return null; }
+	$current = get_the_ID();
+	if ( $current && (string) get_post_meta( $current, 'property_id', true ) === (string) $property_id ) {
+		$parent = rentfetch_get_parent_property_post_id( $current );
+		if ( $parent && ( null === $source || rentfetch_get_record_source( $parent ) === rentfetch_normalize_record_source( $source ) ) ) {
+			return $parent;
+		}
 	}
-
-	$args = array(
-		'post_type'      => 'properties',
-		'meta_key'       => 'property_id',
-		'meta_value'     => $property_id,
-		'posts_per_page' => 1,
-		'fields'         => 'ids',
-	);
-
-	$posts = get_posts( $args );
-
-	if ( ! empty( $posts ) ) {
-		return $posts[0];
-	}
-
-	return null;
+	$index = rentfetch_get_relationship_index();
+	$matches = null === $source ? ( $index['properties'][ $property_id ] ?? array() )
+		: ( $index['properties_source'][ wp_json_encode( array( rentfetch_normalize_record_source( $source ), (string) $property_id ) ) ] ?? array() );
+	return 1 === count( $matches ) ? $matches[0] : null;
 }
 
 /**
@@ -71,7 +64,7 @@ function rentfetch_properties_post_classes( $classes, $property_id = null ) {
 	}
 
 	$property_id_meta = esc_html( get_post_meta( $post_id, 'property_id', true ) );
-	$floorplan_data   = rentfetch_get_floorplans( $property_id_meta );
+	$floorplan_data   = rentfetch_get_floorplans( $property_id_meta, $post_id );
 
 	if ( isset( $floorplan_data['availability'] ) ) {
 		$units_count = $floorplan_data['availability'];
@@ -2632,7 +2625,7 @@ function rentfetch_get_effective_property_special( $property_id = null ) {
 		return null;
 	}
 
-	$floorplan_data     = rentfetch_get_floorplans( $property_id_meta );
+	$floorplan_data     = rentfetch_get_floorplans( $property_id_meta, $post_id );
 	$floorplan_specials = isset( $floorplan_data['property_specials'] ) && is_array( $floorplan_data['property_specials'] )
 		? array_values( array_filter( $floorplan_data['property_specials'] ) )
 		: array();

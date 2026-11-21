@@ -77,8 +77,8 @@ function rentfetch_sort_property_posts( $posts, $sort ) {
 				return strcasecmp( $a->post_title, $b->post_title );
 			}
 
-			$a_floorplans = rentfetch_get_floorplans( get_post_meta( $a->ID, 'property_id', true ) );
-			$b_floorplans = rentfetch_get_floorplans( get_post_meta( $b->ID, 'property_id', true ) );
+			$a_floorplans = rentfetch_get_floorplans( get_post_meta( $a->ID, 'property_id', true ), $a->ID );
+			$b_floorplans = rentfetch_get_floorplans( get_post_meta( $b->ID, 'property_id', true ), $b->ID );
 			if ( 'availability' === $sort ) {
 				$comparison = (int) ( $b_floorplans['availability'] ?? 0 ) <=> (int) ( $a_floorplans['availability'] ?? 0 );
 			} else {

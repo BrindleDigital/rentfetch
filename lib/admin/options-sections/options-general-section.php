@@ -637,19 +637,6 @@ function rentfetch_save_settings_general_data_sync() {
 	}
 
 	// Textarea field.
-	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_voyager_code'] ) ) {
-		$options_yardi_integration_creds_yardi_voyager_code = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_voyager_code'] ) );
-
-		// Remove all whitespace.
-		$options_yardi_integration_creds_yardi_voyager_code = preg_replace( '/\s+/', '', $options_yardi_integration_creds_yardi_voyager_code );
-
-		// Add a space after each comma.
-		$options_yardi_integration_creds_yardi_voyager_code = preg_replace( '/,/', ', ', $options_yardi_integration_creds_yardi_voyager_code );
-
-		update_option( 'rentfetch_options_yardi_integration_creds_yardi_voyager_code', $options_yardi_integration_creds_yardi_voyager_code );
-	}
-
-	// Textarea field.
 	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_property_code'] ) ) {
 		$options_yardi_integration_creds_yardi_property_code = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_property_code'] ) );
 
@@ -680,6 +667,12 @@ function rentfetch_save_settings_general_data_sync() {
 	if ( isset( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) ) {
 		$options_yardi_integration_creds_yardi_password = sanitize_text_field( wp_unslash( $_POST['rentfetch_options_yardi_integration_creds_yardi_password'] ) );
 		update_option( 'rentfetch_options_yardi_integration_creds_yardi_password', $options_yardi_integration_creds_yardi_password );
+	}
+
+	if ( isset( $_POST['rentfetch_options_rentegi_property_codes'] ) ) {
+		$codes = preg_split( '/[\s,]+/', sanitize_text_field( wp_unslash( $_POST['rentfetch_options_rentegi_property_codes'] ) ), -1, PREG_SPLIT_NO_EMPTY );
+		$codes = array_values( array_unique( array_filter( $codes, static function( $code ) { return 1 === preg_match( '/^[A-Za-z0-9_-]{1,64}$/D', $code ); } ) ) );
+		update_option( 'rentfetch_options_rentegi_property_codes', implode( ', ', $codes ) );
 	}
 
 	// Engrain asset IDs.

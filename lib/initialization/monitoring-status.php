@@ -459,10 +459,11 @@ function rentfetch_get_monitoring_property_rollups() {
 		$property_id     = (string) get_post_meta( $post_id, 'property_id', true );
 		$sync_state      = rentfetch_get_monitoring_sync_state_label( $post_id );
 		$sync_status     = rentfetch_get_monitoring_sync_status_map( $post_id );
-		$floorplan_ids   = isset( $floorplan_groups[ $property_id ] ) ? $floorplan_groups[ $property_id ] : array();
-		$unit_ids        = isset( $unit_groups[ $property_id ] ) ? $unit_groups[ $property_id ] : array();
+		$group_key = rentfetch_get_property_group_key( $property_id, $post_id );
+		$floorplan_ids   = $floorplan_groups[ $group_key ] ?? array();
+		$unit_ids        = $unit_groups[ $group_key ] ?? array();
 		$property_health = rentfetch_get_monitoring_record_health( $post_id, $sync_state );
-		$endpoint_errors = rentfetch_get_monitoring_floorplan_errors( $post_id, $floorplan_ids );
+		$endpoint_errors = rentfetch_get_monitoring_endpoint_errors( $post_id, $floorplan_ids, $unit_ids );
 		$rollups[]       = array(
 			'post_id'           => (int) $post_id,
 			'property_id'       => $property_id,
@@ -577,6 +578,11 @@ function rentfetch_get_monitoring_child_posts_grouped_by_property( $post_type ) 
 			continue;
 		}
 
+		$parent = rentfetch_get_parent_property_post_id( $post_id );
+		$index = rentfetch_get_relationship_index();
+		if ( ! $parent && ! empty( $index['properties'][ $property_id ] ) ) { continue; }
+		$property_id = rentfetch_get_property_group_key( $property_id, $parent );
+		if ( '' === $property_id ) { continue; }
 		if ( ! isset( $grouped[ $property_id ] ) ) {
 			$grouped[ $property_id ] = array();
 		}

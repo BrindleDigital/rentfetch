@@ -147,6 +147,8 @@
 		var dialog = document.querySelector('[data-rf-unit-relationship-dialog]');
 		var originalPropertyId = $propertySelect.val();
 		var originalFloorplanId = $floorplanSelect.val();
+		var originalPropertyIndex = $propertySelect.prop('selectedIndex');
+		var originalFloorplanIndex = $floorplanSelect.prop('selectedIndex');
 		var relationshipsUnlocked =
 			!originalPropertyId && !originalFloorplanId;
 		var resetSearches = function () {};
@@ -161,8 +163,8 @@
 		}
 
 		function restoreRelationships() {
-			$propertySelect.val(originalPropertyId);
-			$floorplanSelect.val(originalFloorplanId);
+			$propertySelect.prop('selectedIndex', originalPropertyIndex);
+			$floorplanSelect.prop('selectedIndex', originalFloorplanIndex).trigger('change');
 			resetSearches();
 		}
 
@@ -202,6 +204,8 @@
 					return {
 						label: $(this).text(),
 						value: this.value,
+						optionIndex: this.index,
+						propertyPostId: $(this).attr('data-property-post-id') || '',
 						propertyId: $(this).attr('data-property-id') || '',
 					};
 				})
@@ -236,7 +240,7 @@
 						);
 					},
 					select: function (event, ui) {
-						$select.val(ui.item.value).trigger('change');
+						$select.prop('selectedIndex', ui.item.optionIndex).trigger('change');
 						$search.val(ui.item.label);
 						if ('function' === typeof afterSelect) {
 							afterSelect(ui.item);
@@ -294,10 +298,10 @@
 
 				if (
 					$floorplanSelect.val() &&
-					selectedFloorplan.attr('data-property-id') !==
-						$propertySelect.val()
+					selectedFloorplan.attr('data-property-post-id') !==
+						$propertySelect.find('option:selected').attr('data-property-post-id')
 				) {
-					$floorplanSelect.val('');
+					$floorplanSelect.val('').trigger('change');
 					resetSearches();
 				}
 			}
@@ -307,7 +311,7 @@
 			function (choice) {
 				return (
 					!$propertySelect.val() ||
-					choice.propertyId === $propertySelect.val()
+					choice.propertyPostId === $propertySelect.find('option:selected').attr('data-property-post-id')
 				);
 			}
 		);
@@ -317,6 +321,11 @@
 			resetFloorplan();
 		};
 
+		$floorplanSelect.on('change', function () {
+			$identity.closest('form').find('[name=rentfetch_floorplan_post_id]').val(
+				$floorplanSelect.find('option:selected').attr('data-floorplan-post-id') || ''
+			);
+		});
 		bindDialog(dialog, unlockRelationships, restoreRelationships);
 	}
 

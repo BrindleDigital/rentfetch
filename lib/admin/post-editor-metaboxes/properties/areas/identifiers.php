@@ -22,6 +22,7 @@ function rentfetch_render_property_identity_bar( $post ) {
 	$source_labels   = apply_filters(
 		'rentfetch_property_source_labels',
 		array(
+			'rentegi'     => 'RentEGI',
 			'engrain'     => 'Engrain / SightMap',
 			'entrata'     => 'Entrata',
 			'rentmanager' => 'Rent Manager',

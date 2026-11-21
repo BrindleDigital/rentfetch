@@ -34,6 +34,8 @@ function rentfetch_property_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_rentmanager', $array_fields, $post_id );
 	} elseif ( 'entrata' === $property_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_entrata', $array_fields, $post_id );
+	} elseif ( 'rentegi' === $property_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_rentegi', $array_fields, $post_id );
 	} elseif ( 'engrain' === $property_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_property_syncing_fields_engrain', $array_fields, $post_id );
 	}
@@ -172,3 +174,9 @@ function rentfetch_property_syncing_fields_realpage( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_property_syncing_fields_realpage', 'rentfetch_property_syncing_fields_realpage', 10, 2 );
+
+/** Fields supplied by the RentEGI MITS feed; media and other manual fields stay editable. */
+function rentfetch_property_syncing_fields_rentegi( $array_fields, $post_id ) {
+	return array( 'title', 'property_id', 'address', 'city', 'state', 'zipcode', 'email', 'phone' );
+}
+add_filter( 'rentfetch_filter_property_syncing_fields_rentegi', 'rentfetch_property_syncing_fields_rentegi', 10, 2 );

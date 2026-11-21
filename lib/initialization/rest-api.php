@@ -374,7 +374,8 @@ function rentfetch_rest_search_properties( $request ) {
 		rentfetch_set_floorplans();
 	}
 
-	$property_ids = rentfetch_get_property_ids_with_available_floorplans();
+	$matched_property_post_ids = rentfetch_get_property_ids_with_available_floorplans( array(), true );
+	$property_ids = array_values( array_unique( array_map( static function( $post_id ) { return (string) get_post_meta( $post_id, 'property_id', true ); }, $matched_property_post_ids ) ) );
 	if ( empty( $property_ids ) ) {
 		$property_ids = array( '1' ); // if there aren't any properties, we shouldn't find anything.
 	}
@@ -436,6 +437,10 @@ function rentfetch_rest_search_properties( $request ) {
 				'value' => $property_ids,
 			),
 		);
+	}
+
+	if ( 'all' !== $display_availability || ! isset( $atts['propertyids'] ) ) {
+		$property_args['post__in'] = $matched_property_post_ids ?: array( 0 );
 	}
 
 	// Apply filters (this allows all the filter hooks to modify the query).

@@ -176,26 +176,7 @@ function rentfetch_unit_image_gallery( $unit_post_id = null, $context = 'table',
  * @return int|null Property post ID when found, null otherwise.
  */
 function rentfetch_get_connected_property_post_id_for_unit( $unit_post_id = null ) {
-	if ( ! $unit_post_id ) {
-		$unit_post_id = get_the_ID();
-	}
-
-	$unit_post_id = (int) $unit_post_id;
-	if ( $unit_post_id <= 0 ) {
-		return null;
-	}
-
-	$property_id = trim( (string) get_post_meta( $unit_post_id, 'property_id', true ) );
-	if ( '' === $property_id || ! function_exists( 'rentfetch_get_post_id_from_property_id' ) ) {
-		return null;
-	}
-
-	$property_post_id = (int) rentfetch_get_post_id_from_property_id( $property_id );
-	if ( $property_post_id <= 0 ) {
-		return null;
-	}
-
-	return $property_post_id;
+	return rentfetch_get_parent_property_post_id( $unit_post_id ?: get_the_ID() ) ?: null;
 }
 
 /**
@@ -205,50 +186,7 @@ function rentfetch_get_connected_property_post_id_for_unit( $unit_post_id = null
  * @return int|null
  */
 function rentfetch_get_connected_floorplan_post_id_for_unit( $unit_post_id = null ) {
-	if ( ! $unit_post_id ) {
-		$unit_post_id = get_the_ID();
-	}
-
-	$unit_post_id = (int) $unit_post_id;
-	$floorplan_id = trim( (string) get_post_meta( $unit_post_id, 'floorplan_id', true ) );
-	$property_id  = trim( (string) get_post_meta( $unit_post_id, 'property_id', true ) );
-	$unit_source  = trim( (string) get_post_meta( $unit_post_id, 'unit_source', true ) );
-	if ( $unit_post_id <= 0 || '' === $floorplan_id || '' === $property_id ) {
-		return null;
-	}
-
-	$meta_query = array(
-		'relation' => 'AND',
-		array(
-			'key'     => 'floorplan_id',
-			'value'   => $floorplan_id,
-			'compare' => '=',
-		),
-		array(
-			'key'     => 'property_id',
-			'value'   => $property_id,
-			'compare' => '=',
-		),
-	);
-	if ( '' !== $unit_source ) {
-		$meta_query[] = array(
-			'key'     => 'floorplan_source',
-			'value'   => $unit_source,
-			'compare' => '=',
-		);
-	}
-
-	$floorplan_ids = get_posts(
-		array(
-			'post_type'      => 'floorplans',
-			'post_status'    => 'any',
-			'posts_per_page' => 1,
-			'fields'         => 'ids',
-			'meta_query'     => $meta_query,
-		)
-	);
-
-	return empty( $floorplan_ids ) ? null : (int) $floorplan_ids[0];
+	return rentfetch_resolve_floorplan_post_id( $unit_post_id ?: get_the_ID() ) ?: null;
 }
 
 /**
@@ -609,41 +547,8 @@ function rentfetch_get_floorplan_units_count_from_meta() {
  * @return int the unit count.
  */
 function rentfetch_get_floorplan_units_count_from_cpt() {
-
-	$floorplan_wordpress_id = get_the_ID();
-	$floorplan_id           = get_post_meta( $floorplan_wordpress_id, 'floorplan_id', true );
-	$property_id            = get_post_meta( $floorplan_wordpress_id, 'property_id', true );
-
-	if ( ! $floorplan_id ) {
-		return null;
-	}
-
-	// set up the args for the query. We need units that match both the property and floorplan.
-	$args = array(
-		'post_type'      => 'units',
-		'posts_per_page' => -1,
-		'fields'         => 'ids',
-		'status'         => 'publish',
-		'meta_query'     => array(
-			'relation' => 'AND',
-			array(
-				'key'     => 'floorplan_id',
-				'value'   => $floorplan_id,
-				'compare' => '=',
-			),
-			array(
-				'key'     => 'property_id',
-				'value'   => $property_id,
-				'compare' => '=',
-			),
-		),
-	);
-
-	$posts = get_posts( $args );
-
-	$count = count( $posts );
-
-	return (int) $count;
+	$args = rentfetch_get_floorplan_unit_query_args( get_the_ID(), array( 'posts_per_page' => -1, 'fields' => 'ids' ) );
+	return count( get_posts( $args ) );
 }
 
 // * Buttons

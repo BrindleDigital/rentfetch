@@ -224,26 +224,7 @@ function rentfetch_format_floorplan_rent_display( $minimum_rent, $maximum_rent, 
  * @return int|null Property post ID when found, null otherwise.
  */
 function rentfetch_get_connected_property_post_id_for_floorplan( $floorplan_post_id = null ) {
-	if ( ! $floorplan_post_id ) {
-		$floorplan_post_id = get_the_ID();
-	}
-
-	$floorplan_post_id = (int) $floorplan_post_id;
-	if ( $floorplan_post_id <= 0 ) {
-		return null;
-	}
-
-	$property_id = trim( (string) get_post_meta( $floorplan_post_id, 'property_id', true ) );
-	if ( '' === $property_id || ! function_exists( 'rentfetch_get_post_id_from_property_id' ) ) {
-		return null;
-	}
-
-	$property_post_id = (int) rentfetch_get_post_id_from_property_id( $property_id );
-	if ( $property_post_id <= 0 ) {
-		return null;
-	}
-
-	return $property_post_id;
+	return rentfetch_get_parent_property_post_id( $floorplan_post_id ?: get_the_ID() ) ?: null;
 }
 
 /**
@@ -1015,6 +996,7 @@ function rentfetch_floorplan_unit_table() {
 		),
 	);
 
+	$args = rentfetch_get_floorplan_unit_query_args( $floorplan_post->ID, $args );
 	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
@@ -1184,6 +1166,7 @@ function rentfetch_floorplan_unit_list() {
 		),
 	);
 
+	$args = rentfetch_get_floorplan_unit_query_args( $floorplan_post->ID, $args );
 	$args              = apply_filters( 'rentfetch_floorplan_unit_display_args', $args );
 	$columns           = rentfetch_floorplan_unit_display_get_columns( $args );
 	$square_feet_label = rentfetch_get_unit_square_feet_heading_label();
@@ -1328,7 +1311,7 @@ function rentfetch_get_similar_floorplans() {
 	);
 
 	// The Query.
-	$similar_floorplans_query = new WP_Query( $args );
+	$similar_floorplans_query = new WP_Query( rentfetch_get_property_floorplan_query_args( rentfetch_get_parent_property_post_id( get_the_ID() ), $args ) );
 
 	// The Loop.
 	if ( $similar_floorplans_query->have_posts() ) {

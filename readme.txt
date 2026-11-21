@@ -4,7 +4,7 @@ Tags: apartments, properties, yardi, entrata, appfolio
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.3
-Stable tag: 0.39.14
+Stable tag: 0.39.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,12 @@ Start from your WordPress dashboard.
 7. Add a shortcode to display what you'd like to display (there's a one-click copy list of available shortcodes on one of the plugin settings pages).
 
 == Changelog ==
+
+= 0.39.15 =
+
+* Add RentEGI property-code settings, synced-field controls and source tracking for use with Rent Fetch Sync 0.16.13 and Rent Fetch API 0.4.15.
+* Keep property, floor plan and unit relationships separate across providers, preserve manually attached units, and calculate availability from published inventory.
+* Extend detailed sync-error exports to all supported integrations and improve frontend cache refreshes, including persistent object caches.
 
 = 0.39.14 =
 

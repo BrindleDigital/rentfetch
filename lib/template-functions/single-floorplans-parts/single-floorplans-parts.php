@@ -552,6 +552,7 @@ function rentfetch_single_floorplan_unit_table() {
 			),
 		),
 	);
+	$args = rentfetch_get_floorplan_unit_query_args( $floorplan_post->ID, $args );
 	$columns        = rentfetch_floorplan_unit_display_get_columns( $args );
 	$post           = $floorplan_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	setup_postdata( $post );
@@ -723,23 +724,7 @@ function rentfetch_single_floorplan_get_aggregated_unit_amenities( $floorplan_po
 		return array();
 	}
 
-	$unit_ids = get_posts(
-		array(
-			'post_type'      => 'units',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-			'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-				array(
-					'key'   => 'property_id',
-					'value' => $property_id,
-				),
-				array(
-					'key'   => 'floorplan_id',
-					'value' => $floorplan_id,
-				),
-			),
-		)
-	);
+	$unit_ids = get_posts( rentfetch_get_floorplan_unit_query_args( $floorplan_post_id, array( 'posts_per_page' => -1, 'fields' => 'ids' ) ) );
 
 	$unit_features = array();
 	foreach ( $unit_ids as $unit_id ) {

@@ -422,6 +422,7 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 		return;
 	}
 
+	$previous_floorplan_post_id = rentfetch_resolve_floorplan_post_id( $post_id );
 	$relationship_override_confirmed = isset( $_POST['rentfetch_unit_relationship_override_confirmed'] )
 		&& '1' === sanitize_text_field( wp_unslash( $_POST['rentfetch_unit_relationship_override_confirmed'] ) );
 	$current_property_id             = (string) get_post_meta( $post_id, 'property_id', true );
@@ -497,6 +498,20 @@ function rentfetch_save_units_metaboxes( $post_id ) {
 			} else {
 				update_post_meta( $post_id, 'unit_source', $submitted_unit_source );
 			}
+		}
+	}
+
+	if ( isset( $_POST['rentfetch_floorplan_post_id'] ) && '' === trim( (string) get_post_meta( $post_id, 'unit_source', true ) ) ) {
+		$selected_id = absint( $_POST['rentfetch_floorplan_post_id'] );
+		$index = rentfetch_get_relationship_index();
+		$parent = $index['records'][ $selected_id ] ?? array();
+		$changed = $previous_floorplan_post_id !== $selected_id;
+		$can_change = ! $changed || $relationship_override_confirmed || '' === $current_property_id || '' === $current_floorplan_id;
+		if ( $can_change && 'floorplans' === ( $parent['type'] ?? '' )
+			&& (string) get_post_meta( $post_id, 'property_id', true ) === ( $parent['property_id'] ?? '' )
+			&& (string) get_post_meta( $post_id, 'floorplan_id', true ) === ( $parent['floorplan_id'] ?? '' ) ) {
+			update_post_meta( $post_id, 'rentfetch_floorplan_post_id', $selected_id );
+			delete_post_meta( $post_id, 'floorplan_source' );
 		}
 	}
 

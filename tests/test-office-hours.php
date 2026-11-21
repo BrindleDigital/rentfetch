@@ -10,6 +10,7 @@ define( 'ABSPATH', __DIR__ );
 function add_action() {}
 function add_filter() {}
 function add_shortcode() {}
+function rentfetch_get_parent_property_post_id( $post_id ) { return 1; }
 function apply_filters( $hook, $value ) {
 	return $value;
 }
@@ -20,7 +21,7 @@ function get_posts( $args ) {
 	return 'test-property' === $args['meta_value'] ? array( 1 ) : array();
 }
 function get_post_meta( $post_id, $key ) {
-	return $GLOBALS['rentfetch_test_office_hours'];
+	return 'property_id' === $key ? 'test-property' : $GLOBALS['rentfetch_test_office_hours'];
 }
 function shortcode_atts( $defaults, $atts ) {
 	return array_merge( $defaults, $atts );

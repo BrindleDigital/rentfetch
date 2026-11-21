@@ -34,51 +34,34 @@ function rentfetch_clear_search_cache_transients() {
 			AND option_name NOT LIKE '_transient_timeout_%'"
 	);
 
-	$transient_count = count( $all_transients );
-
-	if ( $transient_count > 0 ) {
-		// Delete cache transients and their timeouts.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$deleted = $wpdb->query(
-			"DELETE FROM {$wpdb->options} 
-			WHERE option_name LIKE '_transient_rentfetch_propertysearch_%' 
-			OR option_name LIKE '_transient_timeout_rentfetch_propertysearch_%'
-			OR option_name LIKE '_transient_rentfetch_floorplansearch_%' 
-			OR option_name LIKE '_transient_timeout_rentfetch_floorplansearch_%'
-			OR option_name LIKE '_transient_rentfetch_floorplans_array_sql_%' 
-			OR option_name LIKE '_transient_timeout_rentfetch_floorplans_array_sql_%'
-			OR option_name LIKE '_transient_rentfetch_meta_values_%'
-			OR option_name LIKE '_transient_timeout_rentfetch_meta_values_%'
-			OR option_name LIKE '_transient_rentfetch_property_ids_available_%' 
-			OR option_name LIKE '_transient_timeout_rentfetch_property_ids_available_%'
-				OR option_name LIKE '_transient_rentfetch_property_floorplans_%' 
-				OR option_name LIKE '_transient_timeout_rentfetch_property_floorplans_%'
-				OR option_name LIKE '_transient_rentfetch_date_availability_%'
-				OR option_name LIKE '_transient_timeout_rentfetch_date_availability_%'
-				OR option_name LIKE '_transient_rentfetch_date_search_%'
-				OR option_name LIKE '_transient_timeout_rentfetch_date_search_%'
-				OR option_name LIKE '_transient_rentfetch_fees_csv_%'
-				OR option_name LIKE '_transient_timeout_rentfetch_fees_csv_%'
-				OR option_name LIKE '_transient_rentfetch_fees_csv_calc_%'
-				OR option_name LIKE '_transient_timeout_rentfetch_fees_csv_calc_%'"
-		);
-
-		delete_option( 'rentfetch_search_query_cache_registry' );
-		delete_option( 'rentfetch_search_query_cache_stats' );
-		delete_option( 'rentfetch_cache_warming_cursor' );
-
-		return array(
-			'message' => sprintf(
-				'Successfully cleared %d cached result(s).',
-				$transient_count
-			),
-			'count'   => $transient_count,
-		);
+	$keys = array_map(
+		static function ( $name ) { return substr( $name, strlen( '_transient_' ) ); },
+		(array) $all_transients
+	);
+	// Registered keys also cover caches stored in Redis/Memcached rather than options.
+	$registry = get_option( 'rentfetch_search_query_cache_registry', array() );
+	if ( is_array( $registry ) ) {
+		foreach ( array_keys( $registry ) as $key ) {
+			if ( rentfetch_is_search_query_cache_key( $key ) ) {
+				$keys[] = $key;
+			}
+		}
+	}
+	$keys = array_unique( $keys );
+	foreach ( $keys as $key ) {
+		delete_transient( $key );
 	}
 
+	delete_option( 'rentfetch_search_query_cache_registry' );
+	delete_option( 'rentfetch_search_query_cache_stats' );
+	delete_option( 'rentfetch_cache_warming_cursor' );
+	unset( $GLOBALS['rentfetch_floorplans'] );
+
 	return array(
-		'message' => 'No cached results found to clear.',
-		'count'   => 0,
+		'message' => $keys
+			? sprintf( 'Successfully cleared %d cached result(s).', count( $keys ) )
+			: 'No cached results found to clear.',
+		'count'   => count( $keys ),
 	);
 }
 

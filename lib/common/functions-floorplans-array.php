@@ -21,6 +21,8 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	$floorplans    = array();
 	$meta_keys     = array(
 		'property_id',
+		'floorplan_source',
+		'rentfetch_property_post_id',
 		'beds',
 		'baths',
 		'minimum_rent',
@@ -53,7 +55,7 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 
 	// Pseudocache: use a transient keyed by the query args to avoid expensive SQL on
 	// repeated calls.
-	$cache_key = 'rentfetch_floorplans_array_sql_v2_' . current_time( 'Y-m-d' ) . '_' . md5( wp_json_encode( $args ) );
+	$cache_key = 'rentfetch_floorplans_array_sql_v3_' . current_time( 'Y-m-d' ) . '_' . md5( wp_json_encode( $args ) );
 	if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 		$cached = rentfetch_get_cache_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) ) {
@@ -150,6 +152,11 @@ function rentfetch_get_floorplans_array_sql( $args = array() ) {
 	$today = current_time( 'Y-m-d' );
 	foreach ( $floorplan_meta as $fid => $meta ) {
 		$property_id                 = isset( $meta['property_id'] ) ? $meta['property_id'] : '';
+		$parent = rentfetch_get_parent_property_post_id( (int) $fid );
+		$index = rentfetch_get_relationship_index();
+		if ( ! $parent && ! empty( $index['properties'][ $property_id ] ) ) { continue; }
+		$property_id = rentfetch_get_property_group_key( $property_id, $parent );
+		if ( '' === $property_id ) { continue; }
 		$beds                        = isset( $meta['beds'] ) ? $meta['beds'] : '';
 		$baths                       = isset( $meta['baths'] ) ? $meta['baths'] : '';
 		$minimum_rent                = isset( $meta['minimum_rent'] ) ? $meta['minimum_rent'] : '';
@@ -331,6 +338,11 @@ function rentfetch_get_floorplans_array() {
 
 			$id                = get_the_ID();
 			$property_id       = get_post_meta( $id, 'property_id', true );
+			$parent = rentfetch_get_parent_property_post_id( $id );
+			$index = rentfetch_get_relationship_index();
+			if ( ! $parent && ! empty( $index['properties'][ $property_id ] ) ) { continue; }
+			$property_id = rentfetch_get_property_group_key( $property_id, $parent );
+			if ( '' === $property_id ) { continue; }
 			$beds              = get_post_meta( $id, 'beds', true );
 			$baths             = get_post_meta( $id, 'baths', true );
 			$minimum_rent      = get_post_meta( $id, 'minimum_rent', true );
@@ -528,16 +540,16 @@ add_action( 'wp_loaded', 'rentfetch_set_floorplans' );
  *
  * @return array an array of floorplans.
  */
-function rentfetch_get_floorplans( $property_id = null ) {
-
+function rentfetch_get_floorplans( $property_id = null, $property_post_id = 0 ) {
 	global $rentfetch_floorplans;
-	$property_id = esc_html( $property_id );
-
-	if ( $property_id && isset( $rentfetch_floorplans[ $property_id ] ) ) {
-		return $rentfetch_floorplans[ $property_id ];
+	if ( null === $property_id ) { return is_array( $rentfetch_floorplans ) ? $rentfetch_floorplans : array(); }
+	if ( '' === trim( (string) $property_id ) ) { return array(); }
+	if ( function_exists( 'rentfetch_get_relationship_index' ) ) {
+		$property_post_id = $property_post_id ?: rentfetch_get_post_id_from_property_id( $property_id );
+		$key = rentfetch_get_property_group_key( $property_id, $property_post_id );
+		return '' !== $key ? ( $rentfetch_floorplans[ $key ] ?? array() ) : array();
 	}
-
-	return $rentfetch_floorplans;
+	return $rentfetch_floorplans[ $property_id ] ?? array();
 }
 
 /**
@@ -547,7 +559,7 @@ function rentfetch_get_floorplans( $property_id = null ) {
  * @param array $args Optional. Query arguments, same as WP_Query. Default empty array.
  * @return array Array of property IDs.
  */
-function rentfetch_get_property_ids_with_available_floorplans( $args = array() ) {
+function rentfetch_get_property_ids_with_available_floorplans( $args = array(), $return_post_ids = false ) {
 	global $wpdb;
 
 	// Set up default args to match rentfetch_get_floorplans_array.
@@ -563,7 +575,7 @@ function rentfetch_get_property_ids_with_available_floorplans( $args = array() )
 	$args         = apply_filters( 'rentfetch_search_floorplans_query_args', $args );
 
 	// Pseudocache: use a transient keyed by the query args.
-	$cache_key = 'rentfetch_property_ids_available_' . md5( wp_json_encode( $args ) );
+	$cache_key = 'rentfetch_property_ids_available_v2_' . ( $return_post_ids ? 'posts_' : 'external_' ) . md5( wp_json_encode( $args ) );
 	if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 		$cached = rentfetch_get_cache_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) ) {
@@ -631,6 +643,14 @@ function rentfetch_get_property_ids_with_available_floorplans( $args = array() )
 		return array();
 	}
 
+	if ( $return_post_ids ) {
+		$property_ids = array();
+		foreach ( $ids as $floorplan_post_id ) {
+			$parent = rentfetch_get_parent_property_post_id( (int) $floorplan_post_id );
+			if ( $parent ) { $property_ids[] = $parent; }
+		}
+		$property_ids = array_values( array_unique( $property_ids ) );
+	} else {
 	// Step 2: Get distinct property_ids from those floorplan IDs.
 	$ids_in           = implode( ',', array_map( 'intval', $ids ) );
 	$property_ids_sql = "
@@ -641,6 +661,7 @@ function rentfetch_get_property_ids_with_available_floorplans( $args = array() )
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- IDs are integer-cast and the remaining query is static; results use the plugin query cache.
 	$property_ids = $wpdb->get_col( $property_ids_sql );
 
+	}
 	// Cache the results.
 	if ( get_option( 'rentfetch_options_disable_query_caching', '1' ) !== '1' ) {
 		rentfetch_set_cache_transient( $cache_key, $property_ids );

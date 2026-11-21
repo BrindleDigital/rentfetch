@@ -33,6 +33,8 @@ function wp_strip_all_tags( $value ) { return strip_tags( $value ); }
 
 /** No-op filter registration for this focused check. */
 function add_filter() {}
+function rentfetch_get_floorplan_unit_query_args( $post_id, $args = array() ) { return $args; }
+function rentfetch_resolve_floorplan_post_id( $post_id ) { return 0; }
 
 /**
  * Output a marker for the focused media test.

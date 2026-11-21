@@ -1,5 +1,15 @@
 # Changes
 
+## 0.39.15
+
+* Remove saving of the retired Yardi Voyager-code conversion setting.
+
+* Scope property, floor plan and unit relationships, availability queries and monitoring by provider. Preserve manual attachments, using a specific floor plan selection when external identifiers overlap.
+
+* Add RentEGI property-code settings, source labels, and synchronized-field definitions while keeping fields absent from its feed editable.
+* Export saved property, floor plan and unit endpoint error details for all supported integrations, with credential redaction and existing Yardi recovery handling.
+* Clear registered frontend caches through WordPress APIs, including persistent object caches, and return no floor plans when a requested property is absent from the aggregate.
+
 ## 0.39.14
 
 * Added property-wide Yardi floor-plan API failure details to monitoring, including the specific API, endpoint, error, affected plans, and timezone-aware timestamps, while suppressing older errors after a successful full refresh.

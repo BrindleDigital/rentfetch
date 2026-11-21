@@ -34,6 +34,8 @@ function rentfetch_unit_syncing_fields( $array_fields, $post_id ) {
 		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_rentmanager', $array_fields, $post_id );
 	} elseif ( 'entrata' === $unit_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_entrata', $array_fields, $post_id );
+	} elseif ( 'rentegi' === $unit_source ) {
+		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_rentegi', $array_fields, $post_id );
 	} elseif ( 'engrain' === $unit_source ) {
 		$array_fields = apply_filters( 'rentfetch_filter_unit_syncing_fields_engrain', $array_fields, $post_id );
 	}
@@ -187,3 +189,9 @@ function rentfetch_unit_syncing_fields_realpage( $array_fields, $post_id ) {
 	);
 }
 add_filter( 'rentfetch_filter_unit_syncing_fields_realpage', 'rentfetch_unit_syncing_fields_realpage', 10, 2 );
+
+/** Fields supplied by the RentEGI MITS feed; media and other manual fields stay editable. */
+function rentfetch_unit_syncing_fields_rentegi( $array_fields, $post_id ) {
+	return array( 'title', 'property_id', 'floorplan_id', 'unit_id', 'beds', 'baths', 'minimum_rent', 'maximum_rent', 'deposit', 'availability_date' );
+}
+add_filter( 'rentfetch_filter_unit_syncing_fields_rentegi', 'rentfetch_unit_syncing_fields_rentegi', 10, 2 );
